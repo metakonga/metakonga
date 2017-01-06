@@ -1,0 +1,546 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;cxx;c;def</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h</Extensions>
+    </Filter>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>moc;h;cpp</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Debug">
+      <UniqueIdentifier>{19887b31-3056-4dad-a989-ebae82f7f9c3}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Release">
+      <UniqueIdentifier>{812dc1b8-9d33-44db-b7ef-f377785d1943}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Header Files\collision">
+      <UniqueIdentifier>{57490752-342b-4c86-a37e-34c9228afa4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\CUDA">
+      <UniqueIdentifier>{72b0f25f-c014-40f1-898c-ee6b5873c446}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\dialog">
+      <UniqueIdentifier>{3c6eb682-76e3-4d00-a10e-cdae7930109d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mbd">
+      <UniqueIdentifier>{fd018b35-d911-43d5-8ae6-cbb9a3a28086}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\object">
+      <UniqueIdentifier>{8584ccb5-7008-46fe-8d94-908d1ea57789}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\simulation">
+      <UniqueIdentifier>{58902fe5-6b34-4152-98df-aed5c524441f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\collision">
+      <UniqueIdentifier>{6f3f16d0-633c-483f-b4b5-bb55ac315b9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\CUDA">
+      <UniqueIdentifier>{cb1707c4-57ce-49aa-a092-1ee6fd2f1811}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\dialog">
+      <UniqueIdentifier>{57be8e71-f26d-44ee-afae-9f4051971038}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mbd">
+      <UniqueIdentifier>{73cd1433-aca8-4a52-a5f3-8146ba9a49ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\object">
+      <UniqueIdentifier>{6bfa6fb0-1715-47c0-b708-2d53c037d5f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\simulation">
+      <UniqueIdentifier>{406f0c89-ae62-4f3f-91a8-1c937d05160a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\table">
+      <UniqueIdentifier>{a67d8acf-0f2f-4517-9bdf-062fca48de12}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\table">
+      <UniqueIdentifier>{d2437041-6942-44b1-aa2b-f710c7c1f529}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="xdynamics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_xdynamics.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_xdynamics.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_xdynamics.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_ccDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_ccDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_cubeDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cubeDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_cylinderDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cylinderDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_ExportDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_ExportDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_massDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_massDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_newDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_newDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_particleDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_particleDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_planeDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_planeDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_solveDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_solveDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_msimulation.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_msimulation.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_contactConstant.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_contactConstant.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_glwidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_glwidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_objProperty.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_objProperty.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_solveProcess.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_solveProcess.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\collision\collision_particles_polygonObject.cpp">
+      <Filter>Source Files\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\collision\collision.cpp">
+      <Filter>Source Files\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\collision\collision_particles_cube.cpp">
+      <Filter>Source Files\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\collision\collision_particles_cylinder.cpp">
+      <Filter>Source Files\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\collision\collision_particles_particles.cpp">
+      <Filter>Source Files\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\collision\collision_particles_plane.cpp">
+      <Filter>Source Files\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\ccDialog.cpp">
+      <Filter>Source Files\dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\cubeDialog.cpp">
+      <Filter>Source Files\dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\cylinderDialog.cpp">
+      <Filter>Source Files\dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\ExportDialog.cpp">
+      <Filter>Source Files\dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\massDialog.cpp">
+      <Filter>Source Files\dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\newDialog.cpp">
+      <Filter>Source Files\dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\particleDialog.cpp">
+      <Filter>Source Files\dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\planeDialog.cpp">
+      <Filter>Source Files\dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\polygonDialog.cpp">
+      <Filter>Source Files\dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\solveDialog.cpp">
+      <Filter>Source Files\dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\kinematicConstraint.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\revoluteConstratin.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\object\polygonObject.cpp">
+      <Filter>Source Files\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\object\cube.cpp">
+      <Filter>Source Files\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\object\cylinder.cpp">
+      <Filter>Source Files\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\object\mass.cpp">
+      <Filter>Source Files\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\object\object.cpp">
+      <Filter>Source Files\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\object\plane.cpp">
+      <Filter>Source Files\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\simulation\dem_simulation.cpp">
+      <Filter>Source Files\simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\simulation\dembd_simulation.cpp">
+      <Filter>Source Files\simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\simulation\mbd_simulation.cpp">
+      <Filter>Source Files\simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\simulation\msimulation.cpp">
+      <Filter>Source Files\simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_contactCoefficientTable.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_contactCoefficientTable.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\contactCoefficientTable.cpp">
+      <Filter>Source Files\table</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\contactConstant.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\glwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\grid_base.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\mintegrator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\modeler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\neighborhood_cell.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\objProperty.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\particle_system.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\solveProcess.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\vcontroller.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\velocity_verlet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\vobject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\vparticles.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\vplane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\vpolygon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\vcylinder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\vcube.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="xdynamics.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="xdynamics.qrc">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="newModel.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="objProperty.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="xdynamics.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\ccDialog.h">
+      <Filter>Header Files\dialog</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\cubeDialog.h">
+      <Filter>Header Files\dialog</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\cylinderDialog.h">
+      <Filter>Header Files\dialog</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\ExportDialog.h">
+      <Filter>Header Files\dialog</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\massDialog.h">
+      <Filter>Header Files\dialog</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\newDialog.h">
+      <Filter>Header Files\dialog</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\particleDialog.h">
+      <Filter>Header Files\dialog</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\planeDialog.h">
+      <Filter>Header Files\dialog</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\solveDialog.h">
+      <Filter>Header Files\dialog</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\simulation\msimulation.h">
+      <Filter>Header Files\simulation</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\contactConstant.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\glwidget.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\objProperty.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\solveProcess.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\contactCoefficientTable.h">
+      <Filter>Header Files\table</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GeneratedFiles\ui_newModel.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_objProperty.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_xdynamics.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\collision.h">
+      <Filter>Header Files\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\collision_particles_cube.h">
+      <Filter>Header Files\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\collision_particles_cylinder.h">
+      <Filter>Header Files\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\collision_particles_particles.h">
+      <Filter>Header Files\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\collision_particles_plane.h">
+      <Filter>Header Files\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\collision_particles_polygonObject.h">
+      <Filter>Header Files\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\kinematicConstraint.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\revoluteConstraint.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\object\polygonObject.h">
+      <Filter>Header Files\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\object\cube.h">
+      <Filter>Header Files\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\object\cylinder.h">
+      <Filter>Header Files\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\object\mass.h">
+      <Filter>Header Files\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\object\object.h">
+      <Filter>Header Files\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\object\plane.h">
+      <Filter>Header Files\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\simulation\dem_simulation.h">
+      <Filter>Header Files\simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\simulation\dembd_simulation.h">
+      <Filter>Header Files\simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\simulation\mbd_simulation.h">
+      <Filter>Header Files\simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\checkFunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\colors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\grid_base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\materialLibrary.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\mintegrator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\modeler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\mphysics_numeric.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\mphysics_types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\msgBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\neighborhood_cell.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\particle_system.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\vcontroller.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\vcube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\vcylinder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\velocity_verlet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\vglew.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\view_line.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\view_mass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\view_object.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\view_plane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\vobject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\vparticles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\vplane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\vpolygon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\view_shape.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\MyTableWidgetItem.h">
+      <Filter>Header Files\table</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\mphysics_cuda_dec.cuh">
+      <Filter>Header Files\CUDA</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\mphysics_cuda_impl.cuh">
+      <Filter>Header Files\CUDA</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="..\..\..\..\source\mphysics_cuda_def.cu">
+      <Filter>Source Files\CUDA</Filter>
+    </CudaCompile>
+  </ItemGroup>
+</Project>

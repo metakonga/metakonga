@@ -1,0 +1,36 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Resources/ani_fast.png</file>
+        <file>Resources/ani_morefast.png</file>
+        <file>Resources/ani_moreprevious.png</file>
+        <file>Resources/ani_pause.png</file>
+        <file>Resources/ani_play.png</file>
+        <file>Resources/ani_previous.png</file>
+        <file>Resources/collision.png</file>
+        <file>Resources/copy.png</file>
+        <file>Resources/cut.png</file>
+        <file>Resources/cylinder.png</file>
+        <file>Resources/cylindrical.png</file>
+        <file>Resources/icChangeParticle.png</file>
+        <file>Resources/icLine.png</file>
+        <file>Resources/icPolygon.png</file>
+        <file>Resources/icRect.png</file>
+        <file>Resources/mass.png</file>
+        <file>Resources/new.png</file>
+        <file>Resources/open.png</file>
+        <file>Resources/open_rt.png</file>
+        <file>Resources/particle.png</file>
+        <file>Resources/paste.png</file>
+        <file>Resources/pause.png</file>
+        <file>Resources/play.png</file>
+        <file>Resources/PointMass.png</file>
+        <file>Resources/pRec.png</file>
+        <file>Resources/revolute.png</file>
+        <file>Resources/save.png</file>
+        <file>Resources/simPlay.png</file>
+        <file>Resources/simStop.png</file>
+        <file>Resources/solve.png</file>
+        <file>Resources/spherical.png</file>
+        <file>Resources/table.png</file>
+    </qresource>
+</RCC>
