@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>parVIEW</class>
- <widget class="QMainWindow" name="parVIEW">
+ <class>xdynamics</class>
+ <widget class="QMainWindow" name="xdynamics">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>parVIEW</string>
+   <string>xdynamics</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">

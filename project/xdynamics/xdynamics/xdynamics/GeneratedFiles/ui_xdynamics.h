@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'xdynamics.ui'
+** Form generated from reading UI file 'xdynamicsp27092.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef UI_XDYNAMICS_H
-#define UI_XDYNAMICS_H
+#ifndef XDYNAMICSP27092_H
+#define XDYNAMICSP27092_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -137,4 +137,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // UI_XDYNAMICS_H
+#endif // XDYNAMICSP27092_H
