@@ -83,6 +83,12 @@ void objProperty::initialize(modeler* _md, GLWidget* _gl)
 			objList->addItem(value.objectName());			
 		}
 	}
+	if (md->objects().size()){
+		foreach(object* value, md->objects()){
+			tops[objList->count()] = TOP_OBJECT;
+			objList->addItem(value->objectName());
+		}
+	}
 	if (_isInit){
 		getNameWidget()->setText("");
 		getMaterialWidget()->setCurrentIndex(0);
@@ -118,6 +124,7 @@ void objProperty::changeObject(int id)
 	currentTargetType = tops[id];
 	//objProp->
 	switch (currentTargetType){
+	case TOP_OBJECT: settingObjectObjectProperties(id); break;
 	case TOP_POLYGON_OBJECT:
 		settingPolygonObjectProperties(id);
 		break;
@@ -172,6 +179,21 @@ void objProperty::settingPolygonObjectProperties(int id)
 	//LEName->setReadOnly(true);
 
 	getMaterialWidget()->setCurrentIndex((int)po->materialType());
+
+	_isSetting = true;
+}
+
+void objProperty::settingObjectObjectProperties(int id)
+{
+	_isSetting = false;
+	QListWidgetItem *it = objList->item(id);
+	object* o = (md->objects()[it->text()]);
+	currentObject = o;
+	//QLineEdit* LEName = new QLineEdit;
+	getNameWidget()->setText(o->objectName());
+	//LEName->setReadOnly(true);
+
+	getMaterialWidget()->setCurrentIndex((int)o->materialType());
 
 	_isSetting = true;
 }

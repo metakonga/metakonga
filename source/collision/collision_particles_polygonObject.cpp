@@ -45,7 +45,7 @@ bool collision_particles_polygonObject::cuCollid()
 	checkCudaErrors(cudaMemset(mforce, 0, sizeof(double3)*ps->numParticle()));
 	checkCudaErrors(cudaMemset(mmoment, 0, sizeof(double3)*ps->numParticle()));
 
-	cu_particle_polygonObject_collision(po->devicePolygonInfo(), po->deviceSphereSet(), po->deviceMassInfo(), po->youngs(), po->poisson(), rest, sratio, fric, ps->cuPosition(), ps->cuVelocity(), ps->cuOmega(), ps->cuForce(), ps->cuMoment(), ps->cuMass(), ps->youngs(), ps->poisson(), gb->cuSortedID(), gb->cuCellStart(), gb->cuCellEnd(), ps->numParticle(), mpos, mforce, mmoment, _mf, _mm);
+	cu_particle_polygonObject_collision(po->devicePolygonInfo(), po->deviceSphereSet(), po->deviceMassInfo(), po->youngs(), po->poisson(), rest, rest, fric, ps->cuPosition(), ps->cuVelocity(), ps->cuOmega(), ps->cuForce(), ps->cuMoment(), ps->cuMass(), ps->youngs(), ps->poisson(), gb->cuSortedID(), gb->cuCellStart(), gb->cuCellEnd(), ps->numParticle(), mpos, mforce, mmoment, _mf, _mm);
 // 	double3* h_force = new double3[ps->numParticle()];
 // 	checkCudaErrors(cudaMemcpy(h_force, mforce, sizeof(double3) * ps->numParticle(), cudaMemcpyDeviceToHost));
 // 	std::fstream fs;
@@ -173,7 +173,7 @@ bool collision_particles_polygonObject::collid_with_particle(unsigned int i, flo
 							{
 								VEC3F unit = -po->hostPolygonInfo()[k].N.To<float>();
 								VEC3F dv = -(ivel + iomega.cross(ir * unit));
-								constant c = getConstant(ir, 0, ms, 0, ps->youngs(), po->youngs(), ps->poisson(), po->poisson(), 0.f);
+								constant c = getConstant(ir, 0, ms, 0, ps->youngs(), po->youngs(), ps->poisson(), po->poisson(), ps->shear(), po->shear());
 								float fsn = -c.kn * pow(overlap, 1.5f);
 								single_force = (fsn + c.vn * dv.dot(unit)) * unit;
 								//std::cout << k << ", " << single_force.x << ", " << single_force.y << ", " << single_force.z << std::endl;

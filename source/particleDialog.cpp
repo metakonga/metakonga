@@ -49,10 +49,12 @@ particle_system* particleDialog::callDialog(modeler *_md)
 	LECohesion = new QLineEdit;
 	QLabel *LRestitution = new QLabel("Restitution");
 	LERestitution = new QLineEdit;
-	QLabel *LStiffRatio = new QLabel("Stiffness Ratio");
-	LEStiffRatio = new QLineEdit;
+	//QLabel *LShearModulus = new QLabel("Shear modulus");
+	//LEShearModulus = new QLineEdit;
 	QLabel *Lfriction = new QLabel("Friction");
 	LEFriction = new QLineEdit;
+	QLabel *LRollingFriction = new QLabel("Rolling friction");
+	LERollingFriction = new QLineEdit;
 	QGridLayout *byGeoLayout = new QGridLayout;
 	
 	CBGeometry->addItems(geoStrList);
@@ -63,8 +65,9 @@ particle_system* particleDialog::callDialog(modeler *_md)
 	byGeoLayout->addWidget(LNumParticle, 4, 0); byGeoLayout->addWidget(LENumParticle, 4, 1, 1, 2);
 	byGeoLayout->addWidget(LTotalMass, 5, 0); byGeoLayout->addWidget(LETotalMass, 5, 1, 1, 2);
 	byGeoLayout->addWidget(LRestitution, 6, 0); byGeoLayout->addWidget(LERestitution, 6, 1, 1, 2);
-	byGeoLayout->addWidget(LStiffRatio, 7, 0); byGeoLayout->addWidget(LEStiffRatio, 7, 1, 1, 2);
-	byGeoLayout->addWidget(Lfriction, 8, 0); byGeoLayout->addWidget(LEFriction, 8, 1, 1, 2);
+	//byGeoLayout->addWidget(LShearModulus, 7, 0); byGeoLayout->addWidget(LEShearModulus, 7, 1, 1, 2);
+	byGeoLayout->addWidget(Lfriction, 7, 0); byGeoLayout->addWidget(LEFriction, 7, 1, 1, 2);
+	byGeoLayout->addWidget(LRollingFriction, 8, 0); byGeoLayout->addWidget(LERollingFriction, 8, 1, 1, 2);
 	byGeoLayout->addWidget(LCohesion, 9, 0); byGeoLayout->addWidget(LECohesion, 9, 1, 1, 2);
 	byGeoTab->setLayout(byGeoLayout);
 	tabWidget->addTab(byGeoTab, "Geometry"); byGeoTab->setObjectName("Geometry");
@@ -103,7 +106,7 @@ particle_system* particleDialog::callDialog(modeler *_md)
 		}
 		else{
 			ps->makeParticles(b_obj, LESpacing->text().toFloat(), LERadius->text().toFloat());
-			ps->setCollision(LERestitution->text().toFloat(), LEStiffRatio->text().toFloat(), LEFriction->text().toFloat(), LECohesion->text().toFloat());
+			ps->setCollision(LERestitution->text().toFloat(), LEFriction->text().toFloat(), LERollingFriction->text().toFloat(), LECohesion->text().toFloat());
 		}
 		
 		//ps->makeParticles
@@ -131,10 +134,10 @@ void particleDialog::Click_ok()
 			msgBox("Value of radius is empty!!", QMessageBox::Critical);
 			return;
 		}
-		if (LEStiffRatio->text().isEmpty()){
-			msgBox("Value of radius is empty!!", QMessageBox::Critical);
-			return;
-		}
+// 		if (LEShearModulus->text().isEmpty()){
+// 			msgBox("Value of radius is empty!!", QMessageBox::Critical);
+// 			return;
+// 		}
 		if (LEFriction->text().isEmpty()){
 			msgBox("Value of radius is empty!!", QMessageBox::Critical);
 			return;

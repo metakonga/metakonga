@@ -33,7 +33,6 @@ xdynamics::xdynamics(int argc, char** argv, QWidget *parent)
 	, gl(NULL)
 	, ptObj(NULL)
 {
-	//pinfoDialog = NULL;
 	animation_statement = false;
 	ui.setupUi(this);
 	gl = new GLWidget(argc, argv, NULL);
@@ -49,7 +48,6 @@ xdynamics::~xdynamics()
 		exitThread();
 	}
 	if (gl) delete gl; gl = NULL;
-	//if (pinfoDialog) delete pinfoDialog; pinfoDialog = NULL;
 	if (md) delete md; md = NULL;
 	if (sim) delete sim; sim = NULL;
 	if (th) delete th; th = NULL;

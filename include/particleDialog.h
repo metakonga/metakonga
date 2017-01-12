@@ -42,8 +42,9 @@ private:
 	QLineEdit *LEPosition;
 	QLineEdit *LEVelocity;
 	QLineEdit *LERestitution;
-	QLineEdit *LEStiffRatio;
+	//QLineEdit *LEShearModulus;
 	QLineEdit *LEFriction;
+	QLineEdit *LERollingFriction;
 	QLineEdit *LECohesion;
 	QLineEdit *LENumParticle;
 	QLineEdit *LETotalMass;

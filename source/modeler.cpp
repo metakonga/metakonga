@@ -236,32 +236,32 @@ particle_system* modeler::makeParticleSystem(QString _name)
 	return ps;
 }
 
-collision* modeler::makeCollision(QString _name, float _rest, float _sratio, float _fric, float _coh, tCollisionPair tcp, void* o1, void* o2)
+collision* modeler::makeCollision(QString _name, float _rest, float _fric, float _rfric, float _coh, tCollisionPair tcp, void* o1, void* o2)
 {
 	collision* c = NULL;
 	particle_system *ps;
 	switch (tcp){
 	case PARTICLES_PARTICLES:
 		c = new collision_particles_particles(_name, this, (particle_system*)o1);
-		c->setContactParameter(_rest, _sratio, _fric, _coh);
+		c->setContactParameter(_rest, _fric, _rfric, _coh);
 		break;
 	case PARTICLES_PLANE:
 		ps = (particle_system*)o1;
 		c = new collision_particles_plane(_name, this, (particle_system*)o1, (plane*)o2);
 		ps->addCollision(c);
-		c->setContactParameter(_rest, _sratio, _fric, _coh);
+		c->setContactParameter(_rest, _fric, _rfric, _coh);
 		break;
 	case PARTICLES_CYLINDER:
 		ps = (particle_system*)o1;
 		c = new collision_particles_cylinder(_name, this, ps, (cylinder*)o2);
 		ps->addCollision(c);
-		c->setContactParameter(_rest, _sratio, _fric, _coh);
+		c->setContactParameter(_rest, _fric, _rfric, _coh);
 		break;
 	case PARTICLES_POLYGONOBJECT:
 		ps = (particle_system*)o1;
 		c = new collision_particles_polygonObject(_name, this, ps, (polygonObject*)o2);
 		ps->addCollision(c);
-		c->setContactParameter(_rest, _sratio, _fric, _coh);
+		c->setContactParameter(_rest, _fric, _rfric, _coh);
 	}
 
 
@@ -437,39 +437,40 @@ void modeler::openModeler(GLWidget *gl, QString& file)
  		{
 			unsigned int np;
 			QString pfile, bo;
-			float rho, E, pr, sh, rest, ratio, fric, coh;
+			float rho, E, pr, sh, rest, fric, rfric, coh;
 			in >> ch >> np;
 			in >> ch >> pfile;
 			in >> ch >> bo;
 			in >> ch >> rho;
 			in >> ch >> E;
 			in >> ch >> pr;
-			in >> ch >> sh;
+			//in >> ch >> sh;
 			in >> ch >> rest;
-			in >> ch >> ratio;
+			in >> ch >> sh;
 			in >> ch >> fric;
+			in >> ch >> rfric,
 			in >> ch >> coh;
 			makeParticleSystem("particles");
 			ps->setParticlesFromFile(pfile, bo, np, rho, E, pr, sh);
-			ps->setCollision(rest, ratio, fric, coh);
+			ps->setCollision(rest, fric, rfric, coh);
 			gl->makeParticle(ps);
  		}
  		else if (ch == "COLLISION")
  		{
-			float rest, ratio, fric, coh;
+			float rest, fric, rfric, coh;
 			QString nm, io, jo;
 			in >> nm;
-			in >> rest >> ratio >> fric >> coh;
+			in >> rest >> fric >> rfric >> coh;
 			in >> ch >> io;
 			in >> ch >> jo;
 	
 			tCollisionPair cp = getCollisionPair(io != "particles" ? objs[io]->objectType() : ps->objectType(), jo != "particles" ? objs[jo]->objectType() : ps->objectType());
 			if (io == "particles")
-				makeCollision(nm, rest, ratio, fric, coh, cp, ps, objs[jo]);
+				makeCollision(nm, rest, fric, rfric, coh, cp, ps, objs[jo]);
 			else if (jo == "particles")
-				makeCollision(nm, rest, ratio, fric, coh, cp, ps, objs[io]);
+				makeCollision(nm, rest, fric, rfric, coh, cp, ps, objs[io]);
 			else
-				makeCollision(nm, rest, ratio, fric, coh, cp, objs[io], objs[jo]);
+				makeCollision(nm, rest, fric, rfric, coh, cp, objs[io], objs[jo]);
  		}
  	}
 	pf.close();

@@ -103,7 +103,6 @@ void plane::cuAllocData(unsigned int _np)
 	_dpi->w4 = make_float3(w4.x, w4.y, w4.z);
 	checkCudaErrors(cudaMalloc((void**)&dpi, sizeof(device_plane_info)));
 	checkCudaErrors(cudaMemcpy(dpi, _dpi, sizeof(device_plane_info), cudaMemcpyHostToDevice));
-	object::setCudaRelativeImpactVelocity(_np);
 	delete _dpi;
 }
 

@@ -61,39 +61,42 @@ bool collision_particles_particles::HMCModel(float dt)
 							unsigned int k = grid_base::sortedID(j);
 							if (i == k || k >= md->numParticle())
 								continue;
-							//0.006398774456172
 							jpos = pos[k].toVector3();
 							rp = jpos - ipos;
 							dist = rp.length();
-							float dist_ = rp.dot();
-							float dist__ = sqrt(dist_);
 							cdist = (pos[i].w + pos[k].w) - dist;
+							//float rcon = pos[i].w - cdist;
 							unsigned int rid = 0;
-							int first_blank = -1;
 							if (cdist > 0){	
-								if (i == 111){
-									i = 111;
-								}
 								float rcon = pos[i].w - 0.5 * cdist;
 								rv = vel[k] + omega[k].cross(-pos[k].w * u) - (vel[i] + omega[i].cross(pos[i].w * u));
-								c = getConstant(pos[i].w, pos[k].w, ms[i], ms[k], ps->youngs(), ps->youngs(), ps->poisson(), ps->poisson(), 0.f);
+								c = getConstant(pos[i].w, pos[k].w, ms[i], ms[k], ps->youngs(), ps->youngs(), ps->poisson(), ps->poisson(), ps->shear(), ps->shear());
 								u = rp / dist;
-								float cor = u.length();
+								//float cor = u.length();
  								float fsn = -c.kn * pow(cdist, 1.5f);
-								float fca = cohesionForce(pos[i].w, pos[k].w, ps->youngs(), ps->youngs(), ps->poisson(), ps->poisson(), fsn);
- 								float fsd = rv.dot(u) * c.vn;
+								//float fca = cohesionForce(pos[i].w, pos[k].w, ps->youngs(), ps->youngs(), ps->poisson(), ps->poisson(), fsn);
+ 								float fdn = c.vn * rv.dot(u);
 
-								Fn = (fsn + fca + fsd) * u;
+								Fn = (fsn + fdn) * u;
 								e = rv - rv.dot(u) * u;
 								mag_e = e.length();
 								VEC3F Ft;
 								if (mag_e){
 									sh = e / mag_e;
 									ds = mag_e * dt;
-									Ft = min(c.ks * ds + c.vs * (rv.dot(sh)), c.mu * Fn.length()) * sh;
-									M = (pos[i].w * u).cross(Ft);
+									float fst = -c.ks * ds;
+									float fdt = c.vs * rv.dot(sh);				
+									Ft = (fst + fdt) * sh;
+									if (Ft.length() >= c.mu * Fn.length())
+										Ft = c.mu * fsn * sh;
+									//Ft = min(c.ks * ds + c.vs * (rv.dot(sh)), c.mu * Fn.length()) * sh;
+									M = (rcon * u).cross(Ft);
+									if (omega->length()){
+										VEC3F on = *omega / omega->length();
+										M += -c.rf * fsn * rcon * on;
+									}
 								}
-								fr[i] += Fn + Ft;
+								fr[i] += Fn;
 								mm[i] += M;
 							}
 						}

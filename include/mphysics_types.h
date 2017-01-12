@@ -61,7 +61,7 @@ enum tImport {NO_FORMAT = 0, MILKSHAPE_3D_ASCII };
 
 typedef struct
 {
-	float kn, vn, ks, vs, mu;
+	float kn, vn, ks, vs, mu, rf;
 }constant;
 
 

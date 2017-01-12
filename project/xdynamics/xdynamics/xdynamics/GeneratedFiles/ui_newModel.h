@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'newModel.ui'
 **
-** Created by: Qt User Interface Compiler version 5.4.2
+** Created by: Qt User Interface Compiler version 5.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -125,10 +125,12 @@ public:
         PBBrowse->setObjectName(QStringLiteral("PBBrowse"));
         PBBrowse->setGeometry(QRect(340, 147, 75, 23));
         PBBrowse->setStyleSheet(QStringLiteral("border-bottom-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(255, 0, 0, 255), stop:0.339795 rgba(255, 0, 0, 255), stop:0.339799 rgba(255, 255, 255, 255), stop:0.662444 rgba(255, 255, 255, 255), stop:0.662469 rgba(0, 0, 255, 255), stop:1 rgba(0, 0, 255, 255));"));
-        PBBrowse->setDefault(false);
         PBBrowse->setFlat(false);
 
         retranslateUi(newModelDialog);
+
+        PBBrowse->setDefault(false);
+
 
         QMetaObject::connectSlotsByName(newModelDialog);
     } // setupUi

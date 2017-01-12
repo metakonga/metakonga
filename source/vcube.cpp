@@ -77,7 +77,8 @@ void vcube::draw(GLenum eMode)
 	if (display){
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glPushMatrix();
-		//glDisable(GL_LIGHTING);
+		glDisable(GL_LIGHTING);
+		if (eMode == GL_SELECT) glLoadName((GLuint)ID());
 		glCallList(glList);
 		glPopMatrix();
 	}

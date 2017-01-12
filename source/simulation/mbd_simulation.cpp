@@ -8,13 +8,15 @@
 #include <QTime>
 #include <QTextStream>
 #include <QFile>
+#include <cusolverDn.h>
 
-#ifndef F2C_INCLUDE
-#include <lapack/f2c.h>
-#endif
-#ifndef __CLAPACK_H
-#include <lapack/clapack.h>
-#endif
+
+// #ifndef F2C_INCLUDE
+// #include <lapack/f2c.h>
+// #endif
+// #ifndef __CLAPACK_H
+// #include <lapack/clapack.h>
+// #endif
 
 mbd_simulation::mbd_simulation()
 	: simulation()
@@ -104,8 +106,8 @@ bool mbd_simulation::initialize(bool isCpu)
 	sdim += md->pointMasses().size() - 1;
 	tdim = mdim + sdim;
 
-	ptDof = (long int*)&tdim;
-	permutation = new long int[tdim];
+	ptDof = (MKL_INT*)&tdim;
+	permutation = new MKL_INT[tdim];
 	lhs.alloc(tdim, tdim);
 	rhs.alloc(tdim);
 	pre.alloc(mdim);
@@ -124,6 +126,11 @@ bool mbd_simulation::initialize(bool isCpu)
 // 
 // 	}
 	lhs.display();
+// 	cusolverDnHandle_t cuhandle = NULL;
+// 	int status = 0;
+// 	cusolverDnCreate(&cuhandle);
+// 	cusolverDnDgetrs(cuhandle, CUBLAS_OP_N, tdim, tdim, lhs.getDataPointer(), tdim, permutation, rhs.get_ptr(), tdim, &status);
+// 	cusolverDnDestroy(cuhandle);
 	dgesv_(ptDof, &lapack_one, lhs.getDataPointer(), ptDof, permutation, rhs.get_ptr(), ptDof, &lapack_info);
 	i = 0;
 	for (massIterator it = md->pointMasses().begin(); it != md->pointMasses().end(); it++)
@@ -516,6 +523,11 @@ double mbd_simulation::correction(unsigned int cs)
 		for (int i(0); i < mdim; i++) ee(i) -= pre(i);
 		constraintEquation();
 		e_norm = ee.norm();
+// 		cusolverDnHandle_t cuhandle = NULL;
+// 		int status = 0;
+// 		cusolverDnCreate(&cuhandle);
+// 		cusolverDnDgetrs(cuhandle, CUBLAS_OP_N, tdim, tdim, lhs.getDataPointer(), tdim, permutation, rhs.get_ptr(), tdim, &status);
+// 		cusolverDnDestroy(cuhandle);
 		dgesv_(ptDof, &lapack_one, lhs.getDataPointer(), ptDof, permutation, ee.get_ptr(), ptDof, &lapack_info);
 		rhs += ee;
 		int idx = 0;
@@ -583,6 +595,11 @@ double mbd_simulation::oneStepCorrection()
 	for (int i(0); i < mdim; i++) ee(i) -= pre(i);
 	constraintEquation();
 	e_norm = ee.norm();
+// 	cusolverDnHandle_t cuhandle = NULL;
+// 	int status = 0;
+// 	cusolverDnCreate(&cuhandle);
+// 	cusolverDnDgetrs(cuhandle, CUBLAS_OP_N, tdim, tdim, lhs.getDataPointer(), tdim, permutation, rhs.get_ptr(), tdim, &status);
+// 	cusolverDnDestroy(cuhandle);
  	dgesv_(ptDof, &lapack_one, lhs.getDataPointer(), ptDof, permutation, ee.get_ptr(), ptDof, &lapack_info);
  	rhs += ee;
 	int idx = 0;

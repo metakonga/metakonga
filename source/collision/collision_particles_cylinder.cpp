@@ -45,7 +45,7 @@ bool collision_particles_cylinder::cuCollid()
 	checkCudaErrors(cudaMemset(mforce, 0, sizeof(double3)*ps->numParticle()));
 	checkCudaErrors(cudaMemset(mmoment, 0, sizeof(double3)*ps->numParticle()));
 	
-	cu_cylinder_hertzian_contact_force(cy->deviceCylinderInfo(), cy->youngs(), cy->poisson(), rest, sratio, fric, ps->cuPosition(), ps->cuVelocity(), ps->cuOmega(), ps->cuForce(), ps->cuMoment(), ps->cuMass(), ps->youngs(), ps->poisson(), ps->numParticle(), mpos, mforce, mmoment, _mf, _mm);
+	cu_cylinder_hertzian_contact_force(cy->deviceCylinderInfo(), cy->youngs(), cy->poisson(), rest, rest, fric, ps->cuPosition(), ps->cuVelocity(), ps->cuOmega(), ps->cuForce(), ps->cuMoment(), ps->cuMass(), ps->youngs(), ps->poisson(), ps->numParticle(), mpos, mforce, mmoment, _mf, _mm);
 	//std::cout << "_mf 1 :" << _mf.x << " " << _mf.y << " " << _mf.z << std::endl;
 	_mf = reductionD3(mforce, ps->numParticle());
 	//std::cout << "_mf 2 :" << _mf.x << " " << _mf.y << " " << _mf.z << std::endl;
@@ -162,9 +162,7 @@ bool collision_particles_cylinder::HMCModel(unsigned int i, float dt)
 	if (overlap > 0)
 	{
 		VEC3F dv = -(v + w.cross(p.w * u));
-		if (!cy->relativeImpactVelocity()[i])
-			cy->relativeImpactVelocity()[i] = abs(dv.length());
-		constant c = getConstant(p.w, 0.f, ps->mass()[i], 0.f, ps->youngs(), cy->youngs(), ps->poisson(), cy->poisson(),0.f);
+		constant c = getConstant(p.w, 0.f, ps->mass()[i], 0.f, ps->youngs(), cy->youngs(), ps->poisson(), cy->poisson(), ps->shear(), cy->shear());
 		float fsn = (-c.kn * pow(overlap, 1.5f));
 		float fca = cohesionForce(p.w, 0.f, ps->youngs(), 0.f, ps->poisson(), 0.f, fsn);
 		Fn = (fsn + fca + c.vn * dv.dot(u)) * u;
@@ -182,9 +180,6 @@ bool collision_particles_cylinder::HMCModel(unsigned int i, float dt)
 		ps->moment()[i] += M;
 		mforce = -sF.To<double>();
 		mmoment = -si.cross(sF.To<double>());
-	}
-	else{
-		cy->relativeImpactVelocity()[i] = 0.f;
 	}
 	if (cy->pointMass()){
 		cy->pointMass()->addExternalForce(mforce);

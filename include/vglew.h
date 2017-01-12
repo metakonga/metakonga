@@ -3,7 +3,7 @@
 
 #ifndef QT_OPENGL_ES_2
 #include <gl/glew.h>
-#include <gl/freeglut.h>
+//#include <gl/freeglut.h>
 #include <gl/glu.h>
 #endif
 
@@ -15,7 +15,7 @@ static class vglew
 public:
 	vglew() { glewInit(); }
 	vglew(int argc, char** argv) {
-		glutInit(&argc, argv);  
+		//glutInit(&argc, argv);  
 		glewInit();
 	}
 	~vglew() {}

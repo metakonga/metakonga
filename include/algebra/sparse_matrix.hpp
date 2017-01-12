@@ -14,6 +14,8 @@
 #define VEC3_4 34
 #endif
 
+namespace xdyn
+{
 template< typename T >
 class sparse_matrix
 {
@@ -184,5 +186,8 @@ std::ostream& operator<<(std::ostream& os, sparse_matrix<T>& sm)
 	}
 	return os;
 }
+}
+
+
 
 #endif

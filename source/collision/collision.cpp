@@ -18,6 +18,8 @@ collision::collision(QString& _name, modeler *_md, QString& o1, QString& o2, tCo
 	, tcm(HMCM)
 	, gb(NULL)
 	, tcp(_tp)
+	, rfric(0)
+	, fric(0)
 {
 
 }
@@ -32,28 +34,28 @@ collision::~collision()
 
 }
 
-constant collision::getConstant(float ir, float jr, float im, float jm, float iE, float jE, float ip, float jp, float riv)
+constant collision::getConstant(float ir, float jr, float im, float jm, float iE, float jE, float ip, float jp, float iG, float jG)
 {
 // 	particle_system* ps = md->particleSystem();
-	constant c = { 0, 0, 0, 0, 0 };
-	float em = jm ? (im * jm) / (im + jm) : im;
-	float er = jr ? (ir * jr) / (ir + jr) : ir;
-	float eym = (iE * jE) / (iE*(1 - jp*jp) + jE*(1 - ip * ip));
-	float beta = ((float)M_PI / log(rest));
+	constant c = { 0, 0, 0, 0, 0, 0 };
+	float Meq = jm ? (im * jm) / (im + jm) : im;
+	float Req = jr ? (ir * jr) / (ir + jr) : ir;
+	float Eeq = (iE * jE) / (iE*(1 - jp*jp) + jE*(1 - ip * ip));
+	float Geq = (iG * jG) / (iG*(2 - jp) + jG*(2 - ip));
+	float ln_e = log(rest);
+	float xi = ln_e / sqrt(ln_e * ln_e + (float)M_PI * (float)M_PI);
 	//float lne = log(rest);
-	float tk = (16.f / 15.f)*sqrt(er) * eym * pow((15.f * em * 1.0f) / (16.f * sqrt(er) * eym), 0.2f);
+	//float tk = (16.f / 15.f)*sqrt(er) * eym * pow((15.f * em * 1.0f) / (16.f * sqrt(er) * eym), 0.2f);
  	//float Geq = 1 / (((2 - ip) / si) + ((2 - jp) / sj));
 	switch (tcm)
 	{
 	case HMCM:
-		c.kn = tk;// (4.f / 3.f) * eym * sqrt(er);
-// 		if(riv)
-// 			c.vn = rest * pow(pow(em, 1.5f) * riv * c.kn, 0.4f);//beta = lne / (sqrt(lne * lne + M_PI * M_PI));
-// 		else
-		c.vn = sqrt((4.0f*em * c.kn) / (1 + beta * beta));// -2.f * sqrt(5.f / 6.f) * beta * sqrt(c.kn * em);
-		c.ks = c.kn * sratio;//8 * Geq * sqrt(er);
-		c.vs = c.vn * sratio; //sqrt((4.0f*em * c.ks) / (1 + beta * beta));// -2.f * sqrt(5.f / 6.f) * beta * sqrt(c.ks * em);
+		c.kn = (4.f / 3.f) * Eeq * sqrt(Req);
+		c.vn = -2.f * sqrt(5.f / 6.f) * xi * sqrt(c.kn * Meq);
+		c.ks = 8.f * Geq * sqrt(Req);
+		c.vs = -2.f * sqrt(5.f / 6.f) * xi * sqrt(c.ks * Meq);
 		c.mu = fric;
+		c.rf = rfric;
 		break;
 	}
 // 	c.kn = (4.0f / 3.0f)*sqrt(er)*eym;
@@ -82,7 +84,7 @@ float collision::cohesionForce(float ri, float rj, float Ei, float Ej, float pri
 
 void collision::save_collision_data(QTextStream& ts)
 {
-	ts << "COLLISION " << name << " " << rest << " " << sratio << " " << fric << " " << coh << endl;
+	ts << "COLLISION " << name << " " << rest << " " << fric << " " << rfric << " " << coh << endl;
 	ts << "i_object " << oname1 << endl
 		<< "j_object " << oname2 << endl;
 }

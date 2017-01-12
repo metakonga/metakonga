@@ -1,6 +1,6 @@
 #include "glwidget.h"
 #include <QDebug>
-/*#include <QKeyEvent>*/
+//#include <QKeyEvent>
 #include <QMouseEvent>
 #include <QTimer>
 
@@ -112,6 +112,7 @@ GLWidget::GLWidget(int argc, char** argv, QWidget *parent)
 	votype = ALL_DISPLAY;
 	//glewInit();
 	vglew::vglew(argc, argv);
+	setFocusPolicy(Qt::StrongFocus);
 }
 
 GLWidget::~GLWidget()
@@ -565,12 +566,14 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 	if (event->button() == Qt::MiddleButton){
 		onZoom = true;
 	}
-	if (!keyID[90] && !keyID[84] && !keyID[82]){
-		if (event->button() == Qt::LeftButton){
-			//int choose = selection(lastPos.x(), lastPos.y());
-
+	//if (!keyID[90] && !keyID[84] && !keyID[82]){
+	if (event->button() == Qt::LeftButton){
+		int choose = selection(lastPos.x(), lastPos.y());
+		if (keyID[82])
 			onRotation = true;
-		}
+		else
+			picking(lastPos.x(), lastPos.y());
+	//}
 	}
 	// 	lastPos = event->pos();
 	// 	if(event->button() == Qt::RightButton){
@@ -623,7 +626,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 		dy > 0 ? trans_y -= 0.1f*moveScale*dy : trans_y -= 0.1f*moveScale*dy;
 		dx > 0 ? trans_x += 0.1f*moveScale*dx : trans_x += 0.1f*moveScale*dx;
 	}
-	if (!keyID[84] && onRotation) {
+	if (keyID[82] && onRotation) {
 		setXRotation(xRot + 8 * dy);
 		setYRotation(yRot + 8 * dx);
 		// 		xRot += dy * 0.2f;

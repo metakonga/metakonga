@@ -7,9 +7,7 @@ unsigned int object::sid = 0;
 //std::ofstream object::io_object;
 
 object::object()
-	: riv(NULL)
-	, d_riv(NULL)
-	, ms(NULL)
+	: ms(NULL)
 	, _update(false)
 {
 
@@ -24,8 +22,6 @@ object::object(modeler* _md, QString& _name, tObject _tobj, tMaterial _mat, tRol
 	, _expression(false)
 	, md(_md)
 	, ms(NULL)
-	, riv(NULL)
-	, d_riv(NULL)
 {
 	id = sid++;
 	d = material::getDensity(mat_type);
@@ -47,17 +43,12 @@ object::object(const object& obj)
 	, _update(obj.isUpdate())
 	, _expression(obj.expression())
 	, ms(NULL)
-	, riv(NULL)
-	, d_riv(NULL)
 {
 	ms = obj.pointMass();
 }
 
 object::~object()
 {
-	//if (ms) delete ms; ms = NULL;
-	if (riv) delete[] riv; riv = NULL;
-	if (d_riv) cudaFree(d_riv); d_riv = NULL;
 
 }
 
@@ -65,12 +56,6 @@ void object::save_mass_data(QTextStream& ts) const
 {
 	if(ms)
 		ms->saveData(ts);
-}
-
-void object::setCudaRelativeImpactVelocity(unsigned int _np)
-{
-	cudaMalloc((void**)&d_riv, sizeof(float)*_np);
-	cudaMemset(d_riv, 0, sizeof(float)*_np);
 }
 
 void object::setMaterial(tMaterial _tm)

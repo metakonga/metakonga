@@ -17,7 +17,7 @@ public:
 	collision(const collision& cs);
 	virtual ~collision();
 
-	void setContactParameter(float _rest, float _sratio, float _fric, float _coh) { rest = _rest; sratio = _sratio; fric = _fric; coh = _coh; }
+	void setContactParameter(float _rest, float _fric, float _rfric, float _coh) { rest = _rest; fric = _fric; rfric = _rfric, coh = _coh; }
 	void setGridBase(grid_base *_gb) { gb = _gb; }
 	float cohesionForce(float ri, float rj, float Ei, float Ej, float pri, float prj, float Fn);
 
@@ -25,7 +25,7 @@ public:
 	virtual bool cuCollid() = 0;
 	virtual bool collid_with_particle(unsigned int i, float dt) = 0;
 
-	constant getConstant(float ir, float jr, float im, float jm, float iE, float jE, float ip, float jp,  float riv);
+	constant getConstant(float ir, float jr, float im, float jm, float iE, float jE, float ip, float jp, float si, float sj);
 	grid_base* getGridBase() { return gb; }
 	tCollisionPair getCollisionPairType() { return tcp; }
 
@@ -41,8 +41,8 @@ protected:
 	QString oname1;
 	QString oname2;
 	float rest;
-	float sratio;
-	float fric;		
+	float fric;	
+	float rfric;
 	float coh;
 
 	float *td;			// tangential displacement

@@ -17,12 +17,6 @@
 #include "mphysics_types.h"
 #include "mphysics_numeric.h"
 
-// QT_BEGIN_NAMESPACE
-// class QLineEdit;
-// class QComboBox;
-// class QLabel;
-// QT_END_NAMESPACE
-
 static QColor colors[10] = { QColor("cyan"), QColor("magenta"), QColor("red"),
 QColor("darkRed"), QColor("darkCyan"), QColor("darkMagenta"),
 QColor("green"), QColor("darkGreen"), QColor("yellow"),
@@ -41,8 +35,6 @@ public:
 	int ID() { return id; }
 	QString& name() { return nm; }
 	void setDisplay(bool _dis) { display = _dis; }
-// 	int roll_id() { return idr; }
-// 	int material_id() { return idm; }
 	QColor color() { return clr; }
 	static void msgBox(QString ch, QMessageBox::Icon ic);
 	void copyCoordinate(GLuint _coord);
@@ -53,7 +45,6 @@ protected:
 	GLuint coord;
 	bool display;
 	QColor clr;
-	//object* m_object;
 	static int count;
 	VEC3D* outPos;
 	EPD* outRot;

@@ -29,6 +29,7 @@ public:
 
 	void initialize(modeler* _md, GLWidget* _gl);
 	void settingPolygonObjectProperties(int id);
+	void settingObjectObjectProperties(int id);
 
 private:
 	QLineEdit* getNameWidget();

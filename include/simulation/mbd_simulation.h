@@ -3,6 +3,7 @@
 
 #include "msimulation.h"
 #include "mass.h"
+#include <mkl.h>
 
 QT_BEGIN_NAMESPACE
 class QFile;
@@ -33,10 +34,10 @@ private:
 	unsigned int nnz; 
 	int dof;				// degree of freedom
 
-	long int lapack_one;
-	long int lapack_info;
-	long int *ptDof;
-	long int *permutation;
+	MKL_INT lapack_one;
+	MKL_INT lapack_info;
+	MKL_INT *ptDof;
+	MKL_INT *permutation;
 
 	double dt2accp;
 	double dt2accv;

@@ -37,8 +37,8 @@ public:
 	QLineEdit *LErest;
 	//QLineEdit *LEDamping;
 	QLineEdit *LEfric;
+	QLineEdit *LERollingFriction;
 	QLineEdit *LECohesion;
-	QLineEdit *LEratio;
 
 private slots:
 	void clickOk();

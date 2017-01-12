@@ -75,7 +75,7 @@ public:
 	void setPosition(float* vpos);
 	void setVelocity(float* vvel);
 	bool makeParticles(object *obj, float spacing, float _rad);
-	void setCollision(float _rest, float _sratio, float _fric, float _sh);
+	void setCollision(float _rest, float _fric, float _rfric, float _sh);
 	void addCollision(collision* c) { cs.push_back(c); }
 	void allocMemory(unsigned int _np);
 	void resizeMemory(unsigned int _np);
@@ -138,6 +138,7 @@ private:
 	float rest;
 	float sratio;
 	float fric;
+	float rfric;
 	float coh;
 
 	float isc; // initial spacing

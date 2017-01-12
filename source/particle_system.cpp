@@ -78,7 +78,7 @@ void particle_system::cuAllocMemory()
 	checkCudaErrors(cudaMalloc((void**)&d_pos, sizeof(float)*np * 4));
 	checkCudaErrors(cudaMemcpy(d_pos, pos, sizeof(float) * np * 4, cudaMemcpyHostToDevice));
 	checkCudaErrors(cudaMalloc((void**)&d_vel, sizeof(float)*np * 3));
-	vel[0].z = 0.1f;
+	//vel[0].z = 0.1f;
 	checkCudaErrors(cudaMemcpy(d_vel, vel, sizeof(float) * np * 3, cudaMemcpyHostToDevice));
 	checkCudaErrors(cudaMalloc((void**)&d_acc, sizeof(float)*np * 3));
 	checkCudaErrors(cudaMemcpy(d_acc, acc, sizeof(float) * np * 3, cudaMemcpyHostToDevice));
@@ -164,13 +164,13 @@ bool particle_system::makeParticles(object *obj, float spacing, float _rad)
 	return true;
 }
 
-void particle_system::setCollision(float _rest, float _sratio, float _fric, float _coh)
+void particle_system::setCollision(float _rest, float _fric, float _rfric, float _coh)
 {
 	c_p2p = new collision_particles_particles(QString("collision_p2p"), md, this);
-	c_p2p->setContactParameter(_rest, _sratio, _fric, _coh);
+	c_p2p->setContactParameter(_rest, _fric, _rfric, _coh);
 	rest = _rest;
-	sratio = _sratio;
 	fric = _fric;
+	rfric = _rfric;
 	coh = _coh;
 }
 
@@ -189,7 +189,7 @@ bool particle_system::particleCollision(float dt)
 
 void particle_system::cuParticleCollision(grid_base* gb)
 {
-	cu_calculate_p2p(d_pos, d_vel, d_acc, d_omega, d_alpha, d_fr, d_mm, d_ms, d_iner, d_riv, E, pr, rest, sratio, fric, coh, gb->cuSortedID(), gb->cuCellStart(), gb->cuCellEnd(), np);
+	cu_calculate_p2p(d_pos, d_vel, d_acc, d_omega, d_alpha, d_fr, d_mm, d_ms, d_iner, d_riv, E, pr, rest, sh, fric, rfric, coh, gb->cuSortedID(), gb->cuCellStart(), gb->cuCellEnd(), np);
 }
 
 void particle_system::saveParticleSystem(QFile& oss)
@@ -213,10 +213,11 @@ void particle_system::saveParticleSystem(QFile& oss)
 		<< "density " << rho << endl
 		<< "youngs " << E << endl
 		<< "poisson " << pr << endl
-		<< "shear " << sh << endl
+		//<< "shear " << sh << endl
 		<< "restitution " << rest << endl
-		<< "ratio " << sratio << endl
+		<< "shear " << sh << endl
 		<< "friction " << fric << endl
+		<< "rollingfriction " << rfric << endl
 		<< "cohesion " << c_p2p->cohesion() << endl
 		<< "init_spacing " << isc << endl;
 }

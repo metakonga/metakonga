@@ -45,7 +45,7 @@ typedef matrix3x4<double>		MAT34D;
 typedef matrix4x4<double>		MAT44D;
 typedef euler_parameter<float>	EPF;
 typedef euler_parameter<double>	EPD;
-typedef sparse_matrix<double>   SMATD;
+typedef xdyn::sparse_matrix<double>   SMATD;
 typedef VECF*					VECF_PTR;
 typedef VECD*					VECD_PTR;
 typedef VECI*					VECI_PTR;

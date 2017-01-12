@@ -204,24 +204,33 @@ __device__ device_force_constant<T> getConstant(
 	T jE,
 	T ip,
 	T jp,
+	T iG,
+	T jG,
 	T rest,
-	T ratio,
-	T fric
-	/*T riv*/)
+	T fric,
+	T rfric)
 {
 	device_force_constant<T> dfc = { 0, 0, 0, 0, 0 };
-	T em = jm ? (im * jm) / (im + jm) : im;
-	T er = jr ? (ir * jr) / (ir + jr) : ir;
-	T eym = (iE * jE) / (iE*(1 - jp*jp) + jE*(1 - ip * ip));
-	T beta = ((T)M_PI / log(rest));
-	dfc.kn = /*(16.f / 15.f)*sqrt(er) * eym * pow((T)((15.f * em * 1.0f) / (16.f * sqrt(er) * eym)), (T)0.2f);*/ (4.0f / 3.0f)*sqrt(er)*eym;
-	dfc.vn = sqrt((4.0f*em * dfc.kn) / (1 + beta * beta));
-	dfc.ks = dfc.kn * ratio;
-	dfc.vs = dfc.vn * ratio;
+	T Meq = jm ? (im * jm) / (im + jm) : im;
+	T Req = jr ? (ir * jr) / (ir + jr) : ir;
+	T Eeq = (iE * jE) / (iE*(1 - jp*jp) + jE*(1 - ip * ip));
+	T Geq = (iG * jG) / (iG*(2 - jp) + jG*(2 - ip));
+	T ln_e = log(rest);
+	T xi = ln_e / sqrt(ln_e * ln_e + (float)M_PI * (float)M_PI);
+	dfc.kn = (4.f / 3.f) * Eeq * sqrt(Req);
+	dfc.vn = -2.f * sqrt(5.f / 6.f) * xi * sqrt(dfc.kn * Meq);
+	dfc.ks = 8.f * Geq * sqrt(Req);
+	dfc.vs = -2.f * sqrt(5.f / 6.f) * xi * sqrt(dfc.ks * Meq);
 	dfc.mu = fric;
+// 	dfc.kn = /*(16.f / 15.f)*sqrt(er) * eym * pow((T)((15.f * em * 1.0f) / (16.f * sqrt(er) * eym)), (T)0.2f);*/ (4.0f / 3.0f)*sqrt(er)*eym;
+// 	dfc.vn = sqrt((4.0f*em * dfc.kn) / (1 + beta * beta));
+// 	dfc.ks = dfc.kn * ratio;
+// 	dfc.vs = dfc.vn * ratio;
+// 	dfc.mu = fric;
 	return dfc;
 }
 
+// ref. Three-dimensional discrete element modelling (DEM) of tillage: Accounting for soil cohesion and adhesion
 __device__ float cohesionForce(
 	float ri,
 	float rj,
@@ -250,8 +259,9 @@ __device__ bool calForce(
 	float im,
 	float jm,
 	float rest,
-	float ratio,
+	float sh,
 	float fric,
+	float rfric,
 	float E,
 	float pr,
 	float coh,
@@ -274,14 +284,15 @@ __device__ bool calForce(
 		return false;
 	}
 	else{
+		float rcon = ir - 0.5f * collid_dist;
 		float3 unit = relative_pos / dist;
 		float3 relative_vel = jvel + cross(jomega, -jr * unit) - (ivel + cross(iomega, ir * unit));
 		//*riv = abs(length(relative_vel));
-		device_force_constant<float> c = getConstant<float>(ir, jr, im, jm, E, E, pr, pr, rest, ratio, fric/*, *riv*/);
+		device_force_constant<float> c = getConstant<float>(ir, jr, im, jm, E, E, pr, pr, sh, sh, rest, fric, rfric);
 		float fsn = -c.kn * pow(collid_dist, 1.5f);
-		float fca = cohesionForce(ir, jr, E, E, pr, pr, coh, fsn);
+		///float fca = cohesionForce(ir, jr, E, E, pr, pr, coh, fsn);
 		float fsd = c.vn * dot(relative_vel, unit);
-		float3 single_force = (fsn + fca + fsd) * unit;
+		float3 single_force = (fsn + /*fca +*/ fsd) * unit;
 		//float3 single_force = (-c.kn * pow(collid_dist, 1.5f) + c.vn * dot(relative_vel, unit)) * unit;
 		float3 single_moment = make_float3(0, 0, 0);
 		float3 e = relative_vel - dot(relative_vel, unit) * unit;
@@ -289,8 +300,18 @@ __device__ bool calForce(
 		if (mag_e){
 			float3 s_hat = e / mag_e;
 			float ds = mag_e * cte.dt;
-			shear_force = min(c.ks * ds + c.vs * (dot(relative_vel, s_hat)), c.mu * length(single_force)) * s_hat;
-			single_moment = cross(ir * unit, shear_force);
+			float fst = -c.ks * ds;
+			float fdt = c.vs * dot(relative_vel, s_hat);
+			shear_force = (fst + fdt) * s_hat;
+			if (length(shear_force) >= c.mu * length(single_force))
+				shear_force = c.mu * fsn * s_hat;
+			single_moment = cross(rcon * unit, shear_force);
+			if (length(iomega)){
+				float3 on = iomega / length(iomega);
+				single_moment += -rfric * fsn * rcon * on;
+			}
+			//shear_force = min(c.ks * ds + c.vs * (dot(relative_vel, s_hat)), c.mu * length(single_force)) * s_hat;
+			//single_moment = cross(ir * unit, shear_force);
 		}
 		force += single_force + shear_force;
 		moment += single_moment;
@@ -314,8 +335,9 @@ __global__ void calculate_p2p_kernel(
 	float E,
 	float pr,
 	float rest,
-	float ratio,
+	float sh,
 	float fric,
+	float rfric,
 	float coh,
 	unsigned int* sorted_index,
 	unsigned int* cstart,
@@ -368,7 +390,7 @@ __global__ void calculate_p2p_kernel(
 						jm = mass[k];
 						/*dfc = getConstant(ir, jr, im, jm, E, E, pr, pr, rest, ratio, fric);*/
 						//unsigned int rid = id > k ? (id * 10 + k) : (k * 10 + id);
-						if (!calForce(ir, jr, im, jm, rest, ratio, fric, E, pr, coh, ipos, jpos, ivel, jvel, iomega, jomega, m_force, m_moment/*, &(riv[rid])*/))
+						if (!calForce(ir, jr, im, jm, rest, sh, fric, rfric, E, pr, coh, ipos, jpos, ivel, jvel, iomega, jomega, m_force, m_moment/*, &(riv[rid])*/))
 							continue;
 					}
 				}
@@ -474,9 +496,10 @@ __global__ void plane_hertzian_contact_force_kernel(
 	device_plane_info *plane,
 	float E,
 	float pr,
+	float G,
 	float rest,
-	float ratio,
 	float fric,
+	float rfric,
 	float4* pos,
 	float3* vel,
 	float3* omega,
@@ -484,9 +507,9 @@ __global__ void plane_hertzian_contact_force_kernel(
 	float3* moment,
 	//float* rad,
 	float* mass,
-	float* riv,
 	float pE,
-	float pPr)
+	float pPr,
+	float pG)
 {
 	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
@@ -513,15 +536,10 @@ __global__ void plane_hertzian_contact_force_kernel(
 	float3 wp = make_float3(dot(dp, plane->u1), dot(dp, plane->u2), dot(dp, plane->uw));
 	
 	float collid_dist = particle_plane_contact_detection(plane, ipos3, wp, unit, r);
-	/*if (abs(wp.z) < r && (wp.x > 0 && wp.x < plane->l1) && (wp.y > 0 && wp.y < plane->l2)){
-		float3 unit = -sign(dot(ipos - plane->xw, plane->uw)) * (plane->uw / length(plane->uw));
-		float collid_dist = r - abs(dot(ipos - plane->xw, unit));*/
 	if (collid_dist > 0){
-		//1float collid_dist2 = particle_plane_contact_detection(plane, ipos3, wp, unit, r);
+		float rcon = r - 0.5f * collid_dist;
 		float3 dv = -(ivel + cross(iomega, r * unit));
-// 		if (!riv[id])
-// 			riv[id] = abs(length(dv));
-		device_force_constant<float> c = getConstant<float>(r, 0.f, m, 0.f, pE, E, pPr, pr, rest, ratio, fric/*, riv[id]*/);
+		device_force_constant<float> c = getConstant<float>(r, 0.f, m, 0.f, pE, E, pPr, pr, pG, G, rest, fric, rfric);
 		float fsn = -c.kn * pow(collid_dist, 1.5f);
 		single_force = (fsn + c.vn * dot(dv, unit)) * unit;
 		//float fca = cohesionForce(r, 0.f, pE, E, pPr, pr, fsn);
@@ -532,14 +550,11 @@ __global__ void plane_hertzian_contact_force_kernel(
 			float3 s_hat = e / mag_e;
 			float ds = mag_e * cte.dt;
 			shear_force = min(c.ks * ds + c.vs * dot(dv, s_hat), c.mu * length(single_force)) * s_hat;
-			m_moment += cross(r * unit, shear_force);
+			m_moment += cross(rcon * unit, shear_force);
 		}
 		m_force += single_force;
 	}
-	else{
-		riv[id] = 0.f;
-	}
-	//}
+
 	force[id] += m_force + shear_force;
 	moment[id] += m_moment;
 }
@@ -699,7 +714,7 @@ __global__ void cylinder_hertzian_contact_force_kernel(
 	if (overlap > 0)
 	{
 		double3 dv = cy->vel + cross(cy->omega, cy2cp) - (ivel + cross(iomega, ipos.w * unit));
-		device_force_constant<double> c = getConstant<double>(ipos.w, 0, im, 0, pE, E, pPr, pr, rest, ratio, fric/*, riv[id]*/);
+		device_force_constant<double> c = getConstant<double>(ipos.w, 0, im, 0, pE, E, pPr, pr, 0, 0, rest, ratio, fric/*, riv[id]*/);
 		double fsn = -c.kn * pow(overlap, 1.5);
 		single_force = (fsn + c.vn * dot(dv, unit)) * unit;
 		double3 e = dv - dot(dv, unit) * unit;
@@ -960,7 +975,7 @@ __global__ void particle_polygonObject_collision_kernel(
 //  									}
 									
 									double3 dv = dpmi->vel + cross(dpmi->omega, po2cp) - (ivel + cross(iomega, ir * unit));
-									device_force_constant<double> c = getConstant<double>(ir, 0, im, 0, pE, E, pPr, pr, rest, ratio, fric);
+									device_force_constant<double> c = getConstant<double>(ir, 0, im, 0, pE, E, pPr, pr,0, 0, rest, ratio, fric);
 									double fsn = -c.kn * pow(overlap, 1.5);
 									single_force = (fsn + c.vn * dot(dv, unit)) * unit;
 // 									printf("%f, %f\n", c.kn, c.vn);

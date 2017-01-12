@@ -9,6 +9,7 @@
 #include <QMenu>
 #include <list>
 #include <QFile>
+#include <QKeyEvent>
 
 class cube;
 class plane;
@@ -16,7 +17,6 @@ class polygonObject;
 class cylinder;
 class particle_system;
 class vparticles;
-
 
 #define SELECT_BUF_SIZE 512
 

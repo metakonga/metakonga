@@ -10,8 +10,12 @@ newDialog::newDialog(QWidget* parent)
 	ui->setupUi(this);
 	connect(ui->PBOK, SIGNAL(clicked()), this, SLOT(Click_ok()));
 	connect(ui->PBBrowse, SIGNAL(clicked()), this, SLOT(Click_browse()));
-	_path = "C:/C++/kangsia/case/";
+	_path = getenv("USERPROFILE");
+	_path += "/Documents/xdynamics/";
 	_name = "Model1";
+	if (!QDir(_path).exists())
+		QDir().mkdir(_path);
+	//QFileDialog::getExistingDirectory(this, "", _path);
 	ui->CBGravity->setCurrentIndex(4);
 }
 
@@ -24,22 +28,6 @@ newDialog::~newDialog()
 
 bool newDialog::callDialog()
 {
-// 	QLabel *LName = new QLabel("Name");
-// 	QLabel *LPath = new QLabel("Path");
-// 	QPushButton *PBBrowse = new QPushButton("Browse");
-// 	LEName = new QLineEdit;
-// 	LEPath = new QLineEdit;
-// 	LEName->setText("isph_test");
-// 	LEPath->setText("C:/C++/kangsia/case/parSPH_V2");
-// 	QGridLayout *newLayout = new QGridLayout;
-// 	QPushButton *PBOk = new QPushButton("OK");
-// 	QPushButton *PBCancel = new QPushButton("Cancel");
-//	connect(PBOk, SIGNAL(clicked()), this, SLOT(Click_ok()));
-//	connect(PBCancel, SIGNAL(clicked()), this, SLOT(Click_cancel()));
-// 	newLayout->addWidget(LName, 0, 0); newLayout->addWidget(LEName, 0, 1, 1, 2);
-// 	newLayout->addWidget(LPath, 1, 0); newLayout->addWidget(LEPath, 1, 1, 1, 2); newLayout->addWidget(PBBrowse, 1, 3, 1, 1);
-// 	newLayout->addWidget(PBOk, 2, 2); newLayout->addWidget(PBCancel, 2, 3);
-//	this->setLayout(newLayout);
 	ui->LEName->setText(_name);
 	this->exec();
 

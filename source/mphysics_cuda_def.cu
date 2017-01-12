@@ -120,7 +120,7 @@ void cu_reorderDataAndFindCellStart(
 	//std::cout << "step 4" << std::endl;
 }
 
-void cu_calculate_p2p(float* pos, float* vel, float* acc, float* omega, float* alpha, float* force, float* moment, float* mass, float* iner, float* riv, float E, float pr, float rest, float ratio, float fric, float coh, unsigned int* sorted_index, unsigned int* cstart, unsigned int* cend, unsigned int np, unsigned int cRun)
+void cu_calculate_p2p(float* pos, float* vel, float* acc, float* omega, float* alpha, float* force, float* moment, float* mass, float* iner, float* riv, float E, float pr, float rest, float sh, float fric, float rfric, float coh, unsigned int* sorted_index, unsigned int* cstart, unsigned int* cend, unsigned int np, unsigned int cRun)
 {
 	computeGridSize(np, 256, numBlocks, numThreads);
 	calculate_p2p_kernel <<< numBlocks, numThreads >>>(
@@ -137,8 +137,9 @@ void cu_calculate_p2p(float* pos, float* vel, float* acc, float* omega, float* a
 		E,
 		pr,
 		rest,
-		ratio,
+		sh,
 		fric,
+		rfric,
 		coh,
 		sorted_index,
 		cstart,
@@ -146,25 +147,26 @@ void cu_calculate_p2p(float* pos, float* vel, float* acc, float* omega, float* a
 		cRun);
 }
 
-void cu_plane_hertzian_contact_force(float* riv, device_plane_info* plan, float E, float pr, float rest, float ratio, float fric, float* pos, float* vel, float* omega, float* force, float* moment, float* mass, float pE, float pPr, unsigned int np)
+void cu_plane_hertzian_contact_force(device_plane_info* plan, float E, float pr, float G, float rest, float fric, float rfric, float* pos, float* vel, float* omega, float* force, float* moment, float* mass, float pE, float pPr, float pG, unsigned int np)
 {
 	computeGridSize(np, 256, numBlocks, numThreads);
 	plane_hertzian_contact_force_kernel << < numBlocks, numThreads >> >(
 		plan,
 		E,
 		pr,
+		G,
 		rest,
-		ratio,
 		fric,
+		rfric,
 		(float4 *)pos,
 		(float3 *)vel,
 		(float3 *)omega,
 		(float3 *)force,
 		(float3 *)moment,
 		mass,
-		riv,
 		pE,
-		pPr);
+		pPr,
+		pG);
 }
 
 void cu_cylinder_hertzian_contact_force(device_cylinder_info* cyl, float E, float pr, float rest, float ratio, float fric, float* pos, float* vel, float* omega, float* force, float* moment, float* mass, float pE, float pPr, unsigned int np, double3* mpos, double3* mf, double3* mm, double3& _mf, double3& _mm)

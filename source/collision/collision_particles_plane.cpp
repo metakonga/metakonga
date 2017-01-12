@@ -24,45 +24,12 @@ collision_particles_plane::~collision_particles_plane()
 
 bool collision_particles_plane::collid(float dt)
 {
-// 	float rad;
-// 	VEC3F p, v, w, dp, wp;
-// 	constant c;
-// 	for (unsigned int i = 0; i < ps->numParticle(); i++){
-// 		rad = ps->radius()[i];
-// 		p = ps->position()[i];
-// 		v = ps->velocity()[i];
-// 		w = ps->angVelocity()[i];
-// 
-// 		VEC3F sf, mf, mm;
-// 		dp = p - pe->XW();
-// 		wp = VEC3F(dp.dot(pe->U1()), dp.dot(pe->U2()), dp.dot(pe->UW()));
-// 		c = getConstant(ps->radius()[i], 0.f, ps->mass()[i], 0.f, ps->youngs(), pe->youngs(), ps->poisson(), pe->poisson());
-// 		if (abs(wp.z) < rad && (wp.x > 0 && wp.x < pe->L1()) && (wp.y > 0 && wp.y < pe->L2())){
-// 			vector3<float> uu = pe->UW() / pe->UW().length();
-// 			int pp = -sign(dp.dot(pe->UW()));
-// 			vector3<float> unit = pp * uu;
-// 			float collid_dist = rad - abs(dp.dot(unit));
-// 			vector3<float> dv = -(v + w.cross(rad * unit));
-// 			sf = (-c.kn * pow(collid_dist, 1.5f) + c.vn * dv.dot(unit)) * unit;
-// 			vector3<float> e = dv - dv.dot(unit) * unit;
-// 			float mag_e = e.length();
-// 			if (mag_e){
-// 				vector3<float> s_hat = e / mag_e;
-// 				float ds = mag_e * dt;
-// 				vector3<float> shear_force = min(c.ks * ds + c.vs * dv.dot(s_hat), c.mu * sf.length()) * s_hat;
-// 				mm = (rad * unit).cross(shear_force);
-// 			}
-// 			mf = sf;
-// 		}
-// 		ps->force()[i] += mf;
-// 		ps->moment()[i] += mm;
-// 	}
 	return true;
 }
 
 bool collision_particles_plane::cuCollid()
 {
-	cu_plane_hertzian_contact_force(pe->cuRelativeImpactVelocity(), pe->devicePlaneInfo(), pe->youngs(), pe->poisson(), rest, sratio, fric, ps->cuPosition(), ps->cuVelocity(), ps->cuOmega(), ps->cuForce(), ps->cuMoment(), ps->cuMass(), ps->youngs(), ps->poisson(), ps->numParticle());
+	cu_plane_hertzian_contact_force(pe->devicePlaneInfo(), pe->youngs(), pe->poisson(), pe->shear(), rest, fric, rfric, ps->cuPosition(), ps->cuVelocity(), ps->cuOmega(), ps->cuForce(), ps->cuMoment(), ps->cuMass(), ps->youngs(), ps->poisson(), ps->shear(), ps->numParticle());
 	return true;
 }
 
@@ -158,76 +125,66 @@ bool collision_particles_plane::collid_with_particle(unsigned int i, float dt)
 		this->HMCModel(i, dt);
 		break;
 	}
-// 	float rad = ps->radius()[i];
-// 	VEC3F p = ps->position()[i];
-// 	VEC3F v = ps->velocity()[i];
-// 	VEC3F w = ps->angVelocity()[i];
-// 	
-// 	VEC3F sf, mf, mm;
-// 	VEC3F dp = p - pe->XW();
-// 	VEC3F wp = VEC3F(dp.dot(pe->U1()), dp.dot(pe->U2()), dp.dot(pe->UW()));
-// 	VEC3F unit;
-// 	constant c = getConstant(ps->radius()[i], 0.f, ps->mass()[i], 0.f, ps->youngs(), pe->youngs(), ps->poisson(), pe->poisson());
-// 	float collid_dist = particle_plane_contact_detection(unit, p, wp, rad);
-// 	if (collid_dist > 0){
-// 		//float collid_dist2 = particle_plane_contact_detection(unit, p, wp, rad);
-// 		vector3<float> dv = -(v + w.cross(rad * unit));
-// 		sf = (-c.kn * pow(collid_dist, 1.5f) + c.vn * dv.dot(unit)) * unit;
+	return true;
+}
+
+bool collision_particles_plane::HMCModel(unsigned int i, float dt)
+{
+	float ms = ps->mass()[i];
+	VEC4F p = ps->position()[i];
+	VEC3F v = ps->velocity()[i];
+	VEC3F w = ps->angVelocity()[i];
+	VEC3F Fn, Ft, M;
+	VEC3F dp = p.toVector3() - pe->XW();
+	VEC3F wp = VEC3F(dp.dot(pe->U1()), dp.dot(pe->U2()), dp.dot(pe->UW()));
+	VEC3F u;
+	
+	float cdist = particle_plane_contact_detection(u, p.toVector3(), wp, p.w);
+	if (cdist > 0){
+		float rcon = p.w - 0.5f * cdist;
+		VEC3F rv = -(v + w.cross(p.w * u));
+		constant c = getConstant(p.w, 0.f, ms, 0.f, ps->youngs(), pe->youngs(), ps->poisson(), pe->poisson(), ps->shear(), pe->shear());
+		float fsn = -c.kn * pow(cdist, 1.5f);
+		float fdn = c.vn * rv.dot(u);
+		Fn = (fsn + fdn) * u;
+		VEC3F e = rv - rv.dot(u) * u;
+		float mag_e = e.length();
+		VEC3F Ft;
+		if (mag_e){
+			VEC3F sh = e / mag_e;
+			float ds = mag_e * dt;
+			float fst = -c.ks * ds;
+			float fdt = c.vs * rv.dot(sh);
+			Ft = (fst + fdt) * sh;
+			if (Ft.length() >= c.mu * Fn.length())
+				Ft = c.mu * fsn * sh;
+			M = (rcon * u).cross(Ft);
+			if (w.length()){
+				VEC3F on = w / w.length();
+				M += -c.rf * fsn * rcon * on;
+			}
+		}
+		ps->force()[i] += Fn;
+		ps->moment()[i] += M;
+
+
+//  		float fsn = (-c.kn * pow(collid_dist, 1.5f));
+//  		float fca = cohesionForce(p.w, 0.f, ps->youngs(), 0.f, ps->poisson(), 0.f, fsn);
+//  		//float fsd = c.vn * dv.dot(unit);
+//  		Fn = (fsn + fca + c.vn * dv.dot(unit)) * unit;
+// 		//Fn = (fsn + fca + fsd) * unit;// (-c.kn * pow(collid_dist, 1.5f) + c.vn * dv.dot(unit)) * unit;;// fn * unit;
 // 		vector3<float> e = dv - dv.dot(unit) * unit;
 // 		float mag_e = e.length();
 // 		vector3<float> shf;
 // 		if (mag_e){
 // 			vector3<float> s_hat = e / mag_e;
 // 			float ds = mag_e * dt;
-// 			vector3<float> shf = min(c.ks * ds + c.vs * dv.dot(s_hat), c.mu * sf.length()) * s_hat;
-// 			mm = (rad * unit).cross(shf);
+// 			Ft = min(c.ks * ds + c.vs * dv.dot(s_hat), c.mu * Fn.length()) * s_hat;
+// 			M = (p.w * unit).cross(Ft);
 // 		}
-// 		mf = sf + shf;
-// 	}
-// 
-// 	ps->force()[i] += mf;
-// 	ps->moment()[i] += mm;
-	return true;
-}
-
-bool collision_particles_plane::HMCModel(unsigned int i, float dt)
-{
-	//float rad = ps->radius()[i];
-	float ms = ps->mass()[i];
-	VEC4F p = ps->position()[i];
-	VEC3F v = ps->velocity()[i];
-	VEC3F w = ps->angVelocity()[i];
-	//cohesion = 0.f;
-	VEC3F Fn, Ft, M;
-	VEC3F dp = p.toVector3() - pe->XW();
-	VEC3F wp = VEC3F(dp.dot(pe->U1()), dp.dot(pe->U2()), dp.dot(pe->UW()));
-	VEC3F unit;
-	
-	float collid_dist = particle_plane_contact_detection(unit, p.toVector3(), wp, p.w);
-	if (collid_dist > 0){
-		float rcon = p.w - 0.5f * collid_dist;
-		vector3<float> dv = -(v + w.cross(p.w * unit));
-		
-		constant c = getConstant(p.w, 0.f, ms, 0.f, ps->youngs(), pe->youngs(), ps->poisson(), pe->poisson(), 0.f);
-		//float collid_dist2 = particle_plane_contact_detection(unit, p, wp, rad);
-		
- 		float fsn = (-c.kn * pow(collid_dist, 1.5f));
- 		float fca = cohesionForce(p.w, 0.f, ps->youngs(), 0.f, ps->poisson(), 0.f, fsn);
- 		//float fsd = c.vn * dv.dot(unit);
- 		Fn = (fsn + fca + c.vn * dv.dot(unit)) * unit;
-		//Fn = (fsn + fca + fsd) * unit;// (-c.kn * pow(collid_dist, 1.5f) + c.vn * dv.dot(unit)) * unit;;// fn * unit;
-		vector3<float> e = dv - dv.dot(unit) * unit;
-		float mag_e = e.length();
-		vector3<float> shf;
-		if (mag_e){
-			vector3<float> s_hat = e / mag_e;
-			float ds = mag_e * dt;
-			Ft = min(c.ks * ds + c.vs * dv.dot(s_hat), c.mu * Fn.length()) * s_hat;
-			M = (p.w * unit).cross(Ft);
-		}
-		//mf = sf + shf;
-		ps->force()[i] += Fn + Ft;
-		ps->moment()[i] += M;
+// 		//mf = sf + shf;
+// 		ps->force()[i] += Fn + Ft;
+// 		ps->moment()[i] += M;
 	}
 
 	//ps->force()[i] += mf;

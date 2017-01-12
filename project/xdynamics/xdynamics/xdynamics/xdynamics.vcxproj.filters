@@ -75,6 +75,12 @@
     <Filter Include="Source Files\table">
       <UniqueIdentifier>{d2437041-6942-44b1-aa2b-f710c7c1f529}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\display">
+      <UniqueIdentifier>{6229944c-4757-4f39-a7fb-b71b34a30f33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\display">
+      <UniqueIdentifier>{729d249a-8e8e-4dc1-90a5-ca4bce29f3bd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -272,9 +278,6 @@
     <ClCompile Include="..\..\..\..\source\contactConstant.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\source\glwidget.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\source\grid_base.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -293,35 +296,38 @@
     <ClCompile Include="..\..\..\..\source\particle_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\source\shader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\source\solveProcess.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\source\vcontroller.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\source\velocity_verlet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\source\vobject.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\..\..\source\glwidget.cpp">
+      <Filter>Source Files\display</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\source\vparticles.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\..\..\source\shader.cpp">
+      <Filter>Source Files\display</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\source\vplane.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\source\vpolygon.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\source\vcylinder.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="..\..\..\..\source\vcontroller.cpp">
+      <Filter>Source Files\display</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\source\vcube.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\display</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\vcylinder.cpp">
+      <Filter>Source Files\display</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\vobject.cpp">
+      <Filter>Source Files\display</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\vparticles.cpp">
+      <Filter>Source Files\display</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\vplane.cpp">
+      <Filter>Source Files\display</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\vpolygon.cpp">
+      <Filter>Source Files\display</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -373,9 +379,6 @@
     <CustomBuild Include="..\..\..\..\include\contactConstant.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\..\..\include\glwidget.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\..\..\..\include\objProperty.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
@@ -384,6 +387,9 @@
     </CustomBuild>
     <CustomBuild Include="..\..\..\..\include\contactCoefficientTable.h">
       <Filter>Header Files\table</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\glwidget.h">
+      <Filter>Header Files\display</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -450,9 +456,6 @@
     <ClInclude Include="..\..\..\..\include\checkFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\colors.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\include\grid_base.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -480,52 +483,13 @@
     <ClInclude Include="..\..\..\..\include\particle_system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\include\timer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\vcontroller.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\vcube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\vcylinder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\velocity_verlet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\vglew.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\view_line.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\view_mass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\view_object.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\view_plane.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\vobject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\vparticles.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\vplane.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\vpolygon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\view_shape.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\MyTableWidgetItem.h">
@@ -536,6 +500,33 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\mphysics_cuda_impl.cuh">
       <Filter>Header Files\CUDA</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\vobject.h">
+      <Filter>Header Files\display</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\vparticles.h">
+      <Filter>Header Files\display</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\vplane.h">
+      <Filter>Header Files\display</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\vpolygon.h">
+      <Filter>Header Files\display</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\vglew.h">
+      <Filter>Header Files\display</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\vcube.h">
+      <Filter>Header Files\display</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\vcontroller.h">
+      <Filter>Header Files\display</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\shader.h">
+      <Filter>Header Files\display</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\colors.h">
+      <Filter>Header Files\display</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

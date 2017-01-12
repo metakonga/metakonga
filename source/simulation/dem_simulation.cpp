@@ -105,7 +105,7 @@ bool dem_simulation::initialize(bool isCpu)
 		}
 	}
 
-	md->particleSystem()->velocity()[0].z = 0.1f;
+	//md->particleSystem()->velocity()[0].x = 0.1f;
 	
 	return true;
 }

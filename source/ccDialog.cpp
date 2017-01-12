@@ -36,12 +36,12 @@ collision* ccDialog::callDialog(modeler *md)
 	//QLabel *LDamping = new QLabel("Damping")
 	QLabel *LCohesion = new QLabel("Cohesion");
 	QLabel *Lrest = new QLabel("Restitution");
-	QLabel *LRatio = new QLabel("Stiffness ratio");
+	QLabel *LRollingFriction = new QLabel("Rolling friction");
 	QLabel *LFric = new QLabel("Friction");
 	LErest = new QLineEdit;
 	LEfric = new QLineEdit;
 	LECohesion = new QLineEdit;
-	LEratio = new QLineEdit;
+	LERollingFriction = new QLineEdit;
 	LEName = new QLineEdit;
 
 	QString nm;
@@ -57,8 +57,9 @@ collision* ccDialog::callDialog(modeler *md)
 	ccLayout->addWidget(LList1, 1, 0);	ccLayout->addWidget(list1, 1, 1, 1, 2);
 	ccLayout->addWidget(LList2, 2, 0);	ccLayout->addWidget(list2, 2, 1, 1, 2);
 	ccLayout->addWidget(Lrest, 3, 0);	ccLayout->addWidget(LErest, 3, 1, 1, 2);
-	ccLayout->addWidget(LRatio, 4, 0);	ccLayout->addWidget(LEratio, 4, 1, 1, 2);
-	ccLayout->addWidget(LFric, 5, 0);	ccLayout->addWidget(LEfric, 5, 1, 1, 2);
+	//ccLayout->addWidget(LShearModulus, 4, 0);	ccLayout->addWidget(LEShear, 4, 1, 1, 2);
+	ccLayout->addWidget(LFric, 4, 0);	ccLayout->addWidget(LEfric, 4, 1, 1, 2);
+	ccLayout->addWidget(LRollingFriction, 5, 0); ccLayout->addWidget(LERollingFriction, 5, 1, 1, 2);
 	ccLayout->addWidget(LCohesion, 6, 0);  ccLayout->addWidget(LECohesion, 6, 1, 1, 2);
 	ccLayout->addWidget(PBOk, 7, 0);	ccLayout->addWidget(PBCancel, 7, 1);
 	this->setLayout(ccLayout);
@@ -88,11 +89,11 @@ collision* ccDialog::callDialog(modeler *md)
 		}
 		tCollisionPair cp = getCollisionPair(o1 ? o1->objectType() : ps->objectType(), o2 ? o2->objectType() : ps->objectType());
 		if(!o1)
-			cs = md->makeCollision(LEName->text(), LErest->text().toFloat(), LEratio->text().toFloat(), LEfric->text().toFloat(), LECohesion->text().toFloat(), cp, ps, o2);
+			cs = md->makeCollision(LEName->text(), LErest->text().toFloat(), LEfric->text().toFloat(), LERollingFriction->text().toFloat(), LECohesion->text().toFloat(), cp, ps, o2);
 		else if (!o2)
-			cs = md->makeCollision(LEName->text(), LErest->text().toFloat(), LEratio->text().toFloat(), LEfric->text().toFloat(), LECohesion->text().toFloat(), cp, ps, o1);
+			cs = md->makeCollision(LEName->text(), LErest->text().toFloat(), LEfric->text().toFloat(), LERollingFriction->text().toFloat(), LECohesion->text().toFloat(), cp, ps, o1);
 		else
-			cs = md->makeCollision(LEName->text(), LErest->text().toFloat(), LEratio->text().toFloat(), LEfric->text().toFloat(), LECohesion->text().toFloat(), cp, o1, o2);
+			cs = md->makeCollision(LEName->text(), LErest->text().toFloat(), LEfric->text().toFloat(), LERollingFriction->text().toFloat(), LECohesion->text().toFloat(), cp, o1, o2);
 	}
 
 	return cs;
@@ -105,7 +106,7 @@ void ccDialog::clickOk()
 		return;
 	}
 
-	if (LErest->text().isEmpty() || LEfric->text().isEmpty() || LEratio->text().isEmpty()){
+	if (LErest->text().isEmpty() || LEfric->text().isEmpty() || LERollingFriction->text().isEmpty()){
 		msgBox("There is empty input.", QMessageBox::Critical);
 		return;
 	}
