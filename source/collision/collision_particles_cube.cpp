@@ -7,8 +7,13 @@ collision_particles_cube::collision_particles_cube()
 
 }
 
-collision_particles_cube::collision_particles_cube(QString& _name, modeler* _md, particle_system *_ps, cube *_c)
-	: collision(_name, _md, _ps->name(), _c->objectName(), PARTICLES_CUBE)
+collision_particles_cube::collision_particles_cube(
+	QString& _name,
+	modeler* _md, 
+	particle_system *_ps, 
+	cube *_c,
+	tContactModel _tcm)
+	: collision(_name, _md, _ps->name(), _c->objectName(), PARTICLES_CUBE, _tcm)
 	, ps(_ps)
 	, cu(_c)
 {

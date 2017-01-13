@@ -492,31 +492,44 @@ __device__ float particle_plane_contact_detection(device_plane_info *pe, float3&
 	return -1.0f;
 }
 
+template<typename T1, typename T2>
+__device__ void HMCModel(
+	device_force_constant<T1> 
+	c, T1 rcon,	T1 cdist, T1 rfric,
+	T2 iomega, T2 dv, T2 unit, T2 Ft, T2& Fn, T2& M)
+{
+	T1 fsn = -c.kn * pow(cdist, (T1)1.5f);
+	T1 fdn = c.vn * dot(dv, unit);
+	Fn = (fsn + fdn) * unit;
+	T2 e = dv - dot(dv, unit) * unit;
+	T1 mag_e = length(e);
+	if (mag_e){
+		T2 s_hat = e / mag_e;
+		T1 ds = mag_e * cte.dt;
+		T1 fst = -c.ks * ds;
+		T1 fdt = c.vs * dot(dv, s_hat);
+		Ft = (fst + fdt) * s_hat;
+		if (length(Ft) >= c.mu * length(Fn))
+			Ft = c.mu * fsn * s_hat;
+		M = cross(rcon * unit, Ft);
+		if (length(iomega)){
+			T2 on = iomega / length(iomega);
+			M += -rfric * fsn * rcon * on;
+		}
+	}
+}
+
+template <int TCM>
 __global__ void plane_hertzian_contact_force_kernel(
 	device_plane_info *plane,
-	float E,
-	float pr,
-	float G,
-	float rest,
-	float fric,
-	float rfric,
-	float4* pos,
-	float3* vel,
-	float3* omega,
-	float3* force,
-	float3* moment,
-	//float* rad,
-	float* mass,
-	float pE,
-	float pPr,
-	float pG)
+	float E, float pr, float G, float rest, float fric, float rfric,
+	float4* pos, float3* vel, float3* omega, float3* force, float3* moment,
+	float* mass, float pE, float pPr, float pG)
 {
 	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
 	if (id >= cte.np)
 		return;
-
-	//float r = rad[id];
 	float m = mass[id];
 	float4 ipos = pos[id];
 	float3 ipos3 = make_float3(ipos);
@@ -524,14 +537,10 @@ __global__ void plane_hertzian_contact_force_kernel(
 	float3 ivel = vel[id];
 	float3 iomega = omega[id];
 
-	float3 single_force = make_float3(0, 0, 0);
-	float3 m_force = make_float3(0, 0, 0);
-	float3 m_moment = make_float3(0, 0, 0);
-	//for (int i = 0; i < 6; i++){
-		//device_plane_info plane = planes[i];
-	
+	float3 Fn = make_float3(0, 0, 0);
+	float3 Ft = make_float3(0, 0, 0);
+	float3 M = make_float3(0, 0, 0);
 	float3 dp = make_float3(ipos) - plane->xw;
-	float3 shear_force = make_float3(0.f);
 	float3 unit = make_float3(0.0f);
 	float3 wp = make_float3(dot(dp, plane->u1), dot(dp, plane->u2), dot(dp, plane->uw));
 	
@@ -540,23 +549,13 @@ __global__ void plane_hertzian_contact_force_kernel(
 		float rcon = r - 0.5f * collid_dist;
 		float3 dv = -(ivel + cross(iomega, r * unit));
 		device_force_constant<float> c = getConstant<float>(r, 0.f, m, 0.f, pE, E, pPr, pr, pG, G, rest, fric, rfric);
-		float fsn = -c.kn * pow(collid_dist, 1.5f);
-		single_force = (fsn + c.vn * dot(dv, unit)) * unit;
-		//float fca = cohesionForce(r, 0.f, pE, E, pPr, pr, fsn);
-		//single_force += fca * unit;
-		float3 e = dv - dot(dv, unit) * unit;
-		float mag_e = length(e);
-		if (mag_e){
-			float3 s_hat = e / mag_e;
-			float ds = mag_e * cte.dt;
-			shear_force = min(c.ks * ds + c.vs * dot(dv, s_hat), c.mu * length(single_force)) * s_hat;
-			m_moment += cross(rcon * unit, shear_force);
+		switch (TCM)
+		{
+		case 0: HMCModel<float, float3>(c, rcon, collid_dist, rfric, iomega, dv, unit, Ft, Fn, M); break;
 		}
-		m_force += single_force;
 	}
-
-	force[id] += m_force + shear_force;
-	moment[id] += m_moment;
+	force[id] += Fn;// m_force + shear_force;
+	moment[id] += M;
 }
 
 
@@ -594,13 +593,8 @@ __device__ float particle_cylinder_contact_detection(
 	double dist = -1.0;
 	double3 ab = make_double3(cy->ptop.x - cy->pbase.x, cy->ptop.y - cy->pbase.y, cy->ptop.z - cy->pbase.z);
 	double3 p = make_double3(pt.x, pt.y, pt.z);
-	//double3 p_pbase = make_double3(p.x - cy->pbase.x, p.y - cy->pbase.y, p.z - cy->pbase.z);
 	double t = dot(p - cy->pbase, ab) / dot(ab, ab);
 	double3 _cp = make_double3(0.0, 0.0, 0.0);
-	//float th = 0.f;
-	//float n;
-	//n = dot(cy->ep, cy->ep);
-	//float3 cp = make_float3(0.f);
 	if (t >= 0 && t <= 1){
 		_cp = cy->pbase + t * ab;
 		dist = length(p - _cp);
@@ -619,8 +613,6 @@ __device__ float particle_cylinder_contact_detection(
 			cp = _cp - cy->rbase * u;
 			return cy->len * 0.5 + pt.w - OtoCp_;
 		}
-		//float pi = 0.f;
-		//float r = 0.f;
 		double3 A_1 = makeTFM_1(cy->ep);
 		double3 A_2 = makeTFM_2(cy->ep);
 		double3 A_3 = makeTFM_3(cy->ep);
@@ -628,16 +620,11 @@ __device__ float particle_cylinder_contact_detection(
 		double3 at = toLocal(A_1, A_2, A_3, _at);
 		double r = length(at);
 		cp = cy->ptop;
-// 		th = acos(at.y / r);
-// 		pi = atan(at.x / at.z);
 		if (abs(at.y) > cy->len){
 			_at = p - cy->pbase;
 			at = toLocal(A_1, A_2, A_3, _at);
 			cp = cy->pbase;
-/*			th = acos(-at.y / r);*/
 		}
-		//float r = length(at);
-		//th = acos(abs( at.y) / r);
 		double pi = atan(at.x / at.z);
 		if (pi < 0 && at.z < 0){
 			_cp.x = cy->rbase * sin(-pi);
@@ -658,7 +645,6 @@ __device__ float particle_cylinder_contact_detection(
 		_cp.y = 0.;
 		cp = cp + toGlobal(A_1, A_2, A_3, _cp);
 
-		//cp.y = 0.f;
 		double3 disVec = cp - p;
 		dist = length(disVec);
 		u = disVec / dist;
@@ -669,25 +655,12 @@ __device__ float particle_cylinder_contact_detection(
 	return -1.0f;
 }
 
+template<int TCM>
 __global__ void cylinder_hertzian_contact_force_kernel(
 	device_cylinder_info *cy,
-	float E,
-	float pr,
-	float rest,
-	float ratio,
-	float fric,
-	float4* pos,
-	float3* vel,
-	float3* omega,
-	float3* force,
-	float3* moment,
-	//float* rad,
-	float* mass,
-	float pE,
-	float pPr,
-	double3* mpos,
-	double3* mf,
-	double3* mm)
+	float E, float pr, float G, float rest, float fric, float rfric,
+	float4* pos, float3* vel, float3* omega, float3* force,	float3* moment,
+	float* mass, float pE, float pPr, float pG, double3* mpos, double3* mf, double3* mm)
 {
 	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
@@ -707,31 +680,35 @@ __global__ void cylinder_hertzian_contact_force_kernel(
 	overlap = particle_cylinder_contact_detection(cy, ipos, unit, cp, id);
 	double3 si = cp - mp;
 	double3 cy2cp = cp - cy->origin;
-	double3 single_force = make_double3(0.0, 0.0, 0.0);
-	double3 shear_force = make_double3(0.0, 0.0, 0.0);
-	double3 m_moment = make_double3(0.0, 0.0, 0.0);
-	//float3 m_force = make_float3(0.f);
+	double3 Ft = make_double3(0.0, 0.0, 0.0);
+	double3 Fn = make_double3(0.0, 0.0, 0.0);
+	double3 M = make_double3(0.0, 0.0, 0.0);
 	if (overlap > 0)
 	{
+		double rcon = ipos.w - 0.5 * overlap;
 		double3 dv = cy->vel + cross(cy->omega, cy2cp) - (ivel + cross(iomega, ipos.w * unit));
-		device_force_constant<double> c = getConstant<double>(ipos.w, 0, im, 0, pE, E, pPr, pr, 0, 0, rest, ratio, fric/*, riv[id]*/);
-		double fsn = -c.kn * pow(overlap, 1.5);
-		single_force = (fsn + c.vn * dot(dv, unit)) * unit;
-		double3 e = dv - dot(dv, unit) * unit;
-		double mag_e = length(e);
-		if (mag_e){
-			double3 s_hat = e / mag_e;
-			double ds = mag_e * cte.dt;
-			shear_force = min(c.ks * ds + c.vs * dot(dv, s_hat), c.mu * length(single_force)) * s_hat;
-			m_moment = cross(ipos.w * unit, shear_force);
+		device_force_constant<double> c = getConstant<double>(ipos.w, 0, im, 0, pE, E, pPr, pr, pG, G, rest, fric, rfric);
+		switch (TCM)
+		{
+		case 0: HMCModel<double, double3>(c, rcon, overlap, rfric, iomega, dv, unit, Ft, Fn, M); break;
 		}
-		//m_force += single_force;
+// 		double fsn = -c.kn * pow(overlap, 1.5);
+// 		single_force = (fsn + c.vn * dot(dv, unit)) * unit;
+// 		double3 e = dv - dot(dv, unit) * unit;
+// 		double mag_e = length(e);
+// 		if (mag_e){
+// 			double3 s_hat = e / mag_e;
+// 			double ds = mag_e * cte.dt;
+// 			shear_force = min(c.ks * ds + c.vs * dot(dv, s_hat), c.mu * length(single_force)) * s_hat;
+// 			m_moment = cross(ipos.w * unit, shear_force);
+// 		}
+// 		//m_force += single_force;
 	}
-	double3 sum_f = single_force;// +shear_force;
+	double3 sum_f = Fn;// +shear_force;
 	force[id] += make_float3(sum_f.x, sum_f.y, sum_f.z);
-	moment[id] += make_float3(m_moment.x, m_moment.y, m_moment.z);
-	mf[id] = -(sum_f + shear_force);// +make_double3(1.0, 5.0, 9.0);
-	mm[id] = -cross(si, sum_f + shear_force);
+	moment[id] += make_float3(M.x, M.y, M.z);
+	mf[id] = -(sum_f + Ft);
+	mm[id] = -cross(si, sum_f + Ft);
 }
 
 template <typename T, unsigned int blockSize>
@@ -885,29 +862,13 @@ __device__ bool checkConcave(device_polygon_info* dpi, unsigned int* tid, unsign
 	return false;
 }
 
+template<int TCM>
 __global__ void particle_polygonObject_collision_kernel(
-	device_polygon_info* dpi,
-	double4* dsph,
-	device_polygon_mass_info* dpmi,
-	float E,
-	float pr,
-	float rest,
-	float ratio,
-	float fric,
-	float4 *pos,
-	float3 *vel,
-	float3 *omega,
-	float3 *force,
-	float3 *moment,
-	float* mass,
-	float pE,
-	float pPr,
-	unsigned int* sorted_index,
-	unsigned int* cstart,
-	unsigned int* cend,
-	double3* mpos,
-	double3* mf,
-	double3* mm)
+	device_polygon_info* dpi, double4* dsph, device_polygon_mass_info* dpmi,
+	float E, float pr, float G, float rest,	float fric, float rfric,
+	float4 *pos, float3 *vel, float3 *omega, float3 *force, float3 *moment,
+	float* mass, float pE, float pPr, float pG,	unsigned int* sorted_index,
+	unsigned int* cstart, unsigned int* cend, double3* mpos, double3* mf, double3* mm)
 {
 	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
@@ -924,20 +885,13 @@ __global__ void particle_polygonObject_collision_kernel(
 	double3 cp = make_double3(0.0, 0.0, 0.0);
 	double3 mp = make_double3(mpos->x, mpos->y, mpos->z);
 	double ir = pos[id].w;
-//  	unsigned int tid[4] = { 0, };
-//  	unsigned int tu_cnt = 0;
-//	double jr = 0;
-	//double im = mass[id];
-	//double jm = 0;
-	//float3 m_force = mass[id] * cte.gravity;
-	double3 m_moment = make_double3(0, 0, 0);
+	double3 M = make_double3(0, 0, 0);
 	int3 neighbour_pos = make_int3(0, 0, 0);
 	uint grid_hash = 0;
-	double3 single_force = make_double3(0, 0, 0);
-	double3 shear_force = make_double3(0, 0, 0);
+	double3 Fn = make_double3(0, 0, 0);
+	double3 Ft = make_double3(0, 0, 0);
 	unsigned int start_index = 0;
 	unsigned int end_index = 0;
-	//bool isc = false;
 	for (int z = -1; z <= 1; z++){
 		for (int y = -1; y <= 1; y++){
 			for (int x = -1; x <= 1; x++){
@@ -951,53 +905,42 @@ __global__ void particle_polygonObject_collision_kernel(
 						if (k >= cte.np)
 						{
 							k -= cte.np;
-							//double3 sph = make_double3(dsph[k].x, dsph[k].y, dsph[k].z);
-						//	double sr = dsph[k].w;
-							double3 distVec;// = make_double3(sph.x - ipos.x, sph.y - ipos.y, sph.z - ipos.z);
-							double dist;// = sqrt(distVec.x * distVec.x + distVec.y * distVec.y + distVec.z * distVec.z);
-							//if ((sr + ir) - dist > 0){
-								double3 cp = closestPtPointTriangle(dpi[k], ipos, ir);
-								double3 po2cp = cp - dpmi->origin;
-								double3 si = cp - mp;
-								distVec = ipos - cp;
-								dist = length(distVec);
-								overlap = ir - dist;
-								single_force = make_double3(0.0, 0.0, 0.0);
-								if (overlap > 0)
+							double3 distVec;
+							double dist;
+							double3 cp = closestPtPointTriangle(dpi[k], ipos, ir);
+							double3 po2cp = cp - dpmi->origin;
+							double3 si = cp - mp;
+							distVec = ipos - cp;
+							dist = length(distVec);
+							overlap = ir - dist;
+							Fn = make_double3(0.0, 0.0, 0.0);
+							if (overlap > 0)
+							{
+								double rcon = ir - 0.5 * overlap;
+								unit = -dpi[k].N;
+								double3 dv = dpmi->vel + cross(dpmi->omega, po2cp) - (ivel + cross(iomega, ir * unit));
+								device_force_constant<double> c = getConstant<double>(ir, 0, im, 0, pE, E, pPr, pr, pG, G, rest, fric, rfric);
+								switch (TCM)
 								{
- 									unit = -dpi[k].N;
-//  									if (!tu_cnt)
-//  										tid[tu_cnt++] = k;
-//  									else{
-// //  										isc = checkConcave(dpi, tid, k, dsph, tu_cnt);
-// // 										if (!isc)
-// // 											continue;
-//  									}
-									
-									double3 dv = dpmi->vel + cross(dpmi->omega, po2cp) - (ivel + cross(iomega, ir * unit));
-									device_force_constant<double> c = getConstant<double>(ir, 0, im, 0, pE, E, pPr, pr,0, 0, rest, ratio, fric);
-									double fsn = -c.kn * pow(overlap, 1.5);
-									single_force = (fsn + c.vn * dot(dv, unit)) * unit;
-// 									printf("%f, %f\n", c.kn, c.vn);
-// 									printf("%d, %f, %f, %f\n",k, single_force.x, single_force.y, single_force.z);
-									double3 e = dv - dot(dv, unit) * unit;
-									double mag_e = length(e);
-									if (mag_e){
-										double3 s_hat = e / mag_e;
-										double ds = mag_e * cte.dt;
-										shear_force = min(c.ks * ds + c.vs * dot(dv, s_hat), c.mu * length(single_force)) * s_hat;
-										m_moment = cross(ir * unit, shear_force);
-									}
-									double3 sum_f = single_force;// +shear_force;
-									force[id] += make_float3(sum_f.x, sum_f.y, sum_f.z);
-									moment[id] += make_float3(m_moment.x, m_moment.y, m_moment.z);
-									mf[id] += -(sum_f + shear_force);// +make_double3(1.0, 5.0, 9.0);
-									mm[id] += -cross(si, sum_f + shear_force);
-									//return;
-									//m_force += single_force;
+								case 0: HMCModel<double, double3>(c, rcon, overlap, rfric, iomega, dv, unit, Ft, Fn, M); break;
 								}
-								
-							//}
+// 								double fsn = -c.kn * pow(overlap, 1.5);
+// 								single_force = (fsn + c.vn * dot(dv, unit)) * unit;
+// 
+// 								double3 e = dv - dot(dv, unit) * unit;
+// 								double mag_e = length(e);
+// 								if (mag_e){
+// 									double3 s_hat = e / mag_e;
+// 									double ds = mag_e * cte.dt;
+// 									shear_force = min(c.ks * ds + c.vs * dot(dv, s_hat), c.mu * length(single_force)) * s_hat;
+// 									m_moment = cross(ir * unit, shear_force);
+// 								}
+								double3 sum_f = Fn;// +shear_force;
+								force[id] += make_float3(sum_f.x, sum_f.y, sum_f.z);
+								moment[id] += make_float3(M.x, M.y, M.z);
+								mf[id] += -(sum_f + Ft);// +make_double3(1.0, 5.0, 9.0);
+								mm[id] += -cross(si, sum_f + Ft);
+							}			
 						}
 					}
 				}

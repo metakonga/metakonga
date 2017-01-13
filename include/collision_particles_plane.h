@@ -10,7 +10,7 @@ class collision_particles_plane : public collision
 {
 public:
 	collision_particles_plane();
-	collision_particles_plane(QString& _name, modeler* _md, particle_system *_ps, plane *_p);
+	collision_particles_plane(QString& _name, modeler* _md, particle_system *_ps, plane *_p, tContactModel _tcm);
 	virtual ~collision_particles_plane();
 
 	virtual bool collid(float dt);

@@ -13,11 +13,17 @@ class collision
 {
 public:
 	collision();
-	collision(QString& _name, modeler* _md, QString& o1, QString& o2, tCollisionPair _tp = NO_COLLISION_PAIR);
+	collision(
+		QString& _name,
+		modeler* _md, 
+		QString& o1,
+		QString& o2, 
+		tCollisionPair _tp, 
+		tContactModel _tcm);
 	collision(const collision& cs);
 	virtual ~collision();
 
-	void setContactParameter(float _rest, float _fric, float _rfric, float _coh) { rest = _rest; fric = _fric; rfric = _rfric, coh = _coh; }
+	void setContactParameter(float _rest, float _fric, float _rfric) { rest = _rest; fric = _fric; rfric = _rfric; }
 	void setGridBase(grid_base *_gb) { gb = _gb; }
 	float cohesionForce(float ri, float rj, float Ei, float Ej, float pri, float prj, float Fn);
 

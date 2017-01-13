@@ -11,7 +11,8 @@
 #include "planeDialog.h"
 #include "massDialog.h"
 #include "particleDialog.h"
-#include "ccDialog.h"
+//#include "ccDialog.h"
+#include "hmcmDialog.h"
 #include "objProperty.h"
 #include "dembd_simulation.h"
 #include "msgBox.h"
@@ -113,9 +114,9 @@ void xdynamics::setMainAction()
 	makeMassAct->setStatusTip(tr("Create mass"));
 	connect(makeMassAct, SIGNAL(triggered()), this, SLOT(makeMass()));
 
-	collidConstAct = new QAction(QIcon(":/Resources/collision.png"), tr("&Define contact constant"), this);
-	collidConstAct->setStatusTip(tr("Define contact constant"));
-	connect(collidConstAct, SIGNAL(triggered()), this, SLOT(collidConst()));
+	collidConstAct = new QAction(QIcon(":/Resources/ic_HMCM.png"), tr("&Define Hertz-Mindlin Contact Model"), this);
+	collidConstAct->setStatusTip(tr("Define Hertz-Mindlin Contact Model"));
+	connect(collidConstAct, SIGNAL(triggered()), this, SLOT(makeHMCM()));
 
 	solveProcessAct = new QAction(QIcon(":/Resources/solve.png"), tr("&Solve the model"), this);
 	solveProcessAct->setStatusTip(tr("Solve the model"));
@@ -648,10 +649,12 @@ void xdynamics::makeMass()
 		gl->makeMassCoordinate(ms->name());
 }
 
-void xdynamics::collidConst()
+void xdynamics::makeHMCM()
 {
-	ccDialog cd;
-	cd.callDialog(md);
+	hmcmDialog hmcm(this, md);
+
+// 	ccDialog cd;
+// 	cd.callDialog(md);
 	//gl->defineCollidConst();
 }
 

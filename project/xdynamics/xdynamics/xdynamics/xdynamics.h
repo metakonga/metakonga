@@ -57,7 +57,7 @@ public:
 	void makeCylinder();
 	void makeParticle();
 	void makeMass();
-	void collidConst();
+	void makeHMCM();
 	void solve();
 	void exitThread();
 	void recieveProgress(unsigned int);

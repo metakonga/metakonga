@@ -329,6 +329,15 @@
     <ClCompile Include="..\..\..\..\source\vpolygon.cpp">
       <Filter>Source Files\display</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\source\hmcmDialog.cpp">
+      <Filter>Source Files\dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_hmcmDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_hmcmDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="xdynamics.h">
@@ -390,6 +399,12 @@
     </CustomBuild>
     <CustomBuild Include="..\..\..\..\include\glwidget.h">
       <Filter>Header Files\display</Filter>
+    </CustomBuild>
+    <CustomBuild Include="HMCM.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\hmcmDialog.h">
+      <Filter>Header Files\dialog</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -527,6 +542,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\colors.h">
       <Filter>Header Files\display</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_HMCM.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

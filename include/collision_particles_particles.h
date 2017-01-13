@@ -10,7 +10,7 @@ class collision_particles_particles : public collision
 {
 public:
 	collision_particles_particles();
-	collision_particles_particles(QString& _name, modeler* _md, particle_system* _ps);
+	collision_particles_particles(QString& _name, modeler* _md, particle_system* _ps, tContactModel _tcm);
 	virtual ~collision_particles_particles();
 
 	virtual bool collid(float dt);

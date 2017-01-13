@@ -9,8 +9,13 @@ collision_particles_cylinder::collision_particles_cylinder()
 
 }
 
-collision_particles_cylinder::collision_particles_cylinder(QString& _name, modeler* _md, particle_system *_ps, cylinder *_cy)
-	: collision(_name, _md, _ps->name(), _cy->objectName(), PARTICLES_CYLINDER)
+collision_particles_cylinder::collision_particles_cylinder(
+	QString& _name,
+	modeler* _md, 
+	particle_system *_ps,
+	cylinder *_cy,
+	tContactModel _tcm)
+	: collision(_name, _md, _ps->name(), _cy->objectName(), PARTICLES_CYLINDER, _tcm)
 	, ps(_ps)
 	, cy(_cy)
 {
@@ -44,26 +49,21 @@ bool collision_particles_cylinder::cuCollid()
 	checkCudaErrors(cudaMalloc((void**)&mmoment, sizeof(double3)*ps->numParticle()));
 	checkCudaErrors(cudaMemset(mforce, 0, sizeof(double3)*ps->numParticle()));
 	checkCudaErrors(cudaMemset(mmoment, 0, sizeof(double3)*ps->numParticle()));
-	
-	cu_cylinder_hertzian_contact_force(cy->deviceCylinderInfo(), cy->youngs(), cy->poisson(), rest, rest, fric, ps->cuPosition(), ps->cuVelocity(), ps->cuOmega(), ps->cuForce(), ps->cuMoment(), ps->cuMass(), ps->youngs(), ps->poisson(), ps->numParticle(), mpos, mforce, mmoment, _mf, _mm);
-	//std::cout << "_mf 1 :" << _mf.x << " " << _mf.y << " " << _mf.z << std::endl;
+	switch (tcm)
+	{
+	case HMCM: cu_cylinder_hertzian_contact_force(0, cy->deviceCylinderInfo(), cy->youngs(), cy->poisson(), cy->shear(), rest, fric, rfric, ps->cuPosition(), ps->cuVelocity(), ps->cuOmega(), ps->cuForce(), ps->cuMoment(), ps->cuMass(), ps->youngs(), ps->poisson(), ps->shear(), ps->numParticle(), mpos, mforce, mmoment, _mf, _mm); break;
+	}
 	_mf = reductionD3(mforce, ps->numParticle());
-	//std::cout << "_mf 2 :" << _mf.x << " " << _mf.y << " " << _mf.z << std::endl;
 	if (cy->pointMass()){
 		cy->pointMass()->addCollisionForce(VEC3D(_mf.x, _mf.y, _mf.z));
 	}
-	/*std::cout << "_mm 1 :" << _mm.x << " " << _mm.y << " " << _mm.z << std::endl;*/
 	_mm = reductionD3(mmoment, ps->numParticle());
-	//std::cout << "_mm 2 :" << _mm.x << " " << _mm.y << " " << _mm.z << std::endl;
 	if (cy->pointMass()){
 		cy->pointMass()->addCollisionMoment(VEC3D(_mm.x, _mm.y, _mm.z));
 	}
-	//std::cout << h_mf->x << " " << h_mf->y << " " << h_mf->z << std::endl;
 	checkCudaErrors(cudaFree(mforce)); mforce = NULL;
 	checkCudaErrors(cudaFree(mmoment)); mmoment = NULL;
 	checkCudaErrors(cudaFree(mpos)); mpos = NULL;
-// 	delete h_mf; h_mf = NULL;
-// 	delete h_mm; h_mm = NULL;
 	return true;
 }
 

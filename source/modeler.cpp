@@ -236,32 +236,32 @@ particle_system* modeler::makeParticleSystem(QString _name)
 	return ps;
 }
 
-collision* modeler::makeCollision(QString _name, float _rest, float _fric, float _rfric, float _coh, tCollisionPair tcp, void* o1, void* o2)
+collision* modeler::makeCollision(QString _name, float _rest, float _fric, float _rfric, tCollisionPair tcp, tContactModel tcm, void* o1, void* o2)
 {
 	collision* c = NULL;
 	particle_system *ps;
 	switch (tcp){
 	case PARTICLES_PARTICLES:
-		c = new collision_particles_particles(_name, this, (particle_system*)o1);
-		c->setContactParameter(_rest, _fric, _rfric, _coh);
+		c = new collision_particles_particles(_name, this, (particle_system*)o1, tcm);
+		c->setContactParameter(_rest, _fric, _rfric);
 		break;
 	case PARTICLES_PLANE:
 		ps = (particle_system*)o1;
-		c = new collision_particles_plane(_name, this, (particle_system*)o1, (plane*)o2);
+		c = new collision_particles_plane(_name, this, (particle_system*)o1, (plane*)o2, tcm);
 		ps->addCollision(c);
-		c->setContactParameter(_rest, _fric, _rfric, _coh);
+		c->setContactParameter(_rest, _fric, _rfric);
 		break;
 	case PARTICLES_CYLINDER:
 		ps = (particle_system*)o1;
-		c = new collision_particles_cylinder(_name, this, ps, (cylinder*)o2);
+		c = new collision_particles_cylinder(_name, this, ps, (cylinder*)o2, tcm);
 		ps->addCollision(c);
-		c->setContactParameter(_rest, _fric, _rfric, _coh);
+		c->setContactParameter(_rest, _fric, _rfric);
 		break;
 	case PARTICLES_POLYGONOBJECT:
 		ps = (particle_system*)o1;
-		c = new collision_particles_polygonObject(_name, this, ps, (polygonObject*)o2);
+		c = new collision_particles_polygonObject(_name, this, ps, (polygonObject*)o2, tcm);
 		ps->addCollision(c);
-		c->setContactParameter(_rest, _fric, _rfric, _coh);
+		c->setContactParameter(_rest, _fric, _rfric);
 	}
 
 
@@ -457,20 +457,21 @@ void modeler::openModeler(GLWidget *gl, QString& file)
  		}
  		else if (ch == "COLLISION")
  		{
-			float rest, fric, rfric, coh;
+			float rest, fric, rfric;
+			int tcm;
 			QString nm, io, jo;
 			in >> nm;
-			in >> rest >> fric >> rfric >> coh;
+			in >> rest >> fric >> rfric >> tcm;
 			in >> ch >> io;
 			in >> ch >> jo;
 	
 			tCollisionPair cp = getCollisionPair(io != "particles" ? objs[io]->objectType() : ps->objectType(), jo != "particles" ? objs[jo]->objectType() : ps->objectType());
 			if (io == "particles")
-				makeCollision(nm, rest, fric, rfric, coh, cp, ps, objs[jo]);
+				makeCollision(nm, rest, fric, rfric, cp, (tContactModel)tcm, ps, objs[jo]);
 			else if (jo == "particles")
-				makeCollision(nm, rest, fric, rfric, coh, cp, ps, objs[io]);
+				makeCollision(nm, rest, fric, rfric, cp, (tContactModel)tcm, ps, objs[io]);
 			else
-				makeCollision(nm, rest, fric, rfric, coh, cp, objs[io], objs[jo]);
+				makeCollision(nm, rest, fric, rfric, cp, (tContactModel)tcm, objs[io], objs[jo]);
  		}
  	}
 	pf.close();

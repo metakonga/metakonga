@@ -7,8 +7,12 @@ collision_particles_particles::collision_particles_particles()
 
 }
 
-collision_particles_particles::collision_particles_particles(QString& _name, modeler* _md, particle_system* _ps)
-	: collision(_name, _md, _ps->name(), _ps->name())
+collision_particles_particles::collision_particles_particles(
+	QString& _name, 
+	modeler* _md,
+	particle_system* _ps,
+	tContactModel _tcm)
+	: collision(_name, _md, _ps->name(), _ps->name(), NO_COLLISION_PAIR, _tcm)
 	, ps(_ps)
 {
 
@@ -42,8 +46,6 @@ bool collision_particles_particles::HMCModel(float dt)
 	VEC3F *fr = ps->force();
 	VEC3F *mm = ps->moment();
 	float* ms = ps->mass();
-	//float* rad = ps->radius();
-	//QListIterator<collision*> cc(cs);
 	for (unsigned int i = 0; i < ps->numParticle(); i++){
 		ipos = VEC3F(pos[i].x, pos[i].y, pos[i].z);
 		gp = grid_base::getCellNumber(pos[i].x, pos[i].y, pos[i].z);

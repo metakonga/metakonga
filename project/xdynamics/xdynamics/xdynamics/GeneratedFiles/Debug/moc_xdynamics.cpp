@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_xdynamics_t {
     QByteArrayData data[38];
-    char stringdata0[465];
+    char stringdata0[462];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -59,14 +59,14 @@ QT_MOC_LITERAL(26, 322, 11), // "makePolygon"
 QT_MOC_LITERAL(27, 334, 12), // "makeCylinder"
 QT_MOC_LITERAL(28, 347, 12), // "makeParticle"
 QT_MOC_LITERAL(29, 360, 8), // "makeMass"
-QT_MOC_LITERAL(30, 369, 11), // "collidConst"
-QT_MOC_LITERAL(31, 381, 5), // "solve"
-QT_MOC_LITERAL(32, 387, 10), // "exitThread"
-QT_MOC_LITERAL(33, 398, 15), // "recieveProgress"
-QT_MOC_LITERAL(34, 414, 15), // "openPinfoDialog"
-QT_MOC_LITERAL(35, 430, 15), // "deleteFileByEXT"
-QT_MOC_LITERAL(36, 446, 3), // "ext"
-QT_MOC_LITERAL(37, 450, 14) // "waitSimulation"
+QT_MOC_LITERAL(30, 369, 8), // "makeHMCM"
+QT_MOC_LITERAL(31, 378, 5), // "solve"
+QT_MOC_LITERAL(32, 384, 10), // "exitThread"
+QT_MOC_LITERAL(33, 395, 15), // "recieveProgress"
+QT_MOC_LITERAL(34, 411, 15), // "openPinfoDialog"
+QT_MOC_LITERAL(35, 427, 15), // "deleteFileByEXT"
+QT_MOC_LITERAL(36, 443, 3), // "ext"
+QT_MOC_LITERAL(37, 447, 14) // "waitSimulation"
 
     },
     "xdynamics\0ChangeShape\0\0ChangeParticleFromFile\0"
@@ -79,9 +79,9 @@ QT_MOC_LITERAL(37, 450, 14) // "waitSimulation"
     "ani_forward2x\0ani_scrollbar\0makeCube\0"
     "makePlane\0makeLine\0makePolygon\0"
     "makeCylinder\0makeParticle\0makeMass\0"
-    "collidConst\0solve\0exitThread\0"
-    "recieveProgress\0openPinfoDialog\0"
-    "deleteFileByEXT\0ext\0waitSimulation"
+    "makeHMCM\0solve\0exitThread\0recieveProgress\0"
+    "openPinfoDialog\0deleteFileByEXT\0ext\0"
+    "waitSimulation"
 };
 #undef QT_MOC_LITERAL
 
@@ -209,7 +209,7 @@ void xdynamics::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
         case 25: _t->makeCylinder(); break;
         case 26: _t->makeParticle(); break;
         case 27: _t->makeMass(); break;
-        case 28: _t->collidConst(); break;
+        case 28: _t->makeHMCM(); break;
         case 29: _t->solve(); break;
         case 30: _t->exitThread(); break;
         case 31: _t->recieveProgress((*reinterpret_cast< uint(*)>(_a[1]))); break;

@@ -66,37 +66,37 @@ collision* ccDialog::callDialog(modeler *md)
 
 	this->exec();
 
-	collision *cs = NULL;
-	if (isDialogOk)
-	{
-		QString ostr1 = list1->currentText();
-		QString ostr2 = list2->currentText();
-		object *o1 = NULL;
-		object *o2 = NULL;
-		particle_system *ps = NULL;
-		
-		if (ostr1 == "particles"){
-			ps = md->particleSystem();
-			o2 = md->objectFromStr(ostr2);
-		}
-		else if(ostr2 == "particles"){
-			o1 = md->objectFromStr(ostr1);
-			ps = md->particleSystem();
-		}
-		else{
-			o1 = md->objectFromStr(ostr1);
-			o2 = md->objectFromStr(ostr2);
-		}
-		tCollisionPair cp = getCollisionPair(o1 ? o1->objectType() : ps->objectType(), o2 ? o2->objectType() : ps->objectType());
-		if(!o1)
-			cs = md->makeCollision(LEName->text(), LErest->text().toFloat(), LEfric->text().toFloat(), LERollingFriction->text().toFloat(), LECohesion->text().toFloat(), cp, ps, o2);
-		else if (!o2)
-			cs = md->makeCollision(LEName->text(), LErest->text().toFloat(), LEfric->text().toFloat(), LERollingFriction->text().toFloat(), LECohesion->text().toFloat(), cp, ps, o1);
-		else
-			cs = md->makeCollision(LEName->text(), LErest->text().toFloat(), LEfric->text().toFloat(), LERollingFriction->text().toFloat(), LECohesion->text().toFloat(), cp, o1, o2);
-	}
+// 	collision *cs = NULL;
+// 	if (isDialogOk)
+// 	{
+// 		QString ostr1 = list1->currentText();
+// 		QString ostr2 = list2->currentText();
+// 		object *o1 = NULL;
+// 		object *o2 = NULL;
+// 		particle_system *ps = NULL;
+// 		
+// 		if (ostr1 == "particles"){
+// 			ps = md->particleSystem();
+// 			o2 = md->objectFromStr(ostr2);
+// 		}
+// 		else if(ostr2 == "particles"){
+// 			o1 = md->objectFromStr(ostr1);
+// 			ps = md->particleSystem();
+// 		}
+// 		else{
+// 			o1 = md->objectFromStr(ostr1);
+// 			o2 = md->objectFromStr(ostr2);
+// 		}
+// 		tCollisionPair cp = getCollisionPair(o1 ? o1->objectType() : ps->objectType(), o2 ? o2->objectType() : ps->objectType());
+// 		if(!o1)
+// 			cs = md->makeCollision(LEName->text(), LErest->text().toFloat(), LEfric->text().toFloat(), LERollingFriction->text().toFloat(), LECohesion->text().toFloat(), cp, ps, o2);
+// 		else if (!o2)
+// 			cs = md->makeCollision(LEName->text(), LErest->text().toFloat(), LEfric->text().toFloat(), LERollingFriction->text().toFloat(), LECohesion->text().toFloat(), cp, ps, o1);
+// 		else
+// 			cs = md->makeCollision(LEName->text(), LErest->text().toFloat(), LEfric->text().toFloat(), LERollingFriction->text().toFloat(), LECohesion->text().toFloat(), cp, o1, o2);
+// 	}
 
-	return cs;
+	return 0;// cs;
 }
 
 void ccDialog::clickOk()

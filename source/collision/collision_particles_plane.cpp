@@ -9,8 +9,13 @@ collision_particles_plane::collision_particles_plane()
 
 }
 
-collision_particles_plane::collision_particles_plane(QString& _name, modeler* _md, particle_system *_ps, plane *_p)
-	: collision(_name, _md, _ps->name(), _p->objectName(), PARTICLES_PLANE)
+collision_particles_plane::collision_particles_plane(
+	QString& _name, 
+	modeler* _md, 
+	particle_system *_ps, 
+	plane *_p, 
+	tContactModel _tcm)
+	: collision(_name, _md, _ps->name(), _p->objectName(), PARTICLES_PLANE, _tcm)
 	, ps(_ps)
 	, pe(_p)
 {
@@ -29,7 +34,11 @@ bool collision_particles_plane::collid(float dt)
 
 bool collision_particles_plane::cuCollid()
 {
-	cu_plane_hertzian_contact_force(pe->devicePlaneInfo(), pe->youngs(), pe->poisson(), pe->shear(), rest, fric, rfric, ps->cuPosition(), ps->cuVelocity(), ps->cuOmega(), ps->cuForce(), ps->cuMoment(), ps->cuMass(), ps->youngs(), ps->poisson(), ps->shear(), ps->numParticle());
+	switch (tcm)
+	{
+	case HMCM: cu_plane_hertzian_contact_force(0, pe->devicePlaneInfo(), pe->youngs(), pe->poisson(), pe->shear(), rest, fric, rfric, ps->cuPosition(), ps->cuVelocity(), ps->cuOmega(), ps->cuForce(), ps->cuMoment(), ps->cuMass(), ps->youngs(), ps->poisson(), ps->shear(), ps->numParticle()); break;
+	}
+	
 	return true;
 }
 

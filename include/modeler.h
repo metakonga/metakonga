@@ -35,7 +35,7 @@ public:
 	kinematicConstraint* makeKinematicConstraint(QString _name, tKinematicConstraint kt, VEC3D& loc, mass* i, VEC3D& fi, VEC3D& gi, mass* j, VEC3D& fj, VEC3D& gj);
 	polygonObject* makePolygonObject(tImport tm, QString file);
 	particle_system* makeParticleSystem(QString _name);
-	collision* makeCollision(QString _name, float _rest, float _fric, float _rfric, float _coh, tCollisionPair tcp, void *o1, void *o2 = NULL);
+	collision* makeCollision(QString _name, float _rest, float _fric, float _rfric, tCollisionPair tcp, tContactModel tcm, void *o1, void *o2 = NULL);
 	//collision_particles_plane* make_collision_ps_plane(std::string _name, float _rest, float _sratio, float _)
 	QMap<QString, object*>& objects() { return objs; }
 	QMap<QString, collision*>& collisions() { return cs; }

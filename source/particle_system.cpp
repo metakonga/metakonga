@@ -166,8 +166,8 @@ bool particle_system::makeParticles(object *obj, float spacing, float _rad)
 
 void particle_system::setCollision(float _rest, float _fric, float _rfric, float _coh)
 {
-	c_p2p = new collision_particles_particles(QString("collision_p2p"), md, this);
-	c_p2p->setContactParameter(_rest, _fric, _rfric, _coh);
+	c_p2p = new collision_particles_particles(QString("collision_p2p"), md, this, HMCM);
+	c_p2p->setContactParameter(_rest, _fric, _rfric);
 	rest = _rest;
 	fric = _fric;
 	rfric = _rfric;

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DLG_HMCM</class>
+ <widget class="QDialog" name="DLG_HMCM">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>331</width>
+    <height>332</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Hertz-Mindlin Contact Model</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <widget class="QGroupBox" name="GBContactElements">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>311</width>
+     <height>111</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Contact elements</string>
+   </property>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>20</y>
+      <width>291</width>
+      <height>76</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="LName">
+       <property name="text">
+        <string>Name</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" rowspan="3">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLineEdit" name="LEName"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="CBFirstObject"/>
+       </item>
+       <item>
+        <widget class="QComboBox" name="CBSecondObject"/>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="LFirstObject">
+       <property name="text">
+        <string>First object</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="LSecondObject">
+       <property name="text">
+        <string>Second object</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <zorder></zorder>
+   <zorder></zorder>
+   <zorder></zorder>
+   <zorder></zorder>
+   <zorder>LName</zorder>
+   <zorder>LEName</zorder>
+   <zorder></zorder>
+  </widget>
+  <widget class="QGroupBox" name="GBContactParameter">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>130</y>
+     <width>311</width>
+     <height>161</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Contact parameter</string>
+   </property>
+   <widget class="QCheckBox" name="CHBEableCohesion">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>104</y>
+      <width>121</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Enable cohesion</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>291</width>
+      <height>76</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0">
+      <widget class="QLabel" name="LRestitution">
+       <property name="text">
+        <string>Restitution</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" rowspan="3">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLineEdit" name="LERestitution"/>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="LEFriction"/>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="LERollingFriction"/>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="LFriction">
+       <property name="text">
+        <string>Friction</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="LRollingFriction">
+       <property name="text">
+        <string>Rolling friction</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>300</y>
+     <width>158</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QPushButton" name="PBOk">
+      <property name="text">
+       <string>Ok</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="PBCancle">
+      <property name="text">
+       <string>Cancle</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

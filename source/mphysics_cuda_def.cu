@@ -147,168 +147,45 @@ void cu_calculate_p2p(float* pos, float* vel, float* acc, float* omega, float* a
 		cRun);
 }
 
-void cu_plane_hertzian_contact_force(device_plane_info* plan, float E, float pr, float G, float rest, float fric, float rfric, float* pos, float* vel, float* omega, float* force, float* moment, float* mass, float pE, float pPr, float pG, unsigned int np)
+void cu_plane_hertzian_contact_force(const int tcm, device_plane_info* plan, float E, float pr, float G, float rest, float fric, float rfric, float* pos, float* vel, float* omega, float* force, float* moment, float* mass, float pE, float pPr, float pG, unsigned int np)
 {
 	computeGridSize(np, 256, numBlocks, numThreads);
-	plane_hertzian_contact_force_kernel << < numBlocks, numThreads >> >(
-		plan,
-		E,
-		pr,
-		G,
-		rest,
-		fric,
-		rfric,
-		(float4 *)pos,
-		(float3 *)vel,
-		(float3 *)omega,
-		(float3 *)force,
-		(float3 *)moment,
-		mass,
-		pE,
-		pPr,
-		pG);
+	switch (tcm)
+	{
+	case 0: plane_hertzian_contact_force_kernel<0> << < numBlocks, numThreads >> >(
+		plan, E, pr, G,	rest, fric,	rfric, (float4 *)pos, (float3 *)vel, (float3 *)omega,
+		(float3 *)force, (float3 *)moment, mass, pE, pPr, pG);
+		break;
+	}
+	
 }
 
-void cu_cylinder_hertzian_contact_force(device_cylinder_info* cyl, float E, float pr, float rest, float ratio, float fric, float* pos, float* vel, float* omega, float* force, float* moment, float* mass, float pE, float pPr, unsigned int np, double3* mpos, double3* mf, double3* mm, double3& _mf, double3& _mm)
+void cu_cylinder_hertzian_contact_force(const int tcm, device_cylinder_info* cyl, float E, float pr, float G, float rest, float fric, float rfric, float* pos, float* vel, float* omega, float* force, float* moment, float* mass, float pE, float pPr, float pG, unsigned int np, double3* mpos, double3* mf, double3* mm, double3& _mf, double3& _mm)
 {
 	computeGridSize(np, 512, numBlocks, numThreads);
-	cylinder_hertzian_contact_force_kernel << < numBlocks, numThreads >> >(
-		cyl,
-		E,
-		pr,
-		rest,
-		ratio,
-		fric,
-		(float4 *)pos,
-		(float3 *)vel,
-		(float3 *)omega,
-		(float3 *)force,
-		(float3 *)moment,
-		mass,
-		pE,
-		pPr,
-		mpos,
-		mf,
-		mm);
-// 	double3 *d_result_bf;
-// 	double3 *d_result_bm;
-// 
-// 	//double3 *result_bm;
-// 	//double3* h_data = new double3[10];
-// 	double3* h_result_bf = new double3[numBlocks];
-// 	double3* h_result_bm = new double3[numBlocks];
-// // 	for (unsigned int i = 0; i < 10; i++){
-// // 		h_data[i] = make_double3(i * 1, i * 2, i * 3);
-// // 	}
-// 	//double3* h_result_bm = new double3[numBlocks];
-// 	double3* h_mf = new double3[np];
-// 	//double3* d_data;
-// 	//checkCudaErrors(cudaMalloc((void**)&d_data, sizeof(double3) * 10));
-// 	//checkCudaErrors(cudaMemcpy(d_data, h_data, sizeof(double3) * 10, cudaMemcpyHostToDevice));
-// 	memset(h_result_bf, 0, sizeof(double3) * numBlocks); 
-// 	memset(h_result_bm, 0, sizeof(double3) * numBlocks);
-// 	//memset(h_result_bm, 0, sizeof(double3) * numBlocks);
-// 	checkCudaErrors(cudaMalloc((void**)&d_result_bf, sizeof(double3) * numBlocks));
-// 	checkCudaErrors(cudaMalloc((void**)&d_result_bm, sizeof(double3) * numBlocks));
-// 	//checkCudaErrors(cudaMalloc((void**)&result_bm, sizeof(double3) * numBlocks));
-// 	checkCudaErrors(cudaMemset(d_result_bf, 0, sizeof(double3) * numBlocks));
-// 	checkCudaErrors(cudaMemset(d_result_bm, 0, sizeof(double3) * numBlocks));
-// 	//checkCudaErrors(cudaMemset(result_bm, 0, sizeof(double3)*numBlocks));
-// 	//double3 tmf = thrust::reduce(thrust::device_ptr<double3>(mf), thrust::device_ptr<double3>(mf) +np);
-// 	//unsigned smemSize = sizeof(double3)*(512);
-// 	//int data[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-// 	//int *d_data;
-// 	////checkCudaErrors(cudaMalloc((void**)&d_data, sizeof(int) * 10));
-// 	//checkCudaErrors(cudaMemcpy(d_data, data, sizeof(int) * 10, cudaMemcpyHostToDevice));
-// 	//int* d_rst;
-// 	//checkCudaErrors(cudaMalloc((void**)&d_rst, sizeof(int) * numBlocks));
-// 	//smemSize = sizeof(int) * 256;
-// 	//reduce6<int, 256> << < numBlocks, 10, smemSize >> >(d_data, d_rst, 10);
-// 	//int* h_rst = new int[numBlocks];
-// 	//checkCudaErrors(cudaMemcpy(h_rst, d_rst, sizeof(int)*numBlocks, cudaMemcpyDeviceToHost));
-// // 	reduce6<double3, 512> << < numBlocks, numThreads, smemSize >> >(mf, d_result_bf, np);
-// // 	//reduce6<double3, 256> <<< numBlocks, numThreads, smemSize >>>(mm, result_bm, np);
-// // 	
-// // 	
-// //  	checkCudaErrors(cudaMemcpy(h_result_bf, d_result_bf, sizeof(double3) * numBlocks, cudaMemcpyDeviceToHost));
-// // 	for (unsigned int i = 0; i < numBlocks; i++){
-// // 		_mf.x += h_result_bf[i].x;
-// // 		_mf.y += h_result_bf[i].y;
-// // 		_mf.z += h_result_bf[i].z;
-// // 	}
-//  //	checkCudaErrors(cudaMemset(d_result_bf, 0, sizeof(double3) * numBlocks));
-// //  	reduce6<double3, 512> << < numBlocks, numThreads, smemSize >> >(mm, d_result_bm, np);
-// // 	checkCudaErrors(cudaMemcpy(h_result_bm, d_result_bm, sizeof(double3) * numBlocks, cudaMemcpyDeviceToHost));
-// // 	for (unsigned int i = 0; i < numBlocks; i++){
-// // 		_mm.x += h_result_bm[i].x;
-// // 		_mm.y += h_result_bm[i].y;
-// // 		_mm.z += h_result_bm[i].z;
-// // 	}
-// 	//checkCudaErrors(cudaMemcpy(h_result_bm, result_bm, sizeof(double3) * numBlocks, cudaMemcpyDeviceToHost));
-// 	checkCudaErrors(cudaMemcpy(h_mf, mf, sizeof(double3)*np, cudaMemcpyDeviceToHost));
-// 	for (unsigned int i = 0; i < np; i++){
-// 		_mf += h_mf[i];
-// 	}
-// // 	double3 sum_d = make_double3(0.0, 0.0, 0.0);
-// // 	for (unsigned int i = 0; i < numBlocks; i++){
-// // 		sum_d.x += h_result_bf[i].x;
-// // 		sum_d.y += h_result_bf[i].y;
-// // 		sum_d.z += h_result_bf[i].z;
-// // 	}
-// // 	
-//  	checkCudaErrors(cudaMemcpy(h_mf, mm, sizeof(double3)*np, cudaMemcpyDeviceToHost));
-// 	for (unsigned int i = 0; i < np; i++){
-// 		_mm += h_mf[i];
-// 	}
-// 	
-// // 	for (unsigned int i = 0; i < numBlocks; i++){
-// // 		_mf.x += h_result_bf[i].x;
-// // 		_mf.y += h_result_bf[i].y;
-// // 		//std::cout << _mf.x << std::endl;
-// // 		_mf.z += h_result_bf[i].z;
-// // // 		_mm.x += h_result_bm[i].x;
-// // // 		_mm.y += h_result_bm[i].y;
-// // // 		_mm.z += h_result_bm[i].z;
-// // 	}
-// // 	if (sum_d.y != 0){
-// // 		std::cout << "sum_d = " << sum_d.x << " " << sum_d.y << " " << sum_d.z << std::endl;
-// // 		std::cout << "_mf = " << _mf.x << " " << _mf.y << " " << _mf.z << std::endl;
-// // 	}
-// 	//delete[] h_data;
-// 	delete[] h_mf;
-//  	delete[] h_result_bf;
-//  	delete[] h_result_bm;
-// // 	// 	//delete [] h_force;¤±`1																																			¤Ä{¤²1
-//  	checkCudaErrors(cudaFree(d_result_bf));
-//  	checkCudaErrors(cudaFree(d_result_bm));
+	switch (tcm)
+	{
+	case 0: cylinder_hertzian_contact_force_kernel<0> << < numBlocks, numThreads >> >(
+		cyl, E, pr, G, rest, fric, rfric, (float4 *)pos, (float3 *)vel, (float3 *)omega,
+		(float3 *)force, (float3 *)moment, mass, pE, pPr, pG, mpos, mf, mm);
+		break;
+	}
+	
 }
 
-void cu_particle_polygonObject_collision(device_polygon_info* dpi, double* dsph, device_polygon_mass_info* dpmi, float E, float pr, float rest, float ratio, float fric, float* pos, float* vel, float* omega, float* force, float* moment, float* mass, float pE, float pPr, unsigned int* sorted_index, unsigned int* cstart, unsigned int* cend, unsigned int np, double3* mpos, double3* mf, double3* mm, double3& _mf, double3& _mm)
+void cu_particle_polygonObject_collision(const int tcm, device_polygon_info* dpi, double* dsph, device_polygon_mass_info* dpmi, float E, float pr, float G, float rest, float fric, float rfric, float* pos, float* vel, float* omega, float* force, float* moment, float* mass, float pE, float pPr, float pG, unsigned int* sorted_index, unsigned int* cstart, unsigned int* cend, unsigned int np, double3* mpos, double3* mf, double3* mm, double3& _mf, double3& _mm)
 {
 	computeGridSize(np, 256, numBlocks, numThreads);
-	particle_polygonObject_collision_kernel << < numBlocks, numThreads >> >(
-		dpi,
-		(double4 *)dsph,
-		dpmi,
-		E,
-		pr,
-		rest,
-		ratio,
-		fric,
-		(float4 *)pos,
-		(float3 *)vel,
-		(float3 *)omega,
-		(float3 *)force,
-		(float3 *)moment,
-		mass,
-		pE,
-		pPr,
-		sorted_index,
-		cstart,
-		cend,
-		mpos,
-		mf,
-		mm);
+	switch (tcm)
+	{
+	case 0: particle_polygonObject_collision_kernel<0> << < numBlocks, numThreads >> >(
+		dpi, (double4 *)dsph, dpmi, E, pr, G, rest, fric, rfric,
+		(float4 *)pos, (float3 *)vel, (float3 *)omega, (float3 *)force, (float3 *)moment,
+		mass, pE, pPr, pG, sorted_index, cstart, cend, mpos, mf, mm);
+		break;
+
+	}
+	
 }
 
 double3 reductionD3(double3* in, unsigned int np)

@@ -53,13 +53,7 @@ void neighborhood_cell::detection()
 		sid += value.numIndex();
 	}
 
-	thrust::sort_by_key(cell_id, cell_id + nse/*md->numParticle()*/, body_id);
-// 	std::fstream fs;
-// 	fs.open("C:/C++/cpu_sorted_hash_index.txt", std::ios::out);
-// 	for (unsigned int i = 0; i < nse; i++){
-// 		fs << cell_id[i] << " " << body_id[i] << std::endl;
-// 	}
-// 	fs.close();
+	thrust::sort_by_key(cell_id, cell_id + nse, body_id);
 	memset(cell_start, 0xffffffff, sizeof(unsigned int) * ng);
 	memset(cell_end, 0, sizeof(unsigned int)*ng);
 	unsigned int begin = 0, end = 0, id = 0;

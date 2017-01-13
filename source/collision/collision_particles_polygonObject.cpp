@@ -10,8 +10,13 @@ collision_particles_polygonObject::collision_particles_polygonObject()
 
 }
 
-collision_particles_polygonObject::collision_particles_polygonObject(QString& _name, modeler* _md, particle_system *_ps, polygonObject * _poly)
-	: collision(_name, _md, _ps->name(), _poly->objectName(), PARTICLES_POLYGONOBJECT)
+collision_particles_polygonObject::collision_particles_polygonObject(
+	QString& _name, 
+	modeler* _md, 
+	particle_system *_ps, 
+	polygonObject * _poly, 
+	tContactModel _tcm)
+	: collision(_name, _md, _ps->name(), _poly->objectName(), PARTICLES_POLYGONOBJECT, _tcm)
 	, ps(_ps)
 	, po(_poly)
 {
@@ -45,27 +50,19 @@ bool collision_particles_polygonObject::cuCollid()
 	checkCudaErrors(cudaMemset(mforce, 0, sizeof(double3)*ps->numParticle()));
 	checkCudaErrors(cudaMemset(mmoment, 0, sizeof(double3)*ps->numParticle()));
 
-	cu_particle_polygonObject_collision(po->devicePolygonInfo(), po->deviceSphereSet(), po->deviceMassInfo(), po->youngs(), po->poisson(), rest, rest, fric, ps->cuPosition(), ps->cuVelocity(), ps->cuOmega(), ps->cuForce(), ps->cuMoment(), ps->cuMass(), ps->youngs(), ps->poisson(), gb->cuSortedID(), gb->cuCellStart(), gb->cuCellEnd(), ps->numParticle(), mpos, mforce, mmoment, _mf, _mm);
-// 	double3* h_force = new double3[ps->numParticle()];
-// 	checkCudaErrors(cudaMemcpy(h_force, mforce, sizeof(double3) * ps->numParticle(), cudaMemcpyDeviceToHost));
-// 	std::fstream fs;
-// 	fs.open("C:/C++/h_force_poly.txt", std::ios::out);
-// 	for (unsigned int i = 0; i < ps->numParticle(); i++){
-// 		fs << h_force[i].x << " " << h_force[i].y << " " << h_force[i].z << std::endl;
-// 	}
-// 	fs.close();
-// 	delete [] h_force;
+	switch (tcm)
+	{
+	case HMCM: cu_particle_polygonObject_collision(0, po->devicePolygonInfo(), po->deviceSphereSet(), po->deviceMassInfo(), po->youngs(), po->poisson(), po->shear(), rest, fric, rfric, ps->cuPosition(), ps->cuVelocity(), ps->cuOmega(), ps->cuForce(), ps->cuMoment(), ps->cuMass(), ps->youngs(), ps->poisson(), ps->shear(), gb->cuSortedID(), gb->cuCellStart(), gb->cuCellEnd(), ps->numParticle(), mpos, mforce, mmoment, _mf, _mm); break;
+	}
+	
 	_mf = reductionD3(mforce, ps->numParticle());
 	if (po->pointMass()){
 		po->pointMass()->addCollisionForce(VEC3D(_mf.x, _mf.y, _mf.z));
 	}
-	/*std::cout << "_mm 1 :" << _mm.x << " " << _mm.y << " " << _mm.z << std::endl;*/
 	_mm = reductionD3(mmoment, ps->numParticle());
-	//std::cout << "_mm 2 :" << _mm.x << " " << _mm.y << " " << _mm.z << std::endl;
 	if (po->pointMass()){
 		po->pointMass()->addCollisionMoment(VEC3D(_mm.x, _mm.y, _mm.z));
 	}
-	//std::cout << h_mf->x << " " << h_mf->y << " " << h_mf->z << std::endl;
 	checkCudaErrors(cudaFree(mforce)); mforce = NULL;
 	checkCudaErrors(cudaFree(mmoment)); mmoment = NULL;
 	checkCudaErrors(cudaFree(mpos)); mpos = NULL;

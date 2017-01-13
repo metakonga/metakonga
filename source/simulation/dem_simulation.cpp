@@ -56,34 +56,18 @@ bool dem_simulation::initialize(bool isCpu)
 
 	if (isCpu){
 		gb->allocMemory(md->numParticle() + s_np);
-		foreach(object* value, md->objects())
-		{
-// 			if (value->rolltype() != ROLL_PARTICLE)
-// 			{
-// 				value->setRelativeImpactVelocity(md->numParticle());
-// 			}
-		}
 	}
 	else{
 		
 		gb->cuAllocMemory(md->numParticle() + s_np);
 		md->particleSystem()->cuAllocMemory();
-	//	double maxRad = (double)(md->particleSystem()->maxRadius());
 		foreach(object* value, md->objects())
 		{
 			if (value->rolltype() != ROLL_PARTICLE)
 			{
 				value->cuAllocData(md->numParticle());
 			}
-// 			if (value->objectType() == POLYGON)
-// 			{
-// 				polygonObject* po = dynamic_cast<polygonObject*>(value);
-// 				if (maxRad < po->maxRadius())
-// 					maxRad = po->maxRadius();
-// 			}
 		}
-	//	gb->setCellSize((float)(maxRad * 2.0f));
-		
 		device_parameters paras;
 		paras.np = md->numParticle();
 		paras.nsphere = s_np;

@@ -9,13 +9,19 @@ collision::collision()
 
 }
 
-collision::collision(QString& _name, modeler *_md, QString& o1, QString& o2, tCollisionPair _tp)
+collision::collision(
+	QString& _name, 
+	modeler *_md,
+	QString& o1,
+	QString& o2, 
+	tCollisionPair _tp,
+	tContactModel _tcm)
 	: name(_name)
 	, md(_md)
 	, oname1(o1)
 	, oname2(o2)
 	, coh(0)
-	, tcm(HMCM)
+	, tcm(_tcm)
 	, gb(NULL)
 	, tcp(_tp)
 	, rfric(0)
@@ -84,7 +90,7 @@ float collision::cohesionForce(float ri, float rj, float Ei, float Ej, float pri
 
 void collision::save_collision_data(QTextStream& ts)
 {
-	ts << "COLLISION " << name << " " << rest << " " << fric << " " << rfric << " " << coh << endl;
+	ts << "COLLISION " << name << " " << rest << " " << fric << " " << rfric << " " << tcm << endl;
 	ts << "i_object " << oname1 << endl
 		<< "j_object " << oname2 << endl;
 }

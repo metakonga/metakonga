@@ -32,5 +32,6 @@
         <file>Resources/solve.png</file>
         <file>Resources/spherical.png</file>
         <file>Resources/table.png</file>
+        <file>Resources/ic_HMCM.png</file>
     </qresource>
 </RCC>
