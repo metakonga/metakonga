@@ -1,19 +1,23 @@
 #include "mass.h"
 
 mass::mass()
-	: ms(0.f)
+	: ms(0.0)
 	, id(0)
 	, md(NULL)
+	, vobj(NULL)
+	, vpobj(NULL)
 {
 	ep.e0 = 1.0;
 	
 }
 
 mass::mass(modeler* _md, QString& _name)
-	: ms(0.f)
+	: ms(0.0)
 	, id(0)
 	, md(_md)
 	, nm(_name)
+	, vobj(NULL)
+	, vpobj(NULL)
 {
 	ep.e0 = 1.0;
 	makeTransformationMatrix();
@@ -22,7 +26,6 @@ mass::mass(modeler* _md, QString& _name)
 
 mass::~mass()
 {
-
 }
 
 void mass::makeTransformationMatrix()

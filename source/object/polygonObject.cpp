@@ -215,22 +215,16 @@ void polygonObject::fromMS3DASCII(QTextStream& qs)
 	h_mass->ep = EPD(1.0, 0, 0, 0);
 }
 
-unsigned int polygonObject::makeParticles(float rad, float spacing, bool isOnlyCount, VEC4F_PTR pos /* = NULL */, unsigned int sid)
+unsigned int polygonObject::makeParticles(double rad, VEC3UI &_size, VEC3D& spacing, unsigned int nstack, bool isOnlyCount, VEC4D_PTR pos /* = NULL */, unsigned int sid)
 {
 	return 0;
 }
 
-void polygonObject::save_shape_data(QTextStream& ts) const
+void polygonObject::save_object_data(QTextStream& ts)
 {
-	//QTextStream ts(&(md->modelStream()));
 	bool isExistMass = ms ? true : false;
 	ts << "OBJECT POLYGON " << id << " " << name << " " << roll_type << " " << mat_type << " " << (int)_expression << " " << isExistMass << endl
 		<< filePath << endl;
-// 		<< br << " " << tr << " " << len << endl
-// 		<< org.x << " " << org.y << " " << org.z << endl
-// 		<< bpos.x << " " << bpos.y << " " << bpos.z << endl
-// 		<< tpos.x << " " << tpos.y << " " << tpos.z << endl;
-
 
 	if (isExistMass)
 	{

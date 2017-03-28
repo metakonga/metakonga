@@ -70,13 +70,13 @@ cylinder* cylinderDialog::callDialog(modeler *md)
 	if (isDialogOk)
 	{
 		cy = md->makeCylinder(this->objectName(), tMaterial(CBMaterial.currentIndex()), ROLL_BOUNDARY);
-		float br = LEBaseRadius->text().toFloat();
-		float tr = LETopRadius->text().toFloat();
-		//float len = LELength->text().toFloat();
+		float br = LEBaseRadius->text().toDouble();
+		float tr = LETopRadius->text().toDouble();
+		//float len = LELength->text().toDouble();
 		QStringList chList = LEBasePos->text().split(" ");
-		VEC3F bpos = { chList.at(0).toFloat(), chList.at(1).toFloat(), chList.at(2).toFloat() };
+		VEC3D bpos = { chList.at(0).toDouble(), chList.at(1).toDouble(), chList.at(2).toDouble() };
 		chList = LETopPos->text().split(" ");
-		VEC3F tpos = { chList.at(0).toFloat(), chList.at(1).toFloat(), chList.at(2).toFloat() };
+		VEC3D tpos = { chList.at(0).toDouble(), chList.at(1).toDouble(), chList.at(2).toDouble() };
 		cy->define(br, tr, bpos, tpos);
 	}
 

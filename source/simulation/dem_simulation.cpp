@@ -19,6 +19,7 @@ dem_simulation::dem_simulation(modeler *_md)
 	:simulation(_md)
 	, itor(NULL)
 	, gb(NULL)
+	, paras(NULL)
 {
 	
 }
@@ -27,6 +28,7 @@ dem_simulation::~dem_simulation()
 {
 	if (itor) delete itor; itor = NULL;
 	if (gb) delete gb; gb = NULL;
+	if (paras) delete paras; paras = NULL;
 }
 
 bool dem_simulation::initialize(bool isCpu)
@@ -41,16 +43,16 @@ bool dem_simulation::initialize(bool isCpu)
 	nstep = static_cast<unsigned int>((et / dt) + 1);
 	//QProgressBar *pBar;
 	gb = new neighborhood_cell("detector", md);
-	gb->setWorldOrigin(VEC3F(-1.0f, -1.0f, -1.0f));
+	gb->setWorldOrigin(VEC3D(-1.0, -1.0, -1.0));
 	gb->setGridSize(VEC3UI(128, 128, 128));
-	gb->setCellSize(md->particleSystem()->maxRadius() * 2.0f);
+	gb->setCellSize(md->particleSystem()->maxRadius() * 2.0);
 
 	qDebug() << "- Allocation of contact detection module ------------------ DONE";
 	itor = new velocity_verlet(md);
 	qDebug() << "- Allocation of integration module ------------------------ DONE";
 
 	unsigned int s_np = 0;
-	if (md->objPolygon().size()){
+	if (md->numPoly()){
 		s_np = md->numPolygonSphere();
 	}
 
@@ -58,7 +60,6 @@ bool dem_simulation::initialize(bool isCpu)
 		gb->allocMemory(md->numParticle() + s_np);
 	}
 	else{
-		
 		gb->cuAllocMemory(md->numParticle() + s_np);
 		md->particleSystem()->cuAllocMemory();
 		foreach(object* value, md->objects())
@@ -68,18 +69,29 @@ bool dem_simulation::initialize(bool isCpu)
 				value->cuAllocData(md->numParticle());
 			}
 		}
-		device_parameters paras;
-		paras.np = md->numParticle();
-		paras.nsphere = s_np;
-		paras.dt = dt;
-		paras.cohesion = 0.0f;// 1.0E+6;
-		paras.half2dt = 0.5f * dt * dt;
-		paras.gravity = make_float3(md->gravity().x, md->gravity().y, md->gravity().z);
-		paras.cell_size = grid_base::cs;
-		paras.ncell = gb->nCell();
-		paras.grid_size = make_uint3(grid_base::gs.x, grid_base::gs.y, grid_base::gs.z);
-		paras.world_origin = make_float3(grid_base::wo.x, grid_base::wo.y, grid_base::wo.z);
-		setSymbolicParameter(&paras);
+		foreach(collision* value, md->collisions())
+		{
+			value->allocDeviceMemory();
+		}
+		//device_parameters paras;
+		paras = new device_parameters;
+		if (md->particleSystem()->generationMethod()){
+			paras->np = md->particleSystem()->numParticlePerStack();
+		}
+		else{
+			paras->np = md->numParticle();
+		}
+		//paras->np = ->particleSystem()->numParticlePerStack();// md->numParticle();
+		paras->nsphere = s_np;
+		paras->dt = dt;
+		paras->cohesion = 0.0;// 1.0E+6;
+		paras->half2dt = 0.5 * dt * dt;
+		paras->gravity = make_double3(md->gravity().x, md->gravity().y, md->gravity().z);
+		paras->cell_size = grid_base::cs;
+		paras->ncell = gb->nCell();
+		paras->grid_size = make_uint3(grid_base::gs.x, grid_base::gs.y, grid_base::gs.z);
+		paras->world_origin = make_double3(grid_base::wo.x, grid_base::wo.y, grid_base::wo.z);
+		setSymbolicParameter(paras);
 	}
 	//gb->reorderElements(isCpu);
 	foreach(collision* value, md->collisions())
@@ -94,7 +106,7 @@ bool dem_simulation::initialize(bool isCpu)
 	return true;
 }
 
-bool dem_simulation::saveResult(float ct, unsigned int p)
+bool dem_simulation::saveResult(double ct, unsigned int p)
 {
 	char partName[256] = { 0, };
 	//double radius = 0.0;
@@ -105,14 +117,14 @@ bool dem_simulation::saveResult(float ct, unsigned int p)
 	//of.open(partName, std::ios::out, std::ios::binary);
 	of.open(QIODevice::WriteOnly);
 	of.write((char*)&np, sizeof(unsigned int));
-	of.write((char*)&ct, sizeof(float));
-	of.write((char*)md->particleSystem()->position(), sizeof(VEC4F) * md->numParticle());
-	of.write((char*)md->particleSystem()->velocity(), sizeof(VEC3F) * md->numParticle());
+	of.write((char*)&ct, sizeof(double));
+	of.write((char*)md->particleSystem()->position(), sizeof(VEC4D) * md->numParticle());
+	of.write((char*)md->particleSystem()->velocity(), sizeof(VEC3D) * md->numParticle());
 	of.close();
 	return true;
 }
 
-bool dem_simulation::cuSaveResult(float ct, unsigned int p)
+bool dem_simulation::cuSaveResult(double ct, unsigned int p)
 {
 	char partName[256] = { 0, };
 	//double radius = 0.0;
@@ -120,32 +132,38 @@ bool dem_simulation::cuSaveResult(float ct, unsigned int p)
 	//std::fstream of;
 	QFile of(partName);
 	unsigned int np = md->numParticle();
-	checkCudaErrors(cudaMemcpy(md->particleSystem()->position(), md->particleSystem()->cuPosition(), sizeof(float)*md->numParticle() * 4, cudaMemcpyDeviceToHost));
-	checkCudaErrors(cudaMemcpy(md->particleSystem()->velocity(), md->particleSystem()->cuVelocity(), sizeof(float)*md->numParticle() * 3, cudaMemcpyDeviceToHost));
-	checkCudaErrors(cudaMemcpy(md->particleSystem()->force(), md->particleSystem()->cuForce(), sizeof(float)*md->numParticle() * 3, cudaMemcpyDeviceToHost));
+	//unsigned int snp = md->particleSystem()->numStackParticle();
+	checkCudaErrors(cudaMemcpy(md->particleSystem()->position(), md->particleSystem()->cuPosition(), sizeof(double)*np * 4, cudaMemcpyDeviceToHost));
+	checkCudaErrors(cudaMemcpy(md->particleSystem()->velocity(), md->particleSystem()->cuVelocity(), sizeof(double)*np * 3, cudaMemcpyDeviceToHost));
+	checkCudaErrors(cudaMemcpy(md->particleSystem()->force(), md->particleSystem()->cuForce(), sizeof(double)*np * 3, cudaMemcpyDeviceToHost));
 	of.open(QIODevice::WriteOnly);
 	of.write((char*)&np, sizeof(unsigned int));
-	of.write((char*)&ct, sizeof(float));
-	of.write((char*)md->particleSystem()->position(), sizeof(VEC4F) * md->numParticle());
-	of.write((char*)md->particleSystem()->velocity(), sizeof(VEC3F) * md->numParticle());
-	of.write((char*)md->particleSystem()->force(), sizeof(VEC3F) * md->numParticle());
+	//of.write((char*)&snp, sizeof(unsigned int));
+	of.write((char*)&ct, sizeof(double));
+	of.write((char*)md->particleSystem()->position(), sizeof(VEC4D) * np);
+	of.write((char*)md->particleSystem()->velocity(), sizeof(VEC3D) * np);
+	of.write((char*)md->particleSystem()->force(), sizeof(VEC3D) * np);
 	of.close();
 	return true;
 }
 
-void dem_simulation::collision_dem(float dt)
+void dem_simulation::collision_dem(double dt)
 {
-	md->particleSystem()->particleCollision(dt);
+//	md->particleSystem()->particleCollision(dt);
 
 // 	std::map<std::string, collision*>::iterator c;
 // 	for (c = md->collision_map().begin(); c != md->collision_map().end(); c++){
 // 		c->second->collid(dt);
 // 	}
+	foreach(collision* value, md->collisions())
+	{
+		value->collid(dt);
+	} 
 }
 
 void dem_simulation::cuCollision_dem()
 {
-	md->particleSystem()->cuParticleCollision(gb);
+	//md->particleSystem()->cuParticleCollision();
 	foreach(collision* value, md->collisions())
 	{
 		value->cuCollid();
@@ -159,7 +177,7 @@ bool dem_simulation::cpuRun()
 	unsigned int cStep = 0;
 	unsigned int eachStep = 0;
 	
-	float ct = dt * cStep;
+	double ct = dt * cStep;
 	qDebug() << "-------------------------------------------------------------" << endl
 			 << "| Num. Part | Sim. Time | I. Part | I. Total | Elapsed Time |" << endl
 			 << "-------------------------------------------------------------";
@@ -174,6 +192,8 @@ bool dem_simulation::cpuRun()
 	QTime tme;
 	tme.start();
 	cStep++;	
+// 	std::fstream fs;
+// 	fs.open("C:/C++/presult.txt", std::ios::out);
 	//md->particleSystem()->velocity()[0].x = 1.0f; //initial particles velocity setting 
 	while (cStep < nstep)
 	{
@@ -187,10 +207,9 @@ bool dem_simulation::cpuRun()
 		}
 		//mutex.lock();
 		ct = dt * cStep;
-// 		if (cStep == 20000){
-// 			cStep = 20000;
-// 		}
-		itor->updatePosition(dt);
+
+		md->particleSystem()->clusterUpdatePosition(dt);
+		//itor->updatePosition(dt);
 // 		for (unsigned int i = 0; i < 8; i++)
 // 			ppf << ct << " " << md->particleSystem()->position()[i].x << " " << md->particleSystem()->position()[i].y << " " << md->particleSystem()->position()[i].z;
 		gb->detection();
@@ -198,7 +217,8 @@ bool dem_simulation::cpuRun()
 // 		for (unsigned int i = 0; i < 8; i++)
 // 			ppf << md->particleSystem()->force()[i].x << " " << md->particleSystem()->force()[i].y << " " << md->particleSystem()->force()[i].z;
 // 		ppf << endl;
-		itor->updateVelocity(dt);
+		md->particleSystem()->clusterUpdateVelocity(dt);
+		//itor->updateVelocity(dt);
 		//md->updateObject(dt);
 		if (!((cStep) % step)){
 			//mutex.lock();
@@ -213,17 +233,13 @@ bool dem_simulation::cpuRun()
 		}
 		cStep++;
 		eachStep++;
-		//mutex.unlock();
 	}
-//	pf.close();
 	emit finished();
 	return true;
 }
 
 bool dem_simulation::gpuRun()
 {
-
-
 	unsigned int part = 0;
 	unsigned int cStep = 0;
 	unsigned int eachStep = 0;
@@ -249,17 +265,15 @@ bool dem_simulation::gpuRun()
 			return false;
 		}
 		ct = dt * cStep;
-		//std::cout << "step 1" << std::endl;
+		if (md->particleSystem()->updateStackParticle(ct)){
+			paras->np += md->particleSystem()->numParticlePerStack();// ->numParticle();
+			//gb->cuResizeMemory(paras.np);
+			setSymbolicParameter(paras);
+		}
 		itor->cuUpdatePosition();
-		//std::cout << "step 2" << std::endl;
  		gb->cuDetection();
-		//std::cout << "step 3" << std::endl;
  		cuCollision_dem();
-		//std::cout << "step 4" << std::endl;
  		itor->cuUpdateVelocity();
-		//std::cout << "step 5" << std::endl;
-	//	md->updateObject(dt, GPU);
-		//std::cout << "step 6" << std::endl;
 		if (!((cStep) % step)){
 			part++;
 			emit sendProgress(part);

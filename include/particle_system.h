@@ -3,6 +3,7 @@
 
 #include "mphysics_numeric.h"
 #include "mphysics_types.h"
+#include "particle_cluster.h"
 #include <QTextStream>
 #include <QString>
 #include <QList>
@@ -22,131 +23,149 @@ public:
 
 	void clear();
 	QString& name() { return nm; }
-	VEC4F_PTR position() { return pos; }
-	VEC4F_PTR position() const { return pos; }
-	VEC3F_PTR velocity() { return vel; }
-	VEC3F_PTR velocity() const { return vel; }
-	VEC3F_PTR acceleration() { return acc; }
-	VEC3F_PTR acceleration() const { return acc; }
-	VEC3F_PTR angVelocity() { return omega; }
-	VEC3F_PTR angVelocity() const { return omega; }
-	VEC3F_PTR angAcceleration() { return alpha; }
-	VEC3F_PTR angAcceleration() const { return alpha; }
-	VEC3F_PTR force() { return fr; }
-	VEC3F_PTR force() const { return fr; }
-	VEC3F_PTR moment() { return mm; }
-	VEC3F_PTR moment() const { return mm; }
+	VEC4D_PTR position() { return pos; }
+	VEC4D_PTR ref_position() { return r_pos; }
+	VEC4D_PTR position() const { return pos; }
+	VEC3D_PTR velocity() { return vel; }
+	VEC3D_PTR velocity() const { return vel; }
+	VEC3D_PTR acceleration() { return acc; }
+	VEC3D_PTR acceleration() const { return acc; }
+	VEC3D_PTR angVelocity() { return omega; }
+	VEC3D_PTR angVelocity() const { return omega; }
+	VEC3D_PTR angAcceleration() { return alpha; }
+	VEC3D_PTR angAcceleration() const { return alpha; }
+	VEC3D_PTR force() { return fr; }
+	VEC3D_PTR force() const { return fr; }
+	VEC3D_PTR moment() { return mm; }
+	VEC3D_PTR moment() const { return mm; }
 	unsigned int* pairRIV() { return pair_riv; }
-	float* relativeImpactVelocity() { return riv; }
-	float* mass() { return ms; }
-	float* mass() const { return ms; }
-	float* inertia() { return iner; }
-	float* inertia() const { return iner; }
-	//float* radius() { return rad; }
-	//float* radius() const { return rad; }
-	float maxRadius() { return max_r; }
-	float maxRadius() const { return max_r; }
+	double* relativeImpactVelocity() { return riv; }
+	double* mass() { return ms; }
+	double* mass() const { return ms; }
+	double* inertia() { return iner; }
+	double* inertia() const { return iner; }
+	//double* radius() { return rad; }
+	//double* radius() const { return rad; }
+	double maxRadius() { return max_r; }
+	double maxRadius() const { return max_r; }
 
-	float* cuPosition() { return d_pos; }
-	float* cuVelocity() { return d_vel; }
-	float* cuAcceleration() { return d_acc; }
-	float* cuOmega() { return d_omega; }
-	float* cuAlpha() { return d_alpha; }
-	float* cuForce() { return d_fr; }
-	float* cuMoment() { return d_mm; }
-	//float* cuRadius() { return d_rad; }
-	float* cuMass() { return d_ms; }
-	float* cuInertia() { return d_iner; }
+	double* cuPosition() { return d_pos; }
+	double* cuVelocity() { return d_vel; }
+	double* cuAcceleration() { return d_acc; }
+	double* cuOmega() { return d_omega; }
+	double* cuAlpha() { return d_alpha; }
+	double* cuForce() { return d_fr; }
+	double* cuMoment() { return d_mm; }
+	//double* cuRadius() { return d_rad; }
+	double* cuMass() { return d_ms; }
+	double* cuInertia() { return d_iner; }
 
-	float density() { return rho; }
-	float density() const { return rho; }
-	float youngs() { return E; }
-	float youngs() const { return E; }
-	float poisson() { return pr; }
-	float poisson() const { return pr; }
-	float restitution() { return rest; }
-	float restitution() const { return rest; }
-	float stiffRatio() { return sratio; }
-	float stiffRatio() const { return sratio; }
-	float friction() { return fric; }
-	float friction() const { return fric; }
-	float shear() const { return sh; }
+	double density() { return rho; }
+	double density() const { return rho; }
+	double youngs() { return E; }
+	double youngs() const { return E; }
+	double poisson() { return pr; }
+	double poisson() const { return pr; }
+	///double restitution() { return rest; }
+	///double restitution() const { return rest; }
+	//double stiffRatio() { return sratio; }
+	//double stiffRatio() const { return sratio; }
+	////double friction() { return fric; }
+	//double friction() const { return fric; }
+	double shear() const { return sh; }
+	//double cohesion() const { return coh; }
 
-	void setPosition(float* vpos);
-	void setVelocity(float* vvel);
-	bool makeParticles(object *obj, float spacing, float _rad);
-	void setCollision(float _rest, float _fric, float _rfric, float _sh);
-	void addCollision(collision* c) { cs.push_back(c); }
+	void setPosition(double* vpos);
+	void setVelocity(double* vvel);
+	//void setCohesion(double _coh) { coh = _coh; }
+	//void setStiffnessRatio(double _ratio) { sratio = _ratio; }
+	bool makeParticles(object *obj, VEC3UI size, VEC3D spacing, double _rad, unsigned int nstack);
+	//void setCollision(double _rest, double _fric, double _rfric, double _sh, double _ratio);
+	//void addCollision(collision* c) { cs.push_back(c); }
 	void allocMemory(unsigned int _np);
 	void resizeMemory(unsigned int _np);
+	void resizeMemoryForStack(unsigned int _np);
+	//void resizeCudaMemory(unsigned int _np);
+	bool updateStackParticle(double ct, tSolveDevice tDev = CPU);
 	void cuAllocMemory();
 	unsigned int numParticle() { return np; }
 	unsigned int numParticle() const { return np; }
+	//unsigned int numStackParticle() { return total_stack_particle; }
+	unsigned int numParticlePerStack() { return npPerStack; }
 	tObject objectType() { return ot; }
 	QString baseObject() { return bo; }
+	tGenerationParticleMethod generationMethod() { return tGenParticle; }
 
-	bool particleCollision(float dt);
-	void cuParticleCollision(grid_base* gb);
+	//bool particleCollision(double dt);
+	//void cuParticleCollision();
 	modeler* getModeler() { return md; }
 	modeler* getModeler() const { return md; }
 	bool isMemoryAlloc() { return _isMemoryAlloc; }
-	void addParticles(object* obj);
+	void addParticles(object* obj, VEC3UI size);
 
 	void saveParticleSystem(QFile& oss);
-	void setParticlesFromFile(QString& pfile, QString& _bo, unsigned int np, float _rho, float _E, float _pr, float _sh);
-	void changeParticlesFromVP(float* _pos);
+	void setParticlesFromFile(QString& pfile, QString& _bo, unsigned int np, double _rho, double _E, double _pr, double _sh);
+	void setGenerationMethod(tGenerationParticleMethod t_gpm, unsigned int _nStack, double _stack_dt, unsigned int _pstack) { tGenParticle = t_gpm; nStack = _nStack; stack_dt = _stack_dt; npPerStack = _pstack; }
+	void changeParticlesFromVP(double* _pos);
+	particle_cluster* particleClusters(unsigned int id) { return &(pc[id]); }
+	void clusterUpdatePosition(double dt);
+	void clusterUpdateVelocity(double dt);
+	particle_cluster* getParticleClusterFromParticleID(unsigned int id) { return &(pc[cid[id]]); }
 
 private:
 	bool _isMemoryAlloc;
 	QString nm;
 	QString bo;					// base object
 	unsigned int np;
-	float max_r;				// max radius
+	double max_r;				// max radius
 
-	//VEC3F_PTR pos = NULL;
-	VEC4F_PTR pos = NULL;
-	VEC3F_PTR vel = NULL;
-	VEC3F_PTR acc = NULL;
-	VEC3F_PTR omega = NULL;
-	VEC3F_PTR alpha = NULL;
-	VEC3F_PTR fr = NULL;
-	VEC3F_PTR mm = NULL;
-	float* ms = NULL;
-	float* iner = NULL;
+	//VEC3D_PTR pos = NULL;
+	VEC4D_PTR pos = NULL;
+	VEC4D_PTR r_pos = NULL;
+	VEC3D_PTR vel = NULL;
+	VEC3D_PTR acc = NULL;
+	VEC3D_PTR omega = NULL;
+	VEC3D_PTR alpha = NULL;
+	VEC3D_PTR fr = NULL;
+	VEC3D_PTR mm = NULL;
+	unsigned int *cid = NULL;
+	double* ms = NULL;
+	double* iner = NULL;
 	unsigned int* pair_riv = NULL;
-	float* riv = NULL;			// relative impact velocity
-	//float* rad = NULL;
+	double* riv = NULL;			// relative impact velocity
+	//double* rad = NULL;
 
-	float* d_pos = NULL;
-	float* d_vel = NULL;
-	float* d_acc = NULL;
-	float* d_omega = NULL;
-	float* d_alpha = NULL;
-	float* d_fr = NULL;
-	float* d_mm = NULL;
-	float* d_ms = NULL;
-	float* d_iner = NULL;
-	float* d_riv = NULL;
+	double* d_pos = NULL;
+	double* d_vel = NULL;
+	double* d_acc = NULL;
+	double* d_omega = NULL;
+	double* d_alpha = NULL;
+	double* d_fr = NULL;
+	double* d_mm = NULL;
+	double* d_ms = NULL;
+	double* d_iner = NULL;
+	double* d_riv = NULL;
 	unsigned int* d_pair_riv = NULL;
-	//float* d_rad = NULL;
+	//double* d_rad = NULL;
 
-	float rho;
-	float E;
-	float pr;
-	float sh;		//shear modulus
+	particle_cluster* pc;				// particle clusters
 
-	float rest;
-	float sratio;
-	float fric;
-	float rfric;
-	float coh;
+	double rho;
+	double E;
+	double pr;
+	double sh;		//shear modulus
 
-	float isc; // initial spacing
+	VEC3D isc; // initial spacing
+	VEC3UI genParticleSize;
 
 	tObject ot;					// object type
+	tGenerationParticleMethod tGenParticle;
+	unsigned int nStack;
+	unsigned int cStack;
+	unsigned int npPerStack;
+	double last_stack_time;
+	double stack_dt;
 
-	collision *c_p2p;
-	QList<collision*> cs;
 	modeler *md;
 };
 

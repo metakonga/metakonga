@@ -1,6 +1,8 @@
 #include "vpolygon.h"
 #include "vcontroller.h"
 
+int vpolygon::pcnt = 1000;
+
 vpolygon::vpolygon()
 	//: vglew()
 	: vertice(NULL)
@@ -14,7 +16,7 @@ vpolygon::vpolygon()
 	, m_index_vbo(0)
 	, m_vertex_vbo(0)
 {
-
+	id = pcnt++;
 }
 
 vpolygon::vpolygon(QString& _name)
@@ -29,8 +31,9 @@ vpolygon::vpolygon(QString& _name)
 	, nindex(0)
 	, m_index_vbo(0)
 	, m_vertex_vbo(0)
+	, nm(_name)
 {
-
+	id = pcnt++;
 }
 
 vpolygon::~vpolygon()
@@ -121,6 +124,7 @@ bool vpolygon::define(VEC3D org, host_polygon_info* hpi, VEC4D* _sphere, VEC3D* 
 
 void vpolygon::draw(GLenum eMode)
 {
+	if (eMode == GL_SELECT) glLoadName((GLuint)ID());
 	glPushMatrix();
 	if (vcontroller::getFrame() && outPos && outRot)
 	{
@@ -145,7 +149,7 @@ void vpolygon::draw(GLenum eMode)
 		glRotated(ang[2], 0, 0, 1);
 	}
 	
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertex_vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_vbo);
 
@@ -176,7 +180,7 @@ void vpolygon::draw(GLenum eMode)
 // 		}
 	}
 	glPopMatrix();
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//mmglPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void vpolygon::setResultData(unsigned int n)

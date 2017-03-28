@@ -82,11 +82,14 @@ public:
 			,a20+m.a20, a21+m.a21, a22+m.a22);
 	}
 
-	matrix3x3 operator* (matrix3x3 const& m)
+	
+
+	matrix3x3 t()
 	{
-		return matrix3x3(a00*m.a00 + a01*m.a10 + a02*m.a20, a00*m.a01 + a01*m.a11 + a02*m.a21, a00*m.a02 + a01*m.a12 + a02*m.a22
-			,a10*m.a00 + a11*m.a10 + a12*m.a20, a10*m.a01 + a11*m.a11 + a12*m.a21, a10*m.a02 + a11*m.a12 + a12*m.a22
-			,a20*m.a00 + a21*m.a10 + a22*m.a20, a20*m.a01 + a21*m.a11 + a22*m.a21, a20*m.a02 + a21*m.a12 + a22*m.a22);
+		return matrix3x3(
+			a00, a10, a20,
+			a01, a11, a21,
+			a02, a12, a22);
 	}
 
 public:
@@ -133,10 +136,10 @@ std::ostream& operator<<(std::ostream& os, matrix3x3<T>& v)
 	return os;
 }
 
-template <typename T2, typename T>
-inline matrix3x3<T> operator*( T2 s, matrix3x3<T>& m )  { return matrix3x3<T>( m(0)*s, m(1)*s, m(2)*s
-																			  , m(3)*s, m(4)*s, m(5)*s
-																			  , m(6)*s, m(7)*s, m(8)*s); }
+// template <typename T2, typename T>
+// inline matrix3x3<T> operator*( T2 s, matrix3x3<T>& m )  { return matrix3x3<T>( m(0)*s, m(1)*s, m(2)*s
+// 																			  , m(3)*s, m(4)*s, m(5)*s
+// 																			  , m(6)*s, m(7)*s, m(8)*s); }
 template <typename T2, typename T>
 inline matrix3x3<T> operator/( matrix3x3<T>& m, T2 s )  { return matrix3x3<T>( m(0)/s, m(1)/s, m(2)/s
 																			  , m(3)/s, m(4)/s, m(5)/s

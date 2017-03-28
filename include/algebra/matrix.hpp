@@ -105,15 +105,18 @@ namespace algebra
 
 		void display()
 		{
+			fstream fs;
+			fs.open("C:/C++/mat.txt", ios::out);
 			cout << endl;
 			ios::right;
 			for(size_t i(0); i < nrow; i++){
 				for(size_t j(0); j < ncol; j++){
-					cout << setprecision(18) << setw(26) << elements[j * nrow + i];
+					fs/*cout*/ << setprecision(18) << setw(26) << elements[j * nrow + i];
 				}
-				cout << endl;
+				fs << endl;
 			}
-			cout << endl;
+			fs << endl;
+			fs.close();
 		}
 
 		void plus(size_t sr, size_t sc, element_t* ptr, int type)

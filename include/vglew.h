@@ -4,8 +4,9 @@
 #ifndef QT_OPENGL_ES_2
 #include <gl/glew.h>
 //#include <gl/freeglut.h>
-#include <gl/glu.h>
+//#include <gl/glu.h>
 #endif
+//#include <QGLWidget>
 
 #include "mphysics_types.h"
 #include "mphysics_numeric.h"

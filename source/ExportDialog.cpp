@@ -95,12 +95,12 @@ void ExportDialog::Click_ok()
 		io.open(QIODevice::ReadOnly);
 		io.read((char*)&n, sizeof(unsigned int));
 		io.read((char*)&time, sizeof(float));
-		float* p = new float[n * 4];
-		float* v = new float[n * 3];
+		double* p = new double[n * 4];
+		double* v = new double[n * 3];
 		//float* f = new float[n * 3];
 		//float* m = new float[n * 3];
-		io.read((char*)p, sizeof(float)*n * 4);
-		io.read((char*)v, sizeof(float)*n * 3);
+		io.read((char*)p, sizeof(double)*n * 4);
+		io.read((char*)v, sizeof(double)*n * 3);
 		//io.read((char*)f, sizeof(float)*n * 3);
 		//io.read((char*)m, sizeof(float)*n * 3);
 		for (unsigned int i = 0; i < n; i++){

@@ -52,9 +52,9 @@ bool solveDialog::callDialog()
 	this->exec();
 	
 	if (isDialogOk){
-		simTime = LESimTime->text().toFloat();
-		timeStep = LETimeStep->text().toFloat();
-		saveStep = LESaveStep->text().toFloat();
+		simTime = LESimTime->text().toDouble();
+		timeStep = LETimeStep->text().toDouble();
+		saveStep = LESaveStep->text().toDouble();
 		isCpu = RBCpu->isChecked();
 	}
 
@@ -77,7 +77,7 @@ void solveDialog::Click_Solve()
 // 				Object::msgBox("World origin is wrong data.", QMessageBox::Critical);
 // 				return;
 // 			}
-// 	worldOrigin.x = ss.at(0).toFloat(); worldOrigin.y = ss.at(1).toFloat(); worldOrigin.z = ss.at(2).toFloat();
+// 	worldOrigin.x = ss.at(0).toDouble(); worldOrigin.y = ss.at(1).toDouble(); worldOrigin.z = ss.at(2).toDouble();
 // 
 // 	if (LEGridSize->text().split(",").size() == 3)
 // 		ss = LEGridSize->text().split(",");

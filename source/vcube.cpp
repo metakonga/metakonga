@@ -75,12 +75,16 @@ bool vcube::makeCubeGeometry(QString& _name, tRoll _tr, tMaterial _tm, VEC3F& _m
 void vcube::draw(GLenum eMode)
 {
 	if (display){
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glPushMatrix();
 		glDisable(GL_LIGHTING);
-		if (eMode == GL_SELECT) glLoadName((GLuint)ID());
+
+		if (eMode == GL_SELECT){
+			glLoadName((GLuint)ID());
+		}
+
 		glCallList(glList);
 		glPopMatrix();
+		glEnable(GL_LIGHTING);
 	}
 }
 

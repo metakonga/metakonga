@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>331</width>
-    <height>332</height>
+    <width>332</width>
+    <height>386</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Hertz-Mindlin Contact Model</string>
+   <string>Contact Definition Dialog</string>
   </property>
   <property name="modal">
    <bool>true</bool>
@@ -28,7 +28,7 @@
    <property name="title">
     <string>Contact elements</string>
    </property>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>11</x>
@@ -74,13 +74,6 @@
      </item>
     </layout>
    </widget>
-   <zorder></zorder>
-   <zorder></zorder>
-   <zorder></zorder>
-   <zorder></zorder>
-   <zorder>LName</zorder>
-   <zorder>LEName</zorder>
-   <zorder></zorder>
   </widget>
   <widget class="QGroupBox" name="GBContactParameter">
    <property name="geometry">
@@ -88,7 +81,7 @@
      <x>10</x>
      <y>130</y>
      <width>311</width>
-     <height>161</height>
+     <height>211</height>
     </rect>
    </property>
    <property name="title">
@@ -107,7 +100,7 @@
      <string>Enable cohesion</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -153,12 +146,71 @@
      </item>
     </layout>
    </widget>
+   <widget class="QLabel" name="LCohesion">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>132</y>
+      <width>71</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Cohesion</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="LECohesion">
+    <property name="geometry">
+     <rect>
+      <x>95</x>
+      <y>130</y>
+      <width>202</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="CHBUSESTIFFNESSRATIO">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>160</y>
+      <width>131</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Use stiffness ratio</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="LRatio">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>185</y>
+      <width>71</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Ratio</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="LERatio">
+    <property name="geometry">
+     <rect>
+      <x>94</x>
+      <y>182</y>
+      <width>202</width>
+      <height>20</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>160</x>
-     <y>300</y>
+     <y>350</y>
      <width>158</width>
      <height>25</height>
     </rect>
@@ -181,6 +233,20 @@
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>LEName</tabstop>
+  <tabstop>CBFirstObject</tabstop>
+  <tabstop>CBSecondObject</tabstop>
+  <tabstop>LERestitution</tabstop>
+  <tabstop>LEFriction</tabstop>
+  <tabstop>LERollingFriction</tabstop>
+  <tabstop>CHBEableCohesion</tabstop>
+  <tabstop>LECohesion</tabstop>
+  <tabstop>CHBUSESTIFFNESSRATIO</tabstop>
+  <tabstop>LERatio</tabstop>
+  <tabstop>PBOk</tabstop>
+  <tabstop>PBCancle</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

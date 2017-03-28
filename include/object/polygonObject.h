@@ -19,13 +19,13 @@ public:
 	polygonObject(const polygonObject& _poly);
 	virtual ~polygonObject();
 
-	virtual unsigned int makeParticles(float rad, float spacing, bool isOnlyCount, VEC4F_PTR pos = NULL, unsigned int sid = 0);
+	virtual unsigned int makeParticles(double rad, VEC3UI &_size, VEC3D& spacing, unsigned int nstack, bool isOnlyCount, VEC4D_PTR pos = NULL, unsigned int sid = 0);
 	virtual void cuAllocData(unsigned int _np);
-	virtual void updateMotion(float t, tSolveDevice tsd){}
+	virtual void updateMotion(double t, tSolveDevice tsd){}
 	virtual void updateFromMass();
 	void updateDeviceFromHost();
 
-	void save_shape_data(QTextStream& ts) const;
+	virtual void save_object_data(QTextStream& ts);
 	bool define(tImport tm, QTextStream& file);
 
 	QString meshDataFile() const { return filePath; }

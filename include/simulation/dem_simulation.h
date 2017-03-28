@@ -5,6 +5,8 @@
 #include "neighborhood_cell.h"
 #include "velocity_verlet.h"
 
+struct device_parameters;
+
 class dem_simulation : public simulation
 {
 public:
@@ -13,16 +15,16 @@ public:
 	virtual ~dem_simulation();
 
 	virtual bool initialize(bool isCpu);
-	bool saveResult(float ct, unsigned int p);
-	bool cuSaveResult(float ct, unsigned int p);
+	bool saveResult(double ct, unsigned int p);
+	bool cuSaveResult(double ct, unsigned int p);
 	velocity_verlet* getIterator() { return itor; }
 	neighborhood_cell* getNeighborhood() { return gb; }
 
 private:
-	
-	void collision_dem(float dt);
+	void collision_dem(double dt);
 	void cuCollision_dem();
 
+	device_parameters* paras;
 	neighborhood_cell *gb;
 	velocity_verlet *itor;
 

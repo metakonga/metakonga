@@ -1,7 +1,8 @@
 #ifndef MASS_H
 #define MASS_H
 
-//#include "object.h"
+#include "vobject.h"
+#include "vpolygon.h"
 #include "mphysics_numeric.h"
 #include <QTextStream>
 
@@ -17,7 +18,7 @@ public:
 
 	int ID() { return id; }
 	QString& name(){ return nm; }
-	float getMass() { return ms; }
+	double getMass() { return ms; }
 	MAT33D getInertia() { return inertia; }
 	VEC3D getPosition() { return pos; }
 	EPD getEP() { return ep; }
@@ -34,7 +35,7 @@ public:
 
 	void setID(int _id) { id = _id; }
 	//void setName(QString _n)
-	void setMass(float _ms) { ms = _ms; }
+	void setMass(double _ms) { ms = _ms; }
 	void setMassPoint(VEC3D _mp) { pos = _mp; }
 	void setSymIner(VEC3D _si) { sym_iner = _si; }
 	void setPrinIner(VEC3D _pi) { prin_iner = _pi; }
@@ -60,10 +61,18 @@ public:
 	VEC3D toLocal(VEC3D &v);
 	VEC3D toGlobal(VEC3D &v);
 
+	void setBaseGeometryType(tObject _tobj) { baseGeometryType = _tobj; }
+	void setGeometryObject(vobject* _vobj) { vobj = _vobj; }
+	void setPolyGeometryObject(vpolygon* _vpobj) { vpobj = _vpobj; }
+	tObject getBaseGeometryType() { return baseGeometryType; }
+	vobject* getGeometryObject() { return vobj; }
+	vpolygon* getPolyGeometryObject() { return vpobj; }
+
 private:
+	tObject baseGeometryType;
 	QString nm;
 	int id;
-	float ms;				// mass of object
+	double ms;				// mass of object
 	VEC3D sym_iner;			// Ixx, Iyy, Izz
 	VEC3D prin_iner;		// Ixy, Ixz, Iyz
 	MAT33D inertia;
@@ -83,7 +92,8 @@ private:
 	MAT33D A;				// transformation matrix	
 
 	modeler *md;			// pointer of modeler
-	
+	vobject* vobj;
+	vpolygon* vpobj;
 	//object* obj;
 };
 

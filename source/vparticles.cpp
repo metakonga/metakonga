@@ -30,6 +30,7 @@ vparticles::vparticles()
 	, force(NULL)
 	, color(NULL)
 	, isSphParticle(false)
+	, pscale(0)
 {
 	m_posVBO = 0;
 	m_colorVBO = 0;
@@ -48,6 +49,7 @@ vparticles::vparticles(particle_system* _ps)
 	, vel(NULL)
 	, force(NULL)
 	, isSphParticle(false)
+	, pscale(0)
 {
 	m_posVBO = 0;
 	m_colorVBO = 0;
@@ -78,25 +80,25 @@ void vparticles::settingSphParticles(unsigned int _np, QString file)
 	np = _np;
 	//np = ps->numParticle();
 	char v;
-	pos = new float[np * 4];
-	color = new float[np * 4];
+	pos = new double[np * 4];
+	color = new double[np * 4];
 	//ps->setPosition(pos);
 	QFile pf(file);
 	float* v3 = new float[3];
-	float pressure = 0.f;
+	float pressure = 0.0;
 	bool isFS = false;
 	pf.open(QIODevice::ReadOnly);
-	float maxPressure = 1800.f;
+	double maxPressure = 1800.0;
 	bool* fs = new bool[np];
 	char* ptype = new char[np];
-	float* presses = new float[np];
+	double* presses = new double[np];
 	for (unsigned int i = 0; i < np; i++){
 		pf.read((char*)&v, sizeof(char));
 		ptype[i] = v;
 		pf.read((char*)v3, sizeof(float) * 3);
-		pos[i * 4 + 0] = v3[0];
-		pos[i * 4 + 1] = v3[1];
-		pos[i * 4 + 2] = v3[2];
+		pos[i * 4 + 0] = (double)v3[0];
+		pos[i * 4 + 1] = (double)v3[1];
+		pos[i * 4 + 2] = (double)v3[2];
 		pos[i * 4 + 3] = 0.0005f;
 		if (v == 'f')
 		{
@@ -121,7 +123,7 @@ void vparticles::settingSphParticles(unsigned int _np, QString file)
 		}
 		pf.read((char*)v3, sizeof(float) * 3);
 		pf.read((char*)&pressure, sizeof(float));
-		presses[i] = pressure;
+		presses[i] = (double)pressure;
 		if (maxPressure < pressure)
 			maxPressure = pressure;
 		pf.read((char*)&isFS, sizeof(bool));
@@ -134,8 +136,8 @@ void vparticles::settingSphParticles(unsigned int _np, QString file)
 // 			color[i * 4 + 3] = 1.0f;
 // 		}
 	}
-	float grad = maxPressure * 0.1f;
-	float t = 0.f;
+	double grad = maxPressure * 0.1f;
+	double t = 0.f;
 	for (unsigned int i = 0; i < np; i++){
 		if (fs[i])
 		{
@@ -173,13 +175,13 @@ void vparticles::settingSphParticles(unsigned int _np, QString file)
 		glDeleteBuffers(1, &m_colorVBO);
 		m_colorVBO = 0;
 	}
-	unsigned int memSize = sizeof(float) * 4 * np;
+	unsigned int memSize = sizeof(double) * 4 * np;
 	buffer = pos;
 	color_buffer = color;
 	if (!m_posVBO)
-		m_posVBO = vglew::createVBO<float>(memSize, buffer);
+		m_posVBO = vglew::createVBO<double>(memSize, buffer);
 	if (!m_colorVBO)
-		m_colorVBO = vglew::createVBO<float>(memSize, color_buffer);
+		m_colorVBO = vglew::createVBO<double>(memSize, color_buffer);
 
 	if (!m_program)
 		m_program = _compileProgram(vertexShader, spherePixelShader);
@@ -191,23 +193,23 @@ void vparticles::settingSphParticles(unsigned int _np, QString file)
 void vparticles::openResultFromFile_SPH(unsigned int idx)
 {
 	char v;
-	float* v3 = new float[3];
-	float pressure = 0.f;
+	double* v3 = new double[3];
+	double pressure = 0.f;
 	bool isFS = false;
-	float maxPressure = 0.f;
+	double maxPressure = 0.f;
 	bool* fs = new bool[np];
 	char* ptype = new char[np];
-	float* presses = new float[np];
+	double* presses = new double[np];
 	QFile pf(rList.at(vcontroller::getFrame()));
 	pf.open(QIODevice::ReadOnly);
 	for (unsigned int i = 0; i < np; i++){
 		pf.read((char*)&v, sizeof(char));
 		ptype[i] = v;
-		pf.read((char*)v3, sizeof(float) * 3);
+		pf.read((char*)v3, sizeof(double) * 3);
 		pos[i * 4 + 0] = v3[0];
 		pos[i * 4 + 1] = v3[1];
 		pos[i * 4 + 2] = v3[2];
-		pos[i * 4 + 3] = 0.00125f;
+		pos[i * 4 + 3] = 0.00125;
 		if (v == 'f')
 		{
 			color[i * 4 + 0] = 0.0f;
@@ -229,8 +231,8 @@ void vparticles::openResultFromFile_SPH(unsigned int idx)
 			color[i * 4 + 2] = 0.0f;
 			color[i * 4 + 3] = 1.0f;
 		}
-		pf.read((char*)v3, sizeof(float) * 3);
-		pf.read((char*)&pressure, sizeof(float));
+		pf.read((char*)v3, sizeof(double) * 3);
+		pf.read((char*)&pressure, sizeof(double));
 		presses[i] = pressure;
 		if (maxPressure < pressure)
 			maxPressure = pressure;
@@ -245,8 +247,8 @@ void vparticles::openResultFromFile_SPH(unsigned int idx)
 // 			color[i * 4 + 3] = 1.0f;
 // 		}
 	}
-	float grad = maxPressure * 0.1f;
-	float t = 0.f;
+	double grad = maxPressure * 0.1f;
+	double t = 0.f;
 	for (unsigned int i = 0; i < np; i++){
 		/*if (maxPressure < )*/
 		if (fs[i])
@@ -272,7 +274,7 @@ void vparticles::openResultFromFile_SPH(unsigned int idx)
 	pf.close();
 }
 
-void vparticles::draw(GLenum eModem, int wHeight)
+void vparticles::draw(GLenum eModem, int wHeight, int protype)
 {
 	if (rList.size()){
 		if(isSphParticle)
@@ -291,7 +293,22 @@ void vparticles::draw(GLenum eModem, int wHeight)
 	glEnable(GL_DEPTH_TEST);
 	
 	glUseProgram(m_program);
-	glUniform1f(glGetUniformLocation(m_program, "pointScale"), (wHeight) / tanf(55 * 0.5f*(float)M_PI / 180.0f));
+	float projFactor = 0.f;
+	if (!protype){
+		float fTmp1[16] = { 0.f, };
+		glGetFloatv(GL_MODELVIEW_MATRIX, fTmp1);
+		pscale = wHeight*1.74;
+		glUniform1f(glGetUniformLocation(m_program, "orthoDist"), abs(fTmp1[14]));
+		projFactor = 10.f;
+	}
+	else{
+		pscale = (wHeight) / tanf(60 * 0.5*M_PI / 180.0);		
+	}
+	//float ptype = 100.f;
+	glUniform1f(glGetUniformLocation(m_program, "isOrgho"), projFactor);
+	//glUniform1f(glGetUniformLocation(m_program, "pointScale"), (wHeight) / tanf(60 * 0.5*M_PI / 180.0));
+	glUniform1f(glGetUniformLocation(m_program, "pointScale"), pscale);
+	//glUniform1f(glGetUniformLocation(m_program, "orthoDist"), abs(fTmp1[14]));
 
 	_drawPoints();
 
@@ -302,19 +319,19 @@ void vparticles::draw(GLenum eModem, int wHeight)
 
 void vparticles::_drawPoints()
 {
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	if (m_posVBO)
 	{
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_posVBO);
-		glVertexPointer(4, GL_FLOAT, 0, 0);
+		glVertexPointer(4, GL_DOUBLE, 0, 0);
 		glEnableClientState(GL_VERTEX_ARRAY);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)*np * 4, buffer);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLdouble)*np * 4, buffer);
 		if (m_colorVBO)
 		{
 			glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_colorVBO);
-			glColorPointer(4, GL_FLOAT, 0, 0);
+			glColorPointer(4, GL_DOUBLE, 0, 0);
 			glEnableClientState(GL_COLOR_ARRAY);
-			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)*np * 4, color_buffer);
+			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLdouble)*np * 4, color_buffer);
 			
 		}
 
@@ -329,10 +346,10 @@ void vparticles::_drawPoints()
 bool vparticles::define()
 {
 	np = ps->numParticle();
-	if (!pos) pos = new float[np * 4];
-	if (!vel) vel = new float[np * 3];
-	if (!force) force = new float[np * 3];
-	if (!color) color = new float[np * 4];
+	if (!pos) pos = new double[np * 4];
+	if (!vel) vel = new double[np * 3];
+	if (!force) force = new double[np * 3];
+	if (!color) color = new double[np * 4];
 	ps->setPosition(pos);
 	for (unsigned int i = 0; i < np; i++){
 		color[i * 4 + 0] = 0.0f;
@@ -355,13 +372,13 @@ bool vparticles::define()
 		glDeleteBuffers(1, &m_colorVBO);
 		m_colorVBO = 0;
 	}
-	unsigned int memSize = sizeof(float) * 4 * np;
+	unsigned int memSize = sizeof(double) * 4 * np;
 	buffer = pos;
 	color_buffer = color;
 	if (!m_posVBO) 
-		m_posVBO = vglew::createVBO<float>(memSize, buffer);
+		m_posVBO = vglew::createVBO<double>(memSize, buffer);
 	if (!m_colorVBO)
-		m_colorVBO = vglew::createVBO<float>(memSize, color_buffer);
+		m_colorVBO = vglew::createVBO<double>(memSize, color_buffer);
 
 	if (!m_program)
 		m_program = _compileProgram(vertexShader, spherePixelShader);
@@ -371,15 +388,15 @@ bool vparticles::define()
 
 void vparticles::resizeMemory()
 {
-	float* tv4 = new float[np * 4];
-	float* tv3 = new float[np * 3];
+	double* tv4 = new double[np * 4];
+	double* tv3 = new double[np * 3];
 	unsigned int new_np = ps->numParticle();
-	memcpy(tv4, pos, sizeof(float) * np * 4); 
-	delete[] pos; 
-	pos = new float[new_np * 4]; memcpy(pos, tv4, sizeof(float) * np * 4);
-	memcpy(tv3, vel, sizeof(float) * np * 3); delete[] vel; vel = new float[new_np * 3]; memcpy(vel, tv3, sizeof(float) * np * 3);
-	memcpy(tv3, force, sizeof(float) * np * 3); delete[] force; force = new float[new_np * 3]; memcpy(force, tv3, sizeof(float) * np * 3);
-	memcpy(tv4, color, sizeof(float) * np * 4); delete[] color; color = new float[new_np * 4]; memcpy(color, tv4, sizeof(float) * np * 4);
+	memcpy(tv4, pos, sizeof(double) * np * 4);
+	delete[] pos;
+	pos = new double[new_np * 4]; memcpy(pos, tv4, sizeof(double) * np * 4);
+	memcpy(tv3, vel, sizeof(double) * np * 3); delete[] vel; vel = new double[new_np * 3]; memcpy(vel, tv3, sizeof(double) * np * 3);
+	memcpy(tv3, force, sizeof(double) * np * 3); delete[] force; force = new double[new_np * 3]; memcpy(force, tv3, sizeof(double) * np * 3);
+	memcpy(tv4, color, sizeof(double) * np * 4); delete[] color; color = new double[new_np * 4]; memcpy(color, tv4, sizeof(double) * np * 4);
 	delete[] tv4;
 	delete[] tv3;
 	np = new_np;
@@ -388,10 +405,10 @@ void vparticles::resizeMemory()
 bool vparticles::define(VEC4D* p, unsigned int _n)
 {
 	np = _n;// ps->numParticle();
-	if(!pos) pos = new float[np * 4];
-	if(!vel) vel = new float[np * 3];
-	if(!force) force = new float[np * 3];
-	if(!color) color = new float[np * 4];
+	if(!pos) pos = new double[np * 4];
+	if(!vel) vel = new double[np * 3];
+	if(!force) force = new double[np * 3];
+	if(!color) color = new double[np * 4];
 	ps->setPosition(pos);
 	for (unsigned int i = 0; i < np; i++){
 		color[i * 4 + 0] = 0.0f;
@@ -414,13 +431,13 @@ bool vparticles::define(VEC4D* p, unsigned int _n)
 		glDeleteBuffers(1, &m_colorVBO);
 		m_colorVBO = 0;
 	}
-	unsigned int memSize = sizeof(float) * 4 * np;
+	unsigned int memSize = sizeof(double) * 4 * np;
 	buffer = pos;
 	color_buffer = color;
 	if (!m_posVBO)
-		m_posVBO = vglew::createVBO<float>(memSize, buffer);
+		m_posVBO = vglew::createVBO<double>(memSize, buffer);
 	if (!m_colorVBO)
-		m_colorVBO = vglew::createVBO<float>(memSize, color_buffer);
+		m_colorVBO = vglew::createVBO<double>(memSize, color_buffer);
 
 	if (!m_program)
 		m_program = _compileProgram(vertexShader, spherePixelShader);
@@ -476,18 +493,18 @@ void vparticles::openResultFromFile(unsigned int idx)
 {
 	QFile pf(rList.at(vcontroller::getFrame()));
 	pf.open(QIODevice::ReadOnly);
-	float time = 0.f;
+	double time = 0.f;
 	unsigned int _np = 0;
 	pf.read((char*)&_np, sizeof(unsigned int));
-	pf.read((char*)&time, sizeof(float));
-	pf.read((char*)pos, sizeof(float) * 4 * np);
-	pf.read((char*)vel, sizeof(float) * 3 * np);
-	pf.read((char*)force, sizeof(float) * 3 * np);
+	pf.read((char*)&time, sizeof(double));
+	pf.read((char*)pos, sizeof(double) * 4 * np);
+	pf.read((char*)vel, sizeof(double) * 3 * np);
+	pf.read((char*)force, sizeof(double) * 3 * np);
 
-// 	float grad = MPForce * 0.1f;
-// 	float t = 0.f;
+// 	double grad = MPForce * 0.1f;
+// 	double t = 0.f;
 // 	for (unsigned int i = 0; i < np; i++){
-// 		float m = VEC3F(force[i * 3 + 0], force[i * 3 + 1], force[i * 3 + 2]).length();
+// 		double m = VEC3F(force[i * 3 + 0], force[i * 3 + 1], force[i * 3 + 2]).length();
 // 		t = (m - 0) / grad;
 // 		if (t > 7)
 // 			m = m;
@@ -502,29 +519,29 @@ void vparticles::openResultFromFile(unsigned int idx)
 	pf.close();
 }
 
-void vparticles::changeParticles(VEC4F_PTR _pos)
+void vparticles::changeParticles(VEC4D_PTR _pos)
 {
-	memcpy(pos, _pos, sizeof(float) * 4 * np);
+	memcpy(pos, _pos, sizeof(double) * 4 * np);
 }
 
 void vparticles::calcMaxForce()
 {
 	MPForce = 0.f;
-	float *v4 = new float[np * 4];
-	float *v3 = new float[np * 3];
+	double *v4 = new double[np * 4];
+	double *v3 = new double[np * 3];
 	for (unsigned int i = 0; i < rList.size(); i++){
 		QFile pf(rList.at(i));
 		pf.open(QIODevice::ReadOnly);
-		float time = 0.f;
+		double time = 0.f;
 		unsigned int _np = 0;
 
 		pf.read((char*)&_np, sizeof(unsigned int));
-		pf.read((char*)&time, sizeof(float));
-		pf.read((char*)v4, sizeof(float) * 4 * np);
-		pf.read((char*)v3, sizeof(float) * 3 * np);
-		pf.read((char*)v3, sizeof(float) * 3 * np);
+		pf.read((char*)&time, sizeof(double));
+		pf.read((char*)v4, sizeof(double) * 4 * np);
+		pf.read((char*)v3, sizeof(double) * 3 * np);
+		pf.read((char*)v3, sizeof(double) * 3 * np);
 		for (unsigned int i = 0; i < np; i++){
-			float m = sqrt(v3[i * 3 + 0] * v3[i * 3 + 0] + v3[i * 3 + 1] * v3[i * 3 + 1] + v3[i * 3 + 2] * v3[i * 3 + 2]);
+			double m = sqrt(v3[i * 3 + 0] * v3[i * 3 + 0] + v3[i * 3 + 1] * v3[i * 3 + 1] + v3[i * 3 + 2] * v3[i * 3 + 2]);
 			if (MPForce < m)
 				MPForce = m;
 		}

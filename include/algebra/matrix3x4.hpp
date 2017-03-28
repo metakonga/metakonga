@@ -73,11 +73,28 @@ namespace algebra
 				a20-m.a20,a21-m.a21,a22-m.a22,a23-m.a23);
 		}
 
+		matrix3x4 operator- ()
+		{
+			return matrix3x4(
+				-a00, -a01, -a02, -a03,
+				-a10, -a11, -a12, -a13,
+				-a20, -a21, -a22, -a23);
+		}
+
 	public:
 		T a00,a01,a02,a03,a10,a11,a12,a13,a20,a21,a22,a23;
 		size_t size;
 		bool diag;
 	};
+
+	template <typename T2, typename T>
+	inline matrix3x4<T> operator*(T2 s, matrix3x4<T>& m)
+	{
+		return matrix3x4<T>(
+			m(0)*s, m(1)*s, m(2)*s, m(3)*s,
+			m(4)*s, m(5)*s, m(6)*s, m(7)*s,
+			m(8)*s, m(9)*s, m(10)*s, m(11)*s);
+	}
 
 // 	template <typename T2, typename T>
 // 	inline matrix3x4<T> operator*( T2 s, matrix3x4<T>& m )  

@@ -27,15 +27,7 @@ vcylinder::vcylinder(QTextStream& in)
 void vcylinder::draw(GLenum eMode)
 {
 	if (display){
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-// 		glPushMatrix();
-// 		glTranslatef(origin[0], origin[1], origin[2]);
-// 
-// 		glRotatef(ang[0], 0, 0, 1);
-// 		glRotatef(ang[1], 1, 0, 0);
-// 		glRotatef(ang[2], 0, 0, 1);
-		//glPopMatrix();
-		//glPopMatrix();
+		glDisable(GL_LIGHTING);
 		glPushMatrix();
 		if (vcontroller::getFrame() && outPos && outRot)
 		{
@@ -44,9 +36,11 @@ void vcylinder::draw(GLenum eMode)
 			unsigned int f = vcontroller::getFrame();
 			glTranslated(outPos[f].x, outPos[f].y, outPos[f].z);
 			VEC3D e = ep2e(outRot[f]);
-			double xi = (e.x * 180) / M_PI;// +ang[0];
-			double th = (e.y * 180) / M_PI;//; +ang[1];
-			double ap = (e.z * 180) / M_PI;// +ang[2];
+			//e += VEC3D(ang[0], ang[1], ang[2]);
+			double xi = (e.x * 180) / M_PI;
+			double th = (e.y * 180) / M_PI;
+			double ap = (e.z * 180) / M_PI;
+			double diff = xi + ap;
 			glRotated(xi/* - ang[0]*/, 0, 0, 1);
 			glRotated(th/* - ang[1]*/, 1, 0, 0);
 			glRotated(ap/* - ang[2]*/, 0, 0, 1);
@@ -67,7 +61,7 @@ void vcylinder::draw(GLenum eMode)
 		//glCallList(coord);
 		glCallList(glList);
 		glPopMatrix();
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glEnable(GL_LIGHTING);
 	}
 }
 
@@ -82,6 +76,7 @@ bool vcylinder::define()
 	float h_len = length * 0.5f;
 	VEC3F to = VEC3F(pb[0] - origin[0], pb[1] - origin[1], pb[2] - origin[2]);
 	VEC3F u = to / to.length();
+	//VEC3F t = to - to.dot(u) * u;
 	double th = M_PI * 0.5;
 	double ap = acos(u.z);
 	double xi = asin(-u.y);
@@ -89,9 +84,9 @@ bool vcylinder::define()
 	if (ap > M_PI)
 		ap = ap - M_PI;
 
-	ang[0] = 180 * xi / M_PI;
-	ang[1] = 180 * th / M_PI;
-	ang[2] = 180 * ap / M_PI;
+	ang[0] = 0.f;// 180 * xi / M_PI;
+	ang[1] = 0.f;// 180 * th / M_PI;
+	ang[2] = 0.f;// 180 * ap / M_PI;
 
 	EPD ep;
 	ep.setFromEuler(xi, th, ap);
@@ -99,16 +94,16 @@ bool vcylinder::define()
 	glPushMatrix();
 	glBegin(GL_TRIANGLE_FAN);
 	{
-		VEC3D p = VEC3D( 0.f, length * 0.5f, 0.f );
-		glColor3f(0.0f, 0.f, 1.f);
+		//VEC3D p = VEC3D( 0.f, length * 0.5f, 0.f );
+		//glColor3f(0.0f, 0.f, 1.f);
 	//	VEC3F p2_ = ep.A() * VEC3F(p2[0], p2[1], p2[2]);
 		//glVertex3f(p2[0], p2[1], p2[2]);
 		//p = ep.A() * p;
-		glVertex3f(p.x, p.y, p.z);
+		glVertex3f(pb[0], pb[1], pb[2]);
 		for (int i = 0; i < iter + 1; i++){
 			float rad = angle * i;
-			glColor3f(i % 2, 0.f, i % 2 + 1.f);
-			VEC3D q(sin(rad)*topRadius, length * 0.5, cos(rad) * topRadius);
+			//glColor3f(i % 2, 0.f, i % 2 + 1.f);
+			VEC3D q(sin(rad)*topRadius, cos(rad) * topRadius, -0.5f * length );
 			//q = ep.A() * q;
 			glVertex3f(/*origin[0] + */(float)q.x, /*origin[1] + */(float)q.y, /*origin[2] + */(float)q.z);	
 		}
@@ -119,15 +114,15 @@ bool vcylinder::define()
 	{
 		VEC3D p = VEC3D(0.f, -length * 0.5f, 0.f);
 		//float p[3] = { 0.f, -length * 0.5f, 0.f };
-		glColor3f(0.f, 0.f, 1.f);
+		//glColor3f(0.f, 0.f, 1.f);
 		//glVertex3f(p1[0], p1[1], p1[2]);
 		//p = ep.A() * p;
-		glVertex3f(p.x, p.y, p.z);
-		//glVertex3f(p[0], p[1], p[2]);
+		//glVertex3f(p.x, p.y, p.z);
+		glVertex3f(pt[0], pt[1], pt[2]);
 		for (int i = 0; i < iter + 1; i++){
 			float rad = angle * i;
-			glColor3f(i % 2, 0.0f, i % 2 + 1.0f);
-			VEC3D q(sin(-rad)*baseRadius, -length * 0.5, cos(-rad) * baseRadius);
+			//glColor3f(i % 2, 0.0f, i % 2 + 1.0f);
+			VEC3D q(sin(-rad)*baseRadius, cos(-rad) * baseRadius, 0.5f * length);
 			//q = ep.A() * q;
 			glVertex3f(/*origin[0] + */q.x, /*origin[1] + */q.y, /*origin[2] +*/ q.z);
 		}
@@ -137,8 +132,8 @@ bool vcylinder::define()
 	{
 		for (int i = 0; i < iter + 1; i++){
 			float rad = angle * i;
-			VEC3D q1(sin(rad) * topRadius, length * 0.5, cos(rad) * topRadius);
-			VEC3D q2(sin(rad) * baseRadius, -length * 0.5, cos(rad) * baseRadius);
+			VEC3D q1(sin(rad) * topRadius, cos(rad) * topRadius, length * 0.5);
+			VEC3D q2(sin(rad) * baseRadius, cos(rad) * baseRadius, -length * 0.5);
 			//q1 = ep.A() * q1;
 			//q2 = ep.A() * q2;
 			glVertex3f(/*origin[0] + */q2.x, /*origin[1] + */q2.y, /*origin[2] + */q2.z);

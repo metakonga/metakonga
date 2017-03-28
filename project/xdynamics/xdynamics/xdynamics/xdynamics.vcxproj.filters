@@ -81,6 +81,12 @@
     <Filter Include="Header Files\display">
       <UniqueIdentifier>{729d249a-8e8e-4dc1-90a5-ca4bce29f3bd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\widget">
+      <UniqueIdentifier>{7ca6fb4f-23f9-4e7b-9641-8b90fa9a1121}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\widget">
+      <UniqueIdentifier>{82792275-e262-435d-84c2-72b01e195dd1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -338,6 +344,36 @@
     <ClCompile Include="GeneratedFiles\Release\moc_hmcmDialog.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\source\widget\database.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\widget\database.cpp">
+      <Filter>Source Files\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\particle_cluster.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\translationalConstraint.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\drivingConstraint.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_database.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_database.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\cmdWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_cmdWindow.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_cmdWindow.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="xdynamics.h">
@@ -405,6 +441,15 @@
     </CustomBuild>
     <CustomBuild Include="..\..\..\..\include\hmcmDialog.h">
       <Filter>Header Files\dialog</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GenParticle.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\widget\database.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\cmdWindow.h">
+      <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -545,6 +590,21 @@
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_HMCM.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_GenParticle.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\widget\database.h">
+      <Filter>Header Files\widget</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\particle_cluster.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\translationalConstraint.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\drivingConstraint.h">
+      <Filter>Header Files\mbd</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

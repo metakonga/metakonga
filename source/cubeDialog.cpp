@@ -60,10 +60,10 @@ cube* cubeDialog::callDialog(modeler *md)
 	{
 		c = md->makeCube(this->objectName(), tMaterial(CBMaterial->currentIndex()), ROLL_BOUNDARY);
 		QStringList chList = LEStartPoint->text().split(" ");
-		float minPoint[3] = { chList.at(0).toFloat(), chList.at(1).toFloat(), chList.at(2).toFloat() };
+		double minPoint[3] = { chList.at(0).toDouble(), chList.at(1).toDouble(), chList.at(2).toDouble() };
 		chList = LEEndPoint->text().split(" ");
-		float maxPoint[3] = { chList.at(0).toFloat(), chList.at(1).toFloat(), chList.at(2).toFloat() };
-		c->define(VEC3F(minPoint), VEC3F(maxPoint));
+		double maxPoint[3] = { chList.at(0).toDouble(), chList.at(1).toDouble(), chList.at(2).toDouble() };
+		c->define(VEC3D(minPoint), VEC3D(maxPoint));
 	}
 
 	return c;

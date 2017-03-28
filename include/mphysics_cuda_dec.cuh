@@ -17,14 +17,26 @@ struct device_parameters
 	unsigned int nsphere;
 	unsigned int ncell;
 	uint3 grid_size;
-	float dt;
-	float half2dt;
-	float cell_size;
-	float cohesion;
-	float3 gravity;
-	float3 world_origin;
+	double dt;
+	double half2dt;
+	double cell_size;
+	double cohesion;
+	double3 gravity;
+	double3 world_origin;
 
 	//float cohesive;
+};
+
+struct contact_parameter
+{
+	double Ei, Ej;
+	double pri, prj;
+	double Gi, Gj;
+	double rest;
+	double fric;
+	double rfric;
+	double coh;
+	double sratio;
 };
 
 struct device_polygon_info
@@ -39,16 +51,16 @@ struct device_polygon_info
 
 struct device_plane_info
 {
-	float l1, l2;
-	float3 u1;
-	float3 u2;
-	float3 uw;
-	float3 xw;
-	float3 pa;
-	float3 pb;
-	float3 w2;
-	float3 w3;
-	float3 w4;
+	double l1, l2;
+	double3 u1;
+	double3 u2;
+	double3 uw;
+	double3 xw;
+	double3 pa;
+	double3 pb;
+	double3 w2;
+	double3 w3;
+	double3 w4;
 };
 
 struct device_polygon_mass_info
@@ -70,14 +82,15 @@ struct device_cylinder_info
 	double4 ep;
 };
 
-template<typename T>
+
 struct device_force_constant
 {
-	T kn;
-	T vn;
-	T ks;
-	T vs;
-	T mu;
+	double kn;
+	double vn;
+	double ks;
+	double vs;
+	double mu;
+	double ms;
 };
 
 struct device_force_constant_d
@@ -91,17 +104,44 @@ struct device_force_constant_d
 
 void setSymbolicParameter(device_parameters *h_paras);
 
-void vv_update_position(float *pos, float *vel, float *acc, unsigned int np);
-void vv_update_velocity(float *vel, float *acc, float *omega, float *alpha, float *force, float *moment, float* mass, float* iner, unsigned int np);
+void vv_update_position(double *pos, double *vel, double *acc, unsigned int np);
+void vv_update_velocity(double *vel, double *acc, double *omega, double *alpha, double *force, double *moment, double* mass, double* iner, unsigned int np);
 
-void cu_calculateHashAndIndex(unsigned int* hash, unsigned int* index, float *pos, unsigned int np);
+void cu_calculateHashAndIndex(unsigned int* hash, unsigned int* index, double *pos, unsigned int np);
 void cu_calculateHashAndIndexForPolygonSphere(unsigned int* hash, unsigned int* index, unsigned int sid, unsigned int nsphere, double *sphere);
 void cu_reorderDataAndFindCellStart(unsigned int* hash, unsigned int* index, unsigned int* cstart, unsigned int* cend, unsigned int* sorted_index, unsigned int np, unsigned int nsphere, unsigned int ncell);
 
-void cu_calculate_p2p(float* pos, float* vel, float* acc, float* omega, float* alpha, float* force, float* moment, float* mass, float* iner, float* riv, float E, float pr, float rest, float sh, float fric, float rfric, float coh, unsigned int* sorted_index, unsigned int* cstart, unsigned int* cend, unsigned int np, unsigned int cRun = 0);
-void cu_plane_hertzian_contact_force(const int tcm, device_plane_info* plan, float E, float pr, float G, float rest, float fric, float rfric, float* pos, float* vel, float* omega, float* force, float* moment, float* mass, float pE, float pPr, float pG, unsigned int np);
-void cu_particle_polygonObject_collision(const int tcm, device_polygon_info* dpi, double* dsph, device_polygon_mass_info* dpmi, float E, float pr, float G, float rest, float fric, float rfric, float* pos, float* vel, float* omega, float* force, float* moment, float* mass, float pE, float pPr, float pG, unsigned int* sorted_index, unsigned int* cstart, unsigned int* cend, unsigned int np, double3* mpos, double3* mf, double3* mm, double3& _mf, double3& _mm);
-void cu_cylinder_hertzian_contact_force(const int tcm, device_cylinder_info* cyl, float E, float pr, float G, float rest, float fric, float rfric, float* pos, float* vel, float* omega, float* force, float* moment, float* mass, float pE, float pPr, float pG, unsigned int np, double3* mpos, double3* mf, double3* mm, double3& _mf, double3& _mm);
+void cu_calculate_p2p(
+	const int tcm, double* pos, double* vel, double* acc, 
+	double* omega, double* alpha, 
+	double* force, double* moment, 
+	double* mass, double* iner, 
+	unsigned int* sorted_index, unsigned int* cstart, 
+	unsigned int* cend, contact_parameter* cp, unsigned int np);
+
+// Function for contact between particle and plane
+void cu_plane_hertzian_contact_force(
+	const int tcm, device_plane_info* plan, 
+	double* pos, double* vel, double* omega, 
+	double* force, double* moment, double* mass, 
+	unsigned int np, contact_parameter *cp);
+
+// Function for contact between particle and polygonObject
+void cu_particle_polygonObject_collision(
+	const int tcm, device_polygon_info* dpi, double* dsph, device_polygon_mass_info* dpmi,
+	double* pos, double* vel, double* omega, 
+	double* force, double* moment, double* mass, 
+	unsigned int* sidx, unsigned int* cstart, unsigned int* cend, contact_parameter *cp,
+	unsigned int np, double3* mpos, double3* mf, double3* mm, double3& _mf, double3& _mm);
+
+// Function for contact between particle and cylinder
+void cu_cylinder_hertzian_contact_force(
+	const int tcm, device_cylinder_info* cyl, 
+	double* pos, double* vel, double* omega, 
+	double* force, double* moment, double* mass, 
+	unsigned int np, contact_parameter* cp,
+	double3* mpos, double3* mf, double3* mm, double3& _mf, double3& _mm);
+
 double3 reductionD3(double3* in, unsigned int np);
 
 #endif

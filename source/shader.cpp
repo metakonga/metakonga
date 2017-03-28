@@ -13,16 +13,20 @@
 
 // vertex shader
 const char *vertexShader = STRINGIFY(
-	uniform float pointRadius;  // point size in world space
+uniform float projFactor;  // point size in world space
 uniform float pointScale;   // scale to calculate size in pixels
-uniform float densityScale;
+uniform float orthoDist;
 uniform float densityOffset;
 void main()
 {
 	// calculate window-space point size
 	vec3 posEye = vec3(gl_ModelViewMatrix * vec4(gl_Vertex.xyz, 1.0));
 	float dist = length(posEye);
-	gl_PointSize = gl_Vertex.w * (pointScale / dist);
+	//float div = 0.0;
+	if (projFactor > 0.f)
+		dist = orthoDist;
+	//else if(isOrtho == 1) div = dist;
+	gl_PointSize = gl_Vertex.w * (pointScale / dist);///*orthoDist*/;// (pointScale / dist);
 
 	gl_TexCoord[0] = gl_MultiTexCoord0;
 	gl_Position = gl_ModelViewProjectionMatrix * vec4(gl_Vertex.xyz, 1.0);

@@ -115,6 +115,7 @@ VEC4D transpose(VEC3D& v3, MAT34D& m3x4)
 		);
 }
 
+
 inline
 VEC3F transpose(MAT33F& m, VEC3F& a)
 {
@@ -168,6 +169,13 @@ inline VEC3D operator*(MAT33D& m, VEC3D& v)
 		m.a20 * v.x + m.a21 * v.y + m.a22 * v.z);
 }
 
+inline MAT33D operator* (MAT33D& n, MAT33D& m)
+{
+	return MAT33D(n.a00*m.a00 + n.a01*m.a10 + n.a02*m.a20, n.a00*m.a01 + n.a01*m.a11 + n.a02*m.a21, n.a00*m.a02 + n.a01*m.a12 + n.a02*m.a22
+		, n.a10*m.a00 + n.a11*m.a10 + n.a12*m.a20, n.a10*m.a01 + n.a11*m.a11 + n.a12*m.a21, n.a10*m.a02 + n.a11*m.a12 + n.a12*m.a22
+		, n.a20*m.a00 + n.a21*m.a10 + n.a22*m.a20, n.a20*m.a01 + n.a21*m.a11 + n.a22*m.a21, n.a20*m.a02 + n.a21*m.a12 + n.a22*m.a22);
+}
+
 inline VEC3F operator*(MAT33F& m, VEC3F& v)
 {
 	return VEC3F(m.a00 * v.x + m.a01 * v.y + m.a02 * v.z,
@@ -201,10 +209,31 @@ inline VEC3D ep2e(EPD& ep)
 	{
 		m33 = 0.0;
 	}
+	if (m33 > 1.0)
+	{
+
+		m33 = 1.0;
+	}
 	return VEC3D(
 		atan2(((ep.e1 * ep.e3) + (ep.e0 * ep.e2)), -((ep.e2 * ep.e3) - (ep.e0 * ep.e1))),
 		atan2(sqrt(1 - m33 * m33), m33),
 		atan2(((ep.e1 * ep.e3) - (ep.e0 * ep.e2)), ((ep.e2 * ep.e3) + ep.e0 * ep.e1)));
+}
+
+inline VEC3D global2local_eulerAngle(MAT33D& t, VEC3D& v)
+{
+	return VEC3D(
+		t.a00 * v.x + t.a10 * v.y + t.a20 * v.z,
+		t.a01 * v.x + t.a11 * v.y + t.a21 * v.z,
+		t.a02 * v.x + t.a12 * v.y + t.a22 * v.z);
+}
+
+inline VEC3D local2global_eulerAngle(MAT33D& t, VEC3D& v)
+{
+	return VEC3D(
+		t.a00 * v.x + t.a01 * v.y + t.a02 * v.z,
+		t.a10 * v.x + t.a11 * v.y + t.a12 * v.z,
+		t.a20 * v.x + t.a21 * v.y + t.a22 * v.z);
 }
 
 #endif

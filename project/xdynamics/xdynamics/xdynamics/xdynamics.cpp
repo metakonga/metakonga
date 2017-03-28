@@ -16,6 +16,7 @@
 #include "objProperty.h"
 #include "dembd_simulation.h"
 #include "msgBox.h"
+#include "database.h"
 //#include "solveProcess.h"
 #include <QThread>
 #include <QDebug>
@@ -33,12 +34,15 @@ xdynamics::xdynamics(int argc, char** argv, QWidget *parent)
 	, pBar(NULL)
 	, gl(NULL)
 	, ptObj(NULL)
+	, db(NULL)
+	, cmd(NULL)
 {
 	animation_statement = false;
 	ui.setupUi(this);
 	gl = new GLWidget(argc, argv, NULL);
 	ui.GraphicArea->setWidget(gl);
 	QMainWindow::show();
+	
 	setBaseAction();
 	newproj();
 }
@@ -53,6 +57,8 @@ xdynamics::~xdynamics()
 	if (sim) delete sim; sim = NULL;
 	if (th) delete th; th = NULL;
 	if (ptObj) delete ptObj; ptObj = NULL;
+	if (db) delete db; db = NULL;
+	if (cmd) delete cmd; cmd = NULL;
 }
 
 void xdynamics::setBaseAction()
@@ -82,10 +88,6 @@ void xdynamics::setBaseAction()
 
 void xdynamics::setMainAction()
 {
-	// 	pinfoAct = new QAction(QIcon(":/Resources/ani_play.png"), tr("&Particle info dialog"), this);
-	// 	pinfoAct->setStatusTip(tr("Particle info dialog"));
-	// 	connect(pinfoAct, SIGNAL(triggered()), this, SLOT(openPinfoDialog()));
-
 	makeCubeAct = new QAction(QIcon(":/Resources/pRec.png"), tr("&Create Cube Object"), this);
 	makeCubeAct->setStatusTip(tr("Create Cube Object"));
 	connect(makeCubeAct, SIGNAL(triggered()), this, SLOT(makeCube()));
@@ -114,8 +116,8 @@ void xdynamics::setMainAction()
 	makeMassAct->setStatusTip(tr("Create mass"));
 	connect(makeMassAct, SIGNAL(triggered()), this, SLOT(makeMass()));
 
-	collidConstAct = new QAction(QIcon(":/Resources/ic_HMCM.png"), tr("&Define Hertz-Mindlin Contact Model"), this);
-	collidConstAct->setStatusTip(tr("Define Hertz-Mindlin Contact Model"));
+	collidConstAct = new QAction(QIcon(":/Resources/collision.png"), tr("&Create Contact Element"), this);
+	collidConstAct->setStatusTip(tr("Create Contact Element"));
 	connect(collidConstAct, SIGNAL(triggered()), this, SLOT(makeHMCM()));
 
 	solveProcessAct = new QAction(QIcon(":/Resources/solve.png"), tr("&Solve the model"), this);
@@ -125,6 +127,14 @@ void xdynamics::setMainAction()
 	changeParticleAct = new QAction(QIcon(":/Resources/icChangeParticle.png"), tr("&Change particle from file"), this);
 	changeParticleAct->setStatusTip(tr("Change particles from file"));
 	connect(changeParticleAct, SIGNAL(triggered()), this, SLOT(ChangeParticleFromFile()));
+	
+	projectionViewAct = new QAction(QIcon(":/Resources/perspective.png"), tr("&Change perspective view mode"), this);
+	projectionViewAct->setStatusTip(tr("Change perspective view mode"));
+	connect(projectionViewAct, SIGNAL(triggered()), this, SLOT(changeProjectionViewMode()));
+
+	paletteAct = new QAction(QIcon(":/Resources/sketch.png"), tr("&Change sketch mode"), this);
+	paletteAct->setStatusTip(tr("Change sketch mode"));
+	connect(paletteAct, SIGNAL(triggered()), this, SLOT(changePaletteMode()));
 
 	ui.mainToolBar->addAction(makeCubeAct);
 	ui.mainToolBar->addAction(makeRectAct);
@@ -136,6 +146,9 @@ void xdynamics::setMainAction()
 	ui.mainToolBar->addAction(changeParticleAct);
 	ui.mainToolBar->addAction(collidConstAct);
 	ui.mainToolBar->addAction(solveProcessAct);
+	ui.mainToolBar->insertSeparator(solveProcessAct);
+	ui.mainToolBar->addAction(projectionViewAct);
+	ui.mainToolBar->addAction(paletteAct);
 
 	viewObjectComboBox = new QComboBox;
 	viewObjectComboBox->insertItem(0, "All display");
@@ -220,32 +233,26 @@ void xdynamics::newproj()
 		tUnit u = nd->unit();
 		tGravity dg = nd->gravityDirection();
 		md = new modeler(pt + nm, DEM, u, dg);
+		db = new database(this, md);
+		addDockWidget(Qt::RightDockWidgetArea, db);
 	}
 	else
 	{
 		if (!md)
 			md = new modeler;
+		db = new database(this, md);
+		addDockWidget(Qt::RightDockWidgetArea, db);
 		md->openModeler(gl, nd->fullPath());
+		//ui.PTEdit->appendPlainText("Open file : " + nd->fullPath());
 		if (!_isOnMainActions)
 			setMainAction();
 		_isOnMainActions = true;
 	}
+	cmd = new cmdWindow(this);
+	addDockWidget(Qt::BottomDockWidgetArea, cmd);
+	gl->setModeler(md);
+	//md->bindingCommand(ui.PTEdit);
 	delete nd;
-}
-
-void xdynamics::openrtproj()
-{
-	QString dir = "C:/";
-	QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("open"), dir);
-	if (fileNames.isEmpty())
-		return;
-	gl->getDemFileData(fileNames, true);
-	QString tf;
-	tf.sprintf("/ %d", vcontroller::getTotalBuffers() - 1);
-	Lframe->setText(tf);
-	HSlider->setMaximum(vcontroller::getTotalBuffers() - 1);
-
-	vcontroller::setRealTimeParameter(true);
 }
 
 // CODEDYN
@@ -257,10 +264,12 @@ void xdynamics::openproj()
 	else
 		dir = "C:/mphysics";
 	QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("open"), dir, tr("DEM result file (*.bin);;MBD result file (*.mrf);;DEM model file (*.mde);;SPH model file (*.sph)"));
+
 	if (fileNames.isEmpty())
 		return;
 	if (fileNames.size() == 1){
 		QString file = fileNames.at(0);
+		//md->comm("Open file : " + file);
 		int begin = file.lastIndexOf(".");
 		QString ext = file.mid(begin);
 		if (ext == ".mde"){
@@ -277,10 +286,12 @@ void xdynamics::openproj()
 			gl->openMbd(file);
 			setAnimationAction(true);
 		}
-		//	md->
 	}
 	else{
 		QString file = fileNames.at(0);
+// 		QString str;
+// 		QTextStream(&str) << "Open files : " + file + " ~ " + file.mid(file.lastIndexOf("/"));
+		//md->comm("Open files : " + file + " ~ " + fileNames.at(fileNames.size() - 1).mid(file.lastIndexOf("/")));
 		int begin = file.lastIndexOf(".");
 		QString ext = file.mid(begin);
 		if (ext == ".bin")
@@ -299,49 +310,9 @@ void xdynamics::setAnimationAction(bool b)
 	aniForwardAct2->setEnabled(b);
 }
 
-// BEFORE CODEDYN
-// void xdynamics::openproj()
-// {
-// 	QString dir = "C:/";
-// 	//QString dir_name = QFileDialog::getOpenDirectoryName(this, tr("open"), dir);
-// 	QStringList fileNames = QFileDialog::getOpenFileNames(this, tr("open"), dir);
-// 
-// 	//QString fileNames = QFileDialog::getOpenFileName(this, tr("open"), dir);
-// 	if (fileNames.isEmpty())
-// 		return;
-// 
-// 	//gl->getSphFileData(fileNames);
-// 	gl->getDemFileData(fileNames, false);
-// 	//QFile file(fileNames);
-// 	//if (file.open(QIODevice::ReadOnly)){
-// 	//	gl->getFileData(file);
-// 	//	//gl->getSphFileData(file);
-// 	//}
-// 	//file.close();
-// 
-// 	QString tf;
-// 	tf.sprintf("/ %d", view_controller::getTotalBuffers() - 1);
-// 	Lframe->setText(tf);
-// 	HSlider->setMaximum(view_controller::getTotalBuffers() - 1);
-// 	//particle_ptr = gl->getParticle_ptr();
-// 	if (gl->getParticle_ptr()){
-// 		connect(gl->getParticle_ptr(), SIGNAL( mySignal() ), this, SLOT(mySlot()));
-// 	}
-// }
-
 void xdynamics::saveproj()
 {
 	md->saveModeler();
-	msgBox("Model save is done.", QMessageBox::Information);
-	// 	QString dir = modeler::modelPath() + modeler::modelName();
-	// 	QString fileName = QFileDialog::getSaveFileName(this, tr("save"), dir);
-	// 	if (fileName.isEmpty())
-	// 		return;
-	// 	QFile file(fileName);
-	// 	if (file.open(QIODevice::WriteOnly)){
-	// 		gl->SaveModel(file);
-	// 	}
-	// 	file.close();
 }
 
 void xdynamics::mySlot()
@@ -505,19 +476,11 @@ void xdynamics::ChangeParticleFromFile()
 	if (gl->change(file, CHANGE_PARTICLE_POSITION, BIN)){
 		md->particleSystem()->changeParticlesFromVP(gl->vParticles()->getPosition());
 	}
-	//md->particleSystem()->changeParticles()
 }
 
 void xdynamics::ChangeShape()
 {
-	// 	QString dir = "C:/C++/add_particle.bin";
-	// 	//QString fileName = QFileDialog::getOpenFileName(this, tr("open"), dir);
-	// 	//if (fileName.isEmpty())
-	// 	//	return;
-	// 	//gl->ChangeShapeData(fileName);
-	// 
-	// 	gl->ExportForceData();
-	// 	//gl->AddParticles(dir);
+
 }
 
 void xdynamics::DEMRESULTASCII_Export()
@@ -536,63 +499,56 @@ void xdynamics::MBDRESULTASCII_Export()
 	QFile qfo(txtFile);
 	qfo.open(QIODevice::WriteOnly);
 	QTextStream qso(&qfo);
-	QFile qfsfi(md->modelPath() + "/" + md->modelName() + ".sfi");
-	qfsfi.open(QIODevice::ReadOnly);
-	QTextStream qssfi(&qfsfi);
-	unsigned int cnt = 0;
-	unsigned int id = 0;
-	QString ch;
-	QStringList objNames;
-	while (!qssfi.atEnd()){
-		qssfi >> ch;
-		if (ch == "moc")
-			qssfi >> cnt;
-		else if (ch == "object"){
-			qssfi >> id >> ch;
-			objNames.push_back(ch);
-		}
-		else if (ch == "polygonObject"){
-			qssfi >> id >> ch;
-			objNames.push_back(ch);
-		}
 
-	}
-	//qssfi >> ch >> cnt;
+ 	unsigned int cnt = 0;
 	unsigned int nm = 0;
-	float ct = 0.f;
+	unsigned int id = 0;
+	unsigned int nout = 0;
+	unsigned int name_size = 0;
+	double ct = 0.0;
+	char ch;
+	
 	VEC3D p, v, a;
 	EPD ep, ev, ea;
 	qfi.read((char*)&nm, sizeof(unsigned int));
-	for (unsigned int j = 0; j < cnt; j++){
-		for (unsigned int i = 0; i < nm; i++)
-		{
+	qfi.read((char*)&nout, sizeof(unsigned int));
+	while (!qfi.atEnd()){
+		qfi.read((char*)&cnt, sizeof(unsigned int));
+		for (unsigned int i = 0; i < nm; i++){
+			QString str;
+			qfi.read((char*)&name_size, sizeof(unsigned int));
+			for (unsigned int j = 0; j < name_size; j++){
+				qfi.read(&ch, sizeof(char));
+				str.push_back(ch);
+			}
 			qfi.read((char*)&id, sizeof(unsigned int));
-			qfi.read((char*)&ct, sizeof(float));
+			qfi.read((char*)&ct, sizeof(double));
 			qfi.read((char*)&p, sizeof(VEC3D));
 			qfi.read((char*)&ep, sizeof(EPD));
 			qfi.read((char*)&v, sizeof(VEC3D));
 			qfi.read((char*)&ev, sizeof(EPD));
 			qfi.read((char*)&a, sizeof(VEC3D));
 			qfi.read((char*)&ea, sizeof(EPD));
-			qso << ct << " " << objNames[i] << " " << p.x << " " << p.y << " " << p.z
+			qso << ct << " " << str << " " << p.x << " " << p.y << " " << p.z
 				<< " " << ep.e0 << " " << ep.e1 << " " << ep.e2 << " " << ep.e3
 				<< " " << v.x << " " << v.y << " " << v.z
 				<< " " << ev.e0 << " " << ev.e1 << " " << ev.e2 << " " << ev.e3
 				<< " " << a.x << " " << a.y << " " << a.z
-				<< " " << ea.e0 << " " << ea.e1 << " " << ea.e2 << " " << ea.e3 << endl;
+				<< " " << ea.e0 << " " << ea.e1 << " " << ea.e2 << " " << ea.e3 << " ";
 		}
+		qso << endl;
 	}
+
 	qfo.close();
 	qfi.close();
-	qfsfi.close();
 }
 
 void xdynamics::MS3DASCII_Import()
 {
 	QString dir = md->modelPath();
 	QString fileName = QFileDialog::getOpenFileName(this, tr("Import"), dir);
-	md->makePolygonObject(MILKSHAPE_3D_ASCII, fileName);
-	gl->makePolygonObject(md->objPolygon());
+	polygonObject* po = md->makePolygonObject(MILKSHAPE_3D_ASCII, fileName);
+	gl->makePolygonObject(po);
 
 	//gl->addParticles
 }
@@ -615,7 +571,7 @@ void xdynamics::makePlane()
 {
 	planeDialog pd;
 	gl->makePlane(pd.callDialog(md));
-	/*gl->makeRect();*/
+	
 }
 
 void xdynamics::makePolygon()
@@ -637,8 +593,10 @@ void xdynamics::makeLine()
 
 void xdynamics::makeParticle()
 {
-	particleDialog pd;
-	gl->makeParticle(pd.callDialog(md));
+// 	particleDialog pd;
+// 	gl->makeParticle(pd.callDialog(md));
+	particleDialog pd(this, md);
+	gl->makeParticle(md->particleSystem());
 }
 
 void xdynamics::makeMass()
@@ -646,26 +604,24 @@ void xdynamics::makeMass()
 	massDialog msd;
 	mass* ms = msd.callDialog(md);
 	if (ms)
-		gl->makeMassCoordinate(ms->name());
+	{
+		if (ms->getBaseGeometryType() == POLYGON)
+			ms->setPolyGeometryObject(gl->getVPolyObjectFromName(ms->name()));
+		else
+			ms->setGeometryObject(gl->getVObjectFromName(ms->name()));
+	}
+		//ms->setgl->getVObjectFromName(ms->name());
+		//gl->makeMassCoordinate(ms->name());
 }
 
 void xdynamics::makeHMCM()
 {
 	hmcmDialog hmcm(this, md);
-
-// 	ccDialog cd;
-// 	cd.callDialog(md);
-	//gl->defineCollidConst();
 }
 
 void xdynamics::exitThread()
 {
 	if (th->isRunning()){
-		//sim->abort();
-		//	while (!sim->interrupt()){}
-		//disconnect(sim, SIGNAL(finished()), this, SLOT(exitThread()));
-		//disconnect(sim, SIGNAL(sendProgress(unsigned int)), this, SLOT(recieveProgress(unsigned int)));
-		//disconnect(newAct, SIGNAL(triggered()), this, SLOT(waitSimulation()));
 		ui.statusBar->removeWidget(pBar);
 		delete pBar;
 		pBar = NULL;
@@ -732,7 +688,9 @@ void xdynamics::solve()
 
 	sim->setSimulationCondition(sd.simTime, sd.timeStep, sd.saveStep);
 	if (sim->initialize(sd.isCpu)){
-		qDebug() << "- Initialization of simulation ---------------------------- DONE";
+		sim->setCommandWindow(cmd);
+		cmd->write(CMD_INFO, QString("Simulation is initialized."));
+		//qDebug() << "- Initialization of simulation ---------------------------- DONE";
 		if (pBar == NULL)
 			pBar = new QProgressBar;
 		pBar->setMaximum(sim->numStep() / sd.saveStep);
@@ -763,3 +721,20 @@ void xdynamics::solve()
 	// 	if (vv) delete vv; vv = NULL;
 }
 
+void xdynamics::changePaletteMode()
+{
+	bool iss = gl->changePaletteMode();
+	if (iss)
+		paletteAct->setIcon(QIcon(":/Resources/noSketch.png"));
+	else
+		paletteAct->setIcon(QIcon(":/Resources/sketch.png"));
+}
+
+void xdynamics::changeProjectionViewMode()
+{
+	projectionType pt = gl->changeProjectionViewMode();
+	if (pt == ORTHO_PROJECTION)
+		projectionViewAct->setIcon(QIcon(":/Resources/perspective.png"));
+	else if (pt == PERSPECTIVE_PROJECTION)
+		projectionViewAct->setIcon(QIcon(":/Resources/ortho.png"));
+}

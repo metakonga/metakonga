@@ -1,10 +1,12 @@
 #ifndef VOBJECT_H
 #define VOBJECT_H
 
-#ifndef QT_OPENGL_ES_2
-#include <gl/glew.h>
-#include <gl/glu.h>
-#endif
+// #ifndef QT_OPENGL_ES_2
+ #include <gl/glew.h>
+// #include <gl/glu.h>
+// #endif
+
+#include <QGLWidget>
 
 #include <QString>
 #include <QObject>

@@ -3,6 +3,7 @@
 #include "msgBox.h"
 #include "checkFunctions.h"
 #include "modeler.h"
+#include "object.h"
 #include "mass.h"
 #include <QtWidgets>
 
@@ -67,18 +68,19 @@ mass* massDialog::callDialog(modeler *md)
 	if (isDialogOk)
 	{
 		m = md->makeMass(CBBase->currentText());
-		m->setMass(LEMass->text().toFloat());		
-		
+		m->setMass(LEMass->text().toDouble());		
+
+		m->setBaseGeometryType(md->objects().find(m->name()).value()->objectType());
 		VEC3D syminer;							//inertia
-		syminer.x = LEIxy->text().toFloat();
-		syminer.y = LEIxz->text().toFloat();
-		syminer.z = LEIzy->text().toFloat();
+		syminer.x = LEIxy->text().toDouble();
+		syminer.y = LEIxz->text().toDouble();
+		syminer.z = LEIzy->text().toDouble();
 		m->setSymIner(syminer);
 
 		VEC3D prininer;
-		prininer.x = LEIxx->text().toFloat();
-		prininer.y = LEIyy->text().toFloat();
-		prininer.z = LEIzz->text().toFloat();
+		prininer.x = LEIxx->text().toDouble();
+		prininer.y = LEIyy->text().toDouble();
+		prininer.z = LEIzz->text().toDouble();
 		m->setPrinIner(prininer);
 		m->setInertia();//m->define();
 	}

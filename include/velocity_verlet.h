@@ -10,8 +10,8 @@ public:
 	velocity_verlet(modeler *_md);
 	~velocity_verlet();
 
-	virtual void updatePosition(float dt);
-	virtual void updateVelocity(float dt);
+	virtual void updatePosition(double dt);
+	virtual void updateVelocity(double dt);
 	virtual void cuUpdatePosition();
 	virtual void cuUpdateVelocity();
 };

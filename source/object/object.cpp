@@ -66,15 +66,16 @@ void object::setMaterial(tMaterial _tm)
 	p = material::getPoisson(mat_type);
 }
 
-void object::runExpression(float ct, float dt)
+void object::runExpression(double ct, double dt)
 {
-	if (ct > 0.1){
-		VEC3D am = /*((double)ct - 0.1) * */VEC3D(0.0, 0.0, 0.1);
-		VEC3D omega = ms->getEV().toAngularVelocity(ms->getEP());
-	//	double m_vel = VEC3D(0.05).cross(omega).length();
-		//if (m_vel < 1.0)
-		ms->setExternalMoment(am);
-// 		else
-// 			ms->setExternalMoment(VEC3D(0.0, 0.0, 0.0));
-	}
+// 	if (ct > 0.1){
+// 		VEC3D am = /*((double)ct - 0.1) * */VEC3D(0.0, 0.0, 0.1);
+// 		VEC3D omega = ms->getEV().toAngularVelocity(ms->getEP());
+// 	//	double m_vel = VEC3D(0.05).cross(omega).length();
+// 		//if (m_vel < 1.0)
+// 		ms->setExternalMoment(am);
+// // 		else
+// // 			ms->setExternalMoment(VEC3D(0.0, 0.0, 0.0));
+// 	}
+
 }

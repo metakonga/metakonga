@@ -17,7 +17,9 @@ vobject::vobject(QString& _name)
 	, outRot(NULL)
 {
 	count++;
+	id = count;
 	clr = colors[count];
+	clr.setAlphaF(0.5f);
 }
 
 vobject::~vobject()

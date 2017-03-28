@@ -12,6 +12,7 @@ QT_END_NAMESPACE
 class mbd_simulation : public simulation
 {
 	typedef QMap<QString, kinematicConstraint*>::iterator kConstIterator;
+	typedef QMap<QString, drivingConstraint*>::iterator dConstIterator;
 	typedef QMap<object*, mass*>::iterator massIterator;
 public:
 	mbd_simulation();
@@ -24,7 +25,7 @@ public:
 	double correction(unsigned int cs);
 	double oneStepCorrection();
 
-	bool saveResult(float ct, unsigned int p);
+	bool saveResult(double ct, unsigned int p);
 
 	unsigned int getOutCount() { return outCount; }
 

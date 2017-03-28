@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'xdynamicsp27092.ui'
+** Form generated from reading UI file 'xdynamicsHp4440.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.7.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef XDYNAMICSP27092_H
-#define XDYNAMICSP27092_H
+#ifndef XDYNAMICSHP4440_H
+#define XDYNAMICSHP4440_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -49,7 +49,8 @@ public:
     {
         if (xdynamics->objectName().isEmpty())
             xdynamics->setObjectName(QStringLiteral("xdynamics"));
-        xdynamics->resize(600, 400);
+        xdynamics->resize(1010, 802);
+        xdynamics->setTabShape(QTabWidget::Rounded);
         actionChange_Shape = new QAction(xdynamics);
         actionChange_Shape->setObjectName(QStringLiteral("actionChange_Shape"));
         actionChange_Shape->setCheckable(true);
@@ -72,7 +73,7 @@ public:
         GraphicArea->setWidgetResizable(true);
         scrollAreaWidgetContents = new QWidget();
         scrollAreaWidgetContents->setObjectName(QStringLiteral("scrollAreaWidgetContents"));
-        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 580, 315));
+        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 990, 717));
         GraphicArea->setWidget(scrollAreaWidgetContents);
 
         gridLayout->addWidget(GraphicArea, 0, 0, 1, 1);
@@ -80,7 +81,7 @@ public:
         xdynamics->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(xdynamics);
         menuBar->setObjectName(QStringLiteral("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 600, 21));
+        menuBar->setGeometry(QRect(0, 0, 1010, 21));
         menu = new QMenu(menuBar);
         menu->setObjectName(QStringLiteral("menu"));
         menuImport = new QMenu(menu);
@@ -137,4 +138,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // XDYNAMICSP27092_H
+#endif // XDYNAMICSHP4440_H

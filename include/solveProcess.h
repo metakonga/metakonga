@@ -13,7 +13,7 @@ class solveProcess : public QObject
 	Q_OBJECT
 
 public:
-	explicit solveProcess(/*modeler *_md, float _et, float _dt, unsigned int _step, */QObject *parent = 0);
+	explicit solveProcess(/*modeler *_md, double _et, double _dt, unsigned int _step, */QObject *parent = 0);
 	void abort();
 
 private:
@@ -24,9 +24,9 @@ private:
 
 	dem_simulation *dem;
 	modeler* md;
-	float et;
-	float dt;
-	float step;
+	double et;
+	double dt;
+	double step;
 
 signals:
 	void valueChanged(const QString &value);

@@ -32,6 +32,7 @@ inline QStringList getMaterialList(){
 #define POLYETHYLENE_YOUNGS_MODULUS 1.1E+9
 #define POLYETHYLENE_DENSITY		950
 #define POLYETHYLENE_POISSON_RATIO	0.42	
+#define POLYETHYLENE_SHEAR_MODULUS  0.117E+9
 
 #define GLASS_YOUNGS_MODULUS	6.8e+10
 #define GLASS_DENSITY		2180
@@ -40,24 +41,28 @@ inline QStringList getMaterialList(){
 #define ACRYLIC_YOUNGS_MODULUS 3.2E+009
 #define ACRYLIC_DENSITY			1185
 #define ACRYLIC_POISSON_RATIO	0.37
+#define ACRYLIC_SHEAR_MODULUS 1.1514E+9
 
-#define ALUMINUM_YOUNGS_MODULUS  7.1E+10
-#define ALUMINUM_DENSITY		2770
-#define ALUMINUM_POISSON_RATIO	0.33
+#define ALUMINUM_YOUNGS_MODULUS  70.0E+9
+#define ALUMINUM_DENSITY		2700
+#define ALUMINUM_POISSON_RATIO	0.34
+#define ALUMINUM_SHEAR_MODULUS 26.0E+9
 
-enum tKinematicConstraint { CONSTRAINT = 0, REVOLUTE };
-enum tMaterial { STEEL = 0, MEDIUM_CLAY, POLYETHYLENE, GLASS, ACRYLIC, ALUMINUM, SAND };
+enum tKinematicConstraint { CONSTRAINT = 0, REVOLUTE, TRANSLATIONAL };
+enum tMaterial { STEEL = 0, MEDIUM_CLAY, POLYETHYLENE, GLASS, ACRYLIC, ALUMINUM, SAND, FLUID };
 enum tRoll{ NO_DEFINE_ROLL = -1, ROLL_BOUNDARY = 0, ROLL_PARTICLE, ROLL_MOVING };
 enum tObject{ CUBE = 0, PLANE, POLYGON, CYLINDER, PARTICLES };
 enum tSimulation{ DEM, SPH, MBD };
 enum tCollisionPair{ NO_COLLISION_PAIR = 0, PARTICLES_CUBE, PARTICLES_PARTICLES, PARTICLES_PLANE, PARTICLES_CYLINDER, PARTICLES_POLYGONOBJECT };
 enum tFileType{ BIN = 0, MDE, PAR, TXT };
 enum tChangeType{ CHANGE_PARTICLE_POSITION = 0};
-enum tContactModel { HMCM = 0 };
+enum tContactModel { HMCM = 0, DHS };
 enum tSolveDevice { CPU = 0, GPU };
 enum tUnit { MKS = 0, MMKS };
 enum tGravity { PLUS_X = 0, PLUS_Y, PLUS_Z, MINUS_X, MINUS_Y, MINUS_Z };
 enum tImport {NO_FORMAT = 0, MILKSHAPE_3D_ASCII };
+enum tGenerationParticleMethod { DEFAULT_GENERATION_PARTICLE = 0, STACK_PARTICLE_METHOD };
+enum tDriving { DRIVING_DISPLACEMENT = 0, DRIVING_VELOCITY, DRIVING_ACCELERATION };
 
 typedef struct
 {
@@ -95,6 +100,12 @@ inline tCollisionPair getCollisionPair(tObject o1, tObject o2)
 			return PARTICLES_POLYGONOBJECT;
 	}
 
+	if (o1 == PARTICLES){
+		if (o2 == PARTICLES){
+			return PARTICLES_PARTICLES;
+		}
+	}
+
 	return NO_COLLISION_PAIR;
 }
 
@@ -115,13 +126,13 @@ namespace material
 		float v;
 		switch (t)
 		{
-		case STEEL:			v = (float)STEEL_DENSITY;			break;
-		case MEDIUM_CLAY:	v = (float)MEDIUM_CLAY_DENSITY;		break;
-		case POLYETHYLENE:	v = (float)POLYETHYLENE_DENSITY;	break;
-		case GLASS:			v = (float)GLASS_DENSITY;			break;
-		case ACRYLIC:		v = (float)ACRYLIC_DENSITY;			break;
-		case ALUMINUM:		v = (float)ALUMINUM_DENSITY;		break;
-		case SAND:			v = (float)SAND_DENSITY;			break;
+		case STEEL:			v = STEEL_DENSITY;			break;
+		case MEDIUM_CLAY:	v = MEDIUM_CLAY_DENSITY;		break;
+		case POLYETHYLENE:	v = POLYETHYLENE_DENSITY;	break;
+		case GLASS:			v = GLASS_DENSITY;			break;
+		case ACRYLIC:		v = ACRYLIC_DENSITY;			break;
+		case ALUMINUM:		v = ALUMINUM_DENSITY;		break;
+		case SAND:			v = SAND_DENSITY;			break;
 		}
 		return v;
 	}
@@ -131,13 +142,13 @@ namespace material
 		float v;
 		switch (t)
 		{
-		case STEEL:			v = (float)STEEL_YOUNGS_MODULUS;		break;
-		case MEDIUM_CLAY:	v = (float)MEDIUM_CLAY_YOUNGS_MODULUS;	break;
-		case POLYETHYLENE:	v = (float)POLYETHYLENE_YOUNGS_MODULUS;	break;
-		case GLASS:			v = (float)GLASS_YOUNGS_MODULUS;		break;
-		case ACRYLIC:		v = (float)ACRYLIC_YOUNGS_MODULUS;		break;
-		case ALUMINUM:		v = (float)ALUMINUM_YOUNGS_MODULUS;		break;
-		case SAND:			v = (float)SAND_YOUNGS_MODULUS;			break;
+		case STEEL:			v = STEEL_YOUNGS_MODULUS;		break;
+		case MEDIUM_CLAY:	v = MEDIUM_CLAY_YOUNGS_MODULUS;	break;
+		case POLYETHYLENE:	v = POLYETHYLENE_YOUNGS_MODULUS;	break;
+		case GLASS:			v = GLASS_YOUNGS_MODULUS;		break;
+		case ACRYLIC:		v = ACRYLIC_YOUNGS_MODULUS;		break;
+		case ALUMINUM:		v = ALUMINUM_YOUNGS_MODULUS;		break;
+		case SAND:			v = SAND_YOUNGS_MODULUS;			break;
 		}
 		return v;
 	}
@@ -147,13 +158,13 @@ namespace material
 		float v;
 		switch (t)
 		{
-		case STEEL:			v = (float)STEEL_POISSON_RATIO;			break;
-		case MEDIUM_CLAY:	v = (float)MEDIUM_CLAY_POISSON_RATIO;	break;
-		case POLYETHYLENE:	v = (float)POLYETHYLENE_POISSON_RATIO;	break;
-		case GLASS:			v = (float)GLASS_POISSON_RATIO;			break;
-		case ACRYLIC:		v = (float)ACRYLIC_POISSON_RATIO;		break;
-		case ALUMINUM:		v = (float)ALUMINUM_POISSON_RATIO;		break;
-		case SAND:			v = (float)SAND_POISSON_RATIO;			break;
+		case STEEL:			v = STEEL_POISSON_RATIO;			break;
+		case MEDIUM_CLAY:	v = MEDIUM_CLAY_POISSON_RATIO;	break;
+		case POLYETHYLENE:	v = POLYETHYLENE_POISSON_RATIO;	break;
+		case GLASS:			v = GLASS_POISSON_RATIO;			break;
+		case ACRYLIC:		v = ACRYLIC_POISSON_RATIO;		break;
+		case ALUMINUM:		v = ALUMINUM_POISSON_RATIO;		break;
+		case SAND:			v = SAND_POISSON_RATIO;			break;
 		}
 		return v;
 	}
@@ -163,13 +174,16 @@ namespace material
 		float v;
 		switch (t)
 		{
-		case STEEL:			v = (float)STEEL_SHEAR_MODULUS;			break;
-		case SAND:			v = (float)SAND_SHEAR_MODULUS;			break;
-		//case MEDIUM_CLAY:	v = (float)MEDIUM_CLAY_POISSON_RATIO;	break;
-		//case POLYETHYLENE:	v = (float)POLYETHYLENE_POISSON_RATIO;	break;
-		//case GLASS:			v = (float)GLASS_POISSON_RATIO;			break;
-		//case ACRYLIC:		v = (float)ACRYLIC_POISSON_RATIO;		break;
-		//case ALUMINUM:		v = (float)ALUMINUM_POISSON_RATIO;		break;
+		case STEEL:			v = STEEL_SHEAR_MODULUS;			break;
+		case SAND:			v = SAND_SHEAR_MODULUS;			break;
+		case ACRYLIC:		v = ACRYLIC_SHEAR_MODULUS;		break;
+		case POLYETHYLENE:	v = POLYETHYLENE_SHEAR_MODULUS;	break;
+		case ALUMINUM:		v = ALUMINUM_SHEAR_MODULUS;		break;
+		//case MEDIUM_CLAY:	v = MEDIUM_CLAY_POISSON_RATIO;	break;
+		//case POLYETHYLENE:	v = POLYETHYLENE_POISSON_RATIO;	break;
+		//case GLASS:			v = GLASS_POISSON_RATIO;			break;
+		//case ACRYLIC:		v = ACRYLIC_POISSON_RATIO;		break;
+		//case ALUMINUM:		v = ALUMINUM_POISSON_RATIO;		break;
 		}
 		return v;
 	}

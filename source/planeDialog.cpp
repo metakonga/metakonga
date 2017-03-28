@@ -57,13 +57,13 @@ plane* planeDialog::callDialog(modeler* md)
 	{
 		p = md->makePlane(LEName->text(), tMaterial(CBMaterial->currentIndex()), ROLL_BOUNDARY);
 		QStringList ss = LEPa->text().split(" ");
-		VEC3F xw(ss.at(0).toFloat(), ss.at(1).toFloat(), ss.at(2).toFloat());
+		VEC3D xw(ss.at(0).toDouble(), ss.at(1).toDouble(), ss.at(2).toDouble());
 		ss = LEPb->text().split(" ");
-		VEC3F pa(ss.at(0).toFloat(), ss.at(1).toFloat(), ss.at(2).toFloat());
+		VEC3D pa(ss.at(0).toDouble(), ss.at(1).toDouble(), ss.at(2).toDouble());
 		ss = LEPd->text().split(" ");
-		VEC3F pb(ss.at(0).toFloat(), ss.at(1).toFloat(), ss.at(2).toFloat());
+		VEC3D pb(ss.at(0).toDouble(), ss.at(1).toDouble(), ss.at(2).toDouble());
 		ss = LEPc->text().split(" ");
-		VEC3F pc(ss.at(0).toFloat(), ss.at(1).toFloat(), ss.at(2).toFloat());
+		VEC3D pc(ss.at(0).toDouble(), ss.at(1).toDouble(), ss.at(2).toDouble());
 		p->define(xw, pa, pc, pb);
 	}
 	return p;
@@ -82,28 +82,28 @@ void planeDialog::Click_ok()
 		msgBox("Point a is wrong data.", QMessageBox::Critical);
 		return;
 	}
-			//points[0].x = ss.at(0).toFloat(); points[0].y = ss.at(1).toFloat(); points[0].z = ss.at(2).toFloat();
+			//points[0].x = ss.at(0).toDouble(); points[0].y = ss.at(1).toDouble(); points[0].z = ss.at(2).toDouble();
 
 	if (LEPb->text().split(" ").size() != 3)
 	{
 		msgBox("Point b is wrong data.", QMessageBox::Critical);
 		return;
 	}
-					//points[1].x = ss.at(0).toFloat(); points[1].y = ss.at(1).toFloat(); points[1].z = ss.at(2).toFloat();
+					//points[1].x = ss.at(0).toDouble(); points[1].y = ss.at(1).toDouble(); points[1].z = ss.at(2).toDouble();
 
 	if (LEPc->text().split(" ").size() != 3)
 	{
 		msgBox("Point c is wrong data.", QMessageBox::Critical);
 		return;
 	}
-							//points[2].x = ss.at(0).toFloat(); points[2].y = ss.at(1).toFloat(); points[2].z = ss.at(2).toFloat();
+							//points[2].x = ss.at(0).toDouble(); points[2].y = ss.at(1).toDouble(); points[2].z = ss.at(2).toDouble();
 
 	if (LEPd->text().split(" ").size() != 3)
 	{
 		msgBox("Point d is wrong data.", QMessageBox::Critical);
 		return;
 	}
-									//points[3].x = ss.at(0).toFloat(); points[3].y = ss.at(1).toFloat(); points[3].z = ss.at(2).toFloat();
+									//points[3].x = ss.at(0).toDouble(); points[3].y = ss.at(1).toDouble(); points[3].z = ss.at(2).toDouble();
 ///
 									//mtype = material_str2enum(CBMaterial->currentText().toStdString());
 									//material = getMaterialConstant(mtype);

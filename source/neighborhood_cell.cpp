@@ -33,7 +33,7 @@ void neighborhood_cell::reorderDataAndFindCellStart(unsigned int id, unsigned in
 
 void neighborhood_cell::detection()
 {
-	VEC4F_PTR pos = md->particleSystem()->position();
+	VEC4D_PTR pos = md->particleSystem()->position();
 	VEC4D *psph = NULL;
 	VEC3I cell3d;
 
@@ -43,14 +43,15 @@ void neighborhood_cell::detection()
 		body_id[i] = i;
 	}
 	unsigned int sid = md->numParticle();
-	foreach(polygonObject value, md->objPolygon()){
-		psph = value.hostSphereSet();
-		for (unsigned int i = 0; i < value.numIndex(); i++){
+	QList<polygonObject*> polys = md->polyObjects();
+	for (unsigned int po = 0; po < md->numPoly(); po++){
+		psph = polys.at(po)->hostSphereSet();
+		for (unsigned int i = 0; i < polys.at(po)->numIndex(); i++){
 			cell3d = getCellNumber(psph[i].x, psph[i].y, psph[i].z);
 			cell_id[sid + i] = getHash(cell3d);
 			body_id[sid + i] = sid + i;
 		}
-		sid += value.numIndex();
+		sid += polys.at(po)->numIndex();
 	}
 
 	thrust::sort_by_key(cell_id, cell_id + nse, body_id);
@@ -77,8 +78,8 @@ void neighborhood_cell::cuDetection()
 	cu_calculateHashAndIndex(d_cell_id, d_body_id, md->particleSystem()->cuPosition(), md->numParticle());
 	//std::cout << "step 2" << std::endl;
 	unsigned int sid = md->numParticle();
-	for (QMap<QString, polygonObject>::iterator it = md->objPolygon().begin(); it != md->objPolygon().end(); it++){
-		cu_calculateHashAndIndexForPolygonSphere(d_cell_id, d_body_id, sid, it.value().numIndex(), it.value().deviceSphereSet());
+	for (unsigned int i = 0; i < md->polyObjects().size(); i++){
+		cu_calculateHashAndIndexForPolygonSphere(d_cell_id, d_body_id, sid, md->polyObjects().at(i)->numIndex(), md->polyObjects().at(i)->deviceSphereSet());
 	}
 	//std::cout << "step 3" << std::endl;
 	cu_reorderDataAndFindCellStart(d_cell_id, d_body_id, d_cell_start, d_cell_end, d_sorted_id, md->numParticle(), md->numPolygonSphere(), ng);
@@ -88,7 +89,7 @@ void neighborhood_cell::cuDetection()
 void neighborhood_cell::reorderElements(bool isCpu)
 {
 	
-	VEC4F_PTR pos = md->particleSystem()->position();
+	VEC4D_PTR pos = md->particleSystem()->position();
 	VEC4D *psph = NULL;
 	unsigned int np = md->numParticle();
 	allocMemory(np + md->numPolygonSphere());
@@ -107,22 +108,24 @@ void neighborhood_cell::reorderElements(bool isCpu)
 		sphPos = new VEC4D[nsph];
 		hpi = new host_polygon_info[nsph];
 	}
-	for (QMap<QString, polygonObject>::iterator po = md->objPolygon().begin(); po != md->objPolygon().end(); po++){
-		psph = po.value().hostSphereSet();
-		host_polygon_info* _hpi = po.value().hostPolygonInfo();
-		for (unsigned int i = 0; i < po.value().numIndex(); i++){
+	QList<polygonObject*> polys = md->polyObjects();
+	for (unsigned int j = 0; j < polys.size(); j++){
+	//for (QMap<QString, polygonObject>::iterator po = md->objPolygon().begin(); po != md->objPolygon().end(); po++){
+		psph = polys.at(j)->hostSphereSet();
+		host_polygon_info* _hpi = polys.at(j)->hostPolygonInfo();
+		for (unsigned int i = 0; i < polys.at(j)->numIndex(); i++){
 			cell3d = getCellNumber(psph[i].x, psph[i].y, psph[i].z);
 			cell_id[sid + i] = getHash(cell3d);
 			body_id[sid + i] = sid + i;
 			sphPos[sid + i - np] = psph[i];
 			hpi[sid + i - np] = _hpi[i];
 		}
-		sid += po.value().numIndex();
+		sid += polys.at(j)->numIndex();
 	}
 
 	thrust::sort_by_key(cell_id, cell_id + nse/*md->numParticle()*/, body_id);
-	VEC4F *pPos = new VEC4F[md->numParticle()];
-	memcpy(pPos, pos, sizeof(VEC4F) * md->numParticle());
+	VEC4D *pPos = new VEC4D[md->numParticle()];
+	memcpy(pPos, pos, sizeof(VEC4D) * md->numParticle());
 // 	VEC4D *sphPos = NULL;
 // 	if (sid != md->numParticle())
 // 	{
@@ -130,8 +133,8 @@ void neighborhood_cell::reorderElements(bool isCpu)
 // 		memcpy(sphPos, )
 // 	}
 	unsigned int pcnt = 0;
-	unsigned int *pocnt = new unsigned int[md->objPolygon().size()];
-	memset(pocnt, 0, sizeof(unsigned int) * md->objPolygon().size());
+	unsigned int *pocnt = new unsigned int[polys.size()];
+	memset(pocnt, 0, sizeof(unsigned int) * polys.size());
 	for (unsigned int i = 0; i < nse; i++){
 		if (body_id[i] < md->numParticle())
 		{
@@ -143,20 +146,22 @@ void neighborhood_cell::reorderElements(bool isCpu)
 			unsigned int cnt = 0;
 			unsigned int start = np;
 			unsigned int bid = body_id[i];
-			for (QMap<QString, polygonObject>::iterator po = md->objPolygon().begin(); po != md->objPolygon().end(); po++){
-				if (bid < start + po.value().numIndex()){
+			for (unsigned int j = 0; j < polys.size(); j++){
+			//for (QMap<QString, polygonObject>::iterator po = md->objPolygon().begin(); po != md->objPolygon().end(); po++){
+				if (bid < start + polys.at(j)->numIndex()){
 					unsigned int rid = pocnt[cnt]++;
-					po.value().hostPolygonInfo()[rid] = hpi[bid - np];
-					po.value().hostSphereSet()[rid] = sphPos[bid - np];
+					polys.at(j)->hostPolygonInfo()[rid] = hpi[bid - np];
+					polys.at(j)->hostSphereSet()[rid] = sphPos[bid - np];
 				}
 				cnt++;
-				start += po.value().numIndex();
+				start += polys.at(j)->numIndex();
 			}
 		}
 	}
 	delete [] pocnt;
-	for (QMap<QString, polygonObject>::iterator po = md->objPolygon().begin(); po != md->objPolygon().end(); po++){
-		po.value().updateDeviceFromHost();
+	for (unsigned int i = 0; i < polys.size(); i++){
+	//for (QMap<QString, polygonObject>::iterator po = md->objPolygon().begin(); po != md->objPolygon().end(); po++){
+		polys.at(i)->updateDeviceFromHost();
 	}
 	//md->objPolygon().begin().value().updateDeviceFromHost();
 // 	foreach (polygonObject value, md->objPolygon())

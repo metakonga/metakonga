@@ -10,8 +10,8 @@ public:
 	integrator(modeler* _md);
 	virtual ~integrator();
 
-	virtual void updatePosition(float dt) = 0;
-	virtual void updateVelocity(float dt) = 0;
+	virtual void updatePosition(double dt) = 0;
+	virtual void updateVelocity(double dt) = 0;
 	virtual void cuUpdatePosition() = 0;
 	virtual void cuUpdateVelocity() = 0;
 

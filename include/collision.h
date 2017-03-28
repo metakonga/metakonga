@@ -5,9 +5,7 @@
 #include "mphysics_types.h"
 #include "modeler.h"
 #include "grid_base.h"
-//class object;
-//class particle_system;
-//class grid_base;
+#include "mphysics_cuda_dec.cuh"
 
 class collision
 {
@@ -23,15 +21,16 @@ public:
 	collision(const collision& cs);
 	virtual ~collision();
 
-	void setContactParameter(float _rest, float _fric, float _rfric) { rest = _rest; fric = _fric; rfric = _rfric; }
+	void allocDeviceMemory();
+	void setContactParameter(double Ei, double Ej, double Pi, double Pj, double Gi, double Gj, double _rest, double _fric, double _rfric, double _coh, double _ratio);
 	void setGridBase(grid_base *_gb) { gb = _gb; }
-	float cohesionForce(float ri, float rj, float Ei, float Ej, float pri, float prj, float Fn);
+	double cohesionForce(double ri, double rj, double Ei, double Ej, double pri, double prj, double Fn);
 
-	virtual bool collid(float dt) = 0;
+	virtual bool collid(double dt) = 0;
 	virtual bool cuCollid() = 0;
-	virtual bool collid_with_particle(unsigned int i, float dt) = 0;
+	virtual bool collid_with_particle(unsigned int i, double dt) = 0;
 
-	constant getConstant(float ir, float jr, float im, float jm, float iE, float jE, float ip, float jp, float si, float sj);
+	constant getConstant(double ir, double jr, double im, double jm, double iE, double jE, double ip, double jp, double si, double sj);
 	grid_base* getGridBase() { return gb; }
 	tCollisionPair getCollisionPairType() { return tcp; }
 
@@ -40,18 +39,21 @@ public:
 	QString& firstObject() { return oname1; }
 	QString& secondObject() { return oname2; }
 
-	float cohesion() { return coh; }
+	double cohesion() { return coh; }
 
 protected:
 	QString name;
 	QString oname1;
 	QString oname2;
-	float rest;
-	float fric;	
-	float rfric;
-	float coh;
+	double rest;
+	double fric;	
+	double rfric;
+	double coh;
 
-	float *td;			// tangential displacement
+	contact_parameter hcp;				// Host contact parameters
+	contact_parameter* dcp;				// Device contact parameters
+
+	double *td;			// tangential displacement
 
 	tContactModel tcm; 
 	tCollisionPair tcp;

@@ -21,10 +21,11 @@ public:
 	object(const object& obj);
 	virtual ~object();
 
-	virtual unsigned int makeParticles(float rad, float spacing, bool isOnlyCount, VEC4F_PTR pos = NULL, unsigned int sid = 0) = 0;
+	virtual unsigned int makeParticles(double rad, VEC3UI &_size, VEC3D &spacing, unsigned int nstack, bool isOnlyCount, VEC4D_PTR pos = NULL, unsigned int sid = 0) = 0;
 	virtual void cuAllocData(unsigned int _np) = 0;
-	virtual void updateMotion(float t, tSolveDevice tsd = CPU) = 0;
+	virtual void updateMotion(double t, tSolveDevice tsd = CPU) = 0;
 	virtual void updateFromMass() = 0;
+	virtual void save_object_data(QTextStream& ts) = 0;
 
 	unsigned int ID() const { return id; }
 	QString objectName() const { return name; }
@@ -32,10 +33,10 @@ public:
 	tMaterial materialType() const { return mat_type; }
 	tRoll rolltype() const { return roll_type; }
 	bool expression() const { return _expression; }
-	float density() const { return d; }
-	float youngs() const { return y; }
-	float poisson() const { return p; }
-	float shear() const { return sm; }
+	double density() const { return d; }
+	double youngs() const { return y; }
+	double poisson() const { return p; }
+	double shear() const { return sm; }
 	bool isUpdate() const { return _update; }
 	mass* pointMass() const { return ms; }
 
@@ -47,7 +48,7 @@ public:
 
 	void addPointMass(mass* _ms) { ms = _ms; }
 	void save_mass_data(QTextStream& ts) const;
-	void runExpression(float ct, float dt);
+	void runExpression(double ct, double dt);
 
 protected:
 	static unsigned int sid;
@@ -59,10 +60,10 @@ protected:
 	tRoll roll_type;
 	tObject obj_type;
 	tMaterial mat_type;
-	float d;		// density
-	float y;		// young's modulus
-	float p;		// poisson ratio
-	float sm;		// shear modulus
+	double d;		// density
+	double y;		// young's modulus
+	double p;		// poisson ratio
+	double sm;		// shear modulus
 	mass* ms;
 	
 	modeler* md;

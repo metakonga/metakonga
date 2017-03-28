@@ -6,7 +6,8 @@
 #include "particleInfoDialog.h"
 #include "glwidget.h"
 //#include "DEM/DemSimulation.h"
-
+#include "database.h"
+#include "cmdWindow.h"
 #include "modeler.h"
 
 class QThread;
@@ -36,10 +37,8 @@ public:
 	void OBJPROPERTY_Dialog();
 	void ChangeComboBox(int);
 	void mySlot();
-	///void spSlot();
 	void newproj();
 	void openproj();
-	void openrtproj();
 	void saveproj();
 	void ani_previous2x();
 	void ani_previous1x();
@@ -58,6 +57,8 @@ public:
 	void makeParticle();
 	void makeMass();
 	void makeHMCM();
+	void changePaletteMode();
+	void changeProjectionViewMode();
 	void solve();
 	void exitThread();
 	void recieveProgress(unsigned int);
@@ -98,6 +99,8 @@ private:
 	QAction *makeCylinderAct;
 	QAction *makeParticleAct;
 	QAction *makeMassAct;
+	QAction *paletteAct;
+	QAction *projectionViewAct;
 	QAction *collidConstAct;
 	QAction *solveProcessAct;
 	QAction *changeParticleAct;
@@ -119,7 +122,8 @@ private:
 
 	//solveProcess *sp;
 	QThread *th;
-	//DemSimulation *dem;
+	database *db;
+	cmdWindow *cmd;
 	simulation *sim;
 	modeler *md;			// 
 };

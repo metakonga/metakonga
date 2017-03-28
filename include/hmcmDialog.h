@@ -19,6 +19,8 @@ private:
 	void setupDialog();
 
 	private slots:
+	void check_cohesion();
+	void check_stiffnessRatio();
 	void click_ok();
 	void click_cancle();
 };

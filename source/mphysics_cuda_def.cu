@@ -30,25 +30,25 @@ void computeGridSize(unsigned n, unsigned blockSize, unsigned &numBlocks, unsign
 	numBlocks = iDivUp(n, numThreads);
 }
 
-void vv_update_position(float *pos, float *vel, float *acc, unsigned int np)
+void vv_update_position(double *pos, double *vel, double *acc, unsigned int np)
 {
 	computeGridSize(np, 256, numBlocks, numThreads);
 	vv_update_position_kernel <<< numBlocks, numThreads >>>(
-		(float4 *)pos,
-		(float3 *)vel,
-		(float3 *)acc);
+		(double4 *)pos,
+		(double3 *)vel,
+		(double3 *)acc);
 }
 
-void vv_update_velocity(float *vel, float *acc, float *omega, float *alpha, float *force, float *moment, float* mass, float* iner, unsigned int np)
+void vv_update_velocity(double *vel, double *acc, double *omega, double *alpha, double *force, double *moment, double* mass, double* iner, unsigned int np)
 {
 	computeGridSize(np, 256, numBlocks, numThreads);
 	vv_update_velocity_kernel <<< numBlocks, numThreads >>>(
-		(float3 *)vel,
-		(float3 *)acc,
-		(float3 *)omega,
-		(float3 *)alpha,
-		(float3 *)force,
-		(float3 *)moment,
+		(double3 *)vel,
+		(double3 *)acc,
+		(double3 *)omega,
+		(double3 *)alpha,
+		(double3 *)force,
+		(double3 *)moment,
 		mass,
 		iner);
 }
@@ -56,11 +56,11 @@ void vv_update_velocity(float *vel, float *acc, float *omega, float *alpha, floa
 void cu_calculateHashAndIndex(
 	unsigned int* hash,
 	unsigned int* index,
-	float *pos,
+	double *pos,
 	unsigned int np)
 {
 	computeGridSize(np, 256, numBlocks, numThreads);
-	calculateHashAndIndex_kernel <<< numBlocks, numThreads >>>(hash, index, (float4 *)pos);
+	calculateHashAndIndex_kernel <<< numBlocks, numThreads >>>(hash, index, (double4 *)pos);
 
 
 }
@@ -120,68 +120,98 @@ void cu_reorderDataAndFindCellStart(
 	//std::cout << "step 4" << std::endl;
 }
 
-void cu_calculate_p2p(float* pos, float* vel, float* acc, float* omega, float* alpha, float* force, float* moment, float* mass, float* iner, float* riv, float E, float pr, float rest, float sh, float fric, float rfric, float coh, unsigned int* sorted_index, unsigned int* cstart, unsigned int* cend, unsigned int np, unsigned int cRun)
+void cu_calculate_p2p(
+	const int tcm, double* pos, double* vel, double* acc, 
+	double* omega, double* alpha, 
+	double* force, double* moment, 
+	double* mass, double* iner,
+	unsigned int* sorted_index, unsigned int* cstart, 
+	unsigned int* cend, contact_parameter* cp, unsigned int np)
 {
 	computeGridSize(np, 256, numBlocks, numThreads);
-	calculate_p2p_kernel <<< numBlocks, numThreads >>>(
-		(float4 *)pos,
-		(float3 *)vel,
-		(float3 *)acc,
-		(float3 *)omega,
-		(float3 *)alpha,
-		(float3 *)force,
-		(float3 *)moment,
-		mass,
-		iner,
-		riv,
-		E,
-		pr,
-		rest,
-		sh,
-		fric,
-		rfric,
-		coh,
-		sorted_index,
-		cstart,
-		cend,
-		cRun);
+	switch (tcm)
+	{
+	case 0:
+		calculate_p2p_kernel<0> << < numBlocks, numThreads >> >(
+			(double4 *)pos, (double3 *)vel, (double3 *)acc,
+			(double3 *)omega, (double3 *)alpha,
+			(double3 *)force, (double3 *)moment,
+			mass, iner,
+			sorted_index, cstart,
+			cend, cp);
+		break;
+	case 1:
+		calculate_p2p_kernel<1> << < numBlocks, numThreads >> >(
+			(double4 *)pos, (double3 *)vel, (double3 *)acc,
+			(double3 *)omega, (double3 *)alpha,
+			(double3 *)force, (double3 *)moment,
+			mass, iner,
+			sorted_index, cstart,
+			cend, cp);
+		break;
+	}
 }
 
-void cu_plane_hertzian_contact_force(const int tcm, device_plane_info* plan, float E, float pr, float G, float rest, float fric, float rfric, float* pos, float* vel, float* omega, float* force, float* moment, float* mass, float pE, float pPr, float pG, unsigned int np)
+void cu_plane_hertzian_contact_force(
+	const int tcm, device_plane_info* plan, 
+	double* pos, double* vel, double* omega, 
+	double* force, double* moment, double* mass, 
+	unsigned int np, contact_parameter *cp)
 {
 	computeGridSize(np, 256, numBlocks, numThreads);
 	switch (tcm)
 	{
 	case 0: plane_hertzian_contact_force_kernel<0> << < numBlocks, numThreads >> >(
-		plan, E, pr, G,	rest, fric,	rfric, (float4 *)pos, (float3 *)vel, (float3 *)omega,
-		(float3 *)force, (float3 *)moment, mass, pE, pPr, pG);
+		plan, (double4 *)pos, (double3 *)vel, (double3 *)omega,
+		(double3 *)force, (double3 *)moment, cp, mass);
+		break;
+	case 1: plane_hertzian_contact_force_kernel<1> << < numBlocks, numThreads >> >(
+		plan, (double4 *)pos, (double3 *)vel, (double3 *)omega,
+		(double3 *)force, (double3 *)moment, cp, mass);
 		break;
 	}
 	
 }
 
-void cu_cylinder_hertzian_contact_force(const int tcm, device_cylinder_info* cyl, float E, float pr, float G, float rest, float fric, float rfric, float* pos, float* vel, float* omega, float* force, float* moment, float* mass, float pE, float pPr, float pG, unsigned int np, double3* mpos, double3* mf, double3* mm, double3& _mf, double3& _mm)
+void cu_cylinder_hertzian_contact_force(
+	const int tcm, device_cylinder_info* cyl, 
+	double* pos, double* vel, double* omega, 
+	double* force, double* moment, 
+	double* mass, unsigned int np, contact_parameter *cp,
+	double3* mpos, double3* mf, double3* mm, double3& _mf, double3& _mm)
 {
 	computeGridSize(np, 512, numBlocks, numThreads);
 	switch (tcm)
 	{
 	case 0: cylinder_hertzian_contact_force_kernel<0> << < numBlocks, numThreads >> >(
-		cyl, E, pr, G, rest, fric, rfric, (float4 *)pos, (float3 *)vel, (float3 *)omega,
-		(float3 *)force, (float3 *)moment, mass, pE, pPr, pG, mpos, mf, mm);
+		cyl, (double4 *)pos, (double3 *)vel, (double3 *)omega,
+		(double3 *)force, (double3 *)moment, cp, mass, mpos, mf, mm);
+		break;
+	case 1: cylinder_hertzian_contact_force_kernel<1> << < numBlocks, numThreads >> >(
+		cyl, (double4 *)pos, (double3 *)vel, (double3 *)omega,
+		(double3 *)force, (double3 *)moment, cp, mass, mpos, mf, mm);
 		break;
 	}
 	
 }
 
-void cu_particle_polygonObject_collision(const int tcm, device_polygon_info* dpi, double* dsph, device_polygon_mass_info* dpmi, float E, float pr, float G, float rest, float fric, float rfric, float* pos, float* vel, float* omega, float* force, float* moment, float* mass, float pE, float pPr, float pG, unsigned int* sorted_index, unsigned int* cstart, unsigned int* cend, unsigned int np, double3* mpos, double3* mf, double3* mm, double3& _mf, double3& _mm)
+void cu_particle_polygonObject_collision(
+	const int tcm, device_polygon_info* dpi, double* dsph, device_polygon_mass_info* dpmi, 
+	double* pos, double* vel, double* omega, 
+	double* force, double* moment, double* mass, 
+	unsigned int* sorted_index, unsigned int* cstart, unsigned int* cend, contact_parameter *cp,
+	unsigned int np, double3* mpos, double3* mf, double3* mm, double3& _mf, double3& _mm)
 {
 	computeGridSize(np, 256, numBlocks, numThreads);
 	switch (tcm)
 	{
-	case 0: particle_polygonObject_collision_kernel<0> << < numBlocks, numThreads >> >(
-		dpi, (double4 *)dsph, dpmi, E, pr, G, rest, fric, rfric,
-		(float4 *)pos, (float3 *)vel, (float3 *)omega, (float3 *)force, (float3 *)moment,
-		mass, pE, pPr, pG, sorted_index, cstart, cend, mpos, mf, mm);
+	case 0: 
+		particle_polygonObject_collision_kernel<0> << < numBlocks, numThreads >> >(
+		dpi, (double4 *)dsph, dpmi, 
+		(double4 *)pos, (double3 *)vel, (double3 *)omega, 
+		(double3 *)force, (double3 *)moment, mass, 
+		sorted_index, cstart, cend, cp,
+		mpos, mf, mm);
 		break;
 
 	}

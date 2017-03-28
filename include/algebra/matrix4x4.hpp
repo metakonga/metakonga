@@ -70,6 +70,15 @@ namespace algebra
 			return *this;
 		}
 
+		matrix4x4& operator=(T v)
+		{
+			a00 = v; a01 = v; a02 = v; a03 = v;
+			a10 = v; a11 = v; a12 = v; a13 = v;
+			a20 = v; a21 = v; a22 = v; a23 = v;
+			a30 = v; a31 = v; a32 = v; a33 = v;
+			return *this;
+		}
+
 		matrix4x4 operator+(matrix4x4 const& m)
 		{
 			return matrix4x4(

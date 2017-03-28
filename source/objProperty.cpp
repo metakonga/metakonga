@@ -75,13 +75,16 @@ void objProperty::initialize(modeler* _md, GLWidget* _gl)
 	tops.clear();
 	//objProp->clear();
 	
-	if (md->objPolygon().size()){
+	if (md->polyObjects().size()){
 		//objList->addItem("polygon object"));
-		foreach(polygonObject value, md->objPolygon())
-		{
+		for (unsigned int i = 0; i < md->polyObjects().size(); i++){
 			tops[objList->count()] = TOP_POLYGON_OBJECT;
-			objList->addItem(value.objectName());			
+			objList->addItem(md->polyObjects().at(i)->objectName());
 		}
+// 		foreach(polygonObject value, md->objPolygon())
+// 		{
+// 				
+// 		}
 	}
 	if (md->objects().size()){
 		foreach(object* value, md->objects()){
@@ -172,7 +175,7 @@ void objProperty::settingPolygonObjectProperties(int id)
 {
 	_isSetting = false;
 	QListWidgetItem *it = objList->item(id);
-	polygonObject* po = &(md->objPolygon()[it->text()]);
+	polygonObject* po = md->getChildObject<polygonObject*>(it->text());// &(md->objPolygon()[it->text()]);
 	currentObject = po;
 	//QLineEdit* LEName = new QLineEdit;
 	getNameWidget()->setText(po->objectName());

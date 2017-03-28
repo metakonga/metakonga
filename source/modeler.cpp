@@ -9,16 +9,24 @@
 #include "collision_particles_cylinder.h"
 #include "collision_particles_polygonObject.h"
 #include "revoluteConstraint.h"
+#include "translationalConstraint.h"
+#include "drivingConstraint.h"
 #include "glwidget.h"
+#include "database.h"
 #include <direct.h>
 #include <QString>
+#include <QPlainTextEdit>
 
 modeler::modeler()
 	: model_path("")
 	, tsim(DEM)
 	, ps(NULL)
+	, ncube(0)
+	, nplane(0)
+	, ncylinder(0)
+	, npoly(0)
 {
-	grav = VEC3F(0.f, -9.80665f, 0.f);
+	grav = VEC3D(0.f, -9.80665f, 0.f);
 }
 
 modeler::modeler(QString _name, tSimulation _sim, tUnit u, tGravity _dg)
@@ -27,15 +35,19 @@ modeler::modeler(QString _name, tSimulation _sim, tUnit u, tGravity _dg)
 	, ps(NULL)
 	, unit(u)
 	, dg(_dg)
+	, ncube(0)
+	, nplane(0)
+	, ncylinder(0)
+	, npoly(0)
 {
 	switch (dg)
 	{
-	case PLUS_X: grav = VEC3F(9.80665f, 0.f, 0.f); break;
-	case PLUS_Y: grav = VEC3F(0.f, 9.80665f, 0.f); break;
-	case PLUS_Z: grav = VEC3F(0.f, 0.f, 9.80665f); break;
-	case MINUS_X: grav = VEC3F(-9.80665f, 0.f, 0.f); break;
-	case MINUS_Y: grav = VEC3F(0.f, -9.80665f, 0.f); break;
-	case MINUS_Z: grav = VEC3F(0.f, 0.f, -9.80665f); break;
+	case PLUS_X: grav = VEC3D(9.80665f, 0.f, 0.f); break;
+	case PLUS_Y: grav = VEC3D(0.f, 9.80665f, 0.f); break;
+	case PLUS_Z: grav = VEC3D(0.f, 0.f, 9.80665f); break;
+	case MINUS_X: grav = VEC3D(-9.80665f, 0.f, 0.f); break;
+	case MINUS_Y: grav = VEC3D(0.f, -9.80665f, 0.f); break;
+	case MINUS_Z: grav = VEC3D(0.f, 0.f, -9.80665f); break;
 	}
 	//grav = VEC3F(0.f, -9.80665f, 0.f);
 	int begin = model_path.lastIndexOf("/");
@@ -66,33 +78,36 @@ modeler::~modeler()
 		kin.next();
 		delete kin.value();
 	}
+	qDeleteAll(objs);
+	qDeleteAll(dconsts);
 	if (ps) delete ps; ps = NULL;
 }
 
 cylinder* modeler::makeCylinder(QString _name, tMaterial _mat, tRoll _roll)
 {
-	cylinder cy(this, _name, _mat, _roll);
-	cylinders[_name] = cy;
-	objs[_name] = &(cylinders[_name]);
-	return &(cylinders[_name]);
+	cylinder *cy = new cylinder(this, _name, _mat, _roll);
+	objs[_name] = cy;
+	ncylinder++;
+	db->addChild(database::CYLINDER_ROOT, _name);
+	return cy;
 }
 
 cube* modeler::makeCube(QString _name, tMaterial _mat, tRoll _roll)
 {
- 	cube cb(this, _name, _mat, _roll);
-	cubes[_name] = cb;
-//	cb.save_shape_data(io_model);
-	objs[_name] = &(cubes[_name]);
-	return &(cubes[_name]);
+ 	cube *cb = new cube(this, _name, _mat, _roll);
+	objs[_name] = cb;
+	ncube++;
+	db->addChild(database::CUBE_ROOT, _name);
+	return cb;
 }
 
 plane* modeler::makePlane(QString _name, tMaterial _mat, tRoll _roll)
 {
- 	plane pe(this, _name, _mat, _roll);
- 	planes[_name] = pe;
-// 	pe.save_shape_data(io_model);
-	objs[_name] = &(planes[_name]);
- 	return &(planes[_name]);
+ 	plane *pe = new plane(this, _name, _mat, _roll);
+  	objs[_name] = pe;
+	nplane++;
+	db->addChild(database::PLANE_ROOT, _name);
+	return pe;
 }
 
 polygonObject* modeler::makePolygonObject(tImport tm, QString file)
@@ -101,7 +116,7 @@ polygonObject* modeler::makePolygonObject(tImport tm, QString file)
 	qf.open(QIODevice::ReadOnly);
 	QTextStream qs(&qf);
 	QString ch;
-	polygonObject* _po;
+	polygonObject* po = NULL;
 	if (tm == NO_FORMAT)
 	{
 		qs >> ch >> ch;
@@ -122,18 +137,22 @@ polygonObject* modeler::makePolygonObject(tImport tm, QString file)
 			}
 			for (int i = 0; i < nmesh; i++)
 			{
-				polygonObject po(this, file);
+				po = new polygonObject(this, file);
 			//	po.define(tm, qs);
-				pObjs[po.objectName()] = po;
-				_po = &(pObjs[po.objectName()]);
-				objs[po.objectName()] = _po;
-				pObjs[po.objectName()].define(tm, qs);
+				//pObjs[po.objectName()] = po;
+				//_po = &(pObjs[po.objectName()]);
+				po->define(tm, qs);
+				objs[po->objectName()] = po;
+				polygons.push_back(po);
+				npoly++;
+				//pObjs[po.objectName()].define(tm, qs);
 			}
 		}
 		break;
 	}
 	qf.close();
-	return _po;
+	db->addChild(database::POLYGON_ROOT, po->objectName());
+	return po;
 }
 	
 // 	polygon po(this, _name, _mat, _roll);
@@ -141,15 +160,18 @@ polygonObject* modeler::makePolygonObject(tImport tm, QString file)
 // 	objs[_name] = &(polygons[_name]);
 // 	return &(polygons[_name]);
 
-kinematicConstraint* modeler::makeKinematicConstraint(QString _name, tKinematicConstraint kt, VEC3D& loc,
-	mass* i, VEC3D& fi, VEC3D& gi,
-	mass* j, VEC3D& fj, VEC3D& gj)
+kinematicConstraint* modeler::makeKinematicConstraint(QString _name, tKinematicConstraint kt,
+	mass* i, VEC3D& spi, VEC3D& fi, VEC3D& gi,
+	mass* j, VEC3D& spj, VEC3D& fj, VEC3D& gj)
 {
 	kinematicConstraint* kin;
 	switch (kt)
 	{
 	case REVOLUTE:
-		kin = new revoluteConstraint(this, _name, kt, loc, i, fi, gi, j, fj, gj);
+		kin = new revoluteConstraint(this, _name, kt, i, spi, fi, gi, j, spj, fj, gj);
+		break;
+	case TRANSLATIONAL:
+		kin = new translationalConstraint(this, _name, kt, i, spi, fi, gi, j, spj, fj, gj);
 		break;
 	}
 	consts[_name] = kin;
@@ -173,9 +195,9 @@ mass* modeler::makeMass(QString _name)
 		
 	switch (obj->objectType()){				//calculate Mass Center Position
 		case CUBE:{
-			cube c = cubes.find(_name).value();
-			vector3<float> minp = c.min_point();
-			vector3<float> maxp = c.max_point();
+			cube *c = getChildObject<cube*>(_name);
+			VEC3D minp = c->min_point();
+			VEC3D maxp = c->max_point();
 			VEC3D CuCenterp;
 			CuCenterp.x = (maxp.x + minp.x) / 2;
 			CuCenterp.y = (maxp.y + minp.y) / 2;
@@ -184,11 +206,11 @@ mass* modeler::makeMass(QString _name)
 			break;
 		}
 		case PLANE:{
-			plane pl= planes.find(_name).value();
-			vector3<float> xw = pl.XW();
-			vector3<float> w2 = pl.W2();
-			vector3<float> w3 = pl.W3();
-			vector3<float> w4 = pl.W4();
+			plane *pl = getChildObject<plane*>(_name);// .find(_name).value();
+			VEC3D xw = pl->XW();
+			VEC3D w2 = pl->W2();
+			VEC3D w3 = pl->W3();
+			VEC3D w4 = pl->W4();
 			VEC3D PlMidp1;
 			PlMidp1.x = (xw.x + w2.x) / 2;
 			PlMidp1.y = (xw.y + w2.y) / 2;
@@ -205,27 +227,20 @@ mass* modeler::makeMass(QString _name)
 			break;
 		}
 		case POLYGON:{
-			QMap<QString, polygonObject>::iterator po = pObjs.find(_name);
-			ms->setMassPoint(po.value().getOrigin());
-// 			vector3<float> p = po.P();
-// 			vector3<float> q = po.Q();
-// 			vector3<float> r = po.R();
-// 			VEC3D PgCenterp;
-// 			PgCenterp.x = (p.x + q.x + r.x) / 3;
-// 			PgCenterp.y = (p.y + q.y + r.y) / 3;
-// 			PgCenterp.z = (p.z + q.z + r.z) / 3;
-// 			ms->setMassPoint(PgCenterp);
+			polygonObject* pobj = getChildObject<polygonObject*>(_name);// <QString, polygonObject>::iterator po = pObjs.find(_name);
+			ms->setMassPoint(pobj->getOrigin());
 			break;
 		}
 		case CYLINDER:{
-			cylinder cy = cylinders.find(_name).value();
+			cylinder *cy = getChildObject<cylinder*>(_name);// .find(_name).value();
 			VEC3D goc;
-			ms->setPosition(cy.origin());
-			ms->setEP(cy.orientation());
+			ms->setPosition(cy->origin());
+			ms->setEP(cy->orientation());
 			//goc = cy.origin().To<double>();
 			break;
 		}
 	}
+	db->addChild(database::MASS_ROOT, _name);
 	return ms;
 }
 
@@ -236,32 +251,51 @@ particle_system* modeler::makeParticleSystem(QString _name)
 	return ps;
 }
 
-collision* modeler::makeCollision(QString _name, float _rest, float _fric, float _rfric, tCollisionPair tcp, tContactModel tcm, void* o1, void* o2)
+drivingConstraint* modeler::makeDrivingConstraint(QString _name, kinematicConstraint* kconst, tDriving td, double val)
+{
+	drivingConstraint* dc = new drivingConstraint(_name);
+	dc->define(kconst, td, val);
+	dconsts[_name] = dc;
+	return dc;
+}
+
+collision* modeler::makeCollision(QString _name, double _rest, double _fric, double _rfric, double _coh, double _ratio, tCollisionPair tcp, tContactModel tcm, void* o1, void* o2)
 {
 	collision* c = NULL;
-	particle_system *ps;
 	switch (tcp){
 	case PARTICLES_PARTICLES:
-		c = new collision_particles_particles(_name, this, (particle_system*)o1, tcm);
-		c->setContactParameter(_rest, _fric, _rfric);
+		c = new collision_particles_particles(_name, this, ps, tcm);
+		c->setContactParameter(
+			ps->youngs(), ps->youngs(), ps->poisson(), ps->poisson(),
+			ps->shear(), ps->shear(), _rest, _fric, _rfric, _coh, _ratio);
 		break;
-	case PARTICLES_PLANE:
-		ps = (particle_system*)o1;
-		c = new collision_particles_plane(_name, this, (particle_system*)o1, (plane*)o2, tcm);
-		ps->addCollision(c);
-		c->setContactParameter(_rest, _fric, _rfric);
+	case PARTICLES_PLANE:{
+		plane *pl = (plane*)o2;
+		c = new collision_particles_plane(_name, this, ps, pl, tcm);
+	//	ps->addCollision(c);
+		c->setContactParameter(
+			ps->youngs(), pl->youngs(), ps->poisson(), pl->poisson(),
+			ps->shear(), pl->shear(), _rest, _fric, _rfric, _coh, _ratio);
 		break;
-	case PARTICLES_CYLINDER:
-		ps = (particle_system*)o1;
-		c = new collision_particles_cylinder(_name, this, ps, (cylinder*)o2, tcm);
-		ps->addCollision(c);
-		c->setContactParameter(_rest, _fric, _rfric);
+	}
+	case PARTICLES_CYLINDER:{
+		cylinder *cy = (cylinder*)o2;
+		c = new collision_particles_cylinder(_name, this, ps, cy, tcm);
+	//	ps->addCollision(c);
+		c->setContactParameter(
+			ps->youngs(), cy->youngs(), ps->poisson(), cy->poisson(),
+			ps->shear(), cy->shear(), _rest, _fric, _rfric, _coh, _ratio);
 		break;
-	case PARTICLES_POLYGONOBJECT:
-		ps = (particle_system*)o1;
-		c = new collision_particles_polygonObject(_name, this, ps, (polygonObject*)o2, tcm);
-		ps->addCollision(c);
-		c->setContactParameter(_rest, _fric, _rfric);
+	}
+	case PARTICLES_POLYGONOBJECT:{
+		polygonObject *po = (polygonObject*)o2;
+		c = new collision_particles_polygonObject(_name, this, ps, po, tcm);
+		//ps->addCollision(c);
+		c->setContactParameter(
+			ps->youngs(), po->youngs(), ps->poisson(), po->youngs(),
+			ps->shear(), po->shear(), _rest, _fric, _rfric, _coh, _ratio);
+		break;
+	}
 	}
 
 
@@ -283,32 +317,11 @@ void modeler::saveModeler()
 	ts << "unit " << (int)unit << endl;
 	ts << "gravity_direction " << (int)dg << endl;
 	ts << "gravity " << grav.x << " " << grav.y << " " << grav.z << endl;
-	if (cubes.size())
+	if (objs.size())
 	{
-		foreach(cube value, cubes)
+		foreach(object* value, objs)
 		{
-			value.save_shape_data(ts);
-		}
-	}
-	if (planes.size())
-	{
-		foreach(plane value, planes)
-		{
-			value.save_shape_data(ts);
-		}
-	}
-	if (pObjs.size())
-	{
-		foreach (polygonObject value, pObjs)
-		{
-			value.save_shape_data(ts);
-		}
-	}
-	if (cylinders.size())
-	{
-		foreach(cylinder value, cylinders)
-		{
-			value.save_shape_data(ts);
+			value->save_object_data(ts);
 		}
 	}
 
@@ -327,6 +340,7 @@ void modeler::saveModeler()
 		}
 	}
 	io_model.close();
+	//comm("Model file was saved - " + model_file);
 }
 
 void modeler::openModeler(GLWidget *gl, QString& file)
@@ -357,7 +371,7 @@ void modeler::openModeler(GLWidget *gl, QString& file)
 				int up;
 				int tr, tmat;
 				in >> id >> ch >> tr >> tmat >> up >> isExist;
-				VEC3F min_p, max_p;
+				VEC3D min_p, max_p;
 				in >> min_p.x >> min_p.y >> min_p.z;
 				in >> max_p.x >> max_p.y >> max_p.z;
 				cube *c = makeCube(ch, (tMaterial)tmat, (tRoll)tr);
@@ -368,13 +382,15 @@ void modeler::openModeler(GLWidget *gl, QString& file)
 				if (isExist){
 					mass *m = makeMass(c->objectName());
 					m->openData(in);
+					m->setBaseGeometryType(CUBE);
+					m->setGeometryObject(gl->getVObjectFromName(m->name()));
 				}
  			}
  			else if (ch == "PLANE") {
 				int up;
 				int tr, tmat;
 				in >> id >> ch >> tr >> tmat >> up >> isExist;
-				VEC3F p1, p2, p3, p4;
+				VEC3D p1, p2, p3, p4;
 				in >> p1.x >> p1.y >> p1.z;
 				in >> p2.x >> p2.y >> p2.z;
 				in >> p3.x >> p3.y >> p3.z;
@@ -388,6 +404,8 @@ void modeler::openModeler(GLWidget *gl, QString& file)
 				if (isExist){		//plane추가
 					mass *m = makeMass(p->objectName());
 					m->openData(in);
+					m->setBaseGeometryType(PLANE);
+					m->setGeometryObject(gl->getVObjectFromName(m->name()));
 				}
  			}
 			else if (ch == "POLYGON"){
@@ -397,26 +415,20 @@ void modeler::openModeler(GLWidget *gl, QString& file)
 				in >> ch;
 				polygonObject* po = makePolygonObject(NO_FORMAT, ch);
 				po->setUpdate(up);
-				gl->makePolygonObject(pObjs);
-// 				VEC3F p, q, r;
-// 				in >> p.x >> p.y >> p.z;
-// 				in >> q.x >> q.y >> q.z;
-// 				in >> r.x >> r.y >> r.z;
-// 				polygon *po = makePolygon(ch, (tMaterial)tmat, (tRoll)tr);
-// 				po->setUpdate((bool)up);
-// 				po->define(p, q, r);
-// 				po->setID(id);
-// 				gl->makePolygon(po);
-// 
+				polygons.push_back(po);
+				gl->makePolygonObject(po);
+
 				if (isExist){		//polygon 추가
 					mass *m = makeMass(po->objectName());
 					m->openData(in);
+					m->setBaseGeometryType(POLYGON);
+					m->setPolyGeometryObject(gl->getVPolyObjectFromName(m->name()));
 				}
 			}
 			else if (ch == "CYLINDER"){
-				float br, tpr, len;
+				double br, tpr, len;
 				int tr, tmat, up;
-				VEC3F org, bpos, tpos;
+				VEC3D org, bpos, tpos;
 				in >> id >> ch >> tr >> tmat >> up >> isExist;
 				in >> br >> tpr >> len;
 				in >> org.x >> org.y >> org.z;
@@ -430,6 +442,8 @@ void modeler::openModeler(GLWidget *gl, QString& file)
 				if (isExist){
 					mass *m = makeMass(cy->objectName());
 					m->openData(in);
+					m->setBaseGeometryType(CYLINDER);
+					m->setGeometryObject(gl->getVObjectFromName(m->name()));
 				}
 			}
  		}
@@ -437,58 +451,66 @@ void modeler::openModeler(GLWidget *gl, QString& file)
  		{
 			unsigned int np;
 			QString pfile, bo;
-			float rho, E, pr, sh, rest, fric, rfric, coh;
+			double rho, E, pr, sh;// rest, fric, rfric, coh, sratio;
 			in >> ch >> np;
 			in >> ch >> pfile;
 			in >> ch >> bo;
 			in >> ch >> rho;
 			in >> ch >> E;
 			in >> ch >> pr;
-			//in >> ch >> sh;
-			in >> ch >> rest;
 			in >> ch >> sh;
-			in >> ch >> fric;
-			in >> ch >> rfric,
-			in >> ch >> coh;
 			makeParticleSystem("particles");
 			ps->setParticlesFromFile(pfile, bo, np, rho, E, pr, sh);
-			ps->setCollision(rest, fric, rfric, coh);
+			//ps->setCollision(rest, fric, rfric, coh, sratio);
 			gl->makeParticle(ps);
- 		}
+		}
+		else if (ch == "STACK")
+		{
+			int tg;
+			unsigned int nStack, npPerStack;
+			double interval;
+			in >> tg;
+			in >> ch >> nStack;
+			in >> ch >> interval;
+			in >> ch >> npPerStack;
+			ps->setGenerationMethod((tGenerationParticleMethod)tg, nStack, interval, npPerStack);
+		}
  		else if (ch == "COLLISION")
  		{
-			float rest, fric, rfric;
+			double rest, fric, rfric, coh, sratio;
 			int tcm;
 			QString nm, io, jo;
 			in >> nm;
-			in >> rest >> fric >> rfric >> tcm;
+			in >> rest >> fric >> rfric >> coh >> sratio >> tcm;
 			in >> ch >> io;
 			in >> ch >> jo;
 	
 			tCollisionPair cp = getCollisionPair(io != "particles" ? objs[io]->objectType() : ps->objectType(), jo != "particles" ? objs[jo]->objectType() : ps->objectType());
-			if (io == "particles")
-				makeCollision(nm, rest, fric, rfric, cp, (tContactModel)tcm, ps, objs[jo]);
-			else if (jo == "particles")
-				makeCollision(nm, rest, fric, rfric, cp, (tContactModel)tcm, ps, objs[io]);
+			if (io == "particles" && jo != "particles")
+				makeCollision(nm, rest, fric, rfric, coh, sratio, cp, (tContactModel)tcm, ps, objs[jo]);
+			else if (io != "particles" && jo == "particles")
+				makeCollision(nm, rest, fric, rfric, coh, sratio, cp, (tContactModel)tcm, ps, objs[io]);
+			else if (io == "particles" && jo == "particles")
+				makeCollision(nm, rest, fric, rfric, coh, sratio, cp, (tContactModel)tcm, ps, ps);
 			else
-				makeCollision(nm, rest, fric, rfric, cp, (tContactModel)tcm, objs[io], objs[jo]);
- 		}
+				makeCollision(nm, rest, fric, rfric, coh, sratio, cp, (tContactModel)tcm, objs[io], objs[jo]);
+ 		} 
  	}
 	pf.close();
 	unit = (tUnit)_unit;
 	dg = (tGravity)_dg;
 	switch (dg)
 	{
-	case PLUS_X: grav = VEC3F(9.80665f, 0.f, 0.f); break;
-	case PLUS_Y: grav = VEC3F(0.f, 9.80665f, 0.f); break;
-	case PLUS_Z: grav = VEC3F(0.f, 0.f, 9.80665f); break;
-	case MINUS_X: grav = VEC3F(-9.80665f, 0.f, 0.f); break;
-	case MINUS_Y: grav = VEC3F(0.f, -9.80665f, 0.f); break;
-	case MINUS_Z: grav = VEC3F(0.f, 0.f, -9.80665f); break;
+	case PLUS_X: grav = VEC3D(9.80665f, 0.f, 0.f); break;
+	case PLUS_Y: grav = VEC3D(0.f, 9.80665f, 0.f); break;
+	case PLUS_Z: grav = VEC3D(0.f, 0.f, 9.80665f); break;
+	case MINUS_X: grav = VEC3D(-9.80665f, 0.f, 0.f); break;
+	case MINUS_Y: grav = VEC3D(0.f, -9.80665f, 0.f); break;
+	case MINUS_Z: grav = VEC3D(0.f, 0.f, -9.80665f); break;
 	}
 }
 
-void modeler::runExpression(float ct, float dt)
+void modeler::runExpression(double ct, double dt)
 {
 	if (objs.size()){
 		foreach(object* value, objs)
@@ -497,17 +519,36 @@ void modeler::runExpression(float ct, float dt)
 				value->runExpression(ct, dt);
 		}
 	}
+	if (dconsts.size()){
+		foreach(drivingConstraint* value, dconsts)
+		{
+			value->driving(ct);
+		}
+	}
 }
 
 unsigned int modeler::numPolygonSphere()
 {
 	unsigned int _np = 0;
-	if (pObjs.size())
+	if (npoly)
 	{
-		foreach(polygonObject value, pObjs)
+		foreach(object* value, objs)
 		{
-			_np += value.numIndex();
+			if (value->objectType() == POLYGON)
+				_np += getChildObject<polygonObject*>(value->objectName())->numIndex();
 		}
 	}
 	return _np;
+}
+
+// void modeler::comm(QString com)
+// {
+// 	pte->appendPlainText(com);
+// }
+
+void modeler::actionDelete(const QString& tg)
+{
+	object* obj = objs.take(tg);
+	if(obj)
+		delete obj;
 }

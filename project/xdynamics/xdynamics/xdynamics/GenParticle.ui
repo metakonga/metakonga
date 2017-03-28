@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DLG_Particle</class>
+ <widget class="QDialog" name="DLG_Particle">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>391</width>
+    <height>425</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Particle Creating Dialog</string>
+  </property>
+  <property name="modal">
+   <bool>true</bool>
+  </property>
+  <widget class="QGroupBox" name="GB_ParticleData">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>371</width>
+     <height>101</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Particle data</string>
+   </property>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>22</x>
+      <y>21</y>
+      <width>331</width>
+      <height>61</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QLabel" name="L_BaseGeometry">
+         <property name="text">
+          <string>Base geometry</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="L_Radius">
+         <property name="text">
+          <string>Radius</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QComboBox" name="CB_BaseGeometry"/>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="LE_Radius"/>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="GB_Function">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>122</y>
+     <width>371</width>
+     <height>101</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Function</string>
+   </property>
+   <widget class="QCheckBox" name="CHB_StackParticle">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>101</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Stack particle</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>41</y>
+      <width>331</width>
+      <height>50</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QLabel" name="L_StackNumber">
+         <property name="text">
+          <string>Number</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="L_StackTimeInterval">
+         <property name="text">
+          <string>Time interval</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <widget class="QLineEdit" name="LE_StackNumber"/>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="LE_StackTimeInterval"/>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="GB_Information">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>234</y>
+     <width>371</width>
+     <height>151</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Information</string>
+   </property>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>26</x>
+      <y>24</y>
+      <width>331</width>
+      <height>111</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="rightMargin">
+      <number>6</number>
+     </property>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="L_NumParticle">
+         <property name="text">
+          <string>Num. particle</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="L_TotalMass">
+         <property name="text">
+          <string>Total mass</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="L_Spacing">
+         <property name="text">
+          <string>Spacing</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="L_Size">
+         <property name="text">
+          <string>Size</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLineEdit" name="LE_NumParticle">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="LE_TotalMass">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="LE_Spacing">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="LE_Size">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>220</x>
+     <y>390</y>
+     <width>158</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <item>
+     <widget class="QPushButton" name="PB_Ok">
+      <property name="text">
+       <string>Ok</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="PB_Cancle">
+      <property name="text">
+       <string>Cancle</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>CB_BaseGeometry</tabstop>
+  <tabstop>LE_Radius</tabstop>
+  <tabstop>CHB_StackParticle</tabstop>
+  <tabstop>LE_StackNumber</tabstop>
+  <tabstop>LE_StackTimeInterval</tabstop>
+  <tabstop>LE_NumParticle</tabstop>
+  <tabstop>LE_TotalMass</tabstop>
+  <tabstop>LE_Spacing</tabstop>
+  <tabstop>LE_Size</tabstop>
+  <tabstop>PB_Ok</tabstop>
+  <tabstop>PB_Cancle</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

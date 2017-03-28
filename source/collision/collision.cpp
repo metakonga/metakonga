@@ -1,10 +1,12 @@
 #include "collision.h"
+#include "object.h"
 #include <cmath>
 
 collision::collision()
 	: coh(0)
 	, tcm(HMCM)
 	, gb(NULL)
+	, dcp(NULL)
 {
 
 }
@@ -26,6 +28,7 @@ collision::collision(
 	, tcp(_tp)
 	, rfric(0)
 	, fric(0)
+	, dcp(NULL)
 {
 
 }
@@ -37,32 +40,57 @@ collision::collision(const collision& cs)
 
 collision::~collision()
 {
-
+	if (dcp) checkCudaErrors(cudaFree(dcp));
 }
 
-constant collision::getConstant(float ir, float jr, float im, float jm, float iE, float jE, float ip, float jp, float iG, float jG)
+void collision::setContactParameter(
+	double Ei, double Ej, double Pi, double Pj, double Gi, double Gj,
+	double _rest, double _fric, double _rfric, double _coh, double _ratio)
+{
+	hcp = contact_parameter{ Ei, Ej, Pi, Pj, Gi, Gj, _rest, _fric, _rfric, _coh, _ratio};
+}
+
+void collision::allocDeviceMemory()
+{
+	checkCudaErrors(cudaMalloc((void**)&dcp, sizeof(contact_parameter)));
+	checkCudaErrors(cudaMemcpy(dcp, &hcp, sizeof(contact_parameter), cudaMemcpyHostToDevice));
+}
+
+constant collision::getConstant(double ir, double jr, double im, double jm, double iE, double jE, double ip, double jp, double iG, double jG)
 {
 // 	particle_system* ps = md->particleSystem();
 	constant c = { 0, 0, 0, 0, 0, 0 };
-	float Meq = jm ? (im * jm) / (im + jm) : im;
-	float Req = jr ? (ir * jr) / (ir + jr) : ir;
-	float Eeq = (iE * jE) / (iE*(1 - jp*jp) + jE*(1 - ip * ip));
-	float Geq = (iG * jG) / (iG*(2 - jp) + jG*(2 - ip));
-	float ln_e = log(rest);
-	float xi = ln_e / sqrt(ln_e * ln_e + (float)M_PI * (float)M_PI);
-	//float lne = log(rest);
-	//float tk = (16.f / 15.f)*sqrt(er) * eym * pow((15.f * em * 1.0f) / (16.f * sqrt(er) * eym), 0.2f);
- 	//float Geq = 1 / (((2 - ip) / si) + ((2 - jp) / sj));
+	double Meq = jm ? (im * jm) / (im + jm) : im;
+	double Req = jr ? (ir * jr) / (ir + jr) : ir;
+	double Eeq = (iE * jE) / (iE*(1 - jp*jp) + jE*(1 - ip * ip));
+	
+	//double lne = log(rest);
+	//double tk = (16.f / 15.f)*sqrt(er) * eym * pow((15.f * em * 1.0f) / (16.f * sqrt(er) * eym), 0.2f);
+ 	//double Geq = 1 / (((2 - ip) / si) + ((2 - jp) / sj));
 	switch (tcm)
 	{
-	case HMCM:
-		c.kn = (4.f / 3.f) * Eeq * sqrt(Req);
-		c.vn = -2.f * sqrt(5.f / 6.f) * xi * sqrt(c.kn * Meq);
-		c.ks = 8.f * Geq * sqrt(Req);
-		c.vs = -2.f * sqrt(5.f / 6.f) * xi * sqrt(c.ks * Meq);
-		c.mu = fric;
-		c.rf = rfric;
+	case HMCM:{
+		double Geq = (iG * jG) / (iG*(2.0 - jp) + jG*(2.0 - ip));
+		double ln_e = log(hcp.rest);
+		double xi = ln_e / sqrt(ln_e * ln_e + M_PI * M_PI);
+		c.kn = (4.0 / 3.0) * Eeq * sqrt(Req);
+		c.vn = -2.0 * sqrt(5.0 / 6.0) * xi * sqrt(c.kn * Meq);
+		c.ks = 8.0 * Geq * sqrt(Req);
+		c.vs = -2.0 * sqrt(5.0 / 6.0) * xi * sqrt(c.ks * Meq);
+		c.mu = hcp.fric;
+		c.rf = hcp.rfric;
 		break;
+	}
+	case DHS:{
+		double beta = (M_PI / log(hcp.rest));
+		c.kn = (4.0 / 3.0) * Eeq * sqrt(Req);
+		c.vn = sqrt((4.0*Meq * c.kn) / (1 + beta * beta));
+		c.ks = c.kn * hcp.sratio;
+		c.vs = c.vn * hcp.sratio; 
+		c.mu = hcp.fric;
+		c.rf = hcp.rfric;
+		break;
+	}
 	}
 // 	c.kn = (4.0f / 3.0f)*sqrt(er)*eym;
 // 	c.vn = sqrt((4.0f*em * c.kn) / (1 + beta * beta));
@@ -72,17 +100,17 @@ constant collision::getConstant(float ir, float jr, float im, float jm, float iE
  	return c;
 }
 
-float collision::cohesionForce(float ri, float rj, float Ei, float Ej, float pri, float prj, float Fn)
+double collision::cohesionForce(double ri, double rj, double Ei, double Ej, double pri, double prj, double Fn)
 {
-	float cf = 0.f;
+	double cf = 0.0;
 	//cohesion = 5.f;
-	if (coh){
-		float req = (ri * rj / (ri + rj));
-		float Eeq_inv = ((1 - pri * pri) / Ei) + ((1 - prj * prj) / Ej);
-		float rcp = (3.f * req * (-Fn)) / (4.f * (1 / Eeq_inv));
-		float rc = pow(rcp, 1.0f / 3.0f);
-		float Ac = M_PI * rc * rc;
-		cf = coh * Ac;
+	if (hcp.coh){
+		double req = (ri * rj / (ri + rj));
+		double Eeq_inv = ((1 - pri * pri) / Ei) + ((1.0 - prj * prj) / Ej);
+		double rcp = (3.0 * req * (-Fn)) / (4.0 * (1 / Eeq_inv));
+		double rc = pow(rcp, 1.0 / 3.0);
+		double Ac = M_PI * rc * rc;
+		cf = hcp.coh * Ac;
 	}
 	
 	return cf;
@@ -90,17 +118,17 @@ float collision::cohesionForce(float ri, float rj, float Ei, float Ej, float pri
 
 void collision::save_collision_data(QTextStream& ts)
 {
-	ts << "COLLISION " << name << " " << rest << " " << fric << " " << rfric << " " << tcm << endl;
+	ts << "COLLISION " << name << " " << hcp.rest << " " << hcp.fric << " " << hcp.rfric << " " << hcp.coh  << " " << hcp.sratio << " " << tcm << endl;
 	ts << "i_object " << oname1 << endl
 		<< "j_object " << oname2 << endl;
 }
 
-// bool collision::collid_p2p(float dt)
+// bool collision::collid_p2p(double dt)
 // {
 // 	particle_system *ps = md->particleSystem();
 // 	iE = jE = ps->youngs(); ip = jp = ps->poisson();
 // 	VEC3I neigh, gp;
-// 	float im, jm, ir, jr, dist, cdist, mag_e, ds;
+// 	double im, jm, ir, jr, dist, cdist, mag_e, ds;
 // 	unsigned int hash, sid, eid;
 // 	constant c;
 // 	VEC3F ipos, jpos, ivel, jvel, iomega, jomega, f, m, rp, u, rv, sf, sm, e, sh, shf;
@@ -158,7 +186,7 @@ void collision::save_collision_data(QTextStream& ts)
 // 	return true;
 // }
 
-// bool collision::collid(float dt)
+// bool collision::collid(double dt)
 //{
 //	if(!iobj && !jobj)
 //		collid_p2p(dt);

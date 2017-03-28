@@ -15,16 +15,15 @@ public:
 
 	kinematicConstraint();
 	kinematicConstraint(const kinematicConstraint& _kc);
-	kinematicConstraint(modeler *_md, QString&, tKinematicConstraint kt, VEC3D _loc, 
-		mass* ip, VEC3D _fi, VEC3D _gi, 
-		mass* jp, VEC3D _fj, VEC3D _gj);
+	kinematicConstraint(modeler *_md, QString&, tKinematicConstraint kt,
+		mass* ip, VEC3D& _spi, VEC3D& _fi, VEC3D& _gi, 
+		mass* jp, VEC3D& _spj, VEC3D& _fj, VEC3D& _gj);
 
 	virtual ~kinematicConstraint();
 
 	QString name() const { return nm; }
 	mass* iMass() const { return i; }
 	mass* jMass() const { return j; }
-	VEC3D location() const { return loc; }
 	VEC3D axis() const { return ax; }
 	tKinematicConstraint constType() const { return type; }
 	VEC3D sp_i() const { return spi; }
@@ -54,7 +53,6 @@ protected:
 	mass* i;
 	mass* j;
 	double* lm;
-	VEC3D loc;
 	VEC3D ax;
 
 	tKinematicConstraint type;

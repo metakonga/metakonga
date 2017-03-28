@@ -13,14 +13,14 @@ public:
 	collision_particles_polygonObject(QString& _name, modeler* _md, particle_system *_ps, polygonObject * _poly, tContactModel _tcm);
 	virtual ~collision_particles_polygonObject();
 
-	virtual bool collid(float dt);
+	virtual bool collid(double dt);
 	virtual bool cuCollid();
-	virtual bool collid_with_particle(unsigned int i, float dt);
+	virtual bool collid_with_particle(unsigned int i, double dt);
 
 	
 
 private:
-	VEC3F particle_polygon_contact_detection(host_polygon_info& hpi, VEC3F& p, float pr);
+	VEC3D particle_polygon_contact_detection(host_polygon_info& hpi, VEC3D& p, double pr);
 	particle_system *ps;
 	polygonObject *po;
 };

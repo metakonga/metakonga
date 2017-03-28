@@ -1,63 +1,95 @@
 #ifndef PARTICLEDIALOG_H
 #define PARTICLEDIALOG_H
 
-#include <QDialog>
-
-QT_BEGIN_NAMESPACE
-class QStringList;
-class QPushButton;
-class QLineEdit;
-class QLabel;
-class QComboBox;
-class QGridLayout;
-class QTabWidget;
-QT_END_NAMESPACE
+#include "ui_GenParticle.h"
 
 class modeler;
-class particle_system;
 
-class particleDialog : public QDialog
+class particleDialog : public QDialog, private Ui::DLG_Particle
 {
 	Q_OBJECT
+
 public:
-	particleDialog();
+	particleDialog(QWidget* parent, modeler* md);
 	~particleDialog();
 
-	particle_system* callDialog(modeler *md);
-
 private:
-	//QString baseGeometry;
+	modeler* md;
 
-	bool isDialogOk;
-	QLabel *LMaterial;
-	QComboBox *CBMaterial;
-	QWidget *byGeoTab;
-	QWidget *byManualTab;
-	QTabWidget *tabWidget;
-	QComboBox *CBGeometry;
-	QLineEdit *LESpacing;
-	QLineEdit *LEMRadius;
-	QLineEdit *LEName;
-	QLineEdit *LERadius;
-	QLineEdit *LEPosition;
-	QLineEdit *LEVelocity;
-	QLineEdit *LERestitution;
-	//QLineEdit *LEShearModulus;
-	QLineEdit *LEFriction;
-	QLineEdit *LERollingFriction;
-	QLineEdit *LECohesion;
-	QLineEdit *LENumParticle;
-	QLineEdit *LETotalMass;
-	QGridLayout *particleLayout;
-	QStringList geoComboxList;
-	QStringList cpProcess;
+	void setupDialog();
 
-	modeler *md;
+	private slots:
 
-private slots:
-	void Click_ok();
-	void Click_cancel();
-	void particleInformation();
+	void check_stack_particle();
+	void change_particle_radius();
+	void change_stack_number();
+	//void check_stiffnessRatio();
+	void click_ok();
+	void click_cancle();
 };
 
 #endif
+
+// #ifndef PARTICLEDIALOG_H
+// #define PARTICLEDIALOG_H
+// 
+// #include <QDialog>
+// 
+// QT_BEGIN_NAMESPACE
+// class QStringList;
+// class QPushButton;
+// class QLineEdit;
+// class QLabel;
+// class QComboBox;
+// class QGridLayout;
+// class QTabWidget;
+// QT_END_NAMESPACE
+// 
+// class modeler;
+// class particle_system;
+// 
+// class particleDialog : public QDialog
+// {
+// 	Q_OBJECT
+// public:
+// 	particleDialog();
+// 	~particleDialog();
+// 
+// 	particle_system* callDialog(modeler *md);
+// 
+// private:
+// 	//QString baseGeometry;
+// 
+// 	bool isDialogOk;
+// 	QLabel *LMaterial;
+// 	QComboBox *CBMaterial;
+// 	QWidget *byGeoTab;
+// 	QWidget *byManualTab;
+// 	QTabWidget *tabWidget;
+// 	QComboBox *CBGeometry;
+// 	QLineEdit *LESpacing;
+// 	QLineEdit *LEMRadius;
+// 	QLineEdit *LEName;
+// 	QLineEdit *LERadius;
+// 	QLineEdit *LEPosition;
+// 	QLineEdit *LEVelocity;
+// 	QLineEdit *LERestitution;
+// 	//QLineEdit *LEShearModulus;
+// 	QLineEdit *LEFriction;
+// 	QLineEdit *LERollingFriction;
+// 	QLineEdit *LECohesion;
+// 	QLineEdit *LENumParticle;
+// 	QLineEdit *LETotalMass;
+// 	QGridLayout *particleLayout;
+// 	QStringList geoComboxList;
+// 	QStringList cpProcess;
+// 
+// 	modeler *md;
+// 
+// private slots:
+// 	void Click_ok();
+// 	void Click_cancel();
+// 	void particleInformation();
+// };
+// 
+// #endif

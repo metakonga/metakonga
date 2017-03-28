@@ -8,6 +8,11 @@ inline __device__ int sign(float L)
 	return L < 0 ? -1 : 1;
 }
 
+inline __device__ int sign(double L)
+{
+	return L < 0 ? -1 : 1;
+}
+
 inline __device__ double dot(double3& v1, double3& v2)
 {
 	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
@@ -65,7 +70,7 @@ uint calcGridHash(int3 gridPos)
 
 // calculate position in uniform grid
 __device__
-int3 calcGridPos(float3 p)
+int3 calcGridPos(double3 p)
 {
 	int3 gridPos;
 	gridPos.x = floor((p.x - cte.world_origin.x) / cte.cell_size);
@@ -74,7 +79,7 @@ int3 calcGridPos(float3 p)
 	return gridPos;
 }
 
-__global__ void vv_update_position_kernel(float4* pos, float3* vel, float3* acc)
+__global__ void vv_update_position_kernel(double4* pos, double3* vel, double3* acc)
 {
 	unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
 	if (id >= cte.np)
@@ -83,8 +88,10 @@ __global__ void vv_update_position_kernel(float4* pos, float3* vel, float3* acc)
 	double3 v = make_double3(vel[id]);
 	double3 a = make_double3(acc[id]);*/
 
-	float3 _p = cte.dt * vel[id] + cte.half2dt * acc[id];
-	pos[id] += make_float4(_p, 0.f);
+	double3 _p = cte.dt * vel[id] + cte.half2dt * acc[id];
+	pos[id].x += _p.x;// make_double4(_p.x, _p.y, _p.z, 0.f);
+	pos[id].y += _p.y;
+	pos[id].z += _p.z;
 	// 	if(id == 31914){
 	// 		p = make_double3(pos[id]);
 	// 	}
@@ -92,34 +99,36 @@ __global__ void vv_update_position_kernel(float4* pos, float3* vel, float3* acc)
 }
 
 __global__ void vv_update_velocity_kernel(
-	float3* vel,
-	float3* acc,
-	float3* omega,
-	float3* alpha,
-	float3* force,
-	float3* moment,
-	float* mass,
-	float* iner)
+	double3* vel,
+	double3* acc,
+	double3* omega,
+	double3* alpha,
+	double3* force,
+	double3* moment,
+	double* mass,
+	double* iner)
 {
 	unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
 	if (id >= cte.np)
 		return;
-	float3 v = vel[id];
-	float3 L = acc[id];
-	float3 av = omega[id];
-	float3 aa = alpha[id];
-	float m = mass[id];
-	float in = iner[id];
+	double3 v = vel[id];
+	double3 L = acc[id];
+	double3 av = omega[id];
+	double3 aa = alpha[id];
+	double m = mass[id];
+	double in = iner[id];
 
-	v += 0.5f * cte.dt * L;
-	av += 0.5f * cte.dt * aa;
-	L = (1.f / m) * force[id];
-	aa = (1.f / in) * moment[id];
-	v += 0.5f * cte.dt * L;
-	av += 0.5f * cte.dt * aa;
+	v += 0.5 * cte.dt * L;
+	av += 0.5 * cte.dt * aa;
+	L = (1.0 / m) * force[id];
+	aa = (1.0 / in) * moment[id];
+	v += 0.5 * cte.dt * L;
+	av += 0.5 * cte.dt * aa;
 	// 	if(id == 0){
 	// 		printf("Velocity --- > id = %d -> [%f.6, %f.6, %f.6]\n", id, v.x, v.y, v.z);
 	// 	}
+	force[id] = make_double3(0.0, 0.0, 0.0);
+	moment[id] = make_double3(0.0, 0.0, 0.0);
 	vel[id] = v;
 	omega[id] = av;
 	acc[id] = L;
@@ -127,13 +136,13 @@ __global__ void vv_update_velocity_kernel(
 }
 
 
-__global__ void calculateHashAndIndex_kernel(unsigned int* hash, unsigned int* index, float4* pos)
+__global__ void calculateHashAndIndex_kernel(unsigned int* hash, unsigned int* index, double4* pos)
 {
 	unsigned id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
 	if (id >= (cte.np)) return;
-	volatile float4 p = pos[id];
+	volatile double4 p = pos[id];
 
-	int3 gridPos = calcGridPos(make_float3(p.x, p.y, p.z));
+	int3 gridPos = calcGridPos(make_double3(p.x, p.y, p.z));
 	unsigned _hash = calcGridHash(gridPos);
 	/*if(_hash >= cte.ncell)
 	printf("Over limit - hash number : %d", _hash);*/
@@ -146,7 +155,7 @@ __global__ void calculateHashAndIndexForPolygonSphere_kernel(unsigned int* hash,
 	unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
 	if (id >= nsphere) return;
 	volatile double4 p = sphere[id];
-	int3 gridPos = calcGridPos(make_float3((float)p.x, (float)p.y, (float)p.z));
+	int3 gridPos = calcGridPos(make_double3(p.x, p.y, p.z));
 	unsigned int _hash = calcGridHash(gridPos);
 	hash[sid + id] = _hash;
 	index[sid + id] = sid + id;
@@ -194,34 +203,42 @@ __global__ void reorderDataAndFindCellStart_kernel(unsigned int* hash, unsigned 
 	}
 }
 
-template<typename T>
-__device__ device_force_constant<T> getConstant(
-	T ir,
-	T jr,
-	T im,
-	T jm,
-	T iE,
-	T jE,
-	T ip,
-	T jp,
-	T iG,
-	T jG,
-	T rest,
-	T fric,
-	T rfric)
+__device__ device_force_constant getConstant(
+	int tcm, double ir, double jr, double im, double jm,
+	double iE, double jE, double ip, double jp,
+	double iG, double jG, double rest,
+	double fric, double rfric, double sratio)
 {
-	device_force_constant<T> dfc = { 0, 0, 0, 0, 0 };
-	T Meq = jm ? (im * jm) / (im + jm) : im;
-	T Req = jr ? (ir * jr) / (ir + jr) : ir;
-	T Eeq = (iE * jE) / (iE*(1 - jp*jp) + jE*(1 - ip * ip));
-	T Geq = (iG * jG) / (iG*(2 - jp) + jG*(2 - ip));
-	T ln_e = log(rest);
-	T xi = ln_e / sqrt(ln_e * ln_e + (float)M_PI * (float)M_PI);
-	dfc.kn = (4.f / 3.f) * Eeq * sqrt(Req);
-	dfc.vn = -2.f * sqrt(5.f / 6.f) * xi * sqrt(dfc.kn * Meq);
-	dfc.ks = 8.f * Geq * sqrt(Req);
-	dfc.vs = -2.f * sqrt(5.f / 6.f) * xi * sqrt(dfc.ks * Meq);
-	dfc.mu = fric;
+	device_force_constant dfc = { 0, 0, 0, 0, 0, 0 };
+	double Meq = jm ? (im * jm) / (im + jm) : im;
+	double Req = jr ? (ir * jr) / (ir + jr) : ir;
+	double Eeq = (iE * jE) / (iE*(1 - jp*jp) + jE*(1 - ip * ip));
+	switch (tcm)
+	{
+	case 0:{
+		double Geq = (iG * jG) / (iG*(2 - jp) + jG*(2 - ip));
+		double ln_e = log(rest);
+		double xi = ln_e / sqrt(ln_e * ln_e + M_PI * M_PI);
+		dfc.kn = (4.0 / 3.0) * Eeq * sqrt(Req);
+		dfc.vn = -2.0 * sqrt(5.0 / 6.0) * xi * sqrt(dfc.kn * Meq);
+		dfc.ks = 8.0 * Geq * sqrt(Req);
+		dfc.vs = -2.0 * sqrt(5.0 / 6.0) * xi * sqrt(dfc.ks * Meq);
+		dfc.mu = fric;
+		dfc.ms = rfric;
+		break;
+	}
+	case 1:{
+		double beta = (M_PI / log(rest));
+		dfc.kn = (4.0 / 3.0) * Eeq * sqrt(Req);
+		dfc.vn = sqrt((4.0 * Meq * dfc.kn) / (1.0 + beta * beta));
+		dfc.ks = dfc.kn * sratio;
+		dfc.vs = dfc.vn * sratio;
+		dfc.mu = fric;
+		dfc.ms = rfric;
+		break;
+	}
+	}
+	
 // 	dfc.kn = /*(16.f / 15.f)*sqrt(er) * eym * pow((T)((15.f * em * 1.0f) / (16.f * sqrt(er) * eym)), (T)0.2f);*/ (4.0f / 3.0f)*sqrt(er)*eym;
 // 	dfc.vn = sqrt((4.0f*em * dfc.kn) / (1 + beta * beta));
 // 	dfc.ks = dfc.kn * ratio;
@@ -231,146 +248,183 @@ __device__ device_force_constant<T> getConstant(
 }
 
 // ref. Three-dimensional discrete element modelling (DEM) of tillage: Accounting for soil cohesion and adhesion
-__device__ float cohesionForce(
-	float ri,
-	float rj,
-	float Ei,
-	float Ej,
-	float pri,
-	float prj,
-	float coh,
-	float Fn)
+__device__ double cohesionForce(
+	double ri,
+	double rj,
+	double Ei,
+	double Ej,
+	double pri,
+	double prj,
+	double coh,
+	double Fn)
 {
-	float cf = 0.f;
+	double cf = 0.f;
 	if (coh){
-		float req = (ri * rj / (ri + rj));
-		float Eeq_inv = ((1 - pri * pri) / Ei) + ((1 - prj * prj) / Ej);
-		float rcp = (3.f * req * (-Fn)) / (4.f * (1 / Eeq_inv));
-		float rc = pow(rcp, 1.0f / 3.0f);
-		float Ac = M_PI * rc * rc;
+		double req = (ri * rj / (ri + rj));
+		double Eeq_inv = ((1.0 - pri * pri) / Ei) + ((1.0 - prj * prj) / Ej);
+		double rcp = (3.0 * req * (-Fn)) / (4.0 * (1.0 / Eeq_inv));
+		double rc = pow(rcp, 1.0 / 3.0);
+		double Ac = M_PI * rc * rc;
 		cf = coh * Ac;
 	}
 	return cf;
 }
 
-__device__ bool calForce(
-	float ir,
-	float jr,
-	float im,
-	float jm,
-	float rest,
-	float sh,
-	float fric,
-	float rfric,
-	float E,
-	float pr,
-	float coh,
-	float4 ipos,
-	float4 jpos,
-	float3 ivel,
-	float3 jvel,
-	float3 iomega,
-	float3 jomega,
-	float3& force,
-	float3& moment
-	/*float *riv*/)
+// __device__ bool calForce(
+// 	float ir,
+// 	float jr,
+// 	float im,
+// 	float jm,
+// 	float rest,
+// 	float sh,
+// 	float fric,
+// 	float rfric,
+// 	float E,
+// 	float pr,
+// 	float coh,
+// 	float4 ipos,
+// 	float4 jpos,
+// 	float3 ivel,
+// 	float3 jvel,
+// 	float3 iomega,
+// 	float3 jomega,
+// 	float3& force,
+// 	float3& moment
+// 	/*float *riv*/)
+// {
+// 	float3 relative_pos = make_float3(jpos - ipos);
+// 	float dist = length(relative_pos);
+// 	float collid_dist = (ir + jr) - dist;
+// 	float3 shear_force = make_float3(0.f);
+// 	if (collid_dist <= 0){
+// 		//*riv = 0.f;
+// 		return false;
+// 	}
+// 	else{
+// 		float rcon = ir - 0.5f * collid_dist;
+// 		float3 unit = relative_pos / dist;
+// 		float3 relative_vel = jvel + cross(jomega, -jr * unit) - (ivel + cross(iomega, ir * unit));
+// 		//*riv = abs(length(relative_vel));
+// 		device_force_constant<float> c = getConstant<float>(ir, jr, im, jm, E, E, pr, pr, sh, sh, rest, fric, rfric);
+// 		float fsn = -c.kn * pow(collid_dist, 1.5f);
+// 		float fca = cohesionForce(ir, jr, E, E, pr, pr, coh, fsn);
+// 		float fsd = c.vn * dot(relative_vel, unit);
+// 		float3 single_force = (fsn + fca + fsd) * unit;
+// 		//float3 single_force = (-c.kn * pow(collid_dist, 1.5f) + c.vn * dot(relative_vel, unit)) * unit;
+// 		float3 single_moment = make_float3(0, 0, 0);
+// 		float3 e = relative_vel - dot(relative_vel, unit) * unit;
+// 		float mag_e = length(e);
+// 		if (mag_e){
+// 			float3 s_hat = e / mag_e;
+// 			float ds = mag_e * cte.dt;
+// 			float fst = -c.ks * ds;
+// 			float fdt = c.vs * dot(relative_vel, s_hat);
+// 			shear_force = (fst + fdt) * s_hat;
+// 			if (length(shear_force) >= c.mu * length(single_force))
+// 				shear_force = c.mu * fsn * s_hat;
+// 			single_moment = cross(rcon * unit, shear_force);
+// 			if (length(iomega)){
+// 				float3 on = iomega / length(iomega);
+// 				single_moment += -rfric * fsn * rcon * on;
+// 			}
+// 			//shear_force = min(c.ks * ds + c.vs * (dot(relative_vel, s_hat)), c.mu * length(single_force)) * s_hat;
+// 			//single_moment = cross(ir * unit, shear_force);
+// 		}
+// 		force += single_force + shear_force;
+// 		moment += single_moment;
+// 	}
+// 	
+// 	return true;
+// }
+__device__ void HMCModel(
+	device_force_constant c, double ir, double jr, double Ei, double Ej, double pri, double prj, double coh,
+	double rcon, double cdist, double3 iomega,
+	double3 dv, double3 unit, double3& Ft, double3& Fn, double3& M)
 {
-	float3 relative_pos = make_float3(jpos - ipos);
-	float dist = length(relative_pos);
-	float collid_dist = (ir + jr) - dist;
-	float3 shear_force = make_float3(0.f);
-	if (collid_dist <= 0){
-		//*riv = 0.f;
-		return false;
-	}
-	else{
-		float rcon = ir - 0.5f * collid_dist;
-		float3 unit = relative_pos / dist;
-		float3 relative_vel = jvel + cross(jomega, -jr * unit) - (ivel + cross(iomega, ir * unit));
-		//*riv = abs(length(relative_vel));
-		device_force_constant<float> c = getConstant<float>(ir, jr, im, jm, E, E, pr, pr, sh, sh, rest, fric, rfric);
-		float fsn = -c.kn * pow(collid_dist, 1.5f);
-		///float fca = cohesionForce(ir, jr, E, E, pr, pr, coh, fsn);
-		float fsd = c.vn * dot(relative_vel, unit);
-		float3 single_force = (fsn + /*fca +*/ fsd) * unit;
-		//float3 single_force = (-c.kn * pow(collid_dist, 1.5f) + c.vn * dot(relative_vel, unit)) * unit;
-		float3 single_moment = make_float3(0, 0, 0);
-		float3 e = relative_vel - dot(relative_vel, unit) * unit;
-		float mag_e = length(e);
-		if (mag_e){
-			float3 s_hat = e / mag_e;
-			float ds = mag_e * cte.dt;
-			float fst = -c.ks * ds;
-			float fdt = c.vs * dot(relative_vel, s_hat);
-			shear_force = (fst + fdt) * s_hat;
-			if (length(shear_force) >= c.mu * length(single_force))
-				shear_force = c.mu * fsn * s_hat;
-			single_moment = cross(rcon * unit, shear_force);
-			if (length(iomega)){
-				float3 on = iomega / length(iomega);
-				single_moment += -rfric * fsn * rcon * on;
-			}
-			//shear_force = min(c.ks * ds + c.vs * (dot(relative_vel, s_hat)), c.mu * length(single_force)) * s_hat;
-			//single_moment = cross(ir * unit, shear_force);
+// 	if (coh && cdist < 1.0E-8)
+// 		return;
+
+	double fsn = -c.kn * pow(cdist, 1.5);
+	double fdn = c.vn * dot(dv, unit);
+	double fca = cohesionForce(ir, jr, Ei, Ej, pri, prj, coh, fsn);
+// 	if ((fsn + fca + fdn) < 0 && ir)
+// 		return;
+	Fn = (fsn + fca + fdn) * unit;
+	double3 e = dv - dot(dv, unit) * unit;
+	double mag_e = length(e);
+	if (mag_e){
+		double3 s_hat = -(e / mag_e);
+		double ds = mag_e * cte.dt;
+		double fst = -c.ks * ds;
+		double fdt = c.vs * dot(dv, s_hat);
+		Ft = (fst + fdt) * s_hat;
+		if (length(Ft) >= c.mu * length(Fn))
+			Ft = c.mu * fsn * s_hat;
+		M = cross(ir * unit, Ft);
+		if (length(iomega)){
+			double3 on = iomega / length(iomega);
+			M += c.ms * fsn * rcon * on;
 		}
-		force += single_force + shear_force;
-		moment += single_moment;
 	}
-	
-	return true;
 }
 
+__device__ void DHSModel(
+	device_force_constant c, double ir, double jr, double Ei, double Ej, double pri, double prj, double coh,
+	double rcon, double cdist, double3 iomega,
+	double3 dv, double3 unit, double3& Ft, double3& Fn, double3& M)
+{
+	double fsn = -c.kn * pow(cdist, 1.5);
+	double fdn = c.vn * dot(dv, unit);
+	double fca = cohesionForce(ir, jr, Ei, Ej, pri, prj, coh, fsn);
+	Fn = (fsn + fca + fdn) * unit;
+	double3 e = dv - dot(dv, unit) * unit;
+	double mag_e = length(e);
+	if (mag_e)
+	{
+		double3 sh = e / mag_e;
+		double ds = mag_e * cte.dt;
+		Ft = min(c.ks * ds + c.vs * (dot(dv, sh)), c.mu * length(Fn)) * sh;
+		M = cross(ir * unit, Ft);
+		if (length(iomega)){
+			double3 on = iomega / length(iomega);
+			M += c.ms * fsn * rcon * on;
+		}
+	}
+}
+
+template <int TCM>
 __global__ void calculate_p2p_kernel(
-	float4* pos,
-	float3* vel,
-	float3* acc,
-	float3* omega,
-	float3* alpha,
-	float3* force,
-	float3* moment,
-	//float* rad,
-	float* mass,
-	float* iner,
-	float* riv,
-	float E,
-	float pr,
-	float rest,
-	float sh,
-	float fric,
-	float rfric,
-	float coh,
-	unsigned int* sorted_index,
-	unsigned int* cstart,
-	unsigned int* cend,
-	unsigned int cRun = 0)
+	double4* pos, double3* vel, double3* acc,
+	double3* omega, double3* alpha,
+	double3* force, double3* moment,
+	double* mass, double* iner,
+	unsigned int* sorted_index, unsigned int* cstart,
+	unsigned int* cend, contact_parameter* cp)
 {
 	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
 	if (id >= cte.np)
 		return;
 
-	float4 ipos = pos[id];
-	float4 jpos = make_float4(0, 0, 0, 0);
-	float3 ivel = vel[id];
-	float3 jvel = make_float3(0, 0, 0);
-	float3 iomega = omega[id];
-	float3 jomega = make_float3(0, 0, 0);
-	int3 gridPos = calcGridPos(make_float3(ipos));
+	double4 ipos = pos[id];
+	double4 jpos = make_double4(0, 0, 0, 0);
+	double3 ivel = vel[id];
+	double3 jvel = make_double3(0, 0, 0);
+	double3 iomega = omega[id];
+	double3 jomega = make_double3(0, 0, 0);
+	int3 gridPos = calcGridPos(make_double3(ipos.x, ipos.y, ipos.z));
 
-	float ir = ipos.w;
-	float jr = 0;
-	float im = mass[id];
-	float jm = 0;
-	float3 m_force = mass[id] * cte.gravity;
-	float3 m_moment = make_float3(0, 0, 0);
+	double ir = ipos.w; double jr = 0;
+	double im = mass[id]; double jm = 0;
+	double3 Ft = make_double3(0, 0, 0);
+	double3 Fn = make_double3(0, 0, 0);// [id] * cte.gravity;
+	double3 M = make_double3(0, 0, 0);
+	double3 sumF = im * cte.gravity;
+	double3 sumM = make_double3(0, 0, 0);
 	int3 neighbour_pos = make_int3(0, 0, 0);
 	uint grid_hash = 0;
-	//device_force_constant dfc = { 0, 0, 0, 0, 0 };
 	unsigned int start_index = 0;
 	unsigned int end_index = 0;
-	// 	if(id == 31914){
-	// 		end_index = 0;
-	// 	}
 	for (int z = -1; z <= 1; z++){
 		for (int y = -1; y <= 1; y++){
 			for (int x = -1; x <= 1; x++){
@@ -383,178 +437,178 @@ __global__ void calculate_p2p_kernel(
 						unsigned int k = sorted_index[j];
 						if (id == k || k >= cte.np)
 							continue;
-						jpos = pos[k];
-						jvel = vel[k];
-						jomega = omega[k];
-						jr = jpos.w;
-						jm = mass[k];
-						/*dfc = getConstant(ir, jr, im, jm, E, E, pr, pr, rest, ratio, fric);*/
-						//unsigned int rid = id > k ? (id * 10 + k) : (k * 10 + id);
-						if (!calForce(ir, jr, im, jm, rest, sh, fric, rfric, E, pr, coh, ipos, jpos, ivel, jvel, iomega, jomega, m_force, m_moment/*, &(riv[rid])*/))
-							continue;
+						jpos = pos[k]; jvel = vel[k]; jomega = omega[k];
+						jr = jpos.w; jm = mass[k];
+						double3 rp = make_double3(jpos.x - ipos.x, jpos.y - ipos.y, jpos.z - ipos.z);
+						double dist = length(rp);
+						double cdist = (ir + jr) - dist;
+						if (cdist > 0){
+							double rcon = ir - 0.5 * cdist;
+							double3 unit = rp / dist;
+							double3 rv = jvel + cross(jomega, -jr * unit) - (ivel + cross(iomega, ir * unit));
+							device_force_constant c = getConstant(
+								TCM, ir, jr, im, jm, cp->Ei, cp->Ej, 
+								cp->pri, cp->prj, cp->Gi, cp->Gj,
+								cp->rest, cp->fric, cp->rfric, cp->sratio);
+							switch (TCM)
+							{
+							case 0:
+								HMCModel(
+									c, ir, jr, cp->Ei, cp->Ej, cp->pri, cp->prj,
+									cp->coh, rcon, cdist, iomega, 
+									rv, unit, Ft, Fn, M);
+								break;
+							case 1:
+								DHSModel(
+									c, ir, jr, cp->Ei, cp->Ej, cp->pri, cp->prj,
+									cp->coh, rcon, cdist, iomega,
+									rv, unit, Ft, Fn, M);
+								break;
+							}
+							sumF += Fn + Ft;
+							sumM += M;
+						}
 					}
 				}
 			}
 		}
 	}
-	//force[cte.np] = make_double3(0, 0, 0);
-	force[id] = m_force;
-// 	if (id == 0){
-// 		id = 0;
-// 	}
-	// 	if(id == 60775){
-	// 		printf("id = %d -> [%f.6, %f.6, %f.6]\n", id, force[id].x, force[id].y, force[id].z);
-	// 	}
-	moment[id] = m_moment;
+	force[id] += sumF;
+	moment[id] += sumM;
 }
 
-__device__ float particle_plane_contact_detection(device_plane_info *pe, float3& xp, float3& wp, float3& u, float r)
+__device__ double particle_plane_contact_detection(device_plane_info *pe, double3& xp, double3& wp, double3& u, double r)
 {
-	float a_l1 = pow(wp.x - pe->l1, 2.0f);
-	float b_l2 = pow(wp.y - pe->l2, 2.0f);
-	float sqa = wp.x * wp.x;
-	float sqb = wp.y * wp.y;
-	float sqc = wp.z * wp.z;
-	float sqr = r*r;
+	double a_l1 = pow(wp.x - pe->l1, 2.0);
+	double b_l2 = pow(wp.y - pe->l2, 2.0);
+	double sqa = wp.x * wp.x;
+	double sqb = wp.y * wp.y;
+	double sqc = wp.z * wp.z;
+	double sqr = r*r;
 
 	if (abs(wp.z) < r && (wp.x > 0 && wp.x < pe->l1) && (wp.y > 0 && wp.y < pe->l2)){
-		float3 dp = xp - pe->xw;
-		float3 uu = pe->uw / length(pe->uw);
+		double3 dp = xp - pe->xw;
+		double3 uu = pe->uw / length(pe->uw);
 		int pp = -sign(dot(dp, pe->uw));// dp.dot(pe->UW()));
 		u = pp * uu;
-		float collid_dist = r - abs(dot(dp, u));// dp.dot(u));
+		double collid_dist = r - abs(dot(dp, u));// dp.dot(u));
 		return collid_dist;
 	}
 
 	if (wp.x < 0 && wp.y < 0 && (sqa + sqb + sqc) < sqr){
-		float3 Xsw = xp - pe->xw;
-		float h = length(Xsw);// .length();
+		double3 Xsw = xp - pe->xw;
+		double h = length(Xsw);// .length();
 		u = Xsw / h;
 		return r - h;
 	}
 	else if (wp.x > pe->l1 && wp.y < 0 && (a_l1 + sqb + sqc) < sqr){
-		float3 Xsw = xp - pe->w2;
-		float h = length(Xsw);// .length();
+		double3 Xsw = xp - pe->w2;
+		double h = length(Xsw);// .length();
 		u = Xsw / h;
 		return r - h;
 	}
 	else if (wp.x > pe->l1 && wp.y > pe->l2 && (a_l1 + b_l2 + sqc) < sqr){
-		float3 Xsw = xp - pe->w3;
-		float h = length(Xsw);// .length();
+		double3 Xsw = xp - pe->w3;
+		double h = length(Xsw);// .length();
 		u = Xsw / h;
 		return r - h;
 	}
 	else if (wp.x < 0 && wp.y > pe->l2 && (sqa + b_l2 + sqc) < sqr){
-		float3 Xsw = xp - pe->w4;
-		float h = length(Xsw);// .length();
+		double3 Xsw = xp - pe->w4;
+		double h = length(Xsw);// .length();
 		u = Xsw / h;
 		return r - h;
 	}
 	if ((wp.x > 0 && wp.x < pe->l1) && wp.y < 0 && (sqb + sqc) < sqr){
-		float3 Xsw = xp - pe->xw;
-		float3 wj_wi = pe->w2 - pe->xw;
-		float3 us = wj_wi / length(wj_wi);// .length();
-		float3 h_star = Xsw - (dot(Xsw, us)) * us;
-		float h = length(h_star);// .length();
+		double3 Xsw = xp - pe->xw;
+		double3 wj_wi = pe->w2 - pe->xw;
+		double3 us = wj_wi / length(wj_wi);// .length();
+		double3 h_star = Xsw - (dot(Xsw, us)) * us;
+		double h = length(h_star);// .length();
 		u = -h_star / h;
 		return r - h;
 	}
 	else if ((wp.x > 0 && wp.x < pe->l1) && wp.y > pe->l2 && (b_l2 + sqc) < sqr){
-		float3 Xsw = xp - pe->w4;
-		float3 wj_wi = pe->w3 - pe->w4;
-		float3 us = wj_wi / length(wj_wi);// .length();
-		float3 h_star = Xsw - (dot(Xsw, us)) * us;
-		float h = length(h_star);// .length();
+		double3 Xsw = xp - pe->w4;
+		double3 wj_wi = pe->w3 - pe->w4;
+		double3 us = wj_wi / length(wj_wi);// .length();
+		double3 h_star = Xsw - (dot(Xsw, us)) * us;
+		double h = length(h_star);// .length();
 		u = -h_star / h;
 		return r - h;
 
 	}
 	else if ((wp.x > 0 && wp.y < pe->l2) && wp.x < 0 && (sqr + sqc) < sqr){
-		float3 Xsw = xp - pe->xw;
-		float3 wj_wi = pe->w4 - pe->xw;
-		float3 us = wj_wi / length(wj_wi);// .length();
-		float3 h_star = Xsw - (dot(Xsw,us)) * us;
-		float h = length(h_star);// .length();
+		double3 Xsw = xp - pe->xw;
+		double3 wj_wi = pe->w4 - pe->xw;
+		double3 us = wj_wi / length(wj_wi);// .length();
+		double3 h_star = Xsw - (dot(Xsw,us)) * us;
+		double h = length(h_star);// .length();
 		u = -h_star / h;
 		return r - h;
 	}
 	else if ((wp.x > 0 && wp.y < pe->l2) && wp.x > pe->l1 && (a_l1 + sqc) < sqr){
-		float3 Xsw = xp - pe->w2;
-		float3 wj_wi = pe->w3 - pe->w2;
-		float3 us = wj_wi / length(wj_wi);// .length();
-		float3 h_star = Xsw - (dot(Xsw,us)) * us;
-		float h = length(h_star);// .length();
+		double3 Xsw = xp - pe->w2;
+		double3 wj_wi = pe->w3 - pe->w2;
+		double3 us = wj_wi / length(wj_wi);// .length();
+		double3 h_star = Xsw - (dot(Xsw,us)) * us;
+		double h = length(h_star);// .length();
 		u = -h_star / h;
 		return r - h;
 	}
 
 
-	return -1.0f;
-}
-
-template<typename T1, typename T2>
-__device__ void HMCModel(
-	device_force_constant<T1> 
-	c, T1 rcon,	T1 cdist, T1 rfric,
-	T2 iomega, T2 dv, T2 unit, T2 Ft, T2& Fn, T2& M)
-{
-	T1 fsn = -c.kn * pow(cdist, (T1)1.5f);
-	T1 fdn = c.vn * dot(dv, unit);
-	Fn = (fsn + fdn) * unit;
-	T2 e = dv - dot(dv, unit) * unit;
-	T1 mag_e = length(e);
-	if (mag_e){
-		T2 s_hat = e / mag_e;
-		T1 ds = mag_e * cte.dt;
-		T1 fst = -c.ks * ds;
-		T1 fdt = c.vs * dot(dv, s_hat);
-		Ft = (fst + fdt) * s_hat;
-		if (length(Ft) >= c.mu * length(Fn))
-			Ft = c.mu * fsn * s_hat;
-		M = cross(rcon * unit, Ft);
-		if (length(iomega)){
-			T2 on = iomega / length(iomega);
-			M += -rfric * fsn * rcon * on;
-		}
-	}
+	return -1.0;
 }
 
 template <int TCM>
 __global__ void plane_hertzian_contact_force_kernel(
 	device_plane_info *plane,
-	float E, float pr, float G, float rest, float fric, float rfric,
-	float4* pos, float3* vel, float3* omega, float3* force, float3* moment,
-	float* mass, float pE, float pPr, float pG)
+	double4* pos, double3* vel, double3* omega, 
+	double3* force, double3* moment,
+	contact_parameter *cp, double* mass)
 {
 	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
 	if (id >= cte.np)
 		return;
-	float m = mass[id];
-	float4 ipos = pos[id];
-	float3 ipos3 = make_float3(ipos);
-	float r = ipos.w;
-	float3 ivel = vel[id];
-	float3 iomega = omega[id];
+	double m = mass[id];
+	double4 ipos = pos[id];
+	double3 ipos3 = make_double3(ipos.x, ipos.y, ipos.z);
+	double r = ipos.w;
+	double3 ivel = vel[id];
+	double3 iomega = omega[id];
 
-	float3 Fn = make_float3(0, 0, 0);
-	float3 Ft = make_float3(0, 0, 0);
-	float3 M = make_float3(0, 0, 0);
-	float3 dp = make_float3(ipos) - plane->xw;
-	float3 unit = make_float3(0.0f);
-	float3 wp = make_float3(dot(dp, plane->u1), dot(dp, plane->u2), dot(dp, plane->uw));
+	double3 Fn = make_double3(0, 0, 0);
+	double3 Ft = make_double3(0, 0, 0);
+	double3 M = make_double3(0, 0, 0);
+	double3 dp = make_double3(ipos.x, ipos.y, ipos.z) - plane->xw;
+	double3 unit = make_double3(0, 0, 0);
+	double3 wp = make_double3(dot(dp, plane->u1), dot(dp, plane->u2), dot(dp, plane->uw));
 	
-	float collid_dist = particle_plane_contact_detection(plane, ipos3, wp, unit, r);
-	if (collid_dist > 0){
-		float rcon = r - 0.5f * collid_dist;
-		float3 dv = -(ivel + cross(iomega, r * unit));
-		device_force_constant<float> c = getConstant<float>(r, 0.f, m, 0.f, pE, E, pPr, pr, pG, G, rest, fric, rfric);
+	double cdist = particle_plane_contact_detection(plane, ipos3, wp, unit, r);
+	if (cdist > 0){
+		double rcon = r - 0.5 * cdist;
+		double3 dv = -(ivel + cross(iomega, r * unit));
+		device_force_constant c = getConstant(
+			TCM, r, 0.f, m, 0.f, cp->Ei, cp->Ej,
+			cp->pri, cp->prj, cp->Gi, cp->Gj,
+			cp->rest, cp->fric, cp->rfric, cp->sratio);
 		switch (TCM)
 		{
-		case 0: HMCModel<float, float3>(c, rcon, collid_dist, rfric, iomega, dv, unit, Ft, Fn, M); break;
+		case 0: 
+			HMCModel(
+				c, 0, 0, 0, 0, 0, 0, 0, rcon, cdist,
+				iomega, dv, unit, Ft, Fn, M); 
+			break;
+		case 1:
+			DHSModel(
+				c, 0, 0, 0, 0, 0, 0, 0, rcon, cdist, 
+				iomega, dv, unit, Ft, Fn, M);
+			break;
 		}
 	}
-	force[id] += Fn;// m_force + shear_force;
+	force[id] += Fn + Ft;// m_force + shear_force;
 	moment[id] += M;
 }
 
@@ -652,15 +706,15 @@ __device__ float particle_cylinder_contact_detection(
 			return pt.w - dist;
 		}
 	}
-	return -1.0f;
+	return -1.0;
 }
 
 template<int TCM>
 __global__ void cylinder_hertzian_contact_force_kernel(
 	device_cylinder_info *cy,
-	float E, float pr, float G, float rest, float fric, float rfric,
-	float4* pos, float3* vel, float3* omega, float3* force,	float3* moment,
-	float* mass, float pE, float pPr, float pG, double3* mpos, double3* mf, double3* mm)
+	double4* pos, double3* vel, double3* omega, 
+	double3* force,	double3* moment, contact_parameter *cp,
+	double* mass, double3* mpos, double3* mf, double3* mm)
 {
 	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
@@ -669,46 +723,46 @@ __global__ void cylinder_hertzian_contact_force_kernel(
 
 	*mf = make_double3(0.0, 0.0, 0.0);
 	*mm = make_double3(0.0, 0.0, 0.0);
-	double overlap = 0.f;
+	double cdist = 0.0;
 	double im = mass[id];
-	double4 ipos = make_double4((double)pos[id].x, (double)pos[id].y, (double)pos[id].z, (double)pos[id].w);
-	double3 ivel = make_double3((double)vel[id].x, (double)vel[id].y, (double)vel[id].z);
-	double3 iomega = make_double3((double)omega[id].x, (double)omega[id].y, (double)omega[id].z);
+	double4 ipos = make_double4(pos[id].x, pos[id].y, pos[id].z, pos[id].w);
+	double3 ivel = make_double3(vel[id].x, vel[id].y, vel[id].z);
+	double3 iomega = make_double3(omega[id].x, omega[id].y, omega[id].z);
 	double3 unit = make_double3(0.0, 0.0, 0.0);
-	double3 cp = make_double3(0.0, 0.0, 0.0);
+	double3 cpt = make_double3(0.0, 0.0, 0.0);
 	double3 mp = make_double3(mpos->x, mpos->y, mpos->z);
-	overlap = particle_cylinder_contact_detection(cy, ipos, unit, cp, id);
-	double3 si = cp - mp;
-	double3 cy2cp = cp - cy->origin;
+	cdist = particle_cylinder_contact_detection(cy, ipos, unit, cpt, id);
+	double3 si = cpt - mp;
+	double3 cy2cp = cpt - cy->origin;
 	double3 Ft = make_double3(0.0, 0.0, 0.0);
 	double3 Fn = make_double3(0.0, 0.0, 0.0);
 	double3 M = make_double3(0.0, 0.0, 0.0);
-	if (overlap > 0)
+	if (cdist > 0)
 	{
-		double rcon = ipos.w - 0.5 * overlap;
+		double rcon = ipos.w - 0.5 * cdist;
 		double3 dv = cy->vel + cross(cy->omega, cy2cp) - (ivel + cross(iomega, ipos.w * unit));
-		device_force_constant<double> c = getConstant<double>(ipos.w, 0, im, 0, pE, E, pPr, pr, pG, G, rest, fric, rfric);
+		device_force_constant c = getConstant(
+			TCM, ipos.w, 0, im, 0, cp->Ei, cp->Ej,
+			cp->pri, cp->prj, cp->Gi, cp->Gj,
+			cp->rest, cp->fric, cp->rfric, cp->sratio);
 		switch (TCM)
 		{
-		case 0: HMCModel<double, double3>(c, rcon, overlap, rfric, iomega, dv, unit, Ft, Fn, M); break;
+		case 0: HMCModel(
+				c, 0, 0, 0, 0, 0, 0, 0, rcon, cdist, iomega,
+				dv, unit, Ft, Fn, M); 
+			break;
+		case 1:
+			DHSModel(
+				c, 0, 0, 0, 0, 0, 0, 0, rcon, cdist, iomega,
+				dv, unit, Ft, Fn, M);
+			break;
 		}
-// 		double fsn = -c.kn * pow(overlap, 1.5);
-// 		single_force = (fsn + c.vn * dot(dv, unit)) * unit;
-// 		double3 e = dv - dot(dv, unit) * unit;
-// 		double mag_e = length(e);
-// 		if (mag_e){
-// 			double3 s_hat = e / mag_e;
-// 			double ds = mag_e * cte.dt;
-// 			shear_force = min(c.ks * ds + c.vs * dot(dv, s_hat), c.mu * length(single_force)) * s_hat;
-// 			m_moment = cross(ipos.w * unit, shear_force);
-// 		}
-// 		//m_force += single_force;
 	}
-	double3 sum_f = Fn;// +shear_force;
-	force[id] += make_float3(sum_f.x, sum_f.y, sum_f.z);
-	moment[id] += make_float3(M.x, M.y, M.z);
-	mf[id] = -(sum_f + Ft);
-	mm[id] = -cross(si, sum_f + Ft);
+	double3 sum_f = Fn + Ft;
+	force[id] += make_double3(sum_f.x, sum_f.y, sum_f.z);
+	moment[id] += make_double3(M.x, M.y, M.z);
+	mf[id] = -(Fn);
+	mm[id] = cross(si, -Fn);
 }
 
 template <typename T, unsigned int blockSize>
@@ -765,14 +819,7 @@ __global__ void reduce6(T *g_idata, T *g_odata, unsigned int n)
 	}
 
 	__syncthreads();
-// 	if (tid < 32) {
-// 		if (blockSize >= 64) sdata[tid] += sdata[tid + 32];
-// 		if (blockSize >= 32) sdata[tid] += sdata[tid + 16];
-// 		if (blockSize >= 16) sdata[tid] += sdata[tid + 8];
-// 		if (blockSize >= 8) sdata[tid] += sdata[tid + 4];
-// 		if (blockSize >= 4) sdata[tid] += sdata[tid + 2];
-// 		if (blockSize >= 2) sdata[tid] += sdata[tid + 1];
-//	}
+
 	if (tid == 0) g_odata[blockIdx.x] = mySum;
 }
 
@@ -865,24 +912,24 @@ __device__ bool checkConcave(device_polygon_info* dpi, unsigned int* tid, unsign
 template<int TCM>
 __global__ void particle_polygonObject_collision_kernel(
 	device_polygon_info* dpi, double4* dsph, device_polygon_mass_info* dpmi,
-	float E, float pr, float G, float rest,	float fric, float rfric,
-	float4 *pos, float3 *vel, float3 *omega, float3 *force, float3 *moment,
-	float* mass, float pE, float pPr, float pG,	unsigned int* sorted_index,
-	unsigned int* cstart, unsigned int* cend, double3* mpos, double3* mf, double3* mm)
+	double4 *pos, double3 *vel, double3 *omega, double3 *force, double3 *moment,
+	double* mass, unsigned int* sorted_index, unsigned int* cstart, unsigned int* cend, 
+	contact_parameter *cp, double3* mpos, double3* mf, double3* mm)
 {
 	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
 	if (id >= cte.np)
 		return;
 
-	double overlap = 0.f;
-	double im = (double)mass[id];
-	int3 gridPos = calcGridPos(make_float3(pos[id]));
-	double3 ipos = make_double3((double)pos[id].x, (double)pos[id].y, (double)pos[id].z);
-	double3 ivel = make_double3((double)vel[id].x, (double)vel[id].y, (double)vel[id].z);
-	double3 iomega = make_double3((double)omega[id].x, (double)omega[id].y, (double)omega[id].z);
+	double cdist = 0.0;
+	double im = mass[id];
+	
+	double3 ipos = make_double3(pos[id].x, pos[id].y, pos[id].z);
+	double3 ivel = make_double3(vel[id].x, vel[id].y, vel[id].z);
+	double3 iomega = make_double3(omega[id].x, omega[id].y, omega[id].z);
 	double3 unit = make_double3(0.0, 0.0, 0.0);
-	double3 cp = make_double3(0.0, 0.0, 0.0);
+	int3 gridPos = calcGridPos(make_double3(ipos.x, ipos.y, ipos.z));
+	//double3 cpt = make_double3(0.0, 0.0, 0.0);
 	double3 mp = make_double3(mpos->x, mpos->y, mpos->z);
 	double ir = pos[id].w;
 	double3 M = make_double3(0, 0, 0);
@@ -907,37 +954,38 @@ __global__ void particle_polygonObject_collision_kernel(
 							k -= cte.np;
 							double3 distVec;
 							double dist;
-							double3 cp = closestPtPointTriangle(dpi[k], ipos, ir);
-							double3 po2cp = cp - dpmi->origin;
-							double3 si = cp - mp;
-							distVec = ipos - cp;
+							double3 cpt = closestPtPointTriangle(dpi[k], ipos, ir);
+							double3 po2cp = cpt - dpmi->origin;
+							double3 si = cpt - mp;
+							distVec = ipos - cpt;
 							dist = length(distVec);
-							overlap = ir - dist;
+							cdist = ir - dist;
 							Fn = make_double3(0.0, 0.0, 0.0);
-							if (overlap > 0)
+							if (cdist > 0)
 							{
-								double rcon = ir - 0.5 * overlap;
+								double rcon = ir - 0.5 * cdist;
 								unit = -dpi[k].N;
 								double3 dv = dpmi->vel + cross(dpmi->omega, po2cp) - (ivel + cross(iomega, ir * unit));
-								device_force_constant<double> c = getConstant<double>(ir, 0, im, 0, pE, E, pPr, pr, pG, G, rest, fric, rfric);
+								device_force_constant c = getConstant(
+									TCM, ir, 0, im, 0, cp->Ei, cp->Ej,
+									cp->pri, cp->prj, cp->Gi, cp->Gj,
+									cp->rest, cp->fric, cp->rfric, cp->sratio);
 								switch (TCM)
 								{
-								case 0: HMCModel<double, double3>(c, rcon, overlap, rfric, iomega, dv, unit, Ft, Fn, M); break;
+								case 0: 
+									HMCModel(
+										c, 0, 0, 0, 0, 0, 0, 0, rcon, cdist, iomega,
+										dv, unit, Ft, Fn, M); 
+									break;
+								case 1:
+									DHSModel(
+										c, 0, 0, 0, 0, 0, 0, 0, rcon, cdist, iomega,
+										dv, unit, Ft, Fn, M);
+									break;
 								}
-// 								double fsn = -c.kn * pow(overlap, 1.5);
-// 								single_force = (fsn + c.vn * dot(dv, unit)) * unit;
-// 
-// 								double3 e = dv - dot(dv, unit) * unit;
-// 								double mag_e = length(e);
-// 								if (mag_e){
-// 									double3 s_hat = e / mag_e;
-// 									double ds = mag_e * cte.dt;
-// 									shear_force = min(c.ks * ds + c.vs * dot(dv, s_hat), c.mu * length(single_force)) * s_hat;
-// 									m_moment = cross(ir * unit, shear_force);
-// 								}
 								double3 sum_f = Fn;// +shear_force;
-								force[id] += make_float3(sum_f.x, sum_f.y, sum_f.z);
-								moment[id] += make_float3(M.x, M.y, M.z);
+								force[id] += make_double3(sum_f.x, sum_f.y, sum_f.z);
+								moment[id] += make_double3(M.x, M.y, M.z);
 								mf[id] += -(sum_f + Ft);// +make_double3(1.0, 5.0, 9.0);
 								mm[id] += -cross(si, sum_f + Ft);
 							}			
@@ -947,6 +995,4 @@ __global__ void particle_polygonObject_collision_kernel(
 			}
 		}
 	}
-//	force[id] = m_force;
-	//moment[id] = m_moment;
 }

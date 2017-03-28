@@ -13,11 +13,12 @@ public:
 	collision_particles_particles(QString& _name, modeler* _md, particle_system* _ps, tContactModel _tcm);
 	virtual ~collision_particles_particles();
 
-	virtual bool collid(float dt);
-	virtual bool cuCollid(){ return true; }
-	virtual bool collid_with_particle(unsigned int i, float dt) { return true; }
+	virtual bool collid(double dt);
+	virtual bool cuCollid();
+	virtual bool collid_with_particle(unsigned int i, double dt) { return true; }
 
-	bool HMCModel(float dt);
+	bool HMCModel(double dt);
+	bool DHSModel(double dt);
 
 private:
 	particle_system *ps;

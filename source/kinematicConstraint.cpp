@@ -17,26 +17,27 @@ kinematicConstraint::kinematicConstraint()
 
 }
 
-kinematicConstraint::kinematicConstraint(modeler* _md, QString& _nm, tKinematicConstraint kt, VEC3D _loc, 
-										 mass* ip, VEC3D _fi, VEC3D _gi, 
-										 mass* jp, VEC3D _fj, VEC3D _gj)
-										 : md(_md)
-										 , i(ip)
-										 , j(jp)
-										 , lm(NULL)
-										 , type(kt)
-										 , nm(_nm)
-										 //, reactionForce(NULL)
-										 , srow(0)
-										 , icol(0)
-										 , jcol(0)
-										 , nconst(0)
-										 , maxnnz(0)
-										 , fi(_fi)
-										 , fj(_fj)
-										 , gi(_gi)
-										 , gj(_gj)
-										 , loc(_loc)
+kinematicConstraint::kinematicConstraint(modeler *_md, QString& _nm, tKinematicConstraint kt, 
+	mass* ip, VEC3D& _spi, VEC3D& _fi, VEC3D& _gi, 
+	mass* jp, VEC3D& _spj, VEC3D& _fj, VEC3D& _gj)
+	: md(_md)
+	, i(ip)
+	, j(jp)
+	, lm(NULL)
+	, type(kt)
+	, nm(_nm)
+	//, reactionForce(NULL)
+	, srow(0)
+	, icol(0)
+	, jcol(0)
+	, nconst(0)
+	, maxnnz(0)
+	, fi(_fi)
+	, fj(_fj)
+	, gi(_gi)
+	, gj(_gj)
+	, spi(_spi)
+	, spj(_spj)
 										 //, principal_axis(0)
 {
 	hi = fi.cross(gi);
@@ -50,7 +51,6 @@ kinematicConstraint::kinematicConstraint(const kinematicConstraint& _kc)
 	j = _kc.jMass();
 	ax = _kc.axis();
 	nm = _kc.name();
-	loc = _kc.location();
 	type = _kc.constType();
 	spi = _kc.sp_i();
 	spj = _kc.sp_j();
@@ -74,14 +74,18 @@ kinematicConstraint::~kinematicConstraint()
 
 void kinematicConstraint::setCoordinates()
 {
-	spi = loc - (i ? i->getPosition() : VEC3D(0, 0, 0));
-	spj = loc - (j ? j->getPosition() : VEC3D(0, 0, 0));
-	spi = i ? i->toLocal(spi) : VEC3D(0, 0, 0);
-	spj = j ? j->toLocal(spj) : VEC3D(0, 0, 0);
+// 	spi = loc - (i ? i->getPosition() : VEC3D(0, 0, 0));
+// 	spj = loc - (j ? j->getPosition() : VEC3D(0, 0, 0));
+//  	spi = i->toLocal(spi - i->getPosition());
+//  	spj = j->toLocal(spj - j->getPosition());
 	switch (type){
 	case REVOLUTE:
 		nconst = 5;
 		(i && j) ? maxnnz += 46 : maxnnz += 23;
+		break;
+	case TRANSLATIONAL:
+		nconst = 5;
+		(i && j) ? maxnnz += 52 : maxnnz += 26;
 		break;
 	}
 }

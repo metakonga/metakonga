@@ -3,7 +3,7 @@
 #include <QThread>
 #include "object.h"
 
-float simulation::ct = 0.f;
+double simulation::ct = 0.0;
 
 simulation::simulation()
 	: md(NULL)

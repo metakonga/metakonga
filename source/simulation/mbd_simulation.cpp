@@ -1,5 +1,6 @@
 #include "mbd_simulation.h"
 #include "kinematicConstraint.h"
+#include "drivingConstraint.h"
 #include "modeler.h"
 #include "object.h"
 #include "mass.h"
@@ -68,21 +69,47 @@ bool mbd_simulation::initialize(bool isCpu)
 
 	mass *ground = md->makeMass("ground");
 	int i = 0;
-	//mass *jbody = md->objects().find("cylinder").value()->pointMass();//md->objects().begin().value()->pointMass();
-	//jbody++;
-	//md->makeKinematicConstraint("rev0", REVOLUTE, VEC3D(0, 0, 0), NULL, VEC3D(1, 0, 0), VEC3D(0, 1, 0), jbody, VEC3D(1, 0, 0), VEC3D(0, 1, 0));
+	EPD _ep;
+	_ep.setFromEuler(0, 0.5 * M_PI, 0);
+	double n = _ep.dot();
 	for (massIterator it = md->pointMasses().begin(); it != md->pointMasses().end(); it++, i++){
-		it.value()->setID(i);
 		object* o = it.key();
 		if (o == NULL) continue;
+		it.value()->setID(i);
 		switch (o->objectType()){
 		case CYLINDER:{
-			QMap<QString, cylinder>::iterator cy = md->objCylinders().find(o->objectName());
-			it.value()->setEP(cy.value().orientation().To<double>());
+			cylinder* cy = md->getChildObject<cylinder*>(o->objectName());
+			it.value()->setEP(cy->orientation());
+			it.value()->makeTransformationMatrix();
 			}
 			break;
 		}
 	}
+	mass* shaft;
+	mass* guide; 
+	mass* wheel;
+	for (massIterator it = md->pointMasses().begin(); it != md->pointMasses().end(); it++, i++){
+		mass* m = it.value();
+		if (m->name() == "shaft")
+			shaft = m;
+		else if (m->name() == "guide")
+			guide = m;
+		else if (m->name() == "wheel")
+			wheel = m;
+	}
+
+	mass* m = (++md->pointMasses().begin()).value();
+	kinematicConstraint* rev_ws = md->makeKinematicConstraint("rev_wheel_ground", REVOLUTE, wheel, VEC3D(0, 0, 0), wheel->toLocal(VEC3D(1.0, 0, 0)), wheel->toLocal(VEC3D(0, 1.0, 0)),
+		ground, VEC3D(0, -0.012, 0), VEC3D(-1.0, 0, 0), VEC3D(0, 1.0, 0));
+// 	md->makeKinematicConstraint("tra_shaft_guide", TRANSLATIONAL, VEC3D(0, 0.288, 0), shaft, shaft->toLocal(VEC3D(0, 0, 1.0)), shaft->toLocal(VEC3D(1.0, 0, 0)),
+// 								ground, ground->toLocal(VEC3D(1.0, 0, 0)), ground->toLocal(VEC3D(0, 0, -1.0)));
+// 	md->makeKinematicConstraint("tra_shaft_guide", TRANSLATIONAL,  shaft, shaft->getPosition(), shaft->toLocal(VEC3D(0, 0, 1.0)), shaft->toLocal(VEC3D(1.0, 0, 0)),
+// 								guide, guide->getPosition(), guide->toLocal(VEC3D(1.0, 0, 0)), guide->toLocal(VEC3D(0, 0, -1.0)));
+// 	md->makeKinematicConstraint("tra_guide_ground", TRANSLATIONAL, guide, guide->getPosition(), guide->toLocal(VEC3D(0, 1.0, 0)), guide->toLocal(VEC3D(0, 0, -1.0)),
+// 								ground, VEC3D(-1, 0.225, 0), ground->toLocal(VEC3D(0, 0, 1.0)), ground->toLocal(VEC3D(0, 1.0, 0)));
+
+	md->makeDrivingConstraint("Wheel_driving", rev_ws, DRIVING_VELOCITY, 1);
+
 	for (kConstIterator it = md->kinConstraint().begin(); it != md->kinConstraint().end(); it++){
 		kinematicConstraint *kconst = it.value();
 		kconst->setStartRow(sdim);
@@ -91,11 +118,20 @@ bool mbd_simulation::initialize(bool isCpu)
 		switch (kconst->constType())
 		{
 		case REVOLUTE:			sdim += 5; break;
+		case TRANSLATIONAL:		sdim += 5; break;
 		default:
 			break;
 		}
 		nnz += kconst->maxNNZ();
 	}
+	for (dConstIterator it = md->drivingConstraints().begin(); it != md->drivingConstraints().end(); it++){
+		drivingConstraint* dconst = it.value();
+		dconst->setStartRow(sdim);
+		sdim++;
+		nnz += dconst->maxNNZ();
+		//dconst->setStartColumn()
+	}
+	//sdim += md->drivingConstraints().size();
 	for (QMap<object*, mass*>::iterator it = md->pointMasses().begin(); it != md->pointMasses().end(); it++){
 		object* o = it.key();//mass* m = it.value();
 		if (o){
@@ -112,7 +148,7 @@ bool mbd_simulation::initialize(bool isCpu)
 	rhs.alloc(tdim);
 	pre.alloc(mdim);
 	ipp.alloc(mdim);
-	ipv.alloc(tdim);
+	ipv.alloc(mdim);
 	ee.alloc(tdim);
 	cEQ.alloc(tdim - mdim);
 	dt2accp = simulation::dt*simulation::dt*(1 - 2 * beta)*0.5;
@@ -121,16 +157,10 @@ bool mbd_simulation::initialize(bool isCpu)
 	divalpha = 1 / (1 + alpha);
 	divbeta = -1 / (beta*simulation::dt*simulation::dt);
 	cjaco.alloc(nnz + (nm) * 4, tdim - mdim, mdim);
+// 	EPD ev0 = wheel->getEP().w2ev(VEC3D(0, 0, 0.2));
+// 	wheel->setEV(ev0);
 	FULL_LEOM();
-// 	for (kConstIterator it = md->kinConstraint().begin(); md->kinConstraint().end(); it++){
-// 
-// 	}
-	lhs.display();
-// 	cusolverDnHandle_t cuhandle = NULL;
-// 	int status = 0;
-// 	cusolverDnCreate(&cuhandle);
-// 	cusolverDnDgetrs(cuhandle, CUBLAS_OP_N, tdim, tdim, lhs.getDataPointer(), tdim, permutation, rhs.get_ptr(), tdim, &status);
-// 	cusolverDnDestroy(cuhandle);
+	//lhs.display();
 	dgesv_(ptDof, &lapack_one, lhs.getDataPointer(), ptDof, permutation, rhs.get_ptr(), ptDof, &lapack_info);
 	i = 0;
 	for (massIterator it = md->pointMasses().begin(); it != md->pointMasses().end(); it++)
@@ -139,22 +169,28 @@ bool mbd_simulation::initialize(bool isCpu)
 		if (m->ID() == 0)
 			continue;
 		int idx = i * 7;
-		m->setAcceleration(VEC3D(rhs(idx + 0), rhs(idx * 7 + 1), rhs(idx * 7 + 2)));
+		m->setAcceleration(VEC3D(rhs(idx + 0), rhs(idx + 1), rhs(idx + 2)));
 		m->setEA(EPD(rhs(idx + 3), rhs(idx + 4), rhs(idx + 5), rhs(idx + 6)));
 		i++;
+	//	m->setForceAndMomentMemory(nstep);
 	}
 
 	lagMul = rhs.get_ptr() + mdim;
 	qf_out.setFileName(md->modelPath() + "/" + md->modelName() + ".mrf");
 	qf_out.open(QIODevice::WriteOnly);
 	qf_out.write((char*)&nm, sizeof(unsigned int));
-// 	for (massIterator it = md->pointMasses().begin(); it != md->pointMasses().end(); it++){
-// 		object* obj = it.key();
-// 		qf_out.write(obj->objectName().toStdString().c_str(), sizeof(char)*obj->objectName().length());
-// 	}
-	//tp.setFileName("C:/C++/one_pendulum.txt");
-	//tp.open(QIODevice::WriteOnly);
+	unsigned int nr_out = static_cast<unsigned int>(nstep / step) + 1;
+	qf_out.write((char*)&nr_out, sizeof(unsigned int));
 
+	//unsigned int nr_out = static_cast<unsigned int>(nstep / step) + 1;
+	for (QMap<object*, mass*>::iterator it = md->pointMasses().begin(); it != md->pointMasses().end(); it++){
+		if (it.value()->ID() == 0)
+			continue;
+		if (it.value()->getBaseGeometryType() == POLYGON)
+			it.value()->getPolyGeometryObject()->setResultData(nr_out);
+		else
+			it.value()->getGeometryObject()->setResultData(nr_out);
+	}
 	return true;
 }
 
@@ -208,7 +244,7 @@ void mbd_simulation::calcForceVector(VECD* vec)
 	int cnt = 0;
 	VEC3D nf;
 	VEC4D mm, im, rf;
-	VEC3D g = md->gravity().To<double>();
+	VEC3D g = md->gravity();
 	VEC3D cm;
 // 	VEC3D add_moment = VEC3D(0, 0, 0);
 //  	if ((ct >= 0.1f && ct < 0.25f)/* && (simulation::ct < 0.35)*/)
@@ -222,11 +258,23 @@ void mbd_simulation::calcForceVector(VECD* vec)
 		mass* m = it.value();
 		if (m->ID() == 0)
 			continue;
+		//if (m->getCollisionForce())
+		
 		nf = m->getMass() * g + m->getCollisionForce() + m->getExternalForce();
+		
+				
 	///	VEC3D _mm = (VEC3D(0.4, 0.1, 0.0) - m->getPosition()).cross(VEC3D(0.0, -10, 0.0));
 // 		if (m->getExternalMoment().length())
 // 			cm = m->getCollisionForce()
-		mm = calcMoment(m->getEP(), m->getCollisionMoment() + m->getExternalMoment());
+// 		if (m->name() == "wheel" && ct != 0)
+// 		{
+// 			m->setCollisionMoment(VEC3D(0, 0, 100));
+// 		}
+		mm = calcMoment(m->getEP(), m->getCollisionMoment() + m->getExternalMoment()/* + VEC3D(0, 0, 1)*/);
+// 		if (m->name() == "wheel")
+// 		{
+// 			mm.z += 1.0;
+// 		}
 		rf = calcInertiaForce(m->getEV(), m->getInertia(), m->getEP());
 		//rf.x += mm.x; rf.y += mm.y; rf.z += mm.z; rf.w += mm.w;
 		rf += mm;
@@ -240,7 +288,7 @@ void mbd_simulation::sparseConstraintJacobian()
 {
 	int sr, ic, jc, i = 0;
 	mass *ib, *jb;
-	VEC3D dij;
+	//VEC3D dij;
 	EPD ep;
 	cjaco.zeroCount();
 	sr = tdim - md->pointMasses().size() + 1;
@@ -260,18 +308,18 @@ void mbd_simulation::sparseConstraintJacobian()
 		switch (kconst->constType())
 		{
 		case REVOLUTE:
-			if (ib)
+			if (ib->ID())
 			{
-				if (!jb) jb = &ground;
+				//if (!jb->ID()) jb = &ground;
 				for (unsigned i(0); i < 3; i++) cjaco(sr + i, ic + i) = -1;
 				ep = ib->getEP();// m->getParameterv(ib);
 				cjaco.extraction(sr + 0, ic + 3, POINTER(B(ep, -kconst->sp_i())), MAT3X4);
 				cjaco.extraction(sr + 3, ic + 3, POINTER(transpose(jb->toGlobal(kconst->h_j()), B(ep, kconst->g_i()))), VEC4);
 				cjaco.extraction(sr + 4, ic + 3, POINTER(transpose(jb->toGlobal(kconst->h_j()), B(ep, kconst->f_i()))), VEC4);
 			}
-			if (jb)
+			if (jb->ID())
 			{
-				if (!ib) ib = &ground;
+				//if (!ib->ID()) ib = &ground;
 				for (unsigned i(0); i < 3; i++) cjaco(sr + i, jc + i) = 1;
 				ep = jb->getEP();
 				cjaco.extraction(sr + 0, jc + 3, POINTER(B(ep, kconst->sp_j())), MAT3X4);
@@ -280,7 +328,41 @@ void mbd_simulation::sparseConstraintJacobian()
 			}
 			//std::cout << *sjc << std::endl;
 			break;
+		case TRANSLATIONAL:
+			//if (!ib) ib = &ground;
+			//else if (!jb) jb = &ground;
+			VEC3D dij;
+// 			if (jb->ID()) dij = jb->getPosition() + jb->toGlobal(kconst->sp_j());
+// 			if (ib->ID()) dij -= ib->getPosition() + ib->toGlobal(kconst->sp_i());
+			dij = ( jb->getPosition() + jb->toGlobal(kconst->sp_j()) ) - ( ib->getPosition() + ib->toGlobal(kconst->sp_i()) );
+			if (ib->ID())
+			{
+				//if(!(jb->ID())) jb = &ground;
+				cjaco.extraction(sr + 0, ic + 3, POINTER(transpose(jb->toGlobal(kconst->h_j()), B(ep, kconst->g_i()))), VEC4);
+				cjaco.extraction(sr + 1, ic + 3, POINTER(transpose(jb->toGlobal(kconst->h_j()), B(ep, kconst->f_i()))), VEC4);
+				cjaco.extraction(sr + 2, ic + 0, POINTER((-kconst->g_i())), POINTER(transpose(dij + kconst->sp_i(), B(ep, kconst->g_i()))), VEC3_4);
+				cjaco.extraction(sr + 3, ic + 0, POINTER((-kconst->f_i())), POINTER(transpose(dij + kconst->sp_i(), B(ep, kconst->f_i()))), VEC3_4);
+				cjaco.extraction(sr + 4, ic + 3, POINTER(transpose(jb->toGlobal(kconst->f_j()), B(ep, kconst->f_i()))), VEC4);
+			}
+			if (jb->ID())
+			{
+				//if (!(ib->ID())) ib = &ground;
+				cjaco.extraction(sr + 0, jc + 3, POINTER(transpose(ib->toGlobal(kconst->g_i()), B(ep, kconst->h_j()))), VEC4);
+				cjaco.extraction(sr + 1, jc + 3, POINTER(transpose(ib->toGlobal(kconst->f_i()), B(ep, kconst->h_j()))), VEC4);
+				cjaco.extraction(sr + 2, jc + 0, POINTER(kconst->g_i()), POINTER(transpose(kconst->g_i(), B(ep, kconst->sp_j()))), VEC3_4);
+				cjaco.extraction(sr + 3, jc + 0, POINTER(kconst->f_i()), POINTER(transpose(kconst->f_i(), B(ep, kconst->sp_j()))), VEC3_4);
+				cjaco.extraction(sr + 4, jc + 3, POINTER(transpose(jb->toGlobal(kconst->f_i()), B(ep, kconst->f_j()))), VEC4);
+			}
+			break;
 		}
+	}
+	for (dConstIterator it = md->drivingConstraints().begin(); it != md->drivingConstraints().end(); it++){
+		drivingConstraint* dconst = it.value();
+		sr = dconst->startRow() + (md->pointMasses().size() - 1) * 7;
+		ic = dconst->startColumn();
+		//for (int i = 0; i < 7; i++) 
+			//if (dconst->use(i)) 
+		cjaco(sr, ic + 3) = 1.0;
 	}
 }
 
@@ -292,27 +374,31 @@ void mbd_simulation::FULL_LEOM()
 	for (int i(0); i < cjaco.nnz(); i++){
 		lhs(cjaco.ridx[i], cjaco.cidx[i]) = lhs(cjaco.cidx[i], cjaco.ridx[i]) = cjaco.value[i];
 	}
-	//lhs.display();
+	lhs.display();
 }
 
-bool mbd_simulation::saveResult(float ct, unsigned int p)
+bool mbd_simulation::saveResult(double ct, unsigned int p)
 {
 	unsigned int cnt = 0;
+
+	qf_out.write((char*)&outCount, sizeof(unsigned int));
 	for (massIterator it = md->pointMasses().begin(); it != md->pointMasses().end(); it++)
 	{
-		//object* obj = it.key();
 		mass *m = it.value();
 		if (m->ID() == 0)
 			continue;
-		//unsigned int id = obj->ID();
+		unsigned int name_size = m->name().size();
+		qf_out.write((char*)&name_size, sizeof(unsigned int));
+		qf_out.write((char*)m->name().toStdString().c_str(), sizeof(char) * m->name().size());
 		qf_out.write((char*)&cnt, sizeof(unsigned int));
-		qf_out.write((char*)&ct, sizeof(float));
+		qf_out.write((char*)&ct, sizeof(double));
 		qf_out.write((char*)&(m->getPosition()), sizeof(VEC3D));
 		qf_out.write((char*)&(m->getEP()), sizeof(EPD));
 		qf_out.write((char*)&(m->getVelocity()), sizeof(VEC3D));
 		qf_out.write((char*)&(m->getEV()), sizeof(EPD));
 		qf_out.write((char*)&(m->getAcceleration()), sizeof(VEC3D));
 		qf_out.write((char*)&(m->getEA()), sizeof(EPD));
+		m->getGeometryObject()->insertResultData(outCount, m->getPosition(), m->getEP());
 		cnt++;
 	}
 	outCount++;
@@ -367,8 +453,10 @@ void mbd_simulation::prediction(unsigned int cs)
 		m->setPosition(p);
 		m->setVelocity(v);
 		m->setEP(ep);
+// 		double nd = ep.dot();
+// 		double n = ep.length();
 		m->setEV(ev);
-		ep.e0 = 1.0 - (ep.e1 * ep.e1 + ep.e2 * ep.e2 + ep.e3 * ep.e3);
+		//ep.e0 = 1.0 - (ep.e1 * ep.e1 + ep.e2 * ep.e2 + ep.e3 * ep.e3);
 		m->makeTransformationMatrix();
 		i++;
 	}
@@ -419,6 +507,7 @@ void mbd_simulation::calcConstraintSystemJacobian(double mul)
 	int jc = 0;
 	mass* ib = NULL;
 	mass* jb = NULL;
+	VEC3D dij;
 	MAT44D Dv;
 	MAT34D Bv;
 	MATD m_lhs(lhs.rows(), lhs.cols()); m_lhs.zeros();
@@ -431,8 +520,8 @@ void mbd_simulation::calcConstraintSystemJacobian(double mul)
 		switch (kconst->constType())
 		{
 		case REVOLUTE:
-			if (ib){
-				if (!jb) jb = &ground;
+			if (ib->ID()){
+				if (!jb->ID()) jb = &ground;
 				Dv = -D(kconst->sp_i(), VEC3D(lagMul[sr + 0], lagMul[sr + 1], lagMul[sr + 2]));
 				m_lhs.plus(ic + 3, ic + 3, POINTER(Dv), MAT4x4);
 				Dv = lagMul[sr + 3] * D(kconst->g_i(), jb->toGlobal(kconst->h_j())) + lagMul[sr + 4] * D(kconst->f_i(), jb->toGlobal(kconst->h_j()));
@@ -442,8 +531,8 @@ void mbd_simulation::calcConstraintSystemJacobian(double mul)
 					m_lhs.plus(jc + 3, ic + 3, POINTER(Dv), MAT4x4);
 				}
 			}
-			if (jb){
-				if (!ib) ib = &ground;
+			if (jb->ID()){
+				if (!ib->ID()) ib = &ground;
 				Dv = D(kconst->sp_j(), VEC3D(lagMul[sr + 0], lagMul[sr + 1], lagMul[sr + 2]));
 				m_lhs.plus(jc + 3, jc + 3, POINTER(Dv), MAT4x4);
 				Dv = lagMul[sr + 3] * D(kconst->h_j(), ib->toGlobal(kconst->g_i())) + lagMul[sr + 4] * D(kconst->h_j(), ib->toGlobal(kconst->f_i()));
@@ -455,7 +544,62 @@ void mbd_simulation::calcConstraintSystemJacobian(double mul)
 			}
 			sr += 5;
 			break;
+		case TRANSLATIONAL:
+			if (ib->ID())
+			{
+				if (!jb->ID()) jb = &ground;
+				Dv = lagMul[sr + 0] * D(kconst->g_i(), jb->toGlobal(kconst->h_j())) + lagMul[sr + 1] * D(kconst->f_i(), jb->toGlobal(kconst->h_j())) + lagMul[sr + 4] * D(kconst->f_i(), jb->toGlobal(kconst->f_j()));
+				m_lhs.plus(ic + 3, ic + 3, POINTER(Dv), MAT4x4);
+				if (jb != &ground){
+					Dv = lagMul[sr + 0] * transpose(B(ib->getEP(), kconst->g_i()), B(jb->getEP(), kconst->h_j())) + lagMul[sr + 1] * transpose(B(ib->getEP(), kconst->f_i()), B(jb->getEP(), kconst->h_j())) + lagMul[sr + 4] * transpose(B(ib->getEP(), kconst->f_i()), B(jb->getEP(), kconst->f_j()));
+					m_lhs.plus(ic + 3, jc + 3, POINTER(Dv), MAT4x4);
+				}
+				dij = (jb->getPosition() + jb->toGlobal(kconst->sp_j())) - (ib->getPosition() + ib->toGlobal(kconst->sp_i()));
+				Bv = -lagMul[sr + 2] * B(ib->getEP(), kconst->f_i()) - lagMul[sr + 3] * B(ib->getEP(), kconst->g_i()); 
+				m_lhs.plus(ic + 0, ic + 3, POINTER(Bv), MAT3X4);
+				m_lhs.plus(ic + 3, ic + 0, POINTER(Bv), MAT4x3);
+				Dv = lagMul[sr + 2] * D(kconst->f_i(), dij + ib->toGlobal(kconst->sp_i())) + lagMul[sr + 3] * D(kconst->g_i(), dij + ib->toGlobal(kconst->sp_i()));
+				m_lhs.plus(ic + 3, ic + 3, POINTER(Dv), MAT4x4);
+				if (jb != &ground)
+				{
+					Bv = -Bv;
+					m_lhs.plus(ic + 3, jc + 0, POINTER(Bv), MAT4x3);
+					Dv = lagMul[sr + 2] * transpose(B(ib->getEP(), kconst->f_i()), B(jb->getEP(), kconst->sp_j())) + lagMul[sr + 3] * transpose(B(ib->getEP(), kconst->g_i()), B(jb->getEP(), kconst->sp_j()));
+					m_lhs.plus(ic + 3, jc + 3, POINTER(Dv), MAT4x4);
+				}
+			}
+			if (jb)
+			{
+				if (!ib->ID()) ib = &ground;
+				Dv = lagMul[sr + 0] * D(kconst->h_j(), jb->toGlobal(kconst->g_i())) + lagMul[sr + 1] * D(kconst->h_j(), jb->toGlobal(kconst->f_i())) + lagMul[sr + 4] * D(kconst->f_j(), jb->toGlobal(kconst->f_i()));
+				m_lhs.plus(jc + 3, jc + 3, POINTER(Dv), MAT4x4);
+				if (ib != &ground)
+				{
+					Dv = lagMul[sr + 0] * transpose(B(jb->getEP(), kconst->h_j()), B(ib->getEP(), kconst->g_i())) + lagMul[sr + 1] * transpose(B(jb->getEP(), kconst->h_j()), B(ib->getEP(), kconst->f_i())) + lagMul[sr + 4] * transpose(B(jb->getEP(), kconst->f_j()), B(ib->getEP(), kconst->f_i()));
+					m_lhs.plus(jc + 3, ic + 3, POINTER(Dv), MAT4x4);
+				}
+				Dv = lagMul[sr + 2] * D(kconst->sp_j(), ib->toGlobal(kconst->f_i())) + lagMul[sr + 3] * D(kconst->sp_j(), ib->toGlobal(kconst->g_i()));
+				m_lhs.plus(jc + 3, jc + 3, POINTER(Dv), MAT4x4);
+				if (ib != &ground)
+				{
+					Bv = lagMul[sr + 2] * B(ib->getEP(), kconst->f_i()) + lagMul[sr + 3] * B(ib->getEP(), kconst->g_i());
+					m_lhs.plus(jc + 0, ic + 3, POINTER(Bv), MAT3X4);
+					Dv = lagMul[sr + 2] * transpose(B(jb->getEP(), kconst->sp_j()), B(ib->getEP(), kconst->f_i())) + lagMul[sr + 3] * transpose(B(jb->getEP(), kconst->sp_j()), B(ib->getEP(), kconst->g_i()));
+					m_lhs.plus(jc + 3, ic + 3, POINTER(Dv), MAT4x4);
+				}
+			}
+			sr += 5;
 		}
+	}
+	for (massIterator m = md->pointMasses().begin(); m != md->pointMasses().end(); m++){
+		mass* ms = m.value();
+		if (!ms->ID())
+			continue;
+		size_t id = (ms->ID() - 1) * 7;
+		MAT44D Dv;
+		size_t sr = tdim - mdim;
+		Dv = lagMul[sr - ms->ID()] * 2.0;
+		m_lhs.plus(id + 3, id + 3, POINTER(Dv), MAT4x4);
 	}
 	for (unsigned int i = 0; i < m_lhs.rows(); i++){
 		for (unsigned int j = 0; j < m_lhs.cols(); j++){
@@ -467,7 +611,7 @@ void mbd_simulation::calcConstraintSystemJacobian(double mul)
 void mbd_simulation::constraintEquation()
 {
 	double* rhs = ee.get_ptr() + mdim;
-	VEC3D v3;
+	VEC3D v3, v3g, v3f, v;
 	mass *ib = NULL;
 	mass *jb = NULL;
 
@@ -482,17 +626,34 @@ void mbd_simulation::constraintEquation()
 			rhs[kconst->startRow() + 1] = divbeta * v3.y;
 			rhs[kconst->startRow() + 2] = divbeta * v3.z;
 			v3 = jb->toGlobal(kconst->h_j());
+			v = ib->toGlobal(kconst->g_i());
 			rhs[kconst->startRow() + 3] = divbeta * v3.dot(ib->toGlobal(kconst->g_i()));
 			rhs[kconst->startRow() + 4] = divbeta * v3.dot(ib->toGlobal(kconst->f_i()));
 			break;
-		}
+		case TRANSLATIONAL:
+			v3 = jb->toGlobal(kconst->h_j());
+			v3g = ib->toGlobal(kconst->g_i());
+			v3f = ib->toGlobal(kconst->f_i());
+			rhs[kconst->startRow() + 0] = divbeta * v3.dot(v3g);
+			rhs[kconst->startRow() + 1] = divbeta * v3.dot(v3f);
+			v3 = jb->getPosition() + jb->toGlobal(kconst->sp_j()) - ib->getPosition();
+			rhs[kconst->startRow() + 2] = divbeta * v3.dot(v3g) - kconst->sp_i().dot(kconst->g_i());
+			rhs[kconst->startRow() + 3] = divbeta * v3.dot(v3f) - kconst->sp_i().dot(kconst->f_i());
+			rhs[kconst->startRow() + 4] = divbeta * v3g.dot(jb->toGlobal(kconst->g_j()));
+			break;		}
+	}
+	for (dConstIterator it = md->drivingConstraints().begin(); it != md->drivingConstraints().end(); it++){
+		drivingConstraint* dconst = it.value();
+		size_t sr = dconst->startRow();
+		rhs[sr] = divbeta * dconst->constraintEquation(ct);
 	}
 	int mr = tdim - (md->pointMasses().size()-1) - mdim;
 	for (massIterator it = md->pointMasses().begin(); it != md->pointMasses().end(); it++){
 		mass* m = it.value();
 		if (m->ID() == 0)
 			continue;
-		rhs[mr++] = divbeta * (m->getEP().dot() - 1.0);
+		double d = m->getEP().dot();
+		rhs[mr++] = divbeta * (d - 1.0);
 	}
 }
 
@@ -516,18 +677,14 @@ double mbd_simulation::correction(unsigned int cs)
 			}
 		}
 		calcMassSystemJacobian(divalpha * beta * dt * dt);
-		calcConstraintSystemJacobian(beta * dt * dt);
+		//calcConstraintSystemJacobian(beta * dt * dt);
 		for (int i(0); i < cjaco.nnz(); i++){
 			lhs(cjaco.ridx[i], cjaco.cidx[i]) = lhs(cjaco.cidx[i], cjaco.ridx[i]) = cjaco.value[i];
 		}
 		for (int i(0); i < mdim; i++) ee(i) -= pre(i);
 		constraintEquation();
 		e_norm = ee.norm();
-// 		cusolverDnHandle_t cuhandle = NULL;
-// 		int status = 0;
-// 		cusolverDnCreate(&cuhandle);
-// 		cusolverDnDgetrs(cuhandle, CUBLAS_OP_N, tdim, tdim, lhs.getDataPointer(), tdim, permutation, rhs.get_ptr(), tdim, &status);
-// 		cusolverDnDestroy(cuhandle);
+
 		dgesv_(ptDof, &lapack_one, lhs.getDataPointer(), ptDof, permutation, ee.get_ptr(), ptDof, &lapack_info);
 		rhs += ee;
 		int idx = 0;
@@ -558,11 +715,7 @@ double mbd_simulation::correction(unsigned int cs)
 		}
 		if (e_norm <= 1e-5)
 		{
-// 			for (massIterator it = md->pointMasses().begin(); it != md->pointMasses().end(); it++)
-// 			{
-// 				it.value()->setExternalForce(0);
-// 				it.value()->setExternalMoment(0);
-// 			}
+
 			break;
 		}
 	}
@@ -587,19 +740,15 @@ double mbd_simulation::oneStepCorrection()
 			ee(k + j) += -(lhs(k + j, k + 3) * rhs(k + 3) + lhs(k + j, k + 4)*rhs(k + 4) + lhs(k + j, k + 5)*rhs(k + 5) + lhs(k + j, k + 6)*rhs(k + 6));
 		}
 	}
-	//calcMassSystemJacobian(divalpha * beta * dt * dt);
-	//calcConstraintSystemJacobian(beta * dt * dt);
+	calcMassSystemJacobian(divalpha * beta * dt * dt);
+	calcConstraintSystemJacobian(beta * dt * dt);
 	for (int i(0); i < cjaco.nnz(); i++){
 		lhs(cjaco.ridx[i], cjaco.cidx[i]) = lhs(cjaco.cidx[i], cjaco.ridx[i]) = cjaco.value[i];
 	}
 	for (int i(0); i < mdim; i++) ee(i) -= pre(i);
 	constraintEquation();
 	e_norm = ee.norm();
-// 	cusolverDnHandle_t cuhandle = NULL;
-// 	int status = 0;
-// 	cusolverDnCreate(&cuhandle);
-// 	cusolverDnDgetrs(cuhandle, CUBLAS_OP_N, tdim, tdim, lhs.getDataPointer(), tdim, permutation, rhs.get_ptr(), tdim, &status);
-// 	cusolverDnDestroy(cuhandle);
+
  	dgesv_(ptDof, &lapack_one, lhs.getDataPointer(), ptDof, permutation, ee.get_ptr(), ptDof, &lapack_info);
  	rhs += ee;
 	int idx = 0;
@@ -623,12 +772,11 @@ double mbd_simulation::oneStepCorrection()
 		m->setPosition(p);
 		m->setVelocity(v);
 		m->setEP(ep);
-		//m->getEP().
-		//m->getEP().normalize();
 		m->setEV(ev);
 		idx += 4;
 		m->makeTransformationMatrix();
 	}
+	
 	return e_norm;
 }
 
@@ -677,6 +825,7 @@ bool mbd_simulation::cpuRun()
 		cStep++;
 		eachStep++;
 	}
+	qf_out.close();
 	emit finished();
 	return true;
 }

@@ -9,6 +9,8 @@
 #include <QLineEdit>
 #include <QProgressBar>
 #include <QWaitCondition>
+#include "cmdWindow.h"
+
 
 class simulation : public QObject
 {
@@ -22,12 +24,7 @@ public:
 	modeler* model() { return md; }
 	virtual bool initialize(bool isCpu) = 0;
 	
-	
-
-//	QProgressBar* GetProgressBar() { return pBar; }
-	//QLineEdit* GetDurationTimeWidget() { return durationTime; }
-	
-	void setSimulationCondition(float _et, float _dt, unsigned int _step) { et = _et; dt = _dt; step = _step; }
+	void setSimulationCondition(double _et, double _dt, unsigned int _step) { et = _et; dt = _dt; step = _step; }
 	void setWaitSimulation(bool _isw) { _isWait = _isw; }
 	bool isWaiting() { return _isWaiting; }
 	bool wait() { return _isWait; }
@@ -35,20 +32,21 @@ public:
 	void abort();
 	unsigned int numStep() { return nstep; }
 	void reverseWait();
-	
+	void setCommandWindow(cmdWindow* _cmd) { cmd = _cmd; }
 	
 protected:
 	modeler* md;
 	grid_base* gb;
 	integrator* itor;
+	cmdWindow* cmd;
 
 	QMutex mutex;
 	QWaitCondition condition;
 	
 	//QLineEdit *durationTime;
 
-	static float ct;
-	float et, dt;
+	static double ct;
+	double et, dt;
 	unsigned int step;
 	unsigned int nstep;
 

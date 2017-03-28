@@ -33,5 +33,9 @@
         <file>Resources/spherical.png</file>
         <file>Resources/table.png</file>
         <file>Resources/ic_HMCM.png</file>
+        <file>Resources/ortho.png</file>
+        <file>Resources/perspective.png</file>
+        <file>Resources/sketch.png</file>
+        <file>Resources/noSketch.png</file>
     </qresource>
 </RCC>

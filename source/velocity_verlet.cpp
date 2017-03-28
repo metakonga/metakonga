@@ -19,41 +19,42 @@ velocity_verlet::~velocity_verlet()
 
 }
 
-void velocity_verlet::updatePosition(float dt)
+void velocity_verlet::updatePosition(double dt)
 {
-	float sqt_dt = 0.5f * dt * dt;
+	double sqt_dt = 0.5 * dt * dt;
 	//float inv_m = 0.f;
-	VEC3F _p;
-	VEC4F_PTR p = md->particleSystem()->position();
-	VEC3F_PTR v = md->particleSystem()->velocity();
-	VEC3F_PTR a = md->particleSystem()->acceleration();
+	VEC3D _p;
+	VEC4D_PTR p = md->particleSystem()->position();
+	VEC4D_PTR rp = md->particleSystem()->ref_position();
+	VEC3D_PTR v = md->particleSystem()->velocity();
+	VEC3D_PTR a = md->particleSystem()->acceleration();
 	for (unsigned int i = 0; i < md->numParticle(); i++){
-		//inv_m = 1.f / md->particleSystem()->mass()[i];
+		rp[i] = p[i];
 		p[i] += dt * v[i] + sqt_dt * a[i];
 		//p[i].plusDataFromVec3(_p);
 	}
 }
 
-void velocity_verlet::updateVelocity(float dt)
+void velocity_verlet::updateVelocity(double dt)
 {
 	particle_system *ps = md->particleSystem();
-	float inv_m = 0; 
-	float inv_i = 0;
-	VEC3F_PTR v = md->particleSystem()->velocity();
-	VEC3F_PTR o = md->particleSystem()->angVelocity();
-	VEC3F_PTR a = md->particleSystem()->acceleration();
-	VEC3F_PTR aa = md->particleSystem()->angAcceleration();
-	VEC3F_PTR f = md->particleSystem()->force();
-	VEC3F_PTR m = md->particleSystem()->moment();
+	double inv_m = 0;
+	double inv_i = 0;
+	VEC3D_PTR v = md->particleSystem()->velocity();
+	VEC3D_PTR o = md->particleSystem()->angVelocity();
+	VEC3D_PTR a = md->particleSystem()->acceleration();
+	VEC3D_PTR aa = md->particleSystem()->angAcceleration();
+	VEC3D_PTR f = md->particleSystem()->force();
+	VEC3D_PTR m = md->particleSystem()->moment();
 	for (unsigned int i = 0; i < md->numParticle(); i++){
 		inv_m = 1.f / md->particleSystem()->mass()[i];
 		inv_i = 1.f / md->particleSystem()->inertia()[i];
-		v[i] += 0.5f * dt * a[i];
-		o[i] += 0.5f * dt * aa[i];
+		v[i] += 0.5 * dt * a[i];
+		o[i] += 0.5 * dt * aa[i];
 		a[i] = inv_m * f[i];
 		aa[i] = inv_i * m[i];
-		v[i] += 0.5f * dt * a[i];
-		o[i] += 0.5f * dt * aa[i];
+		v[i] += 0.5 * dt * a[i];
+		o[i] += 0.5 * dt * aa[i];
 	}
 }
 

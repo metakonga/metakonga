@@ -6,12 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>1010</width>
+    <height>802</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>xdynamics</string>
+  </property>
+  <property name="tabShape">
+   <enum>QTabWidget::Rounded</enum>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -25,8 +28,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>580</width>
-         <height>315</height>
+         <width>990</width>
+         <height>717</height>
         </rect>
        </property>
       </widget>
@@ -39,7 +42,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>600</width>
+     <width>1010</width>
      <height>21</height>
     </rect>
    </property>

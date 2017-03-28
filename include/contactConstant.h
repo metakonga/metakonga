@@ -68,9 +68,9 @@ namespace parview
 		Object* obj_i;
 		Object* obj_j;
 
-		float restitution;
-		float friction;
-		float stiff_ratio;
+		double restitution;
+		double friction;
+		double stiff_ratio;
 
 		private slots:
 		void clickOk();

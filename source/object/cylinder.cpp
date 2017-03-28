@@ -82,19 +82,19 @@ void cylinder::cuAllocData(unsigned int _np)
 	delete _dci;
 }
 
-bool cylinder::define(float _br, float _tr, vector3<float> _bpos, VEC3F _tpos)
+bool cylinder::define(double _br, double _tr, VEC3D _bpos, VEC3D _tpos)
 {
-	br = static_cast<double>(_br);
-	tr = static_cast<double>(_tr);
+	br = _br;
+	tr = _tr;
 	//len = _len;
 	//org = _org;
-	bpos = _bpos.To<double>();
-	tpos = _tpos.To<double>();
-	
+	bpos = _bpos;
+	tpos = _tpos;
+	ep = EPD(1.0, 0.0, 0.0, 0.0);
 	len = (tpos - bpos).length();
 	org = 0.5 * (tpos + bpos);
-	loc_tpos = VEC3D(0, -len * 0.5, 0);
-	loc_bpos = VEC3D(0, len * 0.5, 0);
+	loc_tpos = ep.toLocal(tpos - org);/* VEC3D(0, -len * 0.5, 0);*/
+	loc_bpos = ep.toLocal(bpos - org);// VEC3D(0, len * 0.5, 0);
 	//p1 = org + 0.5f * len * dpos;
 	//p2 = org - 0.5f * len * dpos;
 
@@ -104,35 +104,35 @@ bool cylinder::define(float _br, float _tr, vector3<float> _bpos, VEC3F _tpos)
 // 	float xi = asin((org.y - tpos.y) / (sin(ap) * h_len));
 // 	euler.x = xi / M_PI;
 // 	euler.y = th / M_PI;
-// 	euler.z = ap / M_PI;
-	VEC3D bo = bpos - org;
-	VEC3D u = bo / bo.length();
-	VEC3D bv = bo.length() * 1.1 * u;
+	// 	euler.z = ap / M_PI;
+// 	VEC3D bo = bpos - org;
+// 	VEC3D u = bo / bo.length();
+// 	VEC3D bv = bo.length() * 1.1 * u;
 
 	//loc_bpos = len * 0.5 * u;
 	//loc_tpos = -len * 0.5 * u;
-	double h_len = len * 0.5;
-	double dth = M_PI * 0.5;
-	double th = M_PI * 0.5;
-	double ap = acos(u.z);
-	double xi = asin(-u.y);
-	b_ep.setFromEuler(xi, th, ap);
-	double _ap = ap + M_PI;
- 	if (_ap > M_PI)
- 		ap = ap - M_PI;
-	t_ep.setFromEuler(xi, th, ap);
-	ep = t_ep;
+// 	double h_len = len * 0.5;
+// 	double dth = M_PI * 0.5;
+// 	double th = M_PI * 0.5;
+// 	double ap = acos(u.z);
+// 	double xi = asin(-u.y);
+// 	b_ep.setFromEuler(xi, th, ap);
+// 	double _ap = ap + M_PI;
+//  	if (_ap > M_PI)
+//  		ap = ap - M_PI;
+// 	t_ep.setFromEuler(xi, th, ap);
+// 	ep = t_ep;
 	
 	return true;
 }
 
-unsigned int cylinder::makeParticles(float rad, float _spacing, bool isOnlyCount, VEC4F_PTR pos, unsigned int sid)
+unsigned int cylinder::makeParticles(double rad, VEC3UI &_size, VEC3D& _spacing, unsigned int nstack, bool isOnlyCount, VEC4D_PTR pos, unsigned int sid)
 {
 	unsigned int np = 0;
 	return np;
 }
 
-void cylinder::save_shape_data(QTextStream& ts) const
+void cylinder::save_object_data(QTextStream& ts)
 {
 	//QTextStream ts(&(md->modelStream()));
 	bool isExistMass = ms ? true : false;
@@ -149,7 +149,7 @@ void cylinder::save_shape_data(QTextStream& ts) const
 	}
 }
 
-void cylinder::setOrientation(float e1, float e2, float e3)
+void cylinder::setOrientation(double e1, double e2, double e3)
 {
 	ep.setFromEuler(e1, e2, e3);
 }

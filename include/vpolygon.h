@@ -22,7 +22,13 @@ public:
 	void setResultData(unsigned int nout);
 	void insertResultData(unsigned int i, VEC3D& p, EPD& r);
 
+	unsigned int ID() { return id; }
+	QString name() { return nm; }
+
 private:
+	QString nm;
+	static int pcnt;
+	unsigned int id;
 	unsigned int nvertex;
 	unsigned int nindex;
 	unsigned int m_vertex_vbo;

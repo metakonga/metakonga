@@ -24,8 +24,8 @@ public:
 
 	bool callDialog();
 	bool isCpu;
-	float simTime;
-	float timeStep;
+	double simTime;
+	double timeStep;
 	unsigned int saveStep;
 
 	//	QString caseName;

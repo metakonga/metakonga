@@ -17,41 +17,41 @@ public:
 	plane(const plane& _plane);
 	~plane();
 
-	virtual unsigned int makeParticles(float _rad, float spacing, bool isOnlyCount, VEC4F_PTR pos = NULL, unsigned int sid = 0);
+	virtual unsigned int makeParticles(double _rad, VEC3UI &_size, VEC3D& spacing, unsigned int nstack, bool isOnlyCount, VEC4D_PTR pos = NULL, unsigned int sid = 0);
 	virtual void cuAllocData(unsigned int _np);
-	virtual void updateMotion(float t, tSolveDevice tsd);
+	virtual void updateMotion(double t, tSolveDevice tsd);
 	virtual void updateFromMass(){}
 
-	void save_shape_data(QTextStream& ts) const;
+	virtual void save_object_data(QTextStream& ts);
 
 	device_plane_info* devicePlaneInfo() { return dpi; }
 
-	bool define(vector3<float>& _xw, vector3<float>& _pa, vector3<float>& _pc, vector3<float>& _pb);
-	bool define(vector3<float>& _xw, vector3<float>& _pa, vector3<float>& _pb);
-	float L1() const { return l1; }
-	float L2() const { return l2; }
-	vector3<float> U1() const { return u1; }
-	vector3<float> U2() const { return u2; }
-	vector3<float> UW() const { return uw; }
-	vector3<float> XW() const { return xw; }
-	vector3<float> PA() const { return pa; }
-	vector3<float> PB() const { return pb; }
-	vector3<float> W2() const { return w2; }
-	vector3<float> W3() const { return w3; }
-	vector3<float> W4() const { return w4; }
+	bool define(VEC3D& _xw, VEC3D& _pa, VEC3D& _pc, VEC3D& _pb);
+	bool define(VEC3D& _xw, VEC3D& _pa, VEC3D& _pb);
+	double L1() const { return l1; }
+	double L2() const { return l2; }
+	VEC3D U1() const { return u1; }
+	VEC3D U2() const { return u2; }
+	VEC3D UW() const { return uw; }
+	VEC3D XW() const { return xw; }
+	VEC3D PA() const { return pa; }
+	VEC3D PB() const { return pb; }
+	VEC3D W2() const { return w2; }
+	VEC3D W3() const { return w3; }
+	VEC3D W4() const { return w4; }
 
 private:
-	float l1, l2;
-	vector3<float> u1;
-	vector3<float> u2;
-	vector3<float> uw;
-	vector3<float> xw;
-	vector3<float> pa;
-	vector3<float> pb;
+	double l1, l2;
+	VEC3D u1;
+	VEC3D u2;
+	VEC3D uw;
+	VEC3D xw;
+	VEC3D pa;
+	VEC3D pb;
 
-	vector3<float> w2;
-	vector3<float> w3;
-	vector3<float> w4;
+	VEC3D w2;
+	VEC3D w3;
+	VEC3D w4;
 
 	device_plane_info *dpi;
 };

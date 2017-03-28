@@ -5,7 +5,7 @@
 #include "vparticles.h"
 #include "vpolygon.h"
 #include "contactConstant.h"
-#include <QGLWidget>
+/*#include <QGLWidget>*/
 #include <QMenu>
 #include <list>
 #include <QFile>
@@ -17,6 +17,7 @@ class polygonObject;
 class cylinder;
 class particle_system;
 class vparticles;
+class modeler;
 
 #define SELECT_BUF_SIZE 512
 
@@ -28,6 +29,11 @@ enum viewObjectType{
 	ONLY_PARTICLE
 };
 
+enum projectionType{
+	ORTHO_PROJECTION = 0,
+	PERSPECTIVE_PROJECTION
+};
+
 class GLWidget : public QGLWidget
 {
 	Q_OBJECT
@@ -36,14 +42,13 @@ public:
 	GLWidget(int argc, char** argv, QWidget *parent = 0);
 	~GLWidget();
 
+	void setModeler(modeler* _md) { md = _md; }
 	void makeCube(cube* c);
 	void makePlane(plane* p);
 	void makeLine();
-	//void makePolygon(polygon* po);
 	void makeCylinder(cylinder* cy);
 	void makeParticle(particle_system* ps);
-	void makePolygonObject(QMap<QString, polygonObject>& pObjs);
-	void defineCollidConst();
+	void makePolygonObject(polygonObject* po);
 	bool change(QString& fp, tChangeType ct, tFileType ft);
 	void makeMassCoordinate(QString& _name);
 
@@ -56,40 +61,21 @@ public:
 	std::list<parview::contactConstant>* ContactConstants(){ return NULL; }// &cconsts;	}
 	void onAnimation() { isAnimation = true; }
 	GLuint makePolygonObject(double* points, double* normals, int* indice, int size);
-	void ExportForceData();
-	//GLuint makeCubeObject(int* index, float* vertex);
-	void onParticleSystem();
-	//void bindingObjects(elements* obj) { objects = obj; }
-	int selection(int x, int y);
-	//void NextAnimationPart(int times = 1) { objects->sphData->NextAnimationPart(times); }
-	//void PriviousAnimationPart(int times = 1) { objects->sphData->PriviousAnimationPart(times); }
 	void setViewObject(viewObjectType viewType) { votype = viewType; };
-	void getFileData(QFile& pf);
-	void getSphFileData(QStringList& fnames);
-	void getDemFileData(QStringList& fnames, bool rt);
-	void OpenFiles(QStringList& fnames);
-	void OpenTXT_file(QString& file);
-	void saveCurrentData(QFile& pf);
-	bool SaveModel(QFile& pf);
-	void UpdateRtDEMData();
 	int getWindowHeight() { return wHeight; }
 	bool is_set_particle() { return isSetParticle; }
-	// 		parview::Object *getParticle_ptr() { return pview_ptr;  }
-	// 		parview::Object *getViewParticle()
-	// 		{ 
-	// 			return pview_ptr;
-	// 		}
 	void openSph(QString& fl);
 	void openMbd(QString& fl);
 	void openResults(QStringList& fl);
-	void ChangeShapeData(QString& sname);
-	void AddParticlesFromPolygonObject(VEC4D* _sphere);
-	void AddBondData(QString& fname);
 	void ChangeDisplayOption(int oid);
 	QMap<QString, vobject*>& Objects() { return v_objs; }
 	vparticles* vParticles() { return vp; }
-
+	vobject* getVObjectFromName(QString name);
+	vpolygon* getVPolyObjectFromName(QString name);
+	projectionType changeProjectionViewMode() { protype = protype == ORTHO_PROJECTION ? PERSPECTIVE_PROJECTION : ORTHO_PROJECTION; return protype; }
+	bool changePaletteMode() { isSketching = isSketching ? false : true; return isSketching; }
 	void glObjectClear();
+	void sketchingMode();
 
 	public slots:
 	void setXRotation(int angle);
@@ -103,6 +89,8 @@ signals:
 	void zRotationChanged(int angle);
 
 protected:
+	void processHits(unsigned int uHits, unsigned int *pBuffer);
+	void drawObject(GLenum eMode);
 	void initializeGL();
 	void paintGL();
 	void resizeGL(int width, int height);
@@ -118,9 +106,9 @@ private:
 	float& horizontalMovement() { return trans_x; }
 	void DrawCartesianCoordinates(vector3<double>& pos, vector3<double>& angle);
 	GLuint makeCoordinate();
+	void actionDelete(const QString& tg);
 	//GLuint makePolygonObject(float* points, float* normals, int* indice, int size);
 	void normalizeAngle(int *angle);
-	//void checkForCgError(const char *situation);
 	int viewOption;
 	bool isRtOpenFile;
 	bool isSetParticle;
@@ -133,6 +121,7 @@ private:
 	int yRot;
 	int zRot;
 	int unit;
+	float gridSize;
 	float moveScale;
 	float ratio;
 	float zoom;
@@ -141,6 +130,7 @@ private:
 
 	float IconScale;
 
+	bool isSketching;
 	bool onZoom;
 	bool onRotation;
 	bool keyID[256];
@@ -149,18 +139,25 @@ private:
 	bool LBOTTON;
 	QPoint lastPos;
 	int aFrame;
+	QList<unsigned int> selectedIndice;
 	bool isAnimation;
 
 	float times[1000];
 
+	GLenum drawingMode;
+
 	viewObjectType votype;
+	projectionType protype;
 	QMap<QString, vobject*> v_objs;
 	QMap<QString, vpolygon*> v_pobjs;
+	QMap<int, void*> v_wobjs;
 	vparticles *vp;
 	QStringList outputNameList;
 
 	float maxViewPoint[3];
 	float minViewPoint[3];
+
+	modeler *md;
 
 signals:
 	void mySignal();

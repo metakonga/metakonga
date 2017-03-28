@@ -1,8 +1,8 @@
 #include "grid_base.h"
 #include "mphysics_cuda_dec.cuh"
 
-VEC3F grid_base::wo;				// world origin
-float grid_base::cs = 0.f;			// cell size
+VEC3D grid_base::wo;				// world origin
+double grid_base::cs = 0.0;			// cell size
 VEC3UI grid_base::gs;				// grid size
 
 unsigned int* grid_base::sorted_id = NULL;
@@ -10,14 +10,17 @@ unsigned int* grid_base::cell_id = NULL;
 unsigned int* grid_base::body_id = NULL;
 unsigned int* grid_base::cell_start = NULL;
 unsigned int* grid_base::cell_end = NULL;
+unsigned int* grid_base::d_sorted_id = NULL;
+unsigned int* grid_base::d_cell_start = NULL;
+unsigned int* grid_base::d_cell_end = NULL;
 
 grid_base::grid_base()
 	: name("grid_base")
-	, d_sorted_id(NULL)
+	//, d_sorted_id(NULL)
 	, d_cell_id(NULL)
 	, d_body_id(NULL)
-	, d_cell_start(NULL)
-	, d_cell_end(NULL)
+	//, d_cell_start(NULL)
+	//, d_cell_end(NULL)
 	, nse(0)
 {
 
@@ -26,11 +29,11 @@ grid_base::grid_base()
 grid_base::grid_base(std::string _name, modeler* _md)
 	: name(_name)
 	, md(_md)
-	, d_sorted_id(NULL)
+	//, d_sorted_id(NULL)
 	, d_cell_id(NULL)
 	, d_body_id(NULL)
-	, d_cell_start(NULL)
-	, d_cell_end(NULL)
+	//, d_cell_start(NULL)
+	//, d_cell_end(NULL)
 	, nse(0)
 {
 
@@ -75,23 +78,38 @@ void grid_base::cuAllocMemory(unsigned int n)
 	checkCudaErrors(cudaMalloc((void**)&d_sorted_id, sizeof(unsigned int)*n));
 	checkCudaErrors(cudaMalloc((void**)&d_cell_start, sizeof(unsigned int)*ng));
 	checkCudaErrors(cudaMalloc((void**)&d_cell_end, sizeof(unsigned int)*ng));
+	nse = n;
 }
 
-VEC3I grid_base::getCellNumber(float x, float y, float z)
+// void grid_base::cuResizeMemory(unsigned int n)
+// {
+// 	unsigned int *h_cell_id = new unsigned int[nse];
+// 	unsigned int *h_body_id = new unsigned int[nse];
+// 	unsigned int *h_sorted_id = new unsigned int[nse];
+// 	checkCudaErrors(cudaFree(d_cell_id));
+// 	checkCudaErrors(cudaFree(d_body_id));
+// 	checkCudaErrors(cudaFree(d_sorted_id));
+// 	checkCudaErrors(cudaMalloc((void**)&d_cell_id, sizeof(unsigned int) * n));
+// 	checkCudaErrors(cudaMalloc((void**)&d_body_id, sizeof(unsigned int) * n));
+// 	checkCudaErrors(cudaMalloc((void**)&d_sorted_id, sizeof(unsigned int) * n));
+// 	checkCudaErrors(cudaMemcpy())
+// }
+
+// VEC3I grid_base::getCellNumber(double x, double y, double z)
+// {
+// 	return VEC3I(
+// 		static_cast<int>(abs(std::floor((x - wo.x) / cs))),
+// 		static_cast<int>(abs(std::floor((y - wo.y) / cs))),
+// 		static_cast<int>(abs(std::floor((z - wo.z) / cs)))
+// 		);
+// }
+
+VEC3I grid_base::getCellNumber(double x, double y, double z)
 {
 	return VEC3I(
 		static_cast<int>(abs(std::floor((x - wo.x) / cs))),
 		static_cast<int>(abs(std::floor((y - wo.y) / cs))),
 		static_cast<int>(abs(std::floor((z - wo.z) / cs)))
-		);
-}
-
-VEC3I grid_base::getCellNumber(double x, double y, double z)
-{
-	return VEC3I(
-		static_cast<int>(abs(std::floor((x - (double)wo.x) / cs))),
-		static_cast<int>(abs(std::floor((y - (double)wo.y) / cs))),
-		static_cast<int>(abs(std::floor((z - (double)wo.z) / cs)))
 		);
 }
 

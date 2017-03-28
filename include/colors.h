@@ -5,12 +5,12 @@
 
 namespace ucolors
 {
-	void colorRamp(float t, float *r)
+	void colorRamp(double t, double *r)
 	{
-		float div255 = 1.0f / 255.0f;
+		double div255 = 1.0f / 255.0f;
 		const int ncolors = 9;
 
-		float c[ncolors][3] = {
+		double c[ncolors][3] = {
 			{ 3 * div255, 0.0f, 102 * div255, },
 			{ 0 * div255, 84 * div255, 1.0f, },
 			{ 0.0f, 216.0f * div255, 1.0f, },
@@ -33,16 +33,16 @@ namespace ucolors
 	}
 
 // 	enum color_type{BLUE=0, GREEN, RED, BLACK, WHITE};
-// 	static algebra::vector4<float> GetColor(color_type c)
+// 	static algebra::vector4<double> GetColor(color_type c)
 // 	{
-// 		algebra::vector4<float> clr;
+// 		algebra::vector4<double> clr;
 // 		switch (c)
 // 		{
-// 		case BLUE: clr = algebra::vector4<float>(0.0f, 0.0f, 1.0f, 1.0f); break;
-// 		case GREEN: clr = algebra::vector4<float>(0.0f, 1.0f, 0.0f, 1.0f); break;
-// 		case RED: clr = algebra::vector4<float>(1.0f, 0.0f, 0.0f, 1.0f); break;
-// 		case BLACK: clr = algebra::vector4<float>(0.0f, 0.0f, 0.0f, 1.0f); break;
-// 		case WHITE: clr = algebra::vector4<float>(1.0f, 1.0f, 1.0f, 1.0f); break;
+// 		case BLUE: clr = algebra::vector4<double>(0.0f, 0.0f, 1.0f, 1.0f); break;
+// 		case GREEN: clr = algebra::vector4<double>(0.0f, 1.0f, 0.0f, 1.0f); break;
+// 		case RED: clr = algebra::vector4<double>(1.0f, 0.0f, 0.0f, 1.0f); break;
+// 		case BLACK: clr = algebra::vector4<double>(0.0f, 0.0f, 0.0f, 1.0f); break;
+// 		case WHITE: clr = algebra::vector4<double>(1.0f, 1.0f, 1.0f, 1.0f); break;
 // 		}
 // 		return clr;
 // 	}

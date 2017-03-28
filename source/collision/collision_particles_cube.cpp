@@ -25,7 +25,7 @@ collision_particles_cube::~collision_particles_cube()
 
 }
 
-bool collision_particles_cube::collid(float dt)
+bool collision_particles_cube::collid(double dt)
 {
 	return true;
 }
@@ -35,7 +35,7 @@ bool collision_particles_cube::cuCollid()
 	return true;
 }
 
-bool collision_particles_cube::collid_with_particle(unsigned int i, float dt)
+bool collision_particles_cube::collid_with_particle(unsigned int i, double dt)
 {
 	switch (tcm)
 	{
@@ -46,11 +46,11 @@ bool collision_particles_cube::collid_with_particle(unsigned int i, float dt)
 	return true;
 }
 
-bool collision_particles_cube::HMCModel(unsigned int i, float dt)
+bool collision_particles_cube::HMCModel(unsigned int i, double dt)
 {
 // 	VEC3F unit;
-// 	float rad = ps->radius()[i];
-// 	float ms = ps->mass()[i];
+// 	double rad = ps->radius()[i];
+// 	double ms = ps->mass()[i];
 // 	VEC3F p = ps->position()[i];
 // 	VEC3F v = ps->velocity()[i];
 // 	VEC3F w = ps->angVelocity()[i];

@@ -68,13 +68,12 @@ bool vplane::makePlaneGeometry(float l, VEC3F& xw, VEC3F& pa, VEC3F& pb, VEC3F& 
 void vplane::draw(GLenum eMode)
 {
 	if (display){
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 		glPushMatrix();
 		glDisable(GL_LIGHTING);
 		if (eMode == GL_SELECT) glLoadName((GLuint)ID());
 		glCallList(glList);
 		glPopMatrix();
-		//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glEnable(GL_LIGHTING);
 	}
 }
 

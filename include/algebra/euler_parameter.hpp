@@ -19,9 +19,22 @@ namespace algebra
 		euler_parameter operator+(euler_parameter& v4){
 			return euler_parameter(e0 + v4.e0, e1 + v4.e1, e2 + v4.e2, e3 + v4.e3);
 		}
+		
+		euler_parameter operator-(euler_parameter& v4){
+			return euler_parameter(e0 - v4.e0, e1 - v4.e1, e2 - v4.e2, e3 - v4.e3);
+		}
+
+		euler_parameter operator-()
+		{
+			return euler_parameter(-e0, -e1, -e2, -e3);
+		}
 
 		T dot(){
 			return e0*e0 + e1*e1 + e2*e2 + e3*e3;
+		}
+
+		T length(){
+			return sqrt(dot());
 		}
 
 		matrix3x4<T> G()
@@ -54,16 +67,27 @@ namespace algebra
 		T* Pointer() { return &e0; }
 
 		void setFromEuler(T xi, T th, T ap){
-			//e0 = cos(0.5 * th) * cos(0.5 * (xi + ap));
+			e0 = cos(0.5 * th) * cos(0.5 * (xi + ap));
 			e1 = sin(0.5 * th) * cos(0.5 * (xi - ap));
 			e2 = sin(0.5 * th) * sin(0.5 * (xi - ap));
 			e3 = cos(0.5 * th) * sin(0.5 * (xi + ap));
-			e0 = sqrt(1.0 - (e1 * e1 + e2 * e2 + e3 * e3));
+			double v = e0 * e0 + e1 * e1 + e2 * e2 + e3 * e3;
+			if (v > 0) e0 = sqrt(1.0 - e1 * e1 + e2 * e2 + e3 * e3);
+			//e0 = sqrt(1.0 - v);
 			//T len = _e0 * _e0 + e1 * e1 + e2 * e2 + e3 * e3;// dot();
 		}
 
+		euler_parameter w2ev(vector3<T>& w)
+		{
+			return 0.5 * euler_parameter(
+				-e1 * w.x - e2 * w.y - e3 * w.z,
+				 e0 * w.x + e3 * w.y - e2 * w.z,
+				-e3 * w.x + e0 * w.y + e1 * w.z,
+				 e2 * w.x - e1 * w.y + e0 * w.z);
+		}
+
 		void normalize(){
-			T d = dot();
+			T d = sqrt(dot());
 			e0 /= d; e1 /= d; e2 /= d; e3 /= d;
 		}
 
@@ -75,6 +99,33 @@ namespace algebra
 				-ep.e3 * e0 - ep.e2 * e1 + ep.e1 * e2 + ep.e0 * e3);
 		}
 
+		euler_parameter<T> toEP2GTV(vector3<T>& v)
+		{
+			return 2.0 * euler_parameter<T>(
+				-e1 * v.x - e2 * v.y - e3 * v.z,
+				e0 * v.x + e3 * v.y - e2 * v.z,
+				-e3 * v.x + e0 * v.y + e1 * v.z,
+				e2 * v.x - e1 * v.y + e0 * v.z);
+		}
+
+		vector3<T> toEP2GV(euler_parameter& v)
+		{
+			return 2.0 * vector3<T>(
+				-e1 * v.e0 + e0 * v.e1 - e3 * v.e2 + e2 * v.e3,
+				-e2 * v.e0 + e3 * v.e1 + e0 * v.e2 - e1 * v.e3, 
+				-e3 * v.e0 - e2 * v.e1 + e1 * v.e2 + e0 * v.e3);
+		}
+
+		euler_parameter<T> toEulerParameter2dot(vector3<T>& a, vector3<T>& v)
+		{
+			T vp = 0.25 * v.dot() * (*this);
+			euler_parameter ga = 0.5 * euler_parameter(-e1 * a.x - e2 * a.y - e3 * a.z,
+				                          e0 * a.x + e3 * a.y - e2 * a.z,
+										 -e3 * a.x + e0 * a.y + e1 * a.z,
+										  e2 * a.x - e1 * a.y + e0 * a.z); 
+			return ga + vp;
+		}
+
 		matrix3x3<T> A()
 		{
 			matrix3x3<T> TM;
@@ -82,6 +133,17 @@ namespace algebra
 			TM.a10 = 2 * (e1*e2 + e0*e3);		TM.a11 = 2 * (e0*e0 + e2*e2 - 0.5);	TM.a12 = 2 * (e2*e3 - e0*e1);
 			TM.a20 = 2 * (e1*e3 - e0*e2);		TM.a21 = 2 * (e2*e3 + e0*e1);		TM.a22 = 2 * (e0*e0 + e3*e3 - 0.5);
 			return TM;
+		}
+
+		vector3<T> toLocal(vector3<T>& v)
+		{
+			vector3<T> tv;
+			matrix3x3<T> TM;
+			TM = A();
+			tv.x = TM.a00*v.x + TM.a10*v.y + TM.a20*v.z;
+			tv.y = TM.a01*v.x + TM.a11*v.y + TM.a21*v.z;
+			tv.z = TM.a02*v.x + TM.a12*v.y + TM.a22*v.z;
+			return tv;
 		}
 
 		T e0, e1, e2, e3;

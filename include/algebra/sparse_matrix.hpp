@@ -150,6 +150,7 @@ public:
 	{
 		ridx[count] = r;
 		cidx[count] = c;
+		_nnz++;
 		return value[count++];
 	}
 	void operator()(const int r, const int c, const T val)
