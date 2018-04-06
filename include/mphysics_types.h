@@ -3,6 +3,8 @@
 
 #include <QStringList>
 
+#define kor(str) QString::fromLocal8Bit(str)
+
 inline QStringList getMaterialList(){
 	QStringList stList;
 	stList.push_back("steel");
@@ -188,6 +190,13 @@ namespace material
 		return v;
 	}
 }
+
+typedef struct  
+{
+	bool isSketching;
+	double sx, sy, ex, ey;
+	double space;
+}sketchParameters;
 
 
 

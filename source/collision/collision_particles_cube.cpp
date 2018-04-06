@@ -30,7 +30,10 @@ bool collision_particles_cube::collid(double dt)
 	return true;
 }
 
-bool collision_particles_cube::cuCollid()
+bool collision_particles_cube::cuCollid(
+	double *dpos, double *dvel, 
+	double *domega, double *dmass, 
+	double *dforce, double *dmoment, unsigned int np)
 {
 	return true;
 }

@@ -475,6 +475,15 @@ void modeler::openModeler(GLWidget *gl, QString& file)
 			in >> ch >> npPerStack;
 			ps->setGenerationMethod((tGenerationParticleMethod)tg, nStack, interval, npPerStack);
 		}
+		else if (ch == "CLUSTER")
+		{
+			int consist = 0;
+			unsigned int nc = 0;
+			in >> ch >> consist;
+			ps->setParticleCluster(consist);
+			//particle_cluster::setConsistNumber(consist);
+			//ps->setParticleCluster(consist);
+		}
  		else if (ch == "COLLISION")
  		{
 			double rest, fric, rfric, coh, sratio;

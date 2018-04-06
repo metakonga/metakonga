@@ -31,6 +31,7 @@ public:
 	vobject(QString& _name);
 	~vobject();
 
+	void animationFrame(float ox, float oy, float oz);
 	void setResultData(unsigned int n);
 	void insertResultData(unsigned int i, VEC3D& p, EPD& r);
 	virtual void draw(GLenum eMode) = 0;

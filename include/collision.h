@@ -27,7 +27,10 @@ public:
 	double cohesionForce(double ri, double rj, double Ei, double Ej, double pri, double prj, double Fn);
 
 	virtual bool collid(double dt) = 0;
-	virtual bool cuCollid() = 0;
+	virtual bool cuCollid(
+		  double *dpos = NULL, double *dvel = NULL
+		, double *domega = NULL, double *dmass = NULL
+		, double *dforce = NULL, double *dmoment = NULL, unsigned int np = 0) = 0;
 	virtual bool collid_with_particle(unsigned int i, double dt) = 0;
 
 	constant getConstant(double ir, double jr, double im, double jm, double iE, double jE, double ip, double jp, double si, double sj);

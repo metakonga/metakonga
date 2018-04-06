@@ -10,7 +10,7 @@ newDialog::newDialog(QWidget* parent)
 	ui->setupUi(this);
 	connect(ui->PBOK, SIGNAL(clicked()), this, SLOT(Click_ok()));
 	connect(ui->PBBrowse, SIGNAL(clicked()), this, SLOT(Click_browse()));
-	_path = getenv("USERPROFILE");
+	_path = kor(getenv("USERPROFILE"));
 	_path += "/Documents/xdynamics/";
 	_name = "Model1";
 	if (!QDir(_path).exists())

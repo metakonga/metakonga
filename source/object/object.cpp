@@ -3,12 +3,13 @@
 #include "mass.h"
 #include <cuda_runtime.h>
 
-unsigned int object::sid = 0;
+//unsigned int object::sid = 0;
 //std::ofstream object::io_object;
 
 object::object()
 	: ms(NULL)
 	, _update(false)
+	, count(0)
 {
 
 }
@@ -22,6 +23,7 @@ object::object(modeler* _md, QString& _name, tObject _tobj, tMaterial _mat, tRol
 	, _expression(false)
 	, md(_md)
 	, ms(NULL)
+	, count(0)
 {
 	id = sid++;
 	d = material::getDensity(mat_type);
@@ -42,6 +44,7 @@ object::object(const object& obj)
 	, sm(obj.shear())
 	, _update(obj.isUpdate())
 	, _expression(obj.expression())
+	, count(obj.particleCount())
 	, ms(NULL)
 {
 	ms = obj.pointMass();

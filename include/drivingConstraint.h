@@ -28,7 +28,9 @@ public:
 
 private:
 	void updateEV(double time);
+	void updateV(double time);
 	double vel_rev_CE(double time);
+	double vel_tra_CE(double time);
 	void(drivingConstraint::*update_func)(double time);
 	double(drivingConstraint::*ce_func)(double time);
 

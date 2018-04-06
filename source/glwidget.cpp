@@ -2,7 +2,9 @@
 #include <QDebug>
 //#include <QKeyEvent>
 #include <QMouseEvent>
+#include <QLineEdit>
 #include <QTimer>
+
 
 #include <math.h>
 #include "mphysics_types.h"
@@ -68,14 +70,15 @@ GLWidget::GLWidget(int argc, char** argv, QWidget *parent)
 	yRot =  0;
 	zRot = 0;
 	unit = 1;
-	zoom =  -1.0;
+	zoom = -1.0;
 	//zoom = -6.16199875;
 	trans_x =  0;
 	moveScale = 0.01f;
 	trans_y =  0;
 	IconScale = 0.1;
 	isSetParticle = false;
-	isSketching = false;
+	sketch = { 0, };
+	sketch.space = 0.02;
 	//particle_ptr = NULL;
 	QTimer *timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this, SLOT(updateGL()));
@@ -103,6 +106,18 @@ GLWidget::GLWidget(int argc, char** argv, QWidget *parent)
 	vglew::vglew(argc, argv);
 	setFocusPolicy(Qt::StrongFocus);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	
+// 	QPen penBorder;
+// 	penBorder.setColor(QColor(0, 0, 0));
+// 	penBorder.setWidth(1);
+// 	m_rectHovered = new QGraphicsRectItem();
+// 	m_rectHovered->setBrush(QBrush(Qt::yellow));
+// 	m_coordHoverX = new QGraphicsSimpleTextItem(m_rectHovered);
+// 	m_coordHoverY = new QGraphicsSimpleTextItem(m_rectHovered);
+// 	penBorder.setColor(QColor(0, 0, 0));
+// 	penBorder.setWidth(1);
+// 	m_coordHoverX->setPen(penBorder);
+// 	m_coordHoverY->setPen(penBorder);
 }
 
 GLWidget::~GLWidget()
@@ -406,6 +421,10 @@ void GLWidget::drawObject(GLenum eMode)
 	glRotated(xRot / 16.0, 1.0, 0.0, 0.0);
 	glRotated(yRot / 16.0, 0.0, 1.0, 0.0);
 	glRotated(zRot / 16.0, 0.0, 0.0, 1.0);
+	if (sketch.isSketching)
+	{
+		sketchingMode();
+	}
 	glPolygonMode(GL_FRONT_AND_BACK, drawingMode);
 	QMapIterator<QString, vobject*> obj(v_objs);
 	
@@ -424,6 +443,7 @@ void GLWidget::drawObject(GLenum eMode)
 		//qglColor(QColor("red"));
 		pobj.value()->draw(eMode);
 	}
+	
 }
 
 void GLWidget::processHits(unsigned int uHits, unsigned int *pBuffer)
@@ -441,48 +461,89 @@ void GLWidget::processHits(unsigned int uHits, unsigned int *pBuffer)
 	}
 }
 
+void GLWidget::setSketchSpace()
+{
+	QLineEdit* le = dynamic_cast<QLineEdit*>(sender());
+	sketch.space = le->text().toDouble();
+}
+
 void GLWidget::sketchingMode()
 {
-	glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
-	gluOrtho2D(-1.02f, 1.02f, -1.02f, 1.02f);
-	unsigned int numGrid = static_cast<unsigned int>(1.0f / gridSize) * 2 + 1;
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	/*glPushMatrix();*/
-	glDisable(GL_LIGHTING);
+	
+// 	glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
+// 	gluOrtho2D(-1.02f, 1.02f, -1.02f, 1.02f);
+// 	unsigned int numGrid = static_cast<unsigned int>(1.0f / gridSize) * 2 + 1;
+// 	glMatrixMode(GL_MODELVIEW);
+// 	glLoadIdentity();
+ 	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+// 	/*glPushMatrix();*/
+ 	//glDisable(GL_LIGHTING);
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glBegin(GL_LINES);
 	{
-		float sx, sy;
-		float ex = 1.0f;
-		float ey = 1.0f;
-		for (unsigned int dx = 0; dx < numGrid; dx++){
-			sx = -1.0f + dx * gridSize;
-			for (unsigned int dy = 0; dy < numGrid; dy++){
-				sy = -1.0f + dy * gridSize;
-				glPushMatrix();
-				glVertex2f(sx, sy);
-				glVertex2f(ex, sy);
-
-				glVertex2f(sx, sy);
-				glVertex2f(sx, ey);
-				glPopMatrix();
-			}
+		double sx = floor((sketch.sx + (sketch.ex - sketch.sx) * 0.1) * 10) * 0.1;
+		double ex = -sx;
+		double sy = floor((sketch.sy + (sketch.ey - sketch.sy) * 0.1) * 10) * 0.1;
+		double ey = -sy;
+		double lx = (floor(ex / sketch.space)) * sketch.space;
+		double ly = (floor(ey / sketch.space)) * sketch.space;
+		glPushMatrix();
+		glVertex3d(sx, sy, 0); glVertex3d(ex, sy, 0);
+		glVertex3d(ex, sy, 0); glVertex3d(ex, ey, 0);
+		glVertex3d(ex, ey, 0); glVertex3d(sx, ey, 0);
+		glVertex3d(sx, ey, 0); glVertex3d(sx, sy, 0);
+		glPopMatrix();
+		int nx = static_cast<int>((ex - sx) / sketch.space + 1e-9);
+		int ny = static_cast<int>((ey - sy) / sketch.space + 1e-9);
+		float fTmp1[16] = { 0.f, };
+		glGetFloatv(GL_PROJECTION_MATRIX, fTmp1);
+		for (int ix = 1; ix < nx; ix++)
+		{
+			double x = sx + sketch.space * ix;
+			glPushMatrix();
+			glVertex3d(x, sy, 0);
+			glVertex3d(x, ey, 0);
+			glPopMatrix();
+ 			
 		}
-// 		glVertex2f(-0.98f, -0.98f);
-// 		glVertex2f(-0.98f, 0.98f);
+		for (int iy = 1; iy < ny; iy++)
+		{
+			double y = sy + sketch.space * iy;
+			glPushMatrix();
+			glVertex3d(sx, y, 0);
+			glVertex3d(ex, y, 0);
+			glPopMatrix();
+		}
+// 		for (double x = sx; x < ex; x += sketch.space){
+// 			double rx = floor(x + 10e-9);
+// 			for (double y = sy; y < ey; y += sketch.space){
+// 				double ry = floor(y + 10e-9);
+// 				glPushMatrix();
+// 				glVertex3d(x, y, 0);
+// 				glVertex3d(lx, y, 0);
 // 
-// 		glVertex2f(-0.98f, 0.98f);
-// 		glVertex2f(0.98f, 0.98f);
-// 
-// 		glVertex2f(0.98f, 0.98f);
-// 		glVertex2f(0.98f, -0.98f);
-// 
-// 		glVertex2f(0.98f, -0.98f);
-// 		glVertex2f(-0.98f, -0.98f);
-	}
-	glEnd();
+// // 				glVertex3f(x, y, 0.f);
+// // 				glVertex3f(x, ly, 0.f);
+// 				glPopMatrix();
+// 			}
+// 			glPushMatrix();
+// 			glVertex3d(x, sy, 0);
+// 			glVertex3d(x, ly, 0);
+// 			glPopMatrix();
+// 		}
+// // 		glVertex2f(-0.98f, -0.98f);
+// // 		glVertex2f(-0.98f, 0.98f);
+// // 
+// // 		glVertex2f(-0.98f, 0.98f);
+// // 		glVertex2f(0.98f, 0.98f);
+// // 
+// // 		glVertex2f(0.98f, 0.98f);
+// // 		glVertex2f(0.98f, -0.98f);
+// // 
+// // 		glVertex2f(0.98f, -0.98f);
+// // 		glVertex2f(-0.98f, -0.98f);
+ 	}
+ 	glEnd();
 
 }
 
@@ -492,13 +553,13 @@ void GLWidget::paintGL()
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	if (isSketching){
-		sketchingMode();
-		return;
-	}
-	else{
-		glClearColor(103.0f / 255.0f, 153.0f / 255.0f, 255.0f / 255.0f, 1.0);
-	}
+// 	if (isSketching){
+// 		sketchingMode();
+// 		return;
+// 	}
+// 	else{
+	glClearColor(103.0f / 255.0f, 153.0f / 255.0f, 255.0f / 255.0f, 1.0);
+	//}
 	gluOrtho2D(-1.0f, 1.0f, -1.0f, 1.0f);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -509,8 +570,6 @@ void GLWidget::paintGL()
 
 	resizeGL(wWidth, wHeight/*, -trans_x, -trans_y*/);
 	glDisable(GL_DEPTH_TEST);
-
-	
 	
 	drawObject(GL_RENDER);
 
@@ -528,9 +587,13 @@ void GLWidget::paintGL()
 void GLWidget::resizeGL(int width, int height)
 {
 	wWidth = width; wHeight = height;
+// 	if (isSketching)
+// 		return;
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
+// 	if (!isSketching)
+// 	{
 	ratio = (GLfloat)(width) / (GLfloat)(height);
 	float z = abs(zoom);
 	float ocef = tanf(60 * M_PI / 360.0f);
@@ -540,12 +603,19 @@ void GLWidget::resizeGL(int width, int height)
 		gluPerspective(60.0f, ratio, 0.01f, 1000.0f);
 		break;
 	case ORTHO_PROJECTION:
-		if (width <= height)
-			glOrtho(-ocef * z, ocef * z, -ocef / ratio * z, ocef / ratio * z, 0.01f, 1000.f);
-		else
-			glOrtho(-ocef * z * ratio, ocef * z * ratio, -ocef * z, ocef * z, 0.01f, 1000.f);
+		if (width <= height){
+			glOrtho(-1 * z, 1 * z, -1 / ratio * z, 1 / ratio * z, 0.01, 1000.);
+			sketch.sx = -1 * z; sketch.ex = 1.f * z;
+			sketch.sy = -1 / ratio * z; sketch.ey = 1.f / ratio * z;
+		}
+		else{
+			glOrtho(-1.f * z * ratio, 1.f * ratio * z, -1.f * z, 1.f * z, 0.01f, 1000.f);
+			sketch.sx = -1.f * z * ratio; sketch.ex = 1.f * ratio * z;
+			sketch.sy = -1.f * z; sketch.ey = 1.f * z;
+		}
 		break;
 	}
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
@@ -554,14 +624,14 @@ void GLWidget::wheelEvent(QWheelEvent *e)
 {
 	QPoint  p = e->angleDelta();
 	float pzoom = zoom;
-	if (isSketching){
-		gridSize *= p.y() > 0 ? 0.1f : 10.0f;
-		if (gridSize > 0.99f)
-			gridSize = 0.1f;
-		else if (gridSize < 0.00099)
-			gridSize = 0.001f;
-	}
-	else
+// 	if (isSketching){
+// 		gridSize *= p.y() > 0 ? 0.1f : 10.0f;
+// 		if (gridSize > 0.99f)
+// 			gridSize = 0.1f;
+// 		else if (gridSize < 0.00099)
+// 			gridSize = 0.001f;
+// 	}
+// 	else
 		p.y() > 0 ? zoom -= 2.0f*moveScale : zoom += 2.0f*moveScale;
 	
 	setFocusPolicy(Qt::StrongFocus);
@@ -611,7 +681,29 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
 	int dx = event->x() - lastPos.x();
 	int dy = event->y() - lastPos.y();
-
+// 	m_rectHovered->setRect(event->x(), event->y() - 31, 40, 30);
+// 	qreal rectX = m_rectHovered->rect().x();
+// 	qreal rectY = m_rectHovered->rect().y();
+// 	qreal rectW = m_rectHovered->rect().width();
+// 	qreal rectH = m_rectHovered->rect().height();
+// 	m_coordHoverX->setPos(rectX + rectW / 4 - 3, rectY + 1);
+// 	m_coordHoverY->setPos(rectX + rectW / 4 - 3, rectY + rectH / 2 + 1);
+// 	m_coordHoverX->setText(QString("%1").arg(event->x(), 4, 'f', 2, '0'));
+// 	m_coordHoverY->setText(QString("%1").arg(event->y(), 4, 'f', 2, '0'));
+// 	//QGLWidget::mapToParent()
+// 	if (sketch.isSketching)
+// 	{
+// 		m_coordHoverX->setVisible(true);
+// 		m_coordHoverY->setVisible(true);
+// 		m_rectHovered->setVisible(true);
+// 	}
+// 	else
+// 	{
+// 		m_coordHoverX->setVisible(false);
+// 		m_coordHoverY->setVisible(false);
+// 		m_rectHovered->setVisible(false);
+// 	}
+	//glMap
 	if (keyID[84]){
 		dy > 0 ? trans_y -= 0.1f*moveScale*dy : trans_y -= 0.1f*moveScale*dy;
 		dx > 0 ? trans_x += 0.1f*moveScale*dx : trans_x += 0.1f*moveScale*dx;
@@ -655,6 +747,8 @@ void GLWidget::picking(int x, int y)
 			glOrtho(-1.f * abs(zoom), 1.f * abs(zoom), -1.f / ratio * abs(zoom), 1.f / ratio * abs(zoom), 0.01f, 1000.f);
 		else
 			glOrtho(-1.f * abs(zoom) * ratio, 1.f * ratio * abs(zoom), -1.f * abs(zoom), 1.f * abs(zoom), 0.01f, 1000.f);
+		
+			
 		break;
 	}
 	

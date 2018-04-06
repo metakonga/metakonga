@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'xdynamicsHp4440.ui'
+** Form generated from reading UI file 'xdynamics.ui'
 **
-** Created by: Qt User Interface Compiler version 5.7.0
+** Created by: Qt User Interface Compiler version 5.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef XDYNAMICSHP4440_H
-#define XDYNAMICSHP4440_H
+#ifndef UI_XDYNAMICS_H
+#define UI_XDYNAMICS_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -118,16 +118,16 @@ public:
 
     void retranslateUi(QMainWindow *xdynamics)
     {
-        xdynamics->setWindowTitle(QApplication::translate("xdynamics", "xdynamics", 0));
-        actionChange_Shape->setText(QApplication::translate("xdynamics", "Change Shape", 0));
-        actionMilkShape_3D_ASCII->setText(QApplication::translate("xdynamics", "MilkShape 3D ASCII", 0));
-        actionMBD_Result_ASCII->setText(QApplication::translate("xdynamics", "MBD Result ASCII", 0));
-        actionDEM_Result_ASCII->setText(QApplication::translate("xdynamics", "DEM Result ASCII", 0));
-        actionProperty->setText(QApplication::translate("xdynamics", "Property", 0));
-        menu->setTitle(QApplication::translate("xdynamics", "\352\270\260\353\212\245", 0));
-        menuImport->setTitle(QApplication::translate("xdynamics", "Import", 0));
-        menuExport->setTitle(QApplication::translate("xdynamics", "Export", 0));
-        secToolBar->setWindowTitle(QApplication::translate("xdynamics", "toolBar", 0));
+        xdynamics->setWindowTitle(QApplication::translate("xdynamics", "xdynamics", Q_NULLPTR));
+        actionChange_Shape->setText(QApplication::translate("xdynamics", "Change Shape", Q_NULLPTR));
+        actionMilkShape_3D_ASCII->setText(QApplication::translate("xdynamics", "MilkShape 3D ASCII", Q_NULLPTR));
+        actionMBD_Result_ASCII->setText(QApplication::translate("xdynamics", "MBD Result ASCII", Q_NULLPTR));
+        actionDEM_Result_ASCII->setText(QApplication::translate("xdynamics", "DEM Result ASCII", Q_NULLPTR));
+        actionProperty->setText(QApplication::translate("xdynamics", "Property", Q_NULLPTR));
+        menu->setTitle(QApplication::translate("xdynamics", "\352\270\260\353\212\245", Q_NULLPTR));
+        menuImport->setTitle(QApplication::translate("xdynamics", "Import", Q_NULLPTR));
+        menuExport->setTitle(QApplication::translate("xdynamics", "Export", Q_NULLPTR));
+        secToolBar->setWindowTitle(QApplication::translate("xdynamics", "toolBar", Q_NULLPTR));
     } // retranslateUi
 
 };
@@ -138,4 +138,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // XDYNAMICSHP4440_H
+#endif // UI_XDYNAMICS_H

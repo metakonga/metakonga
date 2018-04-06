@@ -11,6 +11,9 @@
 #include <QFile>
 #include <QKeyEvent>
 
+#include <QGraphicsSimpleTextItem>
+#include <QGraphicsRectItem>
+
 class cube;
 class plane;
 class polygonObject;
@@ -73,7 +76,7 @@ public:
 	vobject* getVObjectFromName(QString name);
 	vpolygon* getVPolyObjectFromName(QString name);
 	projectionType changeProjectionViewMode() { protype = protype == ORTHO_PROJECTION ? PERSPECTIVE_PROJECTION : ORTHO_PROJECTION; return protype; }
-	bool changePaletteMode() { isSketching = isSketching ? false : true; return isSketching; }
+	bool changePaletteMode() { sketch.isSketching = sketch.isSketching ? false : true; return sketch.isSketching; }
 	void glObjectClear();
 	void sketchingMode();
 
@@ -82,6 +85,7 @@ public:
 	void setYRotation(int angle);
 	void setZRotation(int angle);
 	void ShowContextMenu(const QPoint& pos);
+	void setSketchSpace();
 
 signals:
 	void xRotationChanged(int angle);
@@ -130,7 +134,7 @@ private:
 
 	float IconScale;
 
-	bool isSketching;
+	//bool isSketching;
 	bool onZoom;
 	bool onRotation;
 	bool keyID[256];
@@ -145,6 +149,7 @@ private:
 	float times[1000];
 
 	GLenum drawingMode;
+	sketchParameters sketch;
 
 	viewObjectType votype;
 	projectionType protype;
@@ -158,6 +163,9 @@ private:
 	float minViewPoint[3];
 
 	modeler *md;
+// 	QGraphicsRectItem* m_rectHovered;
+// 	QGraphicsSimpleTextItem* m_coordHoverX;
+// 	QGraphicsSimpleTextItem* m_coordHoverY;
 
 signals:
 	void mySignal();

@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'GenParticle.ui'
 **
-** Created by: Qt User Interface Compiler version 5.7.0
+** Created by: Qt User Interface Compiler version 5.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -251,21 +251,21 @@ public:
 
     void retranslateUi(QDialog *DLG_Particle)
     {
-        DLG_Particle->setWindowTitle(QApplication::translate("DLG_Particle", "Particle Creating Dialog", 0));
-        GB_ParticleData->setTitle(QApplication::translate("DLG_Particle", "Particle data", 0));
-        L_BaseGeometry->setText(QApplication::translate("DLG_Particle", "Base geometry", 0));
-        L_Radius->setText(QApplication::translate("DLG_Particle", "Radius", 0));
-        GB_Function->setTitle(QApplication::translate("DLG_Particle", "Function", 0));
-        CHB_StackParticle->setText(QApplication::translate("DLG_Particle", "Stack particle", 0));
-        L_StackNumber->setText(QApplication::translate("DLG_Particle", "Number", 0));
-        L_StackTimeInterval->setText(QApplication::translate("DLG_Particle", "Time interval", 0));
-        GB_Information->setTitle(QApplication::translate("DLG_Particle", "Information", 0));
-        L_NumParticle->setText(QApplication::translate("DLG_Particle", "Num. particle", 0));
-        L_TotalMass->setText(QApplication::translate("DLG_Particle", "Total mass", 0));
-        L_Spacing->setText(QApplication::translate("DLG_Particle", "Spacing", 0));
-        L_Size->setText(QApplication::translate("DLG_Particle", "Size", 0));
-        PB_Ok->setText(QApplication::translate("DLG_Particle", "Ok", 0));
-        PB_Cancle->setText(QApplication::translate("DLG_Particle", "Cancle", 0));
+        DLG_Particle->setWindowTitle(QApplication::translate("DLG_Particle", "Particle Creating Dialog", Q_NULLPTR));
+        GB_ParticleData->setTitle(QApplication::translate("DLG_Particle", "Particle data", Q_NULLPTR));
+        L_BaseGeometry->setText(QApplication::translate("DLG_Particle", "Base geometry", Q_NULLPTR));
+        L_Radius->setText(QApplication::translate("DLG_Particle", "Radius", Q_NULLPTR));
+        GB_Function->setTitle(QApplication::translate("DLG_Particle", "Function", Q_NULLPTR));
+        CHB_StackParticle->setText(QApplication::translate("DLG_Particle", "Stack particle", Q_NULLPTR));
+        L_StackNumber->setText(QApplication::translate("DLG_Particle", "Number", Q_NULLPTR));
+        L_StackTimeInterval->setText(QApplication::translate("DLG_Particle", "Time interval", Q_NULLPTR));
+        GB_Information->setTitle(QApplication::translate("DLG_Particle", "Information", Q_NULLPTR));
+        L_NumParticle->setText(QApplication::translate("DLG_Particle", "Num. particle", Q_NULLPTR));
+        L_TotalMass->setText(QApplication::translate("DLG_Particle", "Total mass", Q_NULLPTR));
+        L_Spacing->setText(QApplication::translate("DLG_Particle", "Spacing", Q_NULLPTR));
+        L_Size->setText(QApplication::translate("DLG_Particle", "Size", Q_NULLPTR));
+        PB_Ok->setText(QApplication::translate("DLG_Particle", "Ok", Q_NULLPTR));
+        PB_Cancle->setText(QApplication::translate("DLG_Particle", "Cancle", Q_NULLPTR));
     } // retranslateUi
 
 };

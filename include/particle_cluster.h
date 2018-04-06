@@ -11,10 +11,12 @@ public:
 	particle_cluster(unsigned int _nc);
 	~particle_cluster();
 
-	void setIndice(unsigned int _nc, ...);
+	void setIndice(unsigned int sid);
 	void define(VEC4D* pos, double* _mass, double* _iner);
 
 	VEC3D center() { return com; }
+	static int perCluster() { return nc; }
+	unsigned int indice(int i) { return c_indice[i]; }
 	void updatePosition(VEC4D* pp, VEC3D* avp, VEC3D* aap, double dt);
 	void updateVelocity(VEC3D* v, VEC3D* w, VEC3D* force, VEC3D* moment, double dt);
 
@@ -23,9 +25,10 @@ public:
 	VEC3D angularVelocity_in_globalCoordinate();
 	VEC3D eulerAngle_dot();
 	MAT33D op_MTVM(MAT33D& m, MAT33D& v);
+	static void setConsistNumber(int _nc) { nc = _nc; }
 
 private:
-	unsigned int nc;			// the number of particle per cluster
+	static int nc;			// the number of particle per cluster
 	unsigned int *c_indice;		// indice of each particle
 	VEC3D *local;
 	VEC3D com;

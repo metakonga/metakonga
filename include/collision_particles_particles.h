@@ -14,7 +14,10 @@ public:
 	virtual ~collision_particles_particles();
 
 	virtual bool collid(double dt);
-	virtual bool cuCollid();
+	virtual bool cuCollid(
+		double *dpos /* = NULL */, double *dvel /* = NULL  */,
+		double *domega /* = NULL */, double *dmass /* = NULL  */,
+		double *dforce /* = NULL  */, double *dmoment /* = NULL */, unsigned int np);
 	virtual bool collid_with_particle(unsigned int i, double dt) { return true; }
 
 	bool HMCModel(double dt);

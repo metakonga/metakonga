@@ -1,9 +1,10 @@
 #include "particle_cluster.h"
-#include <mkl.h>
+//#include <mkl.h>
+
+int particle_cluster::nc = 0;
 
 particle_cluster::particle_cluster()
-	: nc(0)
-	, dist(0)
+	: dist(0)
 	, mass(0)
 	, c_indice(NULL)
 	, local(NULL)
@@ -12,8 +13,7 @@ particle_cluster::particle_cluster()
 }
 
 particle_cluster::particle_cluster(unsigned int _nc)
-	: nc(_nc)
-	, dist(0)
+	: dist(0)
 	, mass(0)
 	, c_indice(NULL)
 	, local(NULL)
@@ -28,21 +28,22 @@ particle_cluster::~particle_cluster()
 	if (local) delete [] local; local = NULL;
 }
 
-void particle_cluster::setIndice(unsigned int _nc, ...)
+void particle_cluster::setIndice(unsigned int sid)
 {
-	va_list ap;
-	nc = _nc;
+	//va_list ap;
+	//nc = _nc;
 	if (!c_indice)
 		c_indice = new unsigned int[nc];
 	if (!local)
 		local = new VEC3D[nc];
 
-	va_start(ap, nc);
-	va_arg(ap, unsigned int);
+	//va_start(ap, nc);
+	//va_arg(ap, unsigned int);
 	for (unsigned int i = 0; i < nc; i++){
-		c_indice[i] = va_arg(ap, unsigned int);
+		//unsigned int arg = va_arg(ap, unsigned int);
+		c_indice[i] = sid + i;
 	}
-	va_end(ap);
+	//va_end(ap);
 }
 
 void particle_cluster::define(VEC4D* pos, double* _mass, double* _iner)
@@ -67,7 +68,8 @@ void particle_cluster::define(VEC4D* pos, double* _mass, double* _iner)
 	}
 	iner = 0.5 * _in;
 
-	th.x = 0.25 * M_PI; th.y = 0.5 * M_PI;
+	th.x = 0.0;// 0.25 * M_PI;
+	th.y = 0.5 * M_PI;
 	setTM();
 	acc = VEC3D(0.0, -9.80665, 0.f);
 	for (unsigned int i = 0; i < nc; i++){

@@ -34,7 +34,7 @@ particle_system::~particle_system()
 void particle_system::clear()
 {
 	if (pos) delete[] pos; pos = NULL;
-	if (r_pos) delete[] r_pos; r_pos = NULL;
+	//if (pos) delete[] pos; pos = NULL;
 	if (vel) delete[] vel; vel = NULL;
 	if (acc) delete[] acc; acc = NULL;
 	if (omega) delete[] omega; omega = NULL;
@@ -50,25 +50,27 @@ void particle_system::clear()
 	if (cid) delete[] cid; cid = NULL;
 	//if (c_p2p) delete c_p2p; c_p2p = NULL;
 
-	if (d_pos) checkCudaErrors(cudaFree(d_pos));
-	if (d_vel) checkCudaErrors(cudaFree(d_vel));
-	if (d_acc) checkCudaErrors(cudaFree(d_acc));
-	if (d_omega) checkCudaErrors(cudaFree(d_omega));
-	if (d_alpha) checkCudaErrors(cudaFree(d_alpha));
-	if (d_fr) checkCudaErrors(cudaFree(d_fr));
-	if (d_mm) checkCudaErrors(cudaFree(d_mm));
-	if (d_ms) checkCudaErrors(cudaFree(d_ms));
-	//if (d_rad) checkCudaErrors(cudaFree(d_rad));
-	if (d_iner) checkCudaErrors(cudaFree(d_iner));
-	if (d_riv) checkCudaErrors(cudaFree(d_riv));
+// 	if (d_pos) checkCudaErrors(cudaFree(d_pos));
+// 	if (d_vel) checkCudaErrors(cudaFree(d_vel));
+// 	if (d_acc) checkCudaErrors(cudaFree(d_acc));
+// 	if (d_omega) checkCudaErrors(cudaFree(d_omega));
+// 	if (d_alpha) checkCudaErrors(cudaFree(d_alpha));
+// 	if (d_fr) checkCudaErrors(cudaFree(d_fr));
+// 	if (d_mm) checkCudaErrors(cudaFree(d_mm));
+// 	if (d_ms) checkCudaErrors(cudaFree(d_ms));
+// 	//if (d_rad) checkCudaErrors(cudaFree(d_rad));
+// 	if (d_iner) checkCudaErrors(cudaFree(d_iner));
+// 	if (d_riv) checkCudaErrors(cudaFree(d_riv));
 
-	if (pc) delete[] pc; pc = NULL;
+	qDeleteAll(pc);
+	//if (pc) delete[] pc; pc = NULL;
 }
 
 void particle_system::allocMemory(unsigned int _np)
 {
 	pos = new VEC4D[_np];
-	r_pos = new VEC4D[_np];
+	//pos = new VEC4D[_np];
+	//r_pos = new VEC4D[_np];
 	vel = new VEC3D[_np];
 	//vel[0].x = 1.0f;
 	acc = new VEC3D[_np];
@@ -86,27 +88,27 @@ void particle_system::allocMemory(unsigned int _np)
 
 void particle_system::cuAllocMemory()
 {
-	checkCudaErrors(cudaMalloc((void**)&d_pos, sizeof(double)*np * 4));
-	checkCudaErrors(cudaMemcpy(d_pos, pos, sizeof(double) * np * 4, cudaMemcpyHostToDevice));
-	checkCudaErrors(cudaMalloc((void**)&d_vel, sizeof(double)*np * 3));
-	//vel[0].z = 0.1f;
-	checkCudaErrors(cudaMemcpy(d_vel, vel, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
-	checkCudaErrors(cudaMalloc((void**)&d_acc, sizeof(double)*np * 3));
-	checkCudaErrors(cudaMemcpy(d_acc, acc, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
-	checkCudaErrors(cudaMalloc((void**)&d_omega, sizeof(double)*np * 3));
-	checkCudaErrors(cudaMemcpy(d_omega, omega, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
-	checkCudaErrors(cudaMalloc((void**)&d_alpha, sizeof(double)*np * 3));
-	checkCudaErrors(cudaMemcpy(d_alpha, alpha, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
-	checkCudaErrors(cudaMalloc((void**)&d_fr, sizeof(double)*np * 3));
-	checkCudaErrors(cudaMemcpy(d_fr, fr, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
-	checkCudaErrors(cudaMalloc((void**)&d_mm, sizeof(double)*np * 3));
-	checkCudaErrors(cudaMemcpy(d_mm, mm, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
-	checkCudaErrors(cudaMalloc((void**)&d_ms, sizeof(double)*np));
-	checkCudaErrors(cudaMemcpy(d_ms, ms, sizeof(double) * np, cudaMemcpyHostToDevice));
-	//checkCudaErrors(cudaMalloc((void**)&d_rad, sizeof(double)*np));
-	//checkCudaErrors(cudaMemcpy(d_rad, rad, sizeof(double) * np, cudaMemcpyHostToDevice));
-	checkCudaErrors(cudaMalloc((void**)&d_iner, sizeof(double)*np));
-	checkCudaErrors(cudaMemcpy(d_iner, iner, sizeof(double) * np, cudaMemcpyHostToDevice));
+// 	checkCudaErrors(cudaMalloc((void**)&d_pos, sizeof(double)*np * 4));
+// 	checkCudaErrors(cudaMemcpy(d_pos, pos, sizeof(double) * np * 4, cudaMemcpyHostToDevice));
+// 	checkCudaErrors(cudaMalloc((void**)&d_vel, sizeof(double)*np * 3));
+// 	//vel[0].z = 0.1f;
+// 	checkCudaErrors(cudaMemcpy(d_vel, vel, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
+// 	checkCudaErrors(cudaMalloc((void**)&d_acc, sizeof(double)*np * 3));
+// 	checkCudaErrors(cudaMemcpy(d_acc, acc, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
+// 	checkCudaErrors(cudaMalloc((void**)&d_omega, sizeof(double)*np * 3));
+// 	checkCudaErrors(cudaMemcpy(d_omega, omega, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
+// 	checkCudaErrors(cudaMalloc((void**)&d_alpha, sizeof(double)*np * 3));
+// 	checkCudaErrors(cudaMemcpy(d_alpha, alpha, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
+// 	checkCudaErrors(cudaMalloc((void**)&d_fr, sizeof(double)*np * 3));
+// 	checkCudaErrors(cudaMemcpy(d_fr, fr, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
+// 	checkCudaErrors(cudaMalloc((void**)&d_mm, sizeof(double)*np * 3));
+// 	checkCudaErrors(cudaMemcpy(d_mm, mm, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
+// 	checkCudaErrors(cudaMalloc((void**)&d_ms, sizeof(double)*np));
+// 	checkCudaErrors(cudaMemcpy(d_ms, ms, sizeof(double) * np, cudaMemcpyHostToDevice));
+// 	//checkCudaErrors(cudaMalloc((void**)&d_rad, sizeof(double)*np));
+// 	//checkCudaErrors(cudaMemcpy(d_rad, rad, sizeof(double) * np, cudaMemcpyHostToDevice));
+// 	checkCudaErrors(cudaMalloc((void**)&d_iner, sizeof(double)*np));
+// 	checkCudaErrors(cudaMemcpy(d_iner, iner, sizeof(double) * np, cudaMemcpyHostToDevice));
 // 	checkCudaErrors(cudaMalloc((void**)&d_riv, sizeof(double)*np * 6));
 // 	checkCudaErrors(cudaMemset(d_riv, 0, sizeof(double) * np * 6));
 	//c_p2p->allocDeviceMemory();
@@ -161,7 +163,7 @@ void particle_system::resizeMemory(unsigned int _np)
 void particle_system::addParticles(object *obj, VEC3UI size)
 {
 	obj->setRoll(ROLL_PARTICLE);
-	unsigned int add_np = obj->makeParticles(pos[0].w, size, isc, true, NULL);
+	unsigned int add_np = obj->makeParticles(pos[0].w, size, isc, 0, true, NULL);
 	resizeMemory(add_np);
 	obj->makeParticles(pos[0].w, size, isc, 0, false, pos, np);
 	np += add_np;
@@ -173,7 +175,7 @@ bool particle_system::makeParticles(object *obj, VEC3UI size, VEC3D spacing, dou
 	genParticleSize = size;
 	obj->setRoll(ROLL_PARTICLE);
 	bo = obj->objectName();
-	np = size.x * size.y * size.z; //obj->makeParticles(_rad, size, isc, true, NULL);
+	np = obj->particleCount();// size.x * size.y * size.z; //obj->makeParticles(_rad, size, isc, true, NULL);
 	np += np * nstack;
 	allocMemory(np);
 	obj->makeParticles(_rad, size, isc, nstack, false, pos);
@@ -192,6 +194,7 @@ bool particle_system::makeParticles(object *obj, VEC3UI size, VEC3D spacing, dou
 		fr[i] = ms[i] * md->gravity();
 		acc[i] = md->gravity();
 	}
+	//appendCluster();
 // 	pc = new particle_cluster[1];
 // 	pc->setIndice(2, 0, 1);
 // 	pc->define(pos, ms, iner);
@@ -245,8 +248,10 @@ void particle_system::saveParticleSystem(QFile& oss)
 	io_par.write((char*)ms, sizeof(double) * np);
 	io_par.write((char*)iner, sizeof(double) * np);
 	io_par.close();
-
 	QTextStream ots(&oss);
+
+	
+
 	ots << "PARTICLES" << endl;
 	ots << "np " << np << endl
 		<< "path " << file_par << endl
@@ -261,7 +266,12 @@ void particle_system::saveParticleSystem(QFile& oss)
 			<< "interval " << stack_dt << endl
 			<< "per " << npPerStack << endl;
 	}
-		
+	
+	if (pc.size())
+	{
+		ots << "CLUSTER " << endl
+			<< "consist " << 2 << endl;
+	}
 // 		<< "restitution " << rest << endl
 // 		<< "shear " << sh << endl
 // 		<< "friction " << fric << endl
@@ -269,6 +279,44 @@ void particle_system::saveParticleSystem(QFile& oss)
 // 		<< "cohesion " << coh << endl
 // 		<< "stiff_ratio " << sratio << endl;
 		//<< "init_spacing " << isc << endl;
+}
+
+void particle_system::appendCluster()
+{
+	int _consist = 2;
+	unsigned int id = pc.size() * _consist;
+	particle_cluster *_pc = new particle_cluster;
+	//pos[i+1] = VEC4D(pos[i] + pos)
+	//if (_consist == 2)
+	_pc->setIndice(id);
+// 		else if (_consist == 3)
+// 		_pc->setIndice(_consist, id, id + 1, id + 2);
+// 	else if (_consist == 4)
+// 		_pc->setIndice(_consist, id, id + 1, id + 2, id + 3);
+
+	_pc->define(pos, ms, iner);
+	pc.push_back(_pc);
+}
+
+void particle_system::setParticleCluster(int _consist)
+{
+	particle_cluster::setConsistNumber(_consist);
+	appendCluster();
+// 	for (unsigned int i = 0; i < np; i += _consist)
+// 	{
+// 	unsigned int id = pc.size() * _consist;
+// 	particle_cluster *_pc = new particle_cluster;
+// 	//pos[i+1] = VEC4D(pos[i] + pos)
+// 	if (_consist == 2)
+// 		_pc->setIndice(_consist, id, id + 1);
+// 	else if (_consist == 3)
+// 		_pc->setIndice(_consist, id, id + 1, id + 2);
+// 	else if (_consist == 4)
+// 		_pc->setIndice(_consist, id, id + 1, id + 2, id + 3);
+// 
+// 	_pc->define(pos, ms, iner);
+// 	pc.push_back(_pc);
+//	}
 }
 
 void particle_system::setParticlesFromFile(QString& pfile, QString& _bo, unsigned int _np, double _rho, double _E, double _pr, double _sh)
@@ -306,26 +354,31 @@ void particle_system::setParticlesFromFile(QString& pfile, QString& _bo, unsigne
 // 			vel[i].x = 0.001f;
 // 		}
 	}
+	//appendCluster();
+// 	for (unsigned int i = 0; i < np; i += 2)
+// 	{
+// 
+// 	}
 	//float sq = sqrt(0.05f * 0.05f + 0.05f * 0.05f);
-	pos[0].x = 0;  pos[0].y = 0.01; pos[0].z = 0.0;
-	pos[1].x = 0.004; pos[1].y = pos[0].y; pos[1].z = 0.0;
-
-	pos[2].x = 0;  pos[2].y = 0.025; pos[2].z = 0.0;
-	pos[3].x = 0.004; pos[3].y = pos[2].y; pos[3].z = 0.0;
-	pc = new particle_cluster[2];
-	cid = new unsigned int[np];
-	pc[0].setIndice(2, 0, 1);
-	pc[0].define(pos, ms, iner);
-	cid[0] = cid[1] = 0;
-	pc[1].setIndice(2, 2, 3);
-	pc[1].define(pos, ms, iner);
-	cid[2] = cid[3] = 1;
+// 	pos[0].x = 0;  pos[0].y = 0.01; pos[0].z = 0.0;
+// 	pos[1].x = 0.004; pos[1].y = pos[0].y; pos[1].z = 0.0;
+// 
+// 	pos[2].x = 0;  pos[2].y = 0.025; pos[2].z = 0.0;
+// 	pos[3].x = 0.004; pos[3].y = pos[2].y; pos[3].z = 0.0;
+// 	pc = new particle_cluster[2];
+// 	cid = new unsigned int[np];
+// 	pc[0].setIndice(2, 0, 1);
+// 	pc[0].define(pos, ms, iner);
+// 	cid[0] = cid[1] = 0;
+// 	pc[1].setIndice(2, 2, 3);
+// 	pc[1].define(pos, ms, iner);
+// 	cid[2] = cid[3] = 1;
 	//pos[0].z = 0.f;
 }
 
 void particle_system::setPosition(double* vpos)
 {
-	memcpy(vpos, pos, sizeof(double) * 4 * np);
+	memcpy(pos, vpos, sizeof(double) * 4 * np);
 }
 
 void particle_system::setVelocity(double* vvel)
@@ -340,14 +393,22 @@ void particle_system::changeParticlesFromVP(double* _pos)
 
 void particle_system::clusterUpdatePosition(double dt)
 {
-	pc[0].updatePosition(pos, omega, alpha, dt);
-	pc[1].updatePosition(pos, omega, alpha, dt);
+	foreach(particle_cluster* value, pc)
+	{
+		value->updatePosition(pos, omega, alpha, dt);
+	}
+// 	pc[0].updatePosition(pos, omega, alpha, dt);
+// 	pc[1].updatePosition(pos, omega, alpha, dt);
 	memset(fr, 0, sizeof(VEC3D) * np);
 	memset(mm, 0, sizeof(VEC3D) * np);
 }
 
 void particle_system::clusterUpdateVelocity(double dt)
 {
-	pc[0].updateVelocity(vel, omega, fr, mm, dt);
-	pc[1].updateVelocity(vel, omega, fr, mm, dt);
+	foreach(particle_cluster* value, pc)
+	{
+		value->updateVelocity(vel, omega, fr, mm, dt);
+	}
+// 	pc[0].updateVelocity(vel, omega, fr, mm, dt);
+// 	pc[1].updateVelocity(vel, omega, fr, mm, dt);
 }

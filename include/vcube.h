@@ -21,8 +21,8 @@ public:
 
 private:
 	void setIndexList();
-
 	unsigned int glList;
+	float origin[3];
 	int indice[24];
 	float vertice[24];
 };

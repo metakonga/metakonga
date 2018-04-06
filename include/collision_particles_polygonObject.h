@@ -14,10 +14,11 @@ public:
 	virtual ~collision_particles_polygonObject();
 
 	virtual bool collid(double dt);
-	virtual bool cuCollid();
-	virtual bool collid_with_particle(unsigned int i, double dt);
-
-	
+	virtual bool cuCollid(
+		double *dpos /* = NULL */, double *dvel /* = NULL  */,
+		double *domega /* = NULL */, double *dmass /* = NULL  */,
+		double *dforce /* = NULL  */, double *dmoment /* = NULL */, unsigned int np);
+	virtual bool collid_with_particle(unsigned int i, double dt);	
 
 private:
 	VEC3D particle_polygon_contact_detection(host_polygon_info& hpi, VEC3D& p, double pr);

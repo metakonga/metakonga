@@ -106,15 +106,15 @@ void particleDialog::click_ok()
 	VEC3UI size = VEC3UI(slist.at(0).toUInt(), slist.at(1).toUInt(), slist.at(2).toUInt());
 	unsigned int num_stack = 0;
 	float stack_dt = 0.f;
-	if (CHB_StackParticle->isEnabled()){
+	if (CHB_StackParticle->isChecked()){
 		num_stack = LE_StackNumber->text().toUInt();
 		stack_dt = LE_StackTimeInterval->text().toDouble();
 		ps->setGenerationMethod(STACK_PARTICLE_METHOD, num_stack, stack_dt, size.x*size.y*size.z);
 		// 		ps->resizeMemoryForStack(LE_NumParticle->text().toUInt());
 	}
-	if (ps->isMemoryAlloc()){
-		ps->addParticles(b_obj, size);
-	}
+// 	if (ps->isMemoryAlloc()){
+// 		ps->addParticles(b_obj, size);
+// 	}
 	else{
 		slist = LE_Spacing->text().split(" ");
 		VEC3D space = VEC3D(slist.at(0).toDouble(), slist.at(1).toDouble(), slist.at(2).toDouble());

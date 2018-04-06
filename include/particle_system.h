@@ -8,6 +8,7 @@
 #include <QString>
 #include <QList>
 #include <QFile>
+#include <QVector>
 
 class object;
 class modeler;
@@ -24,7 +25,7 @@ public:
 	void clear();
 	QString& name() { return nm; }
 	VEC4D_PTR position() { return pos; }
-	VEC4D_PTR ref_position() { return r_pos; }
+	//VEC4D_PTR initPosition() { return pos0; }
 	VEC4D_PTR position() const { return pos; }
 	VEC3D_PTR velocity() { return vel; }
 	VEC3D_PTR velocity() const { return vel; }
@@ -49,16 +50,16 @@ public:
 	double maxRadius() { return max_r; }
 	double maxRadius() const { return max_r; }
 
-	double* cuPosition() { return d_pos; }
-	double* cuVelocity() { return d_vel; }
-	double* cuAcceleration() { return d_acc; }
-	double* cuOmega() { return d_omega; }
-	double* cuAlpha() { return d_alpha; }
-	double* cuForce() { return d_fr; }
-	double* cuMoment() { return d_mm; }
-	//double* cuRadius() { return d_rad; }
-	double* cuMass() { return d_ms; }
-	double* cuInertia() { return d_iner; }
+// 	double* cuPosition() { return d_pos; }
+// 	double* cuVelocity() { return d_vel; }
+// 	double* cuAcceleration() { return d_acc; }
+// 	double* cuOmega() { return d_omega; }
+// 	double* cuAlpha() { return d_alpha; }
+// 	double* cuForce() { return d_fr; }
+// 	double* cuMoment() { return d_mm; }
+// 	//double* cuRadius() { return d_rad; }
+// 	double* cuMass() { return d_ms; }
+// 	double* cuInertia() { return d_iner; }
 
 	double density() { return rho; }
 	double density() const { return rho; }
@@ -107,10 +108,13 @@ public:
 	void setParticlesFromFile(QString& pfile, QString& _bo, unsigned int np, double _rho, double _E, double _pr, double _sh);
 	void setGenerationMethod(tGenerationParticleMethod t_gpm, unsigned int _nStack, double _stack_dt, unsigned int _pstack) { tGenParticle = t_gpm; nStack = _nStack; stack_dt = _stack_dt; npPerStack = _pstack; }
 	void changeParticlesFromVP(double* _pos);
-	particle_cluster* particleClusters(unsigned int id) { return &(pc[id]); }
+	//particle_cluster* particleClusters(unsigned int id) { return &(pc[id]); }
 	void clusterUpdatePosition(double dt);
 	void clusterUpdateVelocity(double dt);
-	particle_cluster* getParticleClusterFromParticleID(unsigned int id) { return &(pc[cid[id]]); }
+	particle_cluster* getParticleClusterFromParticleID(unsigned int id) { return pc.at(id); }
+	void setParticleCluster(int _consist);
+	QVector<particle_cluster*>& particleCluster() { return pc; }
+	void appendCluster();
 
 private:
 	bool _isMemoryAlloc;
@@ -121,7 +125,7 @@ private:
 
 	//VEC3D_PTR pos = NULL;
 	VEC4D_PTR pos = NULL;
-	VEC4D_PTR r_pos = NULL;
+//	VEC4D_PTR pos0 = NULL;
 	VEC3D_PTR vel = NULL;
 	VEC3D_PTR acc = NULL;
 	VEC3D_PTR omega = NULL;
@@ -135,20 +139,20 @@ private:
 	double* riv = NULL;			// relative impact velocity
 	//double* rad = NULL;
 
-	double* d_pos = NULL;
-	double* d_vel = NULL;
-	double* d_acc = NULL;
-	double* d_omega = NULL;
-	double* d_alpha = NULL;
-	double* d_fr = NULL;
-	double* d_mm = NULL;
-	double* d_ms = NULL;
-	double* d_iner = NULL;
-	double* d_riv = NULL;
-	unsigned int* d_pair_riv = NULL;
+// 	double* d_pos = NULL;
+// 	double* d_vel = NULL;
+// 	double* d_acc = NULL;
+// 	double* d_omega = NULL;
+// 	double* d_alpha = NULL;
+// 	double* d_fr = NULL;
+// 	double* d_mm = NULL;
+// 	double* d_ms = NULL;
+// 	double* d_iner = NULL;
+// 	double* d_riv = NULL;
+// 	unsigned int* d_pair_riv = NULL;
 	//double* d_rad = NULL;
 
-	particle_cluster* pc;				// particle clusters
+	QVector<particle_cluster*> pc;				// particle clusters
 
 	double rho;
 	double E;

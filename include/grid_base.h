@@ -16,8 +16,8 @@ public:
 	virtual ~grid_base();
 
 	void clear();
-	virtual void detection() = 0;
-	virtual void cuDetection() = 0;
+	//virtual void detection(VEC4D_PTR pos) = 0;
+	virtual void detection(double *pos) = 0;
 
 	void setWorldOrigin(VEC3D _wo) { wo = _wo; }
 	void setCellSize(float _cs) { cs = _cs; }

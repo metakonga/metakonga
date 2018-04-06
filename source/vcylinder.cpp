@@ -31,28 +31,28 @@ void vcylinder::draw(GLenum eMode)
 		glPushMatrix();
 		if (vcontroller::getFrame() && outPos && outRot)
 		{
-			
-			//glPushMatrix();
-			unsigned int f = vcontroller::getFrame();
-			glTranslated(outPos[f].x, outPos[f].y, outPos[f].z);
-			VEC3D e = ep2e(outRot[f]);
-			//e += VEC3D(ang[0], ang[1], ang[2]);
-			double xi = (e.x * 180) / M_PI;
-			double th = (e.y * 180) / M_PI;
-			double ap = (e.z * 180) / M_PI;
-			double diff = xi + ap;
-			glRotated(xi/* - ang[0]*/, 0, 0, 1);
-			glRotated(th/* - ang[1]*/, 1, 0, 0);
-			glRotated(ap/* - ang[2]*/, 0, 0, 1);
-			/*glPopMatrix();*/
-			//glCallList(coord);
+			animationFrame(origin[0], origin[1], origin[2]);
+// 			//glPushMatrix();
+// 			unsigned int f = vcontroller::getFrame();
+// 			glTranslated(outPos[f].x, outPos[f].y, outPos[f].z);
+// 			VEC3D e = ep2e(outRot[f]);
+// 			//e += VEC3D(ang[0], ang[1], ang[2]);
+// 			double xi = (e.x * 180) / M_PI;
+// 			double th = (e.y * 180) / M_PI;
+// 			double ap = (e.z * 180) / M_PI;
+// 			double diff = xi + ap;
+// 			glRotated(xi/* - ang[0]*/, 0, 0, 1);
+// 			glRotated(th/* - ang[1]*/, 1, 0, 0);
+// 			glRotated(ap/* - ang[2]*/, 0, 0, 1);
+// 			/*glPopMatrix();*/
+// 			//glCallList(coord);
 		}
 		else{
-			glTranslated(origin[0], origin[1], origin[2]);
-			//glPushMatrix();
-			glRotated(ang[0], 0, 0, 1);
-			glRotated(ang[1], 1, 0, 0);
-			glRotated(ang[2], 0, 0, 1);
+// 			glTranslated(origin[0], origin[1], origin[2]);
+// 			//glPushMatrix();
+// 			glRotated(ang[0], 0, 0, 1);
+// 			glRotated(ang[1], 1, 0, 0);
+// 			glRotated(ang[2], 0, 0, 1);
 			
 			//glPopMatrix();
 		}

@@ -32,7 +32,10 @@ bool collision_particles_cylinder::collid(double dt)
 	return true;
 }
 
-bool collision_particles_cylinder::cuCollid()
+bool collision_particles_cylinder::cuCollid(
+	double *dpos, double *dvel,
+	double *domega, double *dmass,
+	double *dforce, double *dmoment, unsigned int np)
 {
 	double3 *mforce;
 	double3 *mmoment;
@@ -54,17 +57,17 @@ bool collision_particles_cylinder::cuCollid()
 	case HMCM: 
 		cu_cylinder_hertzian_contact_force(
 			0, cy->deviceCylinderInfo(), 
-			ps->cuPosition(), ps->cuVelocity(), ps->cuOmega(), 
-			ps->cuForce(), ps->cuMoment(), 
-			ps->cuMass(), ps->numParticle(), dcp,
+			dpos, dvel, domega, 
+			dforce, dmoment, 
+			dmass, ps->numParticle(), dcp,
 			mpos, mforce, mmoment, _mf, _mm); 
 		break;
 	case DHS:
 		cu_cylinder_hertzian_contact_force(
 			1, cy->deviceCylinderInfo(),
-			ps->cuPosition(), ps->cuVelocity(), ps->cuOmega(),
-			ps->cuForce(), ps->cuMoment(),
-			ps->cuMass(), ps->numParticle(), dcp,
+			dpos, dvel, domega,
+			dforce, dmoment,
+			dmass, ps->numParticle(), dcp,
 			mpos, mforce, mmoment, _mf, _mm);
 		break;
 	}

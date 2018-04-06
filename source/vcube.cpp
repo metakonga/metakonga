@@ -4,6 +4,7 @@
 vcube::vcube()
 	: vobject()
 {
+	origin[0] = origin[1] = origin[2] = 0.f;
 	setIndexList();
 }
 
@@ -53,7 +54,9 @@ bool vcube::makeCubeGeometry(QTextStream& in)
 	vertice[15] = minPoint[0] + size[0]; vertice[16] = minPoint[1] + size[1]; vertice[17] = minPoint[2] + size[2];
 	vertice[18] = minPoint[0] + size[0]; vertice[19] = minPoint[1];		   vertice[20] = minPoint[2];
 	vertice[21] = minPoint[0] + size[0]; vertice[22] = minPoint[1] + size[1]; vertice[23] = minPoint[2];
-
+	origin[0] = minPoint[0] + size[0] * 0.5f;
+	origin[1] = minPoint[1] + size[1] * 0.5f;
+	origin[2] = minPoint[2] + size[2] * 0.5f;
 	display = define();
 	return true;
 }
@@ -68,6 +71,9 @@ bool vcube::makeCubeGeometry(QString& _name, tRoll _tr, tMaterial _tm, VEC3F& _m
 	vertice[15] = _mp.x + _sz.x; vertice[16] = _mp.y + _sz.y; vertice[17] = _mp.z + _sz.z;
 	vertice[18] = _mp.x + _sz.x; vertice[19] = _mp.y;		   vertice[20] = _mp.z;
 	vertice[21] = _mp.x + _sz.x; vertice[22] = _mp.y + _sz.y; vertice[23] = _mp.z;
+	origin[0] = _mp.x + _sz.x * 0.5f;
+	origin[1] = _mp.y + _sz.y * 0.5f;
+	origin[2] = _mp.z + _sz.z * 0.5f;
 	this->define();
 	return true;
 }
@@ -77,7 +83,8 @@ void vcube::draw(GLenum eMode)
 	if (display){
 		glPushMatrix();
 		glDisable(GL_LIGHTING);
-
+		if (vcontroller::getFrame() && outPos && outRot)
+			animationFrame(origin[0], origin[1], origin[2]);
 		if (eMode == GL_SELECT){
 			glLoadName((GLuint)ID());
 		}

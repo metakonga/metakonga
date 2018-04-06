@@ -22,6 +22,7 @@ using namespace algebra;
 #define POINTER4(a) &(a.x)
 
 inline float frand() { return rand() / (float)RAND_MAX; }
+inline double drand() { return rand() / (double)RAND_MAX; }
 
 typedef vector3<float>			VEC3F;
 typedef vector3<double>			VEC3D;

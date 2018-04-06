@@ -121,11 +121,9 @@ void cu_reorderDataAndFindCellStart(
 }
 
 void cu_calculate_p2p(
-	const int tcm, double* pos, double* vel, double* acc, 
-	double* omega, double* alpha, 
-	double* force, double* moment, 
-	double* mass, double* iner,
-	unsigned int* sorted_index, unsigned int* cstart, 
+	const int tcm, double* pos, double* vel, 
+	double* omega, double* force, double* moment, 
+	double* mass, unsigned int* sorted_index, unsigned int* cstart, 
 	unsigned int* cend, contact_parameter* cp, unsigned int np)
 {
 	computeGridSize(np, 256, numBlocks, numThreads);
@@ -133,19 +131,17 @@ void cu_calculate_p2p(
 	{
 	case 0:
 		calculate_p2p_kernel<0> << < numBlocks, numThreads >> >(
-			(double4 *)pos, (double3 *)vel, (double3 *)acc,
-			(double3 *)omega, (double3 *)alpha,
-			(double3 *)force, (double3 *)moment,
-			mass, iner,
+			(double4 *)pos, (double3 *)vel,
+			(double3 *)omega, (double3 *)force, 
+			(double3 *)moment, mass,
 			sorted_index, cstart,
 			cend, cp);
 		break;
 	case 1:
 		calculate_p2p_kernel<1> << < numBlocks, numThreads >> >(
-			(double4 *)pos, (double3 *)vel, (double3 *)acc,
-			(double3 *)omega, (double3 *)alpha,
-			(double3 *)force, (double3 *)moment,
-			mass, iner,
+			(double4 *)pos, (double3 *)vel,
+			(double3 *)omega, (double3 *)force, 
+			(double3 *)moment, mass,
 			sorted_index, cstart,
 			cend, cp);
 		break;

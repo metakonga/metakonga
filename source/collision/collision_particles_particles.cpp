@@ -24,20 +24,21 @@ collision_particles_particles::~collision_particles_particles()
 
 }
 
-bool collision_particles_particles::cuCollid()
+bool collision_particles_particles::cuCollid(
+	double *dpos, double *dvel,
+	double *domega, double *dmass,
+	double *dforce, double *dmoment, unsigned int np)
 {
 	switch (tcm)
 	{
 	case HMCM: 
 		cu_calculate_p2p(
-			0, ps->cuPosition(), ps->cuVelocity(), ps->cuAcceleration(), ps->cuOmega(),
-			ps->cuAlpha(), ps->cuForce(), ps->cuMoment(), ps->cuMass(), ps->cuInertia(),
+			0, dpos, dvel, domega, dforce, dmoment, dmass,
 			grid_base::cuSortedID(), grid_base::cuCellStart(), grid_base::cuCellEnd(), dcp, ps->numParticle());
 		break;
 	case DHS:
 		cu_calculate_p2p(
-			1, ps->cuPosition(), ps->cuVelocity(), ps->cuAcceleration(), ps->cuOmega(),
-			ps->cuAlpha(), ps->cuForce(), ps->cuMoment(), ps->cuMass(), ps->cuInertia(),
+			1, dpos, dvel, domega, dforce, dmoment, dmass,
 			grid_base::cuSortedID(), grid_base::cuCellStart(), grid_base::cuCellEnd(), dcp, ps->numParticle());
 		break;
 	}
@@ -46,6 +47,7 @@ bool collision_particles_particles::cuCollid()
 
 bool collision_particles_particles::collid(double dt)
 {
+
 	switch (tcm)
 	{
 	case HMCM: this->HMCModel(dt); break;
@@ -57,6 +59,7 @@ bool collision_particles_particles::collid(double dt)
 bool collision_particles_particles::DHSModel(double dt)
 {
 	//cohesion = 1.0E+6;
+	unsigned int _np = 0;
 	VEC3I neigh, gp;
 	double dist, cdist, mag_e, ds;
 	unsigned int hash, sid, eid;
@@ -68,7 +71,11 @@ bool collision_particles_particles::DHSModel(double dt)
 	VEC3D *fr = ps->force();
 	VEC3D *mm = ps->moment();
 	double* ms = ps->mass();
-	for (unsigned int i = 0; i < ps->numParticle(); i++){
+	if (ps->particleCluster().size())
+		_np = ps->particleCluster().size() * 2;
+	else
+		_np = ps->numParticle();
+	for (unsigned int i = 0; i < _np; i++){
 		ipos = VEC3D(pos[i].x, pos[i].y, pos[i].z);
 		gp = grid_base::getCellNumber(pos[i].x, pos[i].y, pos[i].z);
 
@@ -101,7 +108,8 @@ bool collision_particles_particles::DHSModel(double dt)
 							if (cdist > 0){
 								u = rp / dist;
 								VEC3D cp = ipos + pos[i].w * u;
-								VEC3D c2p = cp - ps->getParticleClusterFromParticleID(i)->center();
+								unsigned int ci = (unsigned int)(i / particle_cluster::perCluster());
+								VEC3D c2p = cp - ps->getParticleClusterFromParticleID(ci)->center();
 								double rcon = pos[i].w - 0.5 * cdist;
 								rv = vel[k] + omega[k].cross(-pos[k].w * u) - (vel[i] + omega[i].cross(pos[i].w * u));
 								c = getConstant(pos[i].w, pos[k].w, ms[i], ms[k], ps->youngs(), ps->youngs(), ps->poisson(), ps->poisson(), ps->shear(), ps->shear());

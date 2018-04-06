@@ -39,11 +39,12 @@ public:
 	double shear() const { return sm; }
 	bool isUpdate() const { return _update; }
 	mass* pointMass() const { return ms; }
+	unsigned int particleCount() const { return count; }
 
 	// setting functions
 	void setRoll(tRoll tr)  { roll_type = tr; }
 	void setUpdate(bool b) { _expression = b; }
-	void setID(unsigned int _id) { sid = _id > sid ? _id : sid; id = _id; }
+	void setID(unsigned int _id) { id = _id; }
 	void setMaterial(tMaterial _tm);
 
 	void addPointMass(mass* _ms) { ms = _ms; }
@@ -51,9 +52,9 @@ public:
 	void runExpression(double ct, double dt);
 
 protected:
-	static unsigned int sid;
+	unsigned int sid;
 	unsigned int id;
-
+	unsigned int count;
 	bool _expression;
 	bool _update;
 	QString name;

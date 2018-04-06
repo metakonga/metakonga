@@ -47,7 +47,7 @@ bool cube::define(VEC3D& min, VEC3D& max)
 
 unsigned int cube::makeParticles(double rad, VEC3UI &_size, VEC3D &_spacing, unsigned int nstack, bool isOnlyCount, VEC4D_PTR pos, unsigned int sid)
 {
-	unsigned int np = 0;
+	//unsigned int np = 0;
 	if (isOnlyCount){
 		vector3<unsigned int> dim3np(
 			static_cast<unsigned int>(abs(size.x / (rad * 2)))
@@ -74,7 +74,7 @@ unsigned int cube::makeParticles(double rad, VEC3UI &_size, VEC3D &_spacing, uns
 			space.z = (size.z - dim3np.z * dia) / (dim3np.z + 1);
 		}
 		//float spacing = rad * 2.f + _spacing;
-		np = dim3np.x * dim3np.y * dim3np.z;
+		count = dim3np.x * dim3np.y * dim3np.z;
 		_spacing = space;
 		_size = dim3np;
 	}
@@ -125,7 +125,7 @@ unsigned int cube::makeParticles(double rad, VEC3UI &_size, VEC3D &_spacing, uns
 // 		}
 // 	}
 // 	//pos[0].z = 0.f;
-	return np;
+	return count;
 }
 
 void cube::save_object_data(QTextStream& ts)

@@ -5,6 +5,7 @@
 #include "object.h"
 #include "mass.h"
 #include "cylinder.h"
+#include "linearSolver.hpp"
 #include <QDebug>
 #include <QTime>
 #include <QTextStream>
@@ -22,7 +23,7 @@
 mbd_simulation::mbd_simulation()
 	: simulation()
 	, outCount(0)
-	, permutation(NULL)
+	//, permutation(NULL)
 {
 
 }
@@ -30,7 +31,7 @@ mbd_simulation::mbd_simulation()
 mbd_simulation::mbd_simulation(modeler *_md)
 	: simulation(_md)
 	, outCount(0)
-	, permutation(NULL)
+	//, permutation(NULL)
 {
 	ground.setID(-1);
 	ground.makeTransformationMatrix();
@@ -41,7 +42,7 @@ mbd_simulation::~mbd_simulation()
 	//qf_out.close();
 	if (qf_out.isOpen())
 		qf_out.close();
-	if (permutation) delete[] permutation; permutation = NULL;
+	//if (permutation) delete[] permutation; permutation = NULL;
 }
 
 bool mbd_simulation::initialize(bool isCpu)
@@ -54,8 +55,8 @@ bool mbd_simulation::initialize(bool isCpu)
 	nstep = static_cast<unsigned int>((et / dt) + 1);
 	int sdim = 0;
 	mbd_simulation::nnz = 0;
-	lapack_one = 1;
-	lapack_info = 0;
+//	lapack_one = 1;
+	//lapack_info = 0;
 	alpha = -0.3;
 	beta = (1 - alpha) * (1 - alpha) / 4;
 	gamma = 0.5 - alpha;
@@ -99,16 +100,17 @@ bool mbd_simulation::initialize(bool isCpu)
 	}
 
 	mass* m = (++md->pointMasses().begin()).value();
-	kinematicConstraint* rev_ws = md->makeKinematicConstraint("rev_wheel_ground", REVOLUTE, wheel, VEC3D(0, 0, 0), wheel->toLocal(VEC3D(1.0, 0, 0)), wheel->toLocal(VEC3D(0, 1.0, 0)),
-		ground, VEC3D(0, -0.012, 0), VEC3D(-1.0, 0, 0), VEC3D(0, 1.0, 0));
-// 	md->makeKinematicConstraint("tra_shaft_guide", TRANSLATIONAL, VEC3D(0, 0.288, 0), shaft, shaft->toLocal(VEC3D(0, 0, 1.0)), shaft->toLocal(VEC3D(1.0, 0, 0)),
-// 								ground, ground->toLocal(VEC3D(1.0, 0, 0)), ground->toLocal(VEC3D(0, 0, -1.0)));
-// 	md->makeKinematicConstraint("tra_shaft_guide", TRANSLATIONAL,  shaft, shaft->getPosition(), shaft->toLocal(VEC3D(0, 0, 1.0)), shaft->toLocal(VEC3D(1.0, 0, 0)),
-// 								guide, guide->getPosition(), guide->toLocal(VEC3D(1.0, 0, 0)), guide->toLocal(VEC3D(0, 0, -1.0)));
-// 	md->makeKinematicConstraint("tra_guide_ground", TRANSLATIONAL, guide, guide->getPosition(), guide->toLocal(VEC3D(0, 1.0, 0)), guide->toLocal(VEC3D(0, 0, -1.0)),
-// 								ground, VEC3D(-1, 0.225, 0), ground->toLocal(VEC3D(0, 0, 1.0)), ground->toLocal(VEC3D(0, 1.0, 0)));
+	kinematicConstraint* rev_ws = md->makeKinematicConstraint("rev_wheel_shaft", REVOLUTE, wheel, VEC3D(0, 0, 0), wheel->toLocal(VEC3D(1.0, 0, 0)), wheel->toLocal(VEC3D(0, 1.0, 0)),
+		shaft, VEC3D(0, -0.15, 0), VEC3D(-1.0, 0, 0), VEC3D(0, 1.0, 0));
+//  	md->makeKinematicConstraint("tra_grouj_guide", TRANSLATIONAL, shaft, VEC3D(0, 0.288, 0), shaft->toLocal(VEC3D(0, 0, 1.0)), shaft->toLocal(VEC3D(1.0, 0, 0)),
+//  								ground, ground->toLocal(VEC3D(1.0, 0, 0)), ground->toLocal(VEC3D(0, 0, -1.0)));
+	md->makeKinematicConstraint("tra_shaft_guide", TRANSLATIONAL, shaft, VEC3D(0, 0, 0)/*shaft->getPosition()*/, shaft->toLocal(VEC3D(0, 0, 1.0)), shaft->toLocal(VEC3D(1.0, 0, 0)),
+		guide, VEC3D(0, 0, 0)/*guide->getPosition()*/, guide->toLocal(VEC3D(1.0, 0, 0)), guide->toLocal(VEC3D(0, 0, -1.0)));
+	kinematicConstraint* tra_gg = md->makeKinematicConstraint("tra_guide_ground", TRANSLATIONAL, guide, VEC3D(0, 0, 0)/*guide->getPosition()*/, guide->toLocal(VEC3D(0, 1.0, 0)), guide->toLocal(VEC3D(0, 0, -1.0)),
+								ground, VEC3D(-1, 0.225, 0), ground->toLocal(VEC3D(0, 0, 1.0)), ground->toLocal(VEC3D(0, 1.0, 0)));
 
 	md->makeDrivingConstraint("Wheel_driving", rev_ws, DRIVING_VELOCITY, 1);
+//	md->makeDrivingConstraint("guide_driving", tra_gg, DRIVING_VELOCITY, 1);
 
 	for (kConstIterator it = md->kinConstraint().begin(); it != md->kinConstraint().end(); it++){
 		kinematicConstraint *kconst = it.value();
@@ -142,8 +144,8 @@ bool mbd_simulation::initialize(bool isCpu)
 	sdim += md->pointMasses().size() - 1;
 	tdim = mdim + sdim;
 
-	ptDof = (MKL_INT*)&tdim;
-	permutation = new MKL_INT[tdim];
+	//ptDof = (MKL_INT*)&tdim;
+	//permutation = new MKL_INT[tdim];
 	lhs.alloc(tdim, tdim);
 	rhs.alloc(tdim);
 	pre.alloc(mdim);
@@ -160,8 +162,10 @@ bool mbd_simulation::initialize(bool isCpu)
 // 	EPD ev0 = wheel->getEP().w2ev(VEC3D(0, 0, 0.2));
 // 	wheel->setEV(ev0);
 	FULL_LEOM();
+	linearSolver ls(LAPACK_COL_MAJOR, tdim, 1, tdim, tdim);
+	int info = ls.solve(lhs.getDataPointer(), rhs.get_ptr());
 	//lhs.display();
-	dgesv_(ptDof, &lapack_one, lhs.getDataPointer(), ptDof, permutation, rhs.get_ptr(), ptDof, &lapack_info);
+//	dgesv_(ptDof, &lapack_one, lhs.getDataPointer(), ptDof, permutation, rhs.get_ptr(), ptDof, &lapack_info);
 	i = 0;
 	for (massIterator it = md->pointMasses().begin(); it != md->pointMasses().end(); it++)
 	{
@@ -362,7 +366,7 @@ void mbd_simulation::sparseConstraintJacobian()
 		ic = dconst->startColumn();
 		//for (int i = 0; i < 7; i++) 
 			//if (dconst->use(i)) 
-		cjaco(sr, ic + 3) = 1.0;
+		cjaco(sr, ic) = 1.0;
 	}
 }
 
@@ -374,7 +378,7 @@ void mbd_simulation::FULL_LEOM()
 	for (int i(0); i < cjaco.nnz(); i++){
 		lhs(cjaco.ridx[i], cjaco.cidx[i]) = lhs(cjaco.cidx[i], cjaco.ridx[i]) = cjaco.value[i];
 	}
-	lhs.display();
+	//lhs.display();
 }
 
 bool mbd_simulation::saveResult(double ct, unsigned int p)
@@ -660,6 +664,7 @@ void mbd_simulation::constraintEquation()
 double mbd_simulation::correction(unsigned int cs)
 {
 	double e_norm = 1;
+	linearSolver ls(LAPACK_COL_MAJOR, tdim, 1, tdim, tdim);
 	while (1){
 		calcForceVector(&ee);
 		sparseConstraintJacobian();
@@ -684,8 +689,8 @@ double mbd_simulation::correction(unsigned int cs)
 		for (int i(0); i < mdim; i++) ee(i) -= pre(i);
 		constraintEquation();
 		e_norm = ee.norm();
-
-		dgesv_(ptDof, &lapack_one, lhs.getDataPointer(), ptDof, permutation, ee.get_ptr(), ptDof, &lapack_info);
+		int info = ls.solve(lhs.getDataPointer(), ee.get_ptr());
+		//dgesv_(ptDof, &lapack_one, lhs.getDataPointer(), ptDof, permutation, ee.get_ptr(), ptDof, &lapack_info);
 		rhs += ee;
 		int idx = 0;
 		for (massIterator it = md->pointMasses().begin(); it != md->pointMasses().end(); it++){
@@ -724,6 +729,7 @@ double mbd_simulation::correction(unsigned int cs)
 
 double mbd_simulation::oneStepCorrection()
 {
+	linearSolver ls(LAPACK_COL_MAJOR, tdim, 1, tdim, tdim);
 	double e_norm = 1;
 	calcForceVector(&ee);
 	sparseConstraintJacobian();
@@ -748,8 +754,9 @@ double mbd_simulation::oneStepCorrection()
 	for (int i(0); i < mdim; i++) ee(i) -= pre(i);
 	constraintEquation();
 	e_norm = ee.norm();
-
- 	dgesv_(ptDof, &lapack_one, lhs.getDataPointer(), ptDof, permutation, ee.get_ptr(), ptDof, &lapack_info);
+	//lhs.display();
+	int info = ls.solve(lhs.getDataPointer(), ee.get_ptr());
+ 	//dgesv_(ptDof, &lapack_one, lhs.getDataPointer(), ptDof, permutation, ee.get_ptr(), ptDof, &lapack_info);
  	rhs += ee;
 	int idx = 0;
 	for (massIterator it = md->pointMasses().begin(); it != md->pointMasses().end(); it++){

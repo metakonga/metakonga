@@ -27,13 +27,32 @@ collision_particles_plane::~collision_particles_plane()
 
 bool collision_particles_plane::collid(double dt)
 {
-	for (unsigned int i = 0; i < ps->numParticle(); i++){
-		switch (tcm)
+	if (ps->particleCluster().size())
+	{
+		foreach(particle_cluster* value, ps->particleCluster())
 		{
-		case HMCM: this->HMCModel(i, dt); break;
-		case DHS: this->DHSModel(i, dt); break;
+			for (int i = 0; i < value->perCluster(); i++)
+			{
+				unsigned int id = value->indice(i);
+				switch (tcm)
+				{
+				case HMCM: this->HMCModel(id, dt); break;
+				case DHS: this->DHSModel(id, dt); break;
+				}
+			}
 		}
 	}
+	else
+	{
+		for (unsigned int i = 0; i < ps->numParticle(); i++){
+			switch (tcm)
+			{
+			case HMCM: this->HMCModel(i, dt); break;
+			case DHS: this->DHSModel(i, dt); break;
+			}
+		}
+	}
+	
 // 	switch (tcm)
 // 	{
 // 	case HMCM: this->HMCModel(i, dt); break;
@@ -42,21 +61,24 @@ bool collision_particles_plane::collid(double dt)
 	return true;
 }
 
-bool collision_particles_plane::cuCollid()
+bool collision_particles_plane::cuCollid(
+	double *dpos, double *dvel,
+	double *domega, double *dmass,
+	double *dforce,	double *dmoment, unsigned int np)
 {
 	switch (tcm)
 	{
 	case HMCM: cu_plane_hertzian_contact_force(
 			0, pe->devicePlaneInfo(), 
-			ps->cuPosition(), ps->cuVelocity(), ps->cuOmega(), 
-			ps->cuForce(), ps->cuMoment(), ps->cuMass(), 
+			dpos, dvel, domega, 
+			dforce, dmoment, dmass, 
 			ps->numParticle(), dcp); 
 		break;
 	case DHS:
 		cu_plane_hertzian_contact_force(
 			1, pe->devicePlaneInfo(),
-			ps->cuPosition(), ps->cuVelocity(), ps->cuOmega(),
-			ps->cuForce(), ps->cuMoment(), ps->cuMass(),
+			dpos, dvel, domega,
+			dforce, dmoment, dmass,
 			ps->numParticle(), dcp);
 		break;
 	}
@@ -174,7 +196,8 @@ bool collision_particles_plane::DHSModel(unsigned int i, double dt)
 	if (cdist > 0){
 		double rcon = p.w - 0.5 * cdist;
 		VEC3D cp = p.toVector3() + rcon * u;
-		VEC3D c2p = cp - ps->getParticleClusterFromParticleID(i)->center();
+		unsigned int ci = (unsigned int)(i / particle_cluster::perCluster());
+		VEC3D c2p = cp - ps->getParticleClusterFromParticleID(ci)->center();
 		VEC3D dv = -(v + w.cross(p.w * u));
 
 		constant c = getConstant(p.w, 0.0, ms, 0.0, ps->youngs(), pe->youngs(), ps->poisson(), pe->poisson(), ps->shear(), pe->shear());

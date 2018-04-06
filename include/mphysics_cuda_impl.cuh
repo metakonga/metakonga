@@ -394,10 +394,9 @@ __device__ void DHSModel(
 
 template <int TCM>
 __global__ void calculate_p2p_kernel(
-	double4* pos, double3* vel, double3* acc,
-	double3* omega, double3* alpha,
-	double3* force, double3* moment,
-	double* mass, double* iner,
+	double4* pos, double3* vel,
+	double3* omega,	double3* force, 
+	double3* moment, double* mass,
 	unsigned int* sorted_index, unsigned int* cstart,
 	unsigned int* cend, contact_parameter* cp)
 {

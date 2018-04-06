@@ -3,7 +3,7 @@
 
 #include "modeler.h"
 #include "grid_base.h"
-#include "mintegrator.h"
+#include "dem_integrator.h"
 #include <QObject>
 #include <QMutex>
 #include <QLineEdit>
@@ -37,7 +37,7 @@ public:
 protected:
 	modeler* md;
 	grid_base* gb;
-	integrator* itor;
+	dem_integrator* itor;
 	cmdWindow* cmd;
 
 	QMutex mutex;
@@ -50,6 +50,7 @@ protected:
 	unsigned int step;
 	unsigned int nstep;
 
+	bool _isCpu;
 	bool _isWaiting;
 	bool _isWait;
 	bool _abort;

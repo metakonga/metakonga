@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'newModel.ui'
 **
-** Created by: Qt User Interface Compiler version 5.7.0
+** Created by: Qt User Interface Compiler version 5.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -137,27 +137,27 @@ public:
 
     void retranslateUi(QDialog *newModelDialog)
     {
-        newModelDialog->setWindowTitle(QApplication::translate("newModelDialog", "New Model", 0));
-        GBNewModel->setTitle(QApplication::translate("newModelDialog", "New Model", 0));
-        PBOK->setText(QApplication::translate("newModelDialog", "OK", 0));
-        LName->setText(QApplication::translate("newModelDialog", "Name", 0));
-        LUnit->setText(QApplication::translate("newModelDialog", "Unit", 0));
-        LGravity->setText(QApplication::translate("newModelDialog", "Gravity", 0));
+        newModelDialog->setWindowTitle(QApplication::translate("newModelDialog", "New Model", Q_NULLPTR));
+        GBNewModel->setTitle(QApplication::translate("newModelDialog", "New Model", Q_NULLPTR));
+        PBOK->setText(QApplication::translate("newModelDialog", "OK", Q_NULLPTR));
+        LName->setText(QApplication::translate("newModelDialog", "Name", Q_NULLPTR));
+        LUnit->setText(QApplication::translate("newModelDialog", "Unit", Q_NULLPTR));
+        LGravity->setText(QApplication::translate("newModelDialog", "Gravity", Q_NULLPTR));
         CBUnit->clear();
         CBUnit->insertItems(0, QStringList()
-         << QApplication::translate("newModelDialog", "MKS(Meter/Kilogram/Newton/Second)", 0)
+         << QApplication::translate("newModelDialog", "MKS(Meter/Kilogram/Newton/Second)", Q_NULLPTR)
         );
         CBGravity->clear();
         CBGravity->insertItems(0, QStringList()
-         << QApplication::translate("newModelDialog", "+X", 0)
-         << QApplication::translate("newModelDialog", "+Y", 0)
-         << QApplication::translate("newModelDialog", "+Z", 0)
-         << QApplication::translate("newModelDialog", "-X", 0)
-         << QApplication::translate("newModelDialog", "-Y", 0)
-         << QApplication::translate("newModelDialog", "-Z", 0)
+         << QApplication::translate("newModelDialog", "+X", Q_NULLPTR)
+         << QApplication::translate("newModelDialog", "+Y", Q_NULLPTR)
+         << QApplication::translate("newModelDialog", "+Z", Q_NULLPTR)
+         << QApplication::translate("newModelDialog", "-X", Q_NULLPTR)
+         << QApplication::translate("newModelDialog", "-Y", Q_NULLPTR)
+         << QApplication::translate("newModelDialog", "-Z", Q_NULLPTR)
         );
-        LOpenModel->setText(QApplication::translate("newModelDialog", "Open Model", 0));
-        PBBrowse->setText(QApplication::translate("newModelDialog", "Browse", 0));
+        LOpenModel->setText(QApplication::translate("newModelDialog", "Open Model", Q_NULLPTR));
+        PBBrowse->setText(QApplication::translate("newModelDialog", "Browse", Q_NULLPTR));
     } // retranslateUi
 
 };

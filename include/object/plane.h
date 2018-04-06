@@ -42,6 +42,8 @@ public:
 
 private:
 	double l1, l2;
+	VEC3D minp;
+	VEC3D maxp;
 	VEC3D u1;
 	VEC3D u2;
 	VEC3D uw;

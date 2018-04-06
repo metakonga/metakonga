@@ -287,9 +287,6 @@
     <ClCompile Include="..\..\..\..\source\grid_base.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\source\mintegrator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\source\modeler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -373,6 +370,9 @@
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_cmdWindow.cpp">
       <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\dem_integrator.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -522,9 +522,6 @@
     <ClInclude Include="..\..\..\..\include\materialLibrary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\mintegrator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\include\modeler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -544,9 +541,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\timer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\vcylinder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\velocity_verlet.h">
@@ -594,9 +588,6 @@
     <ClInclude Include="GeneratedFiles\ui_GenParticle.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\widget\database.h">
-      <Filter>Header Files\widget</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\include\particle_cluster.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -605,6 +596,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\drivingConstraint.h">
       <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\vcylinder.h">
+      <Filter>Header Files\display</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\dem_integrator.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -40,7 +40,7 @@ bool dembd_simulation::initialize(bool isCpu)
  
  	mbd->initialize(isCpu);
 	
-	dem->getNeighborhood()->cuDetection();
+	dem->cudaDetection();
 
 	collision_dembd(dt);
 
@@ -87,8 +87,8 @@ void dembd_simulation::predictionStep(double dt)
 void dembd_simulation::correctionStep(double dt)
 {
 	unsigned int cnt = 0;
-	dem->getIterator()->cuUpdatePosition();
-	dem->getNeighborhood()->cuDetection();
+	dem->cudaUpdatePosition();
+	dem->cudaDetection();
 	while (1){
 		collision_dembd(dt);
 		double norm = mbd->oneStepCorrection();
@@ -107,7 +107,7 @@ void dembd_simulation::correctionStep(double dt)
 		cnt++;
 		/*std::cout << norm << std::endl;*/
 	}
-	dem->getIterator()->cuUpdateVelocity();
+	dem->cudaUpdateVelocity();
 }
 
 bool dembd_simulation::cpuRun()
@@ -137,7 +137,7 @@ bool dembd_simulation::cpuRun()
 	QDate startingDate = QDate::currentDate();
 	cStep++;
 	// nstep = 3;
-	dem->getNeighborhood()->cuDetection();
+	dem->cudaDetection();
 	while (cStep < nstep)
 	{
 		if (_isWait)

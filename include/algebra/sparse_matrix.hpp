@@ -87,7 +87,7 @@ public:
 	int& nnz() { return _nnz; } 
 	int& rows() { return nrow; }
 	int& cols() { return ncol; }
-	void zeroCount() { count = 0; }
+	void zeroCount() { count = 0; _nnz = 0; }
 
 	void resize(int nr, int nc)
 	{

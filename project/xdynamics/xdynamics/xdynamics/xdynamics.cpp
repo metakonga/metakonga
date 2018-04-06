@@ -195,6 +195,11 @@ void xdynamics::setMainAction()
 	connect(HSlider, SIGNAL(valueChanged(int)), this, SLOT(ani_scrollbar()));
 	ui.secToolBar->addWidget(HSlider);
 
+// 	QLineEdit *sketch_space = new QLineEdit;
+// 	sketch_space->setText("0.02");
+// 	connect(sketch_space, SIGNAL(editingFinished()), gl, SLOT(setSketchSpace()));
+// 	ui.secToolBar->addWidget(sketch_space);
+
 	LEframe = new QLineEdit(this);
 	LEframe->setText(QString("0"));
 	LEframe->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -710,11 +715,13 @@ void xdynamics::solve()
 		delete sim;
 		return;
 	}
+	md->setSolveDevice((tSolveDevice)!sd.isCpu);
 	disconnect(simPlayAct);
 	simPlayAct->setIcon(QIcon(":/Resources/ani_pause.png"));
 	simPlayAct->setStatusTip(tr("Pause for simulation."));
 	connect(simPlayAct, SIGNAL(triggered()), this, SLOT(sim_stop()));
 	simPlayAct->setEnabled(true);
+	saveproj();
 	th->start();
 	qDebug() << "- Simulation Thread On (CPU) -";
 	// 	if (neigh) delete neigh; neigh = NULL;

@@ -55,3 +55,17 @@ void vobject::copyCoordinate(GLuint _coord)
 {
 	coord = _coord;
 }
+
+void vobject::animationFrame(float ox, float oy, float oz)
+{
+	unsigned int f = vcontroller::getFrame();
+	glTranslated(outPos[f].x + ox, outPos[f].y + oy, outPos[f].z + oz);
+	VEC3D e = ep2e(outRot[f]);
+	double xi = (e.x * 180) / M_PI;
+	double th = (e.y * 180) / M_PI;
+	double ap = (e.z * 180) / M_PI;
+	double diff = xi + ap;
+	glRotated(xi, 0, 0, 1);
+	glRotated(th, 1, 0, 0);
+	glRotated(ap, 0, 0, 1);
+}

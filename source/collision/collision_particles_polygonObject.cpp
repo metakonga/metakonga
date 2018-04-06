@@ -31,7 +31,10 @@ bool collision_particles_polygonObject::collid(double dt)
 	return true;
 }
 
-bool collision_particles_polygonObject::cuCollid()
+bool collision_particles_polygonObject::cuCollid(
+	double *dpos, double *dvel,
+	double *domega, double *dmass,
+	double *dforce, double *dmoment, unsigned int np)
 {
 	double3 *mforce;
 	double3 *mmoment;
@@ -53,8 +56,8 @@ bool collision_particles_polygonObject::cuCollid()
 	case HMCM: 
 		cu_particle_polygonObject_collision(
 			0, po->devicePolygonInfo(), po->deviceSphereSet(), po->deviceMassInfo(), 
-			ps->cuPosition(), ps->cuVelocity(), ps->cuOmega(), 
-			ps->cuForce(), ps->cuMoment(), ps->cuMass(), 
+			dpos, dvel, domega,
+			dforce, dmoment, dmass,
 			gb->cuSortedID(), gb->cuCellStart(), gb->cuCellEnd(), dcp, 
 			ps->numParticle(), mpos, mforce, mmoment, _mf, _mm); 
 		break;

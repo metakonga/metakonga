@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'HMCM.ui'
 **
-** Created by: Qt User Interface Compiler version 5.7.0
+** Created by: Qt User Interface Compiler version 5.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -209,21 +209,21 @@ public:
 
     void retranslateUi(QDialog *DLG_HMCM)
     {
-        DLG_HMCM->setWindowTitle(QApplication::translate("DLG_HMCM", "Contact Definition Dialog", 0));
-        GBContactElements->setTitle(QApplication::translate("DLG_HMCM", "Contact elements", 0));
-        LName->setText(QApplication::translate("DLG_HMCM", "Name", 0));
-        LFirstObject->setText(QApplication::translate("DLG_HMCM", "First object", 0));
-        LSecondObject->setText(QApplication::translate("DLG_HMCM", "Second object", 0));
-        GBContactParameter->setTitle(QApplication::translate("DLG_HMCM", "Contact parameter", 0));
-        CHBEableCohesion->setText(QApplication::translate("DLG_HMCM", "Enable cohesion", 0));
-        LRestitution->setText(QApplication::translate("DLG_HMCM", "Restitution", 0));
-        LFriction->setText(QApplication::translate("DLG_HMCM", "Friction", 0));
-        LRollingFriction->setText(QApplication::translate("DLG_HMCM", "Rolling friction", 0));
-        LCohesion->setText(QApplication::translate("DLG_HMCM", "Cohesion", 0));
-        CHBUSESTIFFNESSRATIO->setText(QApplication::translate("DLG_HMCM", "Use stiffness ratio", 0));
-        LRatio->setText(QApplication::translate("DLG_HMCM", "Ratio", 0));
-        PBOk->setText(QApplication::translate("DLG_HMCM", "Ok", 0));
-        PBCancle->setText(QApplication::translate("DLG_HMCM", "Cancle", 0));
+        DLG_HMCM->setWindowTitle(QApplication::translate("DLG_HMCM", "Contact Definition Dialog", Q_NULLPTR));
+        GBContactElements->setTitle(QApplication::translate("DLG_HMCM", "Contact elements", Q_NULLPTR));
+        LName->setText(QApplication::translate("DLG_HMCM", "Name", Q_NULLPTR));
+        LFirstObject->setText(QApplication::translate("DLG_HMCM", "First object", Q_NULLPTR));
+        LSecondObject->setText(QApplication::translate("DLG_HMCM", "Second object", Q_NULLPTR));
+        GBContactParameter->setTitle(QApplication::translate("DLG_HMCM", "Contact parameter", Q_NULLPTR));
+        CHBEableCohesion->setText(QApplication::translate("DLG_HMCM", "Enable cohesion", Q_NULLPTR));
+        LRestitution->setText(QApplication::translate("DLG_HMCM", "Restitution", Q_NULLPTR));
+        LFriction->setText(QApplication::translate("DLG_HMCM", "Friction", Q_NULLPTR));
+        LRollingFriction->setText(QApplication::translate("DLG_HMCM", "Rolling friction", Q_NULLPTR));
+        LCohesion->setText(QApplication::translate("DLG_HMCM", "Cohesion", Q_NULLPTR));
+        CHBUSESTIFFNESSRATIO->setText(QApplication::translate("DLG_HMCM", "Use stiffness ratio", Q_NULLPTR));
+        LRatio->setText(QApplication::translate("DLG_HMCM", "Ratio", Q_NULLPTR));
+        PBOk->setText(QApplication::translate("DLG_HMCM", "Ok", Q_NULLPTR));
+        PBCancle->setText(QApplication::translate("DLG_HMCM", "Cancle", Q_NULLPTR));
     } // retranslateUi
 
 };

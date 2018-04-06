@@ -10,13 +10,13 @@ public:
 	neighborhood_cell(std::string _name, modeler* _md);
 	~neighborhood_cell();
 
-	virtual void detection();
-	virtual void cuDetection();
+	
+	virtual void detection(double *pos);
 
 	void reorderElements(bool isCpu);
 
 private:
-	
+	void _detection(VEC4D_PTR pos);
 	void reorderDataAndFindCellStart(unsigned int id, unsigned int begin, unsigned int end);
 };
 

@@ -37,13 +37,18 @@ void drivingConstraint::define(kinematicConstraint* kc, tDriving td, double val)
 			update_func = &drivingConstraint::updateEV;
 			ce_func = &drivingConstraint::vel_rev_CE;
 			init_e = kc->iMass()->getEP();
-			for (int i = 0; i < 4; i++){
-				if (mple_e(i))
-					use_p[3 + i] = true;
-				else
-					use_p[3 + i] = false;
-			}
+			use_p[3] = true;
 			maxnnz += 4;
+		}
+		if (kconst->constType() == TRANSLATIONAL) {
+			init_t = kc->iMass()->getPosition();
+			update_func = &drivingConstraint::updateV;
+			ce_func = &drivingConstraint::vel_tra_CE;
+			maxnnz += 3;
+			if (direction.x) use_p[0] = true;
+			if (direction.y) use_p[1] = true;
+			if (direction.z) use_p[2] = true;
+			//kc->iMass()->setVelocity(0.2 * direction);
 		}
 	}
 }
@@ -67,14 +72,29 @@ void drivingConstraint::updateEV(double time)
 // 	kconst->iMass()->setEP(new_ep);
 }
 
+void drivingConstraint::updateV(double time)
+{
+	double p = 0 + 0.2 * time;
+	VEC3D pos = p * direction;
+	kconst->iMass()->setPosition(init_t + pos);
+}
+
 double drivingConstraint::vel_rev_CE(double time)
 {
 	double pi = 0 + 0.2 * time;
 	double e0 = cos(0.5 * pi);
 	double v = kconst->iMass()->getEP().e0 - e0;
-// 	mass* m = kconst->iMass();
+// 	mass* m = kconst->iMass()rnr
 // 	EPD v1 = m->getEP() - (init_e + time * mple_e);
 	return v;//v1.length();
+}
+
+double drivingConstraint::vel_tra_CE(double time)
+{
+	VEC3D ne = VEC3D(init_t.x, 0, 0) + 0.2 * time * direction;
+	VEC3D ipos = kconst->iMass()->getPosition();
+	double out = ipos.x - ne.x;
+	return out;
 }
 
 double drivingConstraint::constraintEquation(double ct)

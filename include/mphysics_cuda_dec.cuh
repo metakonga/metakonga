@@ -112,10 +112,9 @@ void cu_calculateHashAndIndexForPolygonSphere(unsigned int* hash, unsigned int* 
 void cu_reorderDataAndFindCellStart(unsigned int* hash, unsigned int* index, unsigned int* cstart, unsigned int* cend, unsigned int* sorted_index, unsigned int np, unsigned int nsphere, unsigned int ncell);
 
 void cu_calculate_p2p(
-	const int tcm, double* pos, double* vel, double* acc, 
-	double* omega, double* alpha, 
-	double* force, double* moment, 
-	double* mass, double* iner, 
+	const int tcm, double* pos, double* vel, 
+	double* omega, double* force,
+	double* moment, double* mass, 
 	unsigned int* sorted_index, unsigned int* cstart, 
 	unsigned int* cend, contact_parameter* cp, unsigned int np);
 

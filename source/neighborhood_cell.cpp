@@ -31,13 +31,17 @@ void neighborhood_cell::reorderDataAndFindCellStart(unsigned int id, unsigned in
 	}
 }
 
-void neighborhood_cell::detection()
+void neighborhood_cell::_detection(VEC4D_PTR pos)
 {
-	VEC4D_PTR pos = md->particleSystem()->position();
+	//VEC4D_PTR pos = md->particleSystem()->position();
 	VEC4D *psph = NULL;
 	VEC3I cell3d;
-
-	for (unsigned int i = 0; i < md->numParticle(); i++){
+	unsigned int _np = 0;
+	if (md->particleSystem()->particleCluster().size())
+		_np = md->particleSystem()->particleCluster().size() * particle_cluster::perCluster();
+	else
+		_np = md->numParticle();
+	for (unsigned int i = 0; i < _np; i++){
 		cell3d = getCellNumber(pos[i].x, pos[i].y, pos[i].z);
 		cell_id[i] = getHash(cell3d);
 		body_id[i] = i;
@@ -54,12 +58,12 @@ void neighborhood_cell::detection()
 		sid += polys.at(po)->numIndex();
 	}
 
-	thrust::sort_by_key(cell_id, cell_id + nse, body_id);
+	thrust::sort_by_key(cell_id, cell_id + /*nse*/_np, body_id);
 	memset(cell_start, 0xffffffff, sizeof(unsigned int) * ng);
 	memset(cell_end, 0, sizeof(unsigned int)*ng);
 	unsigned int begin = 0, end = 0, id = 0;
 	bool ispass;
-	while (end++ != nse/*md->numParticle()*/){
+	while (end++ != _np/*md->numParticle()*/){
 		ispass = true;
 		id = cell_id[begin];
 		if (id != cell_id[end]){
@@ -72,18 +76,23 @@ void neighborhood_cell::detection()
 	}
 }
 
-void neighborhood_cell::cuDetection()
+void neighborhood_cell::detection(double *pos)
 {
-	//std::cout << "step 1" << std::endl;
-	cu_calculateHashAndIndex(d_cell_id, d_body_id, md->particleSystem()->cuPosition(), md->numParticle());
-	//std::cout << "step 2" << std::endl;
-	unsigned int sid = md->numParticle();
-	for (unsigned int i = 0; i < md->polyObjects().size(); i++){
-		cu_calculateHashAndIndexForPolygonSphere(d_cell_id, d_body_id, sid, md->polyObjects().at(i)->numIndex(), md->polyObjects().at(i)->deviceSphereSet());
+	if (md->solveDevice() == GPU)
+	{
+		unsigned int np = md->numParticle();
+		cu_calculateHashAndIndex(d_cell_id, d_body_id, pos, np);
+		//std::cout << "step 2" << std::endl;
+
+		for (unsigned int i = 0; i < md->polyObjects().size(); i++){
+			cu_calculateHashAndIndexForPolygonSphere(d_cell_id, d_body_id, np, md->polyObjects().at(i)->numIndex(), md->polyObjects().at(i)->deviceSphereSet());
+		}
+		//std::cout << "step 3" << std::endl;
+		cu_reorderDataAndFindCellStart(d_cell_id, d_body_id, d_cell_start, d_cell_end, d_sorted_id, md->numParticle(), md->numPolygonSphere(), ng);
+		//std::cout << "step 4" << std::endl
 	}
-	//std::cout << "step 3" << std::endl;
-	cu_reorderDataAndFindCellStart(d_cell_id, d_body_id, d_cell_start, d_cell_end, d_sorted_id, md->numParticle(), md->numPolygonSphere(), ng);
-	//std::cout << "step 4" << std::endl;
+	else
+		_detection((VEC4D_PTR)pos);
 }
 
 void neighborhood_cell::reorderElements(bool isCpu)

@@ -37,6 +37,7 @@ public:
 	//void bindingCommand(QPlainTextEdit* _pte) { pte = _pte; }
 	void setParticleSystem(particle_system* _ps) { ps = _ps; }
 	void setDatabase(database* _db) { db = _db; }
+	void setSolveDevice(tSolveDevice tsd) { tdevice = tsd; }
 	mass* makeMass(QString _name);
 	cube* makeCube(QString _name, tMaterial _mat, tRoll _roll);
 	plane* makePlane(QString _name, tMaterial _mat, tRoll _roll);
@@ -76,6 +77,7 @@ public:
 		return dynamic_cast<object_type>(objs.find(str).value());
 	}
 
+	bool solveDevice() { return tdevice; }
 	unsigned int numCube() { return ncube; }
 	unsigned int numPlane() { return nplane; }
 	unsigned int numCylinder() { return ncylinder; }
@@ -85,6 +87,7 @@ private:
 	VEC3D grav;
 	tUnit unit;								// unit
 	tGravity dg;	// direction of gravity
+	tSolveDevice tdevice;
 	unsigned int ncube;
 	unsigned int nplane;
 	unsigned int ncylinder;
