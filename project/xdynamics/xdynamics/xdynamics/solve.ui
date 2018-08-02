@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DLG_SOLVE</class>
+ <widget class="QDialog" name="DLG_SOLVE">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>267</width>
+    <height>164</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Simulation</string>
+  </property>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>50</y>
+     <width>245</width>
+     <height>74</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QLabel" name="L_TimeStep">
+      <property name="text">
+       <string>Time step</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="LE_TimeStep"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="L_SaveStep">
+      <property name="text">
+       <string>Save step</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLineEdit" name="LE_SaveStep"/>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="L_SimulationTime">
+      <property name="text">
+       <string>Simulation time</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QLineEdit" name="LE_SimulationTime"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>130</y>
+     <width>158</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QPushButton" name="PB_Ok">
+      <property name="text">
+       <string>Ok</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="PB_Cancle">
+      <property name="text">
+       <string>Cancle</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>20</y>
+     <width>241</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QRadioButton" name="RB_CPU">
+      <property name="text">
+       <string>CPU Process</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QRadioButton" name="RB_GPU">
+      <property name="text">
+       <string>GPU Process</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

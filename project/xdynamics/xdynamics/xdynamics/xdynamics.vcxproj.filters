@@ -104,12 +104,6 @@
     <ClCompile Include="GeneratedFiles\qrc_xdynamics.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_ccDialog.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_ccDialog.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_cubeDialog.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -122,46 +116,16 @@
     <ClCompile Include="GeneratedFiles\Release\moc_cylinderDialog.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_ExportDialog.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_ExportDialog.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_massDialog.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_massDialog.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_newDialog.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_newDialog.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_particleDialog.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_particleDialog.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_planeDialog.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Release\moc_planeDialog.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_solveDialog.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_solveDialog.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_msimulation.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_msimulation.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_contactConstant.cpp">
@@ -176,12 +140,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_glwidget.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_objProperty.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_objProperty.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_solveProcess.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -191,23 +149,8 @@
     <ClCompile Include="..\..\..\..\source\collision\collision_particles_polygonObject.cpp">
       <Filter>Source Files\collision</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\source\collision\collision.cpp">
-      <Filter>Source Files\collision</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\source\collision\collision_particles_cube.cpp">
-      <Filter>Source Files\collision</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\source\collision\collision_particles_cylinder.cpp">
       <Filter>Source Files\collision</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\source\collision\collision_particles_particles.cpp">
-      <Filter>Source Files\collision</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\source\collision\collision_particles_plane.cpp">
-      <Filter>Source Files\collision</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\source\ccDialog.cpp">
-      <Filter>Source Files\dialog</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\source\cubeDialog.cpp">
       <Filter>Source Files\dialog</Filter>
@@ -236,40 +179,7 @@
     <ClCompile Include="..\..\..\..\source\solveDialog.cpp">
       <Filter>Source Files\dialog</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\source\kinematicConstraint.cpp">
-      <Filter>Source Files\mbd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\source\revoluteConstratin.cpp">
-      <Filter>Source Files\mbd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\source\object\polygonObject.cpp">
-      <Filter>Source Files\object</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\source\object\cube.cpp">
-      <Filter>Source Files\object</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\source\object\cylinder.cpp">
-      <Filter>Source Files\object</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\source\object\mass.cpp">
-      <Filter>Source Files\object</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\source\object\object.cpp">
-      <Filter>Source Files\object</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\source\object\plane.cpp">
-      <Filter>Source Files\object</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\source\simulation\dem_simulation.cpp">
-      <Filter>Source Files\simulation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\source\simulation\dembd_simulation.cpp">
-      <Filter>Source Files\simulation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\source\simulation\mbd_simulation.cpp">
-      <Filter>Source Files\simulation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\source\simulation\msimulation.cpp">
       <Filter>Source Files\simulation</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_contactCoefficientTable.cpp">
@@ -287,16 +197,10 @@
     <ClCompile Include="..\..\..\..\source\grid_base.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\source\modeler.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\source\neighborhood_cell.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\source\objProperty.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\source\particle_system.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\source\solveProcess.cpp">
@@ -304,9 +208,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\source\velocity_verlet.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\source\glwidget.cpp">
-      <Filter>Source Files\display</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\source\shader.cpp">
       <Filter>Source Files\display</Filter>
@@ -335,12 +236,6 @@
     <ClCompile Include="..\..\..\..\source\hmcmDialog.cpp">
       <Filter>Source Files\dialog</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_hmcmDialog.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_hmcmDialog.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\source\widget\database.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -349,12 +244,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\..\source\particle_cluster.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\source\translationalConstraint.cpp">
-      <Filter>Source Files\mbd</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\..\source\drivingConstraint.cpp">
-      <Filter>Source Files\mbd</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_database.cpp">
       <Filter>Generated Files\Debug</Filter>
@@ -374,6 +263,153 @@
     <ClCompile Include="..\..\..\..\source\dem_integrator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\simulation.cpp">
+      <Filter>Source Files\simulation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\dem_model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\object\cube.cpp">
+      <Filter>Source Files\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\object\cylinder.cpp">
+      <Filter>Source Files\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\object\object.cpp">
+      <Filter>Source Files\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\object\plane.cpp">
+      <Filter>Source Files\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\object\polygonObject.cpp">
+      <Filter>Source Files\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\MultibodyDynamics\fixedConstraint.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\MultibodyDynamics\kinematicConstraint.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\MultibodyDynamics\mbd_model.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\MultibodyDynamics\multibodyDynamics.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\MultibodyDynamics\pointMass.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\MultibodyDynamics\revoluteConstratin.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\MultibodyDynamics\rigidBody.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\MultibodyDynamics\sphericalConstraint.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\MultibodyDynamics\springDamperModel.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\MultibodyDynamics\translationalConstraint.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\MultibodyDynamics\universalConstraint.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\glwidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\geometryObjects.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\modelManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\xDynamicsSolver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\resultStorage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\MultibodyDynamics\cableConstraint.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\MultibodyDynamics\gearConstraint.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\MultibodyDynamics\axialRotationForce.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\MultibodyDynamics\forceElement.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\colors.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_particleDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_particleDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\particleManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\messageBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\contactPairDialog.cpp">
+      <Filter>Source Files\dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\collision\contact.cpp">
+      <Filter>Source Files\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\collision\contact_particles_cube.cpp">
+      <Filter>Source Files\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\collision\contact_particles_particles.cpp">
+      <Filter>Source Files\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\collision\contact_particles_plane.cpp">
+      <Filter>Source Files\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_contactPairDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_contactPairDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_solveDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_solveDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\contactManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\errors.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_xDynamicsSolver.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_xDynamicsSolver.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\importDialog.cpp">
+      <Filter>Source Files\dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_importDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_importDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="xdynamics.h">
@@ -390,9 +426,6 @@
     </CustomBuild>
     <CustomBuild Include="xdynamics.ui">
       <Filter>Form Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\..\include\ccDialog.h">
-      <Filter>Header Files\dialog</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\..\..\include\cubeDialog.h">
       <Filter>Header Files\dialog</Filter>
@@ -418,9 +451,6 @@
     <CustomBuild Include="..\..\..\..\include\solveDialog.h">
       <Filter>Header Files\dialog</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\..\..\include\simulation\msimulation.h">
-      <Filter>Header Files\simulation</Filter>
-    </CustomBuild>
     <CustomBuild Include="..\..\..\..\include\contactConstant.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
@@ -432,9 +462,6 @@
     </CustomBuild>
     <CustomBuild Include="..\..\..\..\include\contactCoefficientTable.h">
       <Filter>Header Files\table</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\..\include\glwidget.h">
-      <Filter>Header Files\display</Filter>
     </CustomBuild>
     <CustomBuild Include="HMCM.ui">
       <Filter>Form Files</Filter>
@@ -451,6 +478,36 @@
     <CustomBuild Include="..\..\..\..\include\cmdWindow.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\glwidget.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="makeCube.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="makePlane.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="makeParticle.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="contactPair.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\contactPairDialog.h">
+      <Filter>Header Files\dialog</Filter>
+    </CustomBuild>
+    <CustomBuild Include="solve.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\xDynamicsSolver.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="import.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\importDialog.h">
+      <Filter>Header Files\dialog</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_newModel.h">
@@ -462,55 +519,13 @@
     <ClInclude Include="GeneratedFiles\ui_xdynamics.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\collision.h">
-      <Filter>Header Files\collision</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\collision_particles_cube.h">
-      <Filter>Header Files\collision</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\include\collision_particles_cylinder.h">
-      <Filter>Header Files\collision</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\collision_particles_particles.h">
-      <Filter>Header Files\collision</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\collision_particles_plane.h">
       <Filter>Header Files\collision</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\collision_particles_polygonObject.h">
       <Filter>Header Files\collision</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\kinematicConstraint.h">
-      <Filter>Header Files\mbd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\revoluteConstraint.h">
-      <Filter>Header Files\mbd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\object\polygonObject.h">
-      <Filter>Header Files\object</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\object\cube.h">
-      <Filter>Header Files\object</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\object\cylinder.h">
-      <Filter>Header Files\object</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\object\mass.h">
-      <Filter>Header Files\object</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\object\object.h">
-      <Filter>Header Files\object</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\object\plane.h">
-      <Filter>Header Files\object</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\include\simulation\dem_simulation.h">
-      <Filter>Header Files\simulation</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\simulation\dembd_simulation.h">
-      <Filter>Header Files\simulation</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\simulation\mbd_simulation.h">
       <Filter>Header Files\simulation</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\checkFunctions.h">
@@ -522,22 +537,13 @@
     <ClInclude Include="..\..\..\..\include\materialLibrary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\modeler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\include\mphysics_numeric.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\mphysics_types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\msgBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\include\neighborhood_cell.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\particle_system.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\timer.h">
@@ -579,9 +585,6 @@
     <ClInclude Include="..\..\..\..\include\shader.h">
       <Filter>Header Files\display</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\colors.h">
-      <Filter>Header Files\display</Filter>
-    </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_HMCM.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
@@ -591,17 +594,143 @@
     <ClInclude Include="..\..\..\..\include\particle_cluster.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\include\translationalConstraint.h">
-      <Filter>Header Files\mbd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\drivingConstraint.h">
-      <Filter>Header Files\mbd</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\include\vcylinder.h">
       <Filter>Header Files\display</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\dem_integrator.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\simulation.h">
+      <Filter>Header Files\simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\dem_model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\geometryObjects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\object\cube.h">
+      <Filter>Header Files\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\object\cylinder.h">
+      <Filter>Header Files\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\object\object.h">
+      <Filter>Header Files\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\object\plane.h">
+      <Filter>Header Files\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\object\polygonObject.h">
+      <Filter>Header Files\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\MultibodyDynamics\fixedConstraint.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\MultibodyDynamics\kinematicConstraint.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\MultibodyDynamics\mbd_model.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\MultibodyDynamics\multibodyDynamics.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\MultibodyDynamics\pointMass.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\MultibodyDynamics\revoluteConstraint.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\MultibodyDynamics\rigidBody.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\MultibodyDynamics\sphericalConstraint.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\MultibodyDynamics\springDamperModel.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\MultibodyDynamics\translationalConstraint.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\MultibodyDynamics\universalConstraint.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\colors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_makeCube.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_makePlane.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\Objects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\modelManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\particleManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\resultStorage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\MultibodyDynamics\cableConstraint.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\MultibodyDynamics\axialRotationForce.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\MultibodyDynamics\gearConstraint.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\MultibodyDynamics\forceElement.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_makeParticle.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\dialogs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\messageBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_contactPair.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\contact.h">
+      <Filter>Header Files\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\contact_particles_cube.h">
+      <Filter>Header Files\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\contact_particles_particles.h">
+      <Filter>Header Files\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\contact_particles_plane.h">
+      <Filter>Header Files\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_solve.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\contactManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\errors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_import.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

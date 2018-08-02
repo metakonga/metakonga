@@ -1,18 +1,31 @@
 #include "cubeDialog.h"
-#include "mphysics_types.h"
 #include "msgBox.h"
-#include "checkFunctions.h"
-#include "modeler.h"
-#include "cube.h"
+#include "geometryObjects.h"
 #include <QtWidgets>
+#include "types.h"
 
-
-cubeDialog::cubeDialog()
-	: isDialogOk(false)
+cubeDialog::cubeDialog(QWidget* parent)
+	: QDialog(parent)
 {
-	LMaterial = new QLabel("Material");
-	CBMaterial = new QComboBox;
-	CBMaterial->addItems(getMaterialList());
+	setupUi(this);
+	CB_Type->addItems(getMaterialList());
+	int mt = CB_Type->currentIndex();
+	cmaterialType cmt = getMaterialConstant(mt);
+	LE_Youngs->setText(QString("%1").arg(cmt.youngs));
+	LE_PoissonRatio->setText(QString("%1").arg(cmt.poisson));
+	LE_Density->setText(QString("%1").arg(cmt.density));
+	LE_ShearModulus->setText(QString("%1").arg(cmt.shear));
+	name = "Cube" + QString("%1").arg(geometryObjects::nCube);
+	LE_Name->setText(name);
+	LE_StartPoint->setText("0.0 0.0 0.0");
+	LE_EndPoint->setText("0.2 0.2 0.2");
+	LE_Youngs->setReadOnly(true);
+	LE_PoissonRatio->setReadOnly(true);
+	LE_Density->setReadOnly(true);
+	LE_ShearModulus->setReadOnly(true);
+	connect(PB_Ok, SIGNAL(clicked()), this, SLOT(Click_ok()));
+	connect(PB_Cancle, SIGNAL(clicked()), this, SLOT(Click_cancel()));
+	connect(CB_Type, SIGNAL(currentIndexChanged(int)), this, SLOT(changeComboBox(int)));
 }
 
 cubeDialog::~cubeDialog()
@@ -20,110 +33,68 @@ cubeDialog::~cubeDialog()
 	//this->
 }
 
-cube* cubeDialog::callDialog(modeler *md)
+void cubeDialog::changeComboBox(int idx)
 {
 	
-		//cubeDialog = new QDialog;
-	QString nm;
-	QTextStream(&nm) << "cube" << md->numCube();
-	this->setObjectName("Cube Dialog");
-	LName = new QLabel("Name");
-	LStartPoint = new QLabel("Start point");
-	LEndPoint = new QLabel("End point");
-	
-	LEName = new QLineEdit;
-	LEName->setText(nm);
-	LEStartPoint = new QLineEdit;
-	LEEndPoint = new QLineEdit;
-	
-	cubeLayout = new QGridLayout;
-	
-	PBOk = new QPushButton("OK");
-	PBCancel = new QPushButton("Cancel");
-	connect(PBOk, SIGNAL(clicked()), this, SLOT(Click_ok()));
-	connect(PBCancel, SIGNAL(clicked()), this, SLOT(Click_cancel()));
-	cubeLayout->addWidget(LMaterial, 0, 0);
-	cubeLayout->addWidget(CBMaterial, 0, 1, 1, 2);
-	cubeLayout->addWidget(LName, 1, 0);
-	cubeLayout->addWidget(LEName, 1, 1, 1, 2);
-	cubeLayout->addWidget(LStartPoint, 2, 0);
-	cubeLayout->addWidget(LEStartPoint, 2, 1, 1, 2);
-	cubeLayout->addWidget(LEndPoint, 3, 0);
-	cubeLayout->addWidget(LEEndPoint, 3, 1, 1, 2);
-	cubeLayout->addWidget(PBOk, 4, 0);
-	cubeLayout->addWidget(PBCancel, 4, 1);
-	this->setLayout(cubeLayout);
-	
-	this->exec();
-	cube *c = NULL;
-	if (isDialogOk)
+	if (idx == USER_INPUT)
 	{
-		c = md->makeCube(this->objectName(), tMaterial(CBMaterial->currentIndex()), ROLL_BOUNDARY);
-		QStringList chList = LEStartPoint->text().split(" ");
-		double minPoint[3] = { chList.at(0).toDouble(), chList.at(1).toDouble(), chList.at(2).toDouble() };
-		chList = LEEndPoint->text().split(" ");
-		double maxPoint[3] = { chList.at(0).toDouble(), chList.at(1).toDouble(), chList.at(2).toDouble() };
-		c->define(VEC3D(minPoint), VEC3D(maxPoint));
+		LE_Youngs->setReadOnly(false);
+		LE_PoissonRatio->setReadOnly(false);
+		LE_Density->setReadOnly(false);
+		LE_ShearModulus->setReadOnly(false);
 	}
-
-	return c;
+	else
+	{
+		cmaterialType cmt;
+		cmt = getMaterialConstant(idx);
+		LE_Youngs->setText(QString("%1").arg(cmt.youngs));
+		LE_PoissonRatio->setText(QString("%1").arg(cmt.poisson));
+		LE_Density->setText(QString("%1").arg(cmt.density));
+		LE_ShearModulus->setText(QString("%1").arg(cmt.shear));
+		LE_Youngs->setReadOnly(true);
+		LE_PoissonRatio->setReadOnly(true);
+		LE_Density->setReadOnly(true);
+		LE_ShearModulus->setReadOnly(true);
+	}
 }
 
 void cubeDialog::Click_ok()
 {
-	if (LEStartPoint->text().isEmpty()){
-		msgBox("Value of start point is empty!!", QMessageBox::Critical);
-	}
-	else if (LEEndPoint->text().isEmpty()){
-		msgBox("Value of end point is empty!!", QMessageBox::Critical);
-	}
+// 	if (LEStartPoint->text().isEmpty()){
+// 		msgBox("Value of start point is empty!!", QMessageBox::Critical);
+// 	}
+// 	else if (LEEndPoint->text().isEmpty()){
+// 		msgBox("Value of end point is empty!!", QMessageBox::Critical);
+// 	}
+// 
+// 	if (!checkParameter3(LEStartPoint->text())){
+// 		msgBox("Start point is wrong data.", QMessageBox::Critical);
+// 		return;
+// 	}
+// 	else if (!checkParameter3(LEEndPoint->text())){
+// 		msgBox("End point is wrong data.", QMessageBox::Critical);
+// 		return;
+// 	}
 
-	if (!checkParameter3(LEStartPoint->text())){
-		msgBox("Start point is wrong data.", QMessageBox::Critical);
-		return;
-	}
-	else if (!checkParameter3(LEEndPoint->text())){
-		msgBox("End point is wrong data.", QMessageBox::Critical);
-		return;
-	}
+	name = LE_Name->text();
+	type = CB_Type->currentIndex();
+	youngs = LE_Youngs->text().toDouble();
+	poisson = LE_PoissonRatio->text().toDouble();
+	density = LE_Density->text().toDouble();
+	shear = LE_ShearModulus->text().toDouble();
+	/*c = md->makeCube(this->objectName(), tMaterial(CBMaterial->currentIndex()), ROLL_BOUNDARY);*/
+	QStringList chList = LE_StartPoint->text().split(" ");
+	start = VEC3D(chList.at(0).toDouble(), chList.at(1).toDouble(), chList.at(2).toDouble());
+	chList = LE_EndPoint->text().split(" ");
+	end = VEC3D(chList.at(0).toDouble(), chList.at(1).toDouble(), chList.at(2).toDouble());
+	/*c->define(start);*/
 
-	this->setObjectName(LEName->text());// LEName->text();
-// 	mtype = material_str2enum(CBMaterial->currentText().toStdString());
-// 	material = getMaterialConstant(mtype);
-
-// 	QStringList chList = LEStartPoint->text().split(" ");
-// 	minPoint[0] = chList.at(0).toFloat();
-// 	minPoint[1] = chList.at(1).toFloat();
-// 	minPoint[2] = chList.at(2).toFloat();
-// 
-// 	chList = LEEndPoint->text().split(" ");
-// 	maxPoint[0] = chList.at(0).toFloat();
-// 	maxPoint[1] = chList.at(1).toFloat();
-// 	maxPoint[2] = chList.at(2).toFloat();
-// 
-// 	width = maxPoint[0] - minPoint[0];
-// 	height = maxPoint[1] - minPoint[1];
-// 	depth = maxPoint[2] - minPoint[2];
-// 
-// 	vertice[0] = minPoint[0];		   vertice[1] = minPoint[1];		   vertice[2] = minPoint[2];
-// 	vertice[3] = minPoint[0];		   vertice[4] = minPoint[1] + height; vertice[5] = minPoint[2];
-// 	vertice[6] = minPoint[0];		   vertice[7] = minPoint[1];		   vertice[8] = minPoint[2] + depth;
-// 	vertice[9] = minPoint[0];		   vertice[10] = minPoint[1] + height; vertice[11] = minPoint[2] + depth;
-// 	vertice[12] = minPoint[0] + width; vertice[13] = minPoint[1];		   vertice[14] = minPoint[2] + depth;
-// 	vertice[15] = minPoint[0] + width; vertice[16] = minPoint[1] + height; vertice[17] = minPoint[2] + depth;
-// 	vertice[18] = minPoint[0] + width; vertice[19] = minPoint[1];		   vertice[20] = minPoint[2];
-// 	vertice[21] = minPoint[0] + width; vertice[22] = minPoint[1] + height; vertice[23] = minPoint[2];
-// 
-// 	this->close();
-// 
-// 	//delete cubeDialog;
-// 	//cubeDialog = NULL;
 	this->close();
-	isDialogOk = true;
+	this->setResult(QDialog::Accepted);
 }
 
 void cubeDialog::Click_cancel()
 {
 	this->close();
-	isDialogOk = false;
+	this->setResult(QDialog::Rejected);
 }

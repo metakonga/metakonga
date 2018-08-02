@@ -45,14 +45,16 @@ public:
 	GLWidget(int argc, char** argv, QWidget *parent = 0);
 	~GLWidget();
 
-	void setModeler(modeler* _md) { md = _md; }
+	static GLWidget* GLObject();
+
+//	void setModeler(modeler* _md) { md = _md; }
 	void makeCube(cube* c);
 	void makePlane(plane* p);
 	void makeLine();
 	void makeCylinder(cylinder* cy);
-	void makeParticle(particle_system* ps);
+	void makeParticle(double* pos, unsigned int n);
 	void makePolygonObject(polygonObject* po);
-	bool change(QString& fp, tChangeType ct, tFileType ft);
+//	bool change(QString& fp, tChangeType ct, tFileType ft);
 	void makeMassCoordinate(QString& _name);
 
 	int xRotation() const { return xRot; }
@@ -67,7 +69,6 @@ public:
 	void setViewObject(viewObjectType viewType) { votype = viewType; };
 	int getWindowHeight() { return wHeight; }
 	bool is_set_particle() { return isSetParticle; }
-	void openSph(QString& fl);
 	void openMbd(QString& fl);
 	void openResults(QStringList& fl);
 	void ChangeDisplayOption(int oid);
@@ -76,7 +77,7 @@ public:
 	vobject* getVObjectFromName(QString name);
 	vpolygon* getVPolyObjectFromName(QString name);
 	projectionType changeProjectionViewMode() { protype = protype == ORTHO_PROJECTION ? PERSPECTIVE_PROJECTION : ORTHO_PROJECTION; return protype; }
-	bool changePaletteMode() { sketch.isSketching = sketch.isSketching ? false : true; return sketch.isSketching; }
+//	bool changePaletteMode() { sketch.isSketching = sketch.isSketching ? false : true; return sketch.isSketching; }
 	void glObjectClear();
 	void sketchingMode();
 
@@ -148,13 +149,13 @@ private:
 
 	float times[1000];
 
-	GLenum drawingMode;
-	sketchParameters sketch;
+
+//	sketchParameters sketch;
 
 	viewObjectType votype;
 	projectionType protype;
 	QMap<QString, vobject*> v_objs;
-	QMap<QString, vpolygon*> v_pobjs;
+	//QMap<QString, vpolygon*> v_pobjs;
 	QMap<int, void*> v_wobjs;
 	vparticles *vp;
 	QStringList outputNameList;
@@ -162,10 +163,7 @@ private:
 	float maxViewPoint[3];
 	float minViewPoint[3];
 
-	modeler *md;
-// 	QGraphicsRectItem* m_rectHovered;
-// 	QGraphicsSimpleTextItem* m_coordHoverX;
-// 	QGraphicsSimpleTextItem* m_coordHoverY;
+	
 
 signals:
 	void mySignal();

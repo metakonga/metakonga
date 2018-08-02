@@ -1,17 +1,18 @@
 #ifndef DEM_INTEGRATOR_H
 #define DEM_INTEGRATOR_H
 
-class modeler;
+//class modeler;
 
 class dem_integrator
 {
 public:
+	enum Type { VELOCITY_VERLET };
 	dem_integrator();
-	dem_integrator(modeler* _md);
+	dem_integrator(Type t);
 	virtual ~dem_integrator();
 
-	//virtual void updatePosition(double dt) = 0;
-	//virtual void updateVelocity(double dt) = 0;
+	Type integrationType() { return type; }
+
 	virtual void updatePosition(double* dpos, double* dvel, double* dacc, unsigned int np) = 0;
 	virtual void updateVelocity(
 		  double *dvel, double* dacc
@@ -20,8 +21,7 @@ public:
 		, double *dmass, double* dinertia, unsigned int np) = 0;
 
 protected:
-	double dt;
-	modeler *md;
+	Type type;
 };
 
 #endif

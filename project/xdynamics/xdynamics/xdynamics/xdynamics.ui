@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1010</width>
-    <height>802</height>
+    <height>801</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,7 +29,7 @@
          <x>0</x>
          <y>0</y>
          <width>990</width>
-         <height>717</height>
+         <height>728</height>
         </rect>
        </property>
       </widget>
@@ -48,13 +48,13 @@
    </property>
    <widget class="QMenu" name="menu">
     <property name="title">
-     <string>기능</string>
+     <string>File</string>
     </property>
     <widget class="QMenu" name="menuImport">
      <property name="title">
       <string>Import</string>
      </property>
-     <addaction name="actionMilkShape_3D_ASCII"/>
+     <addaction name="Import_MilkShape_3D_ASCII"/>
     </widget>
     <widget class="QMenu" name="menuExport">
      <property name="title">
@@ -85,17 +85,6 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <widget class="QToolBar" name="secToolBar">
-   <property name="windowTitle">
-    <string>toolBar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>true</bool>
-   </attribute>
-  </widget>
   <action name="actionChange_Shape">
    <property name="checkable">
     <bool>true</bool>
@@ -104,7 +93,7 @@
     <string>Change Shape</string>
    </property>
   </action>
-  <action name="actionMilkShape_3D_ASCII">
+  <action name="Import_MilkShape_3D_ASCII">
    <property name="text">
     <string>MilkShape 3D ASCII</string>
    </property>

@@ -5,6 +5,8 @@ int vobject::count = -1;
 vobject::vobject()
 	: outPos(NULL)
 	, outRot(NULL)
+	, drawingMode(GL_FILL)
+	, isSelected(false)
 {
 	count++;
 	id = count;
@@ -15,6 +17,8 @@ vobject::vobject(QString& _name)
 	: nm(_name)
 	, outPos(NULL)
 	, outRot(NULL)
+	, drawingMode(GL_FILL)
+	, isSelected(false)
 {
 	count++;
 	id = count;

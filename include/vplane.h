@@ -20,6 +20,7 @@ public:
 	bool makePlaneGeometry(float l1, VEC3F& xw, VEC3F& pa, VEC3F& p2, VEC3F& u1);
 
 private:
+	unsigned int glHiList;
 	unsigned int glList;
 	float p0[3];
 	float p1[3];

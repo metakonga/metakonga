@@ -1,61 +1,56 @@
 #include "newDialog.h"
-#include "ui_newModel.h"
+#include "model.h"
 #include <QtWidgets>
 
 newDialog::newDialog(QWidget* parent)
 	: QDialog(parent)
-	, ui(new Ui::newModelDialog)
-	, isDialogOk(false)
+	, isBrowser(false)
 {
-	ui->setupUi(this);
-	connect(ui->PBOK, SIGNAL(clicked()), this, SLOT(Click_ok()));
-	connect(ui->PBBrowse, SIGNAL(clicked()), this, SLOT(Click_browse()));
-	_path = kor(getenv("USERPROFILE"));
-	_path += "/Documents/xdynamics/";
-	_name = "Model1";
-	if (!QDir(_path).exists())
-		QDir().mkdir(_path);
+	setupUi(this);
+	connect(PB_Ok, SIGNAL(clicked()), this, SLOT(Click_ok()));
+	connect(PB_Browse, SIGNAL(clicked()), this, SLOT(Click_browse()));
+	path = model::path + "/";// kor(getenv("USERPROFILE"));
+	//_path += "/Documents/xdynamics/";
+	name = "Model1";
+	if (!QDir(path).exists())
+		QDir().mkdir(path);
+	LE_Name->setText(name);
 	//QFileDialog::getExistingDirectory(this, "", _path);
-	ui->CBGravity->setCurrentIndex(4);
+	CB_GravityDirection->setCurrentIndex(4);
 }
 
 newDialog::~newDialog()
 {
-	disconnect(ui->PBOK);
-	disconnect(ui->PBBrowse);
-	if (ui) delete ui; ui = NULL;
-}
-
-bool newDialog::callDialog()
-{
-	ui->LEName->setText(_name);
-	this->exec();
-
-	return isDialogOk;
+	//disconnect(PB_Ok);
+	//disconnect(PBBrowse);
+	//if (ui) delete ui; ui = NULL;
 }
 
 void newDialog::Click_ok()
 {
-	_name = ui->LEName->text();
+	name = LE_Name->text();
 	//_path = ui->LEPath->text();
-	_unit = (tUnit)ui->CBUnit->currentIndex();
-	_dir_g = (tGravity)ui->CBGravity->currentIndex();
+	unit = (unit_type)CB_Unit->currentIndex();
+	dir_g = (gravity_direction)CB_GravityDirection->currentIndex();
 	//_path += "/";
 	this->close();
-	isDialogOk = true;
+	this->setResult(QDialog::Accepted);
 }
 
 void newDialog::Click_browse()
 {
-	QString fileName = QFileDialog::getOpenFileName(this, tr("open"), _path, tr("Model File(*.mde)"));
+	QString fileName = QFileDialog::getOpenFileName(this, tr("open"), path, tr("Model File(*.xdm)"));
 	if (!fileName.isEmpty()){
-		_fullPath = fileName;
+		fullPath = fileName;
 		int begin = fileName.lastIndexOf("/");
 		int end = fileName.lastIndexOf(".");
-		_name = fileName.mid(begin + 1, end - begin - 1);
-		_path = fileName.mid(0, begin + 1);
-		this->close();
+		name = fileName.mid(begin + 1, end - begin - 1);
+		path = fileName.mid(0, begin + 1);
 	}
-	//this->close();
-	isDialogOk = false;
+	else
+		return;
+	fullPath = fileName;
+	isBrowser = true;
+	this->close();
+	this->setResult(QDialog::Accepted);
 }

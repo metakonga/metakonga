@@ -5,10 +5,7 @@
 #include <QLineEdit>
 #include <QTimer>
 
-
 #include <math.h>
-#include "mphysics_types.h"
-//#include "gl/freeglut.h"
 
 #include "cube.h"
 #include "vcube.h"
@@ -17,16 +14,19 @@
 #include "vpolygon.h"
 #include "cylinder.h"
 #include "vcylinder.h"
-#include "particle_system.h"
+#include "particleManager.h"
 #include "vparticles.h"
 #include "polygonObject.h"
-#include "modeler.h"
+#include "geometryObjects.h"
 #include "vcontroller.h"
+#include "modelManager.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
 #define METER 1000
+
+GLWidget* ogl;
 
 GLuint makeCubeObject(int* index, float* vertex)
 {
@@ -48,12 +48,6 @@ GLuint makeCubeObject(int* index, float* vertex)
 	return list;
 }
 
-GLfloat LightAmbient[] = { 0.392157f, 0.007843f, 0.039216f, 1.0f };
-GLfloat LightDiffuse[] = { 0.643137f, 0.988235f, 0.611765f, 1.0f };
-GLfloat LightSpecular[] = { 0.f, 0.f, 0.f, 1.0f };
-GLfloat Lightemissive[] = { 0.f, 0.f, 0.f, 1.0f };
-GLfloat LightPosition[] = { 1.0f, 1.0f, -1.0f, 1.0f };
-GLfloat LightPosition2[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 // GLfloat LightAmbient[] = { 0.1f, 0.1f, 0.1f, 1.0f };
 // GLfloat LightDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 // GLfloat LightPosition[] = { 10.0f, 10.0f, -10.0f, 1.0f };
@@ -64,6 +58,7 @@ GLWidget::GLWidget(int argc, char** argv, QWidget *parent)
 	, vp(NULL)
 	//, Doc(_Doc)
 {
+	ogl = this;
 	gridSize = 0.1f;
 	viewOption = 0;
 	xRot =  0;
@@ -77,8 +72,8 @@ GLWidget::GLWidget(int argc, char** argv, QWidget *parent)
 	trans_y =  0;
 	IconScale = 0.1;
 	isSetParticle = false;
-	sketch = { 0, };
-	sketch.space = 0.02;
+// 	sketch = { 0, };
+// 	sketch.space = 0.02;
 	//particle_ptr = NULL;
 	QTimer *timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this, SLOT(updateGL()));
@@ -102,7 +97,7 @@ GLWidget::GLWidget(int argc, char** argv, QWidget *parent)
 	//selectedIndex = -1;
 	votype = ALL_DISPLAY;
 	//glewInit();
-	drawingMode = GL_LINE;
+	//drawingMode = GL_LINE;
 	vglew::vglew(argc, argv);
 	setFocusPolicy(Qt::StrongFocus);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -127,9 +122,14 @@ GLWidget::~GLWidget()
 	glObjectClear();
 }
 
+GLWidget* GLWidget::GLObject()
+{
+	return ogl;
+}
+
 void GLWidget::glObjectClear()
 {
-	qDeleteAll(v_pobjs);
+//	qDeleteAll(v_pobjs);
 	qDeleteAll(v_objs);
 	if (vp) delete vp; vp = NULL;
 }
@@ -169,6 +169,7 @@ void GLWidget::ShowContextMenu(const QPoint& pos)
 	QPoint globalPos = this->mapToGlobal(pos);
 	QMenu myMenu;
 	QList<QMenu*> menus;
+	vobject* vobj = NULL;
 	if (selectedIndice.size())
 	{
 		QString name;
@@ -176,47 +177,58 @@ void GLWidget::ShowContextMenu(const QPoint& pos)
 		{
 			
 			unsigned int id = selectedIndice.at(i);
-			if (id < 1000){
-				vobject* vobj = (vobject*)(v_wobjs[id]);
-				name = vobj->name();
-			}
-			else{
-				vpolygon* vpobj = (vpolygon*)(v_wobjs[id]);
-				name = vpobj->name();
-			}
+			//if (id < 1000){
+			vobj = static_cast<vobject*>(v_wobjs[id]);
+			name = vobj->name();
+			//}
+// 			else{
+// 				vpolygon* vpobj = (vpolygon*)(v_wobjs[id]);
+// 				name = vpobj->name();
+// 			}
 			QMenu *subMenu = new QMenu(name);
 			subMenu->addAction("Delete");
 			subMenu->addAction("Property");
 			myMenu.addMenu(subMenu);
 			menus.push_back(subMenu);
 		}
+		myMenu.addSeparator();
+		myMenu.addAction("Wireframe");
+		myMenu.addAction("Solid");
+		myMenu.addAction("Shade");
 	}
-	myMenu.addSeparator();
-	myMenu.addAction("Wireframe");
-	myMenu.addAction("Solid");
-	myMenu.addAction("Shade");
-	
+
 	QAction *selectedItem = myMenu.exec(globalPos);
 	
-	if (selectedItem){
+	if (selectedItem && vobj){
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
 		QString txt = selectedItem->text();
 		if (txt == "Wireframe"){
-			drawingMode = GL_LINE;
-			glDisable(GL_BLEND);
+			vobj->setDrawingMode(GL_LINE);
+			//drawingMode = GL_LINE;
+		//	glDisable(GL_BLEND);
 		}
 		else if (txt == "Solid"){
-			drawingMode = GL_FILL;
-			glDisable(GL_BLEND);
+			vobj->setDrawingMode(GL_FILL);
+		//	drawingMode = GL_FILL;
+		//	glDisable(GL_BLEND);
 		}
 		else if (txt == "Shade"){
-			drawingMode = GL_FILL;
 			glEnable(GL_BLEND);
+			glDisable(GL_DEPTH_TEST);
+			glDepthFunc(GL_LEQUAL);
+			vobj->setDrawingMode(GL_FILL);
+		//	drawingMode = GL_FILL;
+			
 		}
 		else{	
 			QString pmenuTitle = ((QMenu*)selectedItem->parentWidget())->title();
 			if (txt == "Delete"){
-				md->actionDelete(pmenuTitle);
-				this->actionDelete(pmenuTitle);
+				actionDelete(pmenuTitle);
+				modelManager::MM()->ActionDelete(pmenuTitle);
+// 				md->actionDelete(pmenuTitle);
+// 				this->actionDelete(pmenuTitle);
 			}
 			else if (txt == "Property"){
 
@@ -231,41 +243,51 @@ void GLWidget::actionDelete(const QString& tg)
 	vobject* vobj = v_objs.take(tg);
 	if (vobj)
 		delete vobj;
-	vpolygon* pobj = v_pobjs.take(tg);
-	if (pobj)
-		delete pobj;	
+// 	vpolygon* pobj = v_pobjs.take(tg);
+// 	if (pobj)
+// 		delete pobj;	
 }
 
 void GLWidget::initializeGL()
 {
-	glEnable(GL_LIGHTING);
-	//glEnable(GL_LIGHT0);
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	//glDisable(GL_DEPTH_TEST);
-	//glHint(GL_POLYGON_SMOOTH, GL_NICEST)
-	glLightfv(GL_LIGHT1, GL_AMBIENT, LightAmbient);		// Setup The Ambient Light
-	glLightfv(GL_LIGHT1, GL_DIFFUSE, LightDiffuse);		// Setup The Diffuse Light
-	glLightfv(GL_LIGHT1, GL_SPECULAR, LightSpecular);
-	glLightfv(GL_LIGHT1, GL_EMISSION, Lightemissive);
-	glLightfv(GL_LIGHT1, GL_POSITION, LightPosition);	// Position The Light
-	glEnable(GL_LIGHT1);								// Enable Light One
+	glShadeModel(GL_SMOOTH);                              // 매끄러운 세이딩 사용
+//	glEnable(GL_CULL_FACE);                               // 후면 제거
 
-	glLightfv(GL_LIGHT2, GL_AMBIENT, LightAmbient);		// Setup The Ambient Light
-	glLightfv(GL_LIGHT2, GL_DIFFUSE, LightDiffuse);		// Setup The Diffuse Light
-	glLightfv(GL_LIGHT2, GL_SPECULAR, LightSpecular);
-	glLightfv(GL_LIGHT2, GL_EMISSION, Lightemissive);
-	glLightfv(GL_LIGHT2, GL_POSITION, LightPosition2);	// Position The Light
-	glEnable(GL_LIGHT2);								// Enable Light One
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	//glEnable(GL_RESCALE_NORMAL); 
+
+	GLfloat LightAmbient[] = { 0.3f, 0.3f, 0.3f, 1.0f };
+	GLfloat LightDiffuse[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	GLfloat LightSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	GLfloat Lightemissive[] = { 0.f, 0.f, 0.f, 1.0f };
+	GLfloat LightPosition[] = { 100.0f, 100.0f, 100.0f, 1.0f };
+	
+	glLightfv(GL_LIGHT0, GL_AMBIENT, LightAmbient);		// Setup The Ambient Light
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDiffuse);		// Setup The Diffuse Light
+ 	glLightfv(GL_LIGHT0, GL_SPECULAR, LightSpecular);
+	glLightfv(GL_LIGHT0, GL_POSITION, LightPosition);	// Position The Light
+
+	GLfloat material_Ka[] = { 0.5f, 0.0f, 0.0f, 1.0f };
+	GLfloat material_Kd[] = { 0.4f, 0.4f, 0.5f, 1.0f };
+	GLfloat material_Ks[] = { 0.8f, 0.8f, 0.0f, 1.0f };
+	GLfloat material_Ke[] = { 0.1f, 0.0f, 0.0f, 0.0f };
+	GLfloat material_Se = 20.0f;
+
+	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, material_Ka);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, material_Kd);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, material_Ks);
+	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, material_Ke);
+	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, material_Se);
 
 	coordinate = makeCoordinate();
-	//protype = PERSPECTIVE_PROJECTION;
-	protype = ORTHO_PROJECTION;
+	protype = PERSPECTIVE_PROJECTION;
+	//protype = ORTHO_PROJECTION;
 
-	glEnable(GL_NORMALIZE);
+	//glEnable(GL_NORMALIZE);
 
-	glClearColor(103.0f / 255.0f, 153.0f / 255.0f, 255.0f / 255.0f, 1.0);
+	//glClearColor(1.0, 1.0, 1.0, 1.0);
 }
 
 void GLWidget::makeMassCoordinate(QString& _name)
@@ -281,7 +303,8 @@ vobject* GLWidget::getVObjectFromName(QString name)
 
 vpolygon* GLWidget::getVPolyObjectFromName(QString name)
 {
-	return v_pobjs.find(name).value();
+	return NULL;
+	//return v_pobjs.find(name).value();
 }
 
 GLuint GLWidget::makePolygonObject(double* points, double* normals, int* indice, int size)
@@ -421,28 +444,24 @@ void GLWidget::drawObject(GLenum eMode)
 	glRotated(xRot / 16.0, 1.0, 0.0, 0.0);
 	glRotated(yRot / 16.0, 0.0, 1.0, 0.0);
 	glRotated(zRot / 16.0, 0.0, 0.0, 1.0);
-	if (sketch.isSketching)
-	{
-		sketchingMode();
-	}
-	glPolygonMode(GL_FRONT_AND_BACK, drawingMode);
-	QMapIterator<QString, vobject*> obj(v_objs);
-	
-	
 
+	//glLightfv(GL_LIGHT0, GL_POSITION, LightPosition);	// Position The Light
+	QMapIterator<QString, vobject*> obj(v_objs);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	while (obj.hasNext()){
 		obj.next();
-		obj.value()->color().setAlpha(0.2);
-		qglColor(obj.value()->color());
+	//	obj.value()->color().setAlpha(0.2);
+		//qglColor(obj.value()->color());
 		obj.value()->draw(eMode);
 	}
-
-	QMapIterator<QString, vpolygon*> pobj(v_pobjs);
-	while (pobj.hasNext()){
-		pobj.next();
-		//qglColor(QColor("red"));
-		pobj.value()->draw(eMode);
-	}
+	glDisable(GL_BLEND);
+// 	QMapIterator<QString, vpolygon*> pobj(v_pobjs);
+// 	while (pobj.hasNext()){
+// 		pobj.next();
+// 		//qglColor(QColor("red"));
+// 		pobj.value()->draw(eMode);
+// 	}
 	
 }
 
@@ -451,20 +470,29 @@ void GLWidget::processHits(unsigned int uHits, unsigned int *pBuffer)
 	unsigned int i, j;
 	unsigned int uiName, *ptr;
 	ptr = pBuffer;
+	foreach(int v, selectedIndice)
+		static_cast<vobject*>(v_wobjs[v])->setSelected(false);
 	if (selectedIndice.size())
 		selectedIndice.clear();
 	for (i = 0; i < uHits; i++){
 		uiName = *ptr;
 		ptr += 3;
 		selectedIndice.push_back(*ptr);// selectedIndice[i] = *ptr;
+		unsigned int id = *ptr;
+		vobject* obj = static_cast<vobject*>(v_wobjs[id]);
+		obj->setSelected(true);
+#ifdef _DEBUG
+		qDebug() << obj->name() << " is selected.";
+#endif
+		//static_cast<vobject*>(v_wobjs[id])->setSelected(true);
 		ptr++;
-	}
+	}	
 }
 
 void GLWidget::setSketchSpace()
 {
 	QLineEdit* le = dynamic_cast<QLineEdit*>(sender());
-	sketch.space = le->text().toDouble();
+	//sketch.space = le->text().toDouble();
 }
 
 void GLWidget::sketchingMode()
@@ -478,72 +506,72 @@ void GLWidget::sketchingMode()
  	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 // 	/*glPushMatrix();*/
  	//glDisable(GL_LIGHTING);
-	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-	glBegin(GL_LINES);
-	{
-		double sx = floor((sketch.sx + (sketch.ex - sketch.sx) * 0.1) * 10) * 0.1;
-		double ex = -sx;
-		double sy = floor((sketch.sy + (sketch.ey - sketch.sy) * 0.1) * 10) * 0.1;
-		double ey = -sy;
-		double lx = (floor(ex / sketch.space)) * sketch.space;
-		double ly = (floor(ey / sketch.space)) * sketch.space;
-		glPushMatrix();
-		glVertex3d(sx, sy, 0); glVertex3d(ex, sy, 0);
-		glVertex3d(ex, sy, 0); glVertex3d(ex, ey, 0);
-		glVertex3d(ex, ey, 0); glVertex3d(sx, ey, 0);
-		glVertex3d(sx, ey, 0); glVertex3d(sx, sy, 0);
-		glPopMatrix();
-		int nx = static_cast<int>((ex - sx) / sketch.space + 1e-9);
-		int ny = static_cast<int>((ey - sy) / sketch.space + 1e-9);
-		float fTmp1[16] = { 0.f, };
-		glGetFloatv(GL_PROJECTION_MATRIX, fTmp1);
-		for (int ix = 1; ix < nx; ix++)
-		{
-			double x = sx + sketch.space * ix;
-			glPushMatrix();
-			glVertex3d(x, sy, 0);
-			glVertex3d(x, ey, 0);
-			glPopMatrix();
- 			
-		}
-		for (int iy = 1; iy < ny; iy++)
-		{
-			double y = sy + sketch.space * iy;
-			glPushMatrix();
-			glVertex3d(sx, y, 0);
-			glVertex3d(ex, y, 0);
-			glPopMatrix();
-		}
-// 		for (double x = sx; x < ex; x += sketch.space){
-// 			double rx = floor(x + 10e-9);
-// 			for (double y = sy; y < ey; y += sketch.space){
-// 				double ry = floor(y + 10e-9);
-// 				glPushMatrix();
-// 				glVertex3d(x, y, 0);
-// 				glVertex3d(lx, y, 0);
-// 
-// // 				glVertex3f(x, y, 0.f);
-// // 				glVertex3f(x, ly, 0.f);
-// 				glPopMatrix();
-// 			}
+// 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+// 	glBegin(GL_LINES);
+// 	{
+// 		double sx = floor((sketch.sx + (sketch.ex - sketch.sx) * 0.1) * 10) * 0.1;
+// 		double ex = -sx;
+// 		double sy = floor((sketch.sy + (sketch.ey - sketch.sy) * 0.1) * 10) * 0.1;
+// 		double ey = -sy;
+// 		double lx = (floor(ex / sketch.space)) * sketch.space;
+// 		double ly = (floor(ey / sketch.space)) * sketch.space;
+// 		glPushMatrix();
+// 		glVertex3d(sx, sy, 0); glVertex3d(ex, sy, 0);
+// 		glVertex3d(ex, sy, 0); glVertex3d(ex, ey, 0);
+// 		glVertex3d(ex, ey, 0); glVertex3d(sx, ey, 0);
+// 		glVertex3d(sx, ey, 0); glVertex3d(sx, sy, 0);
+// 		glPopMatrix();
+// 		int nx = static_cast<int>((ex - sx) / sketch.space + 1e-9);
+// 		int ny = static_cast<int>((ey - sy) / sketch.space + 1e-9);
+// 		float fTmp1[16] = { 0.f, };
+// 		glGetFloatv(GL_PROJECTION_MATRIX, fTmp1);
+// 		for (int ix = 1; ix < nx; ix++)
+// 		{
+// 			double x = sx + sketch.space * ix;
 // 			glPushMatrix();
 // 			glVertex3d(x, sy, 0);
-// 			glVertex3d(x, ly, 0);
+// 			glVertex3d(x, ey, 0);
+// 			glPopMatrix();
+//  			
+// 		}
+// 		for (int iy = 1; iy < ny; iy++)
+// 		{
+// 			double y = sy + sketch.space * iy;
+// 			glPushMatrix();
+// 			glVertex3d(sx, y, 0);
+// 			glVertex3d(ex, y, 0);
 // 			glPopMatrix();
 // 		}
-// // 		glVertex2f(-0.98f, -0.98f);
-// // 		glVertex2f(-0.98f, 0.98f);
+// // 		for (double x = sx; x < ex; x += sketch.space){
+// // 			double rx = floor(x + 10e-9);
+// // 			for (double y = sy; y < ey; y += sketch.space){
+// // 				double ry = floor(y + 10e-9);
+// // 				glPushMatrix();
+// // 				glVertex3d(x, y, 0);
+// // 				glVertex3d(lx, y, 0);
 // // 
-// // 		glVertex2f(-0.98f, 0.98f);
-// // 		glVertex2f(0.98f, 0.98f);
-// // 
-// // 		glVertex2f(0.98f, 0.98f);
-// // 		glVertex2f(0.98f, -0.98f);
-// // 
-// // 		glVertex2f(0.98f, -0.98f);
-// // 		glVertex2f(-0.98f, -0.98f);
- 	}
- 	glEnd();
+// // // 				glVertex3f(x, y, 0.f);
+// // // 				glVertex3f(x, ly, 0.f);
+// // 				glPopMatrix();
+// // 			}
+// // 			glPushMatrix();
+// // 			glVertex3d(x, sy, 0);
+// // 			glVertex3d(x, ly, 0);
+// // 			glPopMatrix();
+// // 		}
+// // // 		glVertex2f(-0.98f, -0.98f);
+// // // 		glVertex2f(-0.98f, 0.98f);
+// // // 
+// // // 		glVertex2f(-0.98f, 0.98f);
+// // // 		glVertex2f(0.98f, 0.98f);
+// // // 
+// // // 		glVertex2f(0.98f, 0.98f);
+// // // 		glVertex2f(0.98f, -0.98f);
+// // // 
+// // // 		glVertex2f(0.98f, -0.98f);
+// // // 		glVertex2f(-0.98f, -0.98f);
+//  	}
+//  	glEnd();
 
 }
 
@@ -553,12 +581,7 @@ void GLWidget::paintGL()
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-// 	if (isSketching){
-// 		sketchingMode();
-// 		return;
-// 	}
-// 	else{
-	glClearColor(103.0f / 255.0f, 153.0f / 255.0f, 255.0f / 255.0f, 1.0);
+	glClearColor(0.0, 0.0, 0.0, 1.0);
 	//}
 	gluOrtho2D(-1.0f, 1.0f, -1.0f, 1.0f);
 	glMatrixMode(GL_MODELVIEW);
@@ -569,15 +592,18 @@ void GLWidget::paintGL()
 	glPopMatrix();
 
 	resizeGL(wWidth, wHeight/*, -trans_x, -trans_y*/);
-	glDisable(GL_DEPTH_TEST);
 	
+	//glDisable(GL_DEPTH_TEST);
+	//glDisable(GL_LIGHTING);
 	drawObject(GL_RENDER);
 
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	//glDisable(GL_LIGHTING);
 	if (vp)
-		vp->draw(GL_RENDER, wHeight, protype);
-
+		vp->draw(GL_RENDER, wHeight, protype, abs(zoom));
+	//glEnable(GL_LIGHTING);
 	if (vcontroller::Play()){
-		vcontroller::move2forward1x();
+		vcontroller::update_frame();
 		emit mySignal();
 	}
 
@@ -596,7 +622,7 @@ void GLWidget::resizeGL(int width, int height)
 // 	{
 	ratio = (GLfloat)(width) / (GLfloat)(height);
 	float z = abs(zoom);
-	float ocef = tanf(60 * M_PI / 360.0f);
+	float c = z * tanf(30.0f * M_PI / 180.0f);
 	switch (protype)
 	{
 	case PERSPECTIVE_PROJECTION:
@@ -604,14 +630,14 @@ void GLWidget::resizeGL(int width, int height)
 		break;
 	case ORTHO_PROJECTION:
 		if (width <= height){
-			glOrtho(-1 * z, 1 * z, -1 / ratio * z, 1 / ratio * z, 0.01, 1000.);
-			sketch.sx = -1 * z; sketch.ex = 1.f * z;
-			sketch.sy = -1 / ratio * z; sketch.ey = 1.f / ratio * z;
+			glOrtho(-1.0f * c, 1.0f * c, (-1.0f / ratio) * c, (1.0f / ratio) * c, 0.01f, 1000.f);
+// 			sketch.sx = -1 * z; sketch.ex = 1.f * z;
+// 			sketch.sy = -1 / ratio * z; sketch.ey = 1.f / ratio * z;
 		}
 		else{
-			glOrtho(-1.f * z * ratio, 1.f * ratio * z, -1.f * z, 1.f * z, 0.01f, 1000.f);
-			sketch.sx = -1.f * z * ratio; sketch.ex = 1.f * ratio * z;
-			sketch.sy = -1.f * z; sketch.ey = 1.f * z;
+			glOrtho(-1.0f * c * ratio, 1.0f * c * ratio, -1.0f * c, 1.0f * c, 0.01f, 1000.f);
+// 			sketch.sx = -1.f * z * ratio; sketch.ex = 1.f * ratio * z;
+// 			sketch.sy = -1.f * z; sketch.ey = 1.f * z;
 		}
 		break;
 	}
@@ -815,50 +841,32 @@ void GLWidget::normalizeAngle(int *angle)
 		*angle -= 360 * 16;
 }
 
-bool GLWidget::change(QString& fp, tChangeType ct, tFileType ft)
-{
-	QFile pf(fp);
-	pf.open(QIODevice::ReadOnly);
-	switch (ct)
-	{
-	case CHANGE_PARTICLE_POSITION:{
-			VEC4D_PTR _pos = new VEC4D[vp->Np()];
-			VEC3D_PTR _vel = new VEC3D[vp->Np()];
-			float time = 0.f;
-			unsigned int _np = 0;
-			pf.read((char*)&_np, sizeof(unsigned int));
-			pf.read((char*)&time, sizeof(double));
-			pf.read((char*)_pos, sizeof(VEC4D) * vp->Np());
-			pf.read((char*)_vel, sizeof(VEC3D) * vp->Np());
-			vp->changeParticles(_pos);
-			vp->getParticleSystem()->setVelocity(&(_vel[0].x));
-			delete[] _pos;
-			delete[] _vel;
-		}
-		break;
-	}
-	pf.close();
-
-	return true;
-}
-
-void GLWidget::openSph(QString& file)
-{
-	QFile qf(file);
-	qf.open(QIODevice::ReadOnly);
-	QTextStream ts(&qf);
-	QString path;
-	ts >> path >> path;
-	QString ch;
-	ts >> ch >> ch;
-	unsigned int nfluid, nbound, ndummy;
-	ts >> ch >> nfluid;
-	ts >> ch >> nbound;
-	ts >> ch >> ndummy;
-	vp = new vparticles;
-	vp->settingSphParticles(nfluid+nbound+ndummy, path + "/part0000.bin");
-	isSetParticle = true;
-}
+// bool GLWidget::change(QString& fp, tChangeType ct, tFileType ft)
+// {
+// 	QFile pf(fp);
+// 	pf.open(QIODevice::ReadOnly);
+// 	switch (ct)
+// 	{
+// 	case CHANGE_PARTICLE_POSITION:{
+// 			VEC4D_PTR _pos = new VEC4D[vp->Np()];
+// 			VEC3D_PTR _vel = new VEC3D[vp->Np()];
+// 			float time = 0.f;
+// 			unsigned int _np = 0;
+// 			pf.read((char*)&_np, sizeof(unsigned int));
+// 			pf.read((char*)&time, sizeof(double));
+// 			pf.read((char*)_pos, sizeof(VEC4D) * vp->Np());
+// 			pf.read((char*)_vel, sizeof(VEC3D) * vp->Np());
+// 			vp->changeParticles(_pos);
+// 			vp->getParticleSystem()->setVelocity(&(_vel[0].x));
+// 			delete[] _pos;
+// 			delete[] _vel;
+// 		}
+// 		break;
+// 	}
+// 	pf.close();
+// 
+// 	return true;
+// }
 
 void GLWidget::openMbd(QString& file)
 {
@@ -898,16 +906,16 @@ void GLWidget::openMbd(QString& file)
 			qf.read((char*)&a, sizeof(VEC3D));
 			qf.read((char*)&ea, sizeof(EPD));
  			//it = names.find(id);
-			if (v_pobjs.find(str) != v_pobjs.end()){
-				vpolygon* vpoly = v_pobjs.find(str).value();
-				vpoly->setResultData(nout);
-				vpoly->insertResultData(cnt, p, ep);
-			}
-			else{
-				vobject* vobj = v_objs.find(str).value();
-				vobj->setResultData(nout);
-				vobj->insertResultData(cnt, p, ep);
-			}
+// 			if (v_pobjs.find(str) != v_pobjs.end()){
+// 				vpolygon* vpoly = v_pobjs.find(str).value();
+// 				vpoly->setResultData(nout);
+// 				vpoly->insertResultData(cnt, p, ep);
+// 			}
+			
+			vobject* vobj = v_objs.find(str).value();
+			vobj->setResultData(nout);
+			vobj->insertResultData(cnt, p, ep);
+			
 			
 		}
 	}
@@ -924,9 +932,9 @@ void GLWidget::makeCube(cube* c)
 {
 	if (!c)
 		return;
-	vcube *vc = new vcube(c->objectName());
-	vc->makeCubeGeometry(c->objectName(), c->rolltype(), c->materialType(), c->min_point().To<float>(), c->cube_size().To<float>());
-	v_objs[c->objectName()] = vc;
+	vcube *vc = new vcube(c->Name());
+	vc->makeCubeGeometry(c->Name(), c->RollType(), c->MaterialType(), c->min_point().To<float>(), c->cube_size().To<float>());
+	v_objs[c->Name()] = vc;
 	v_wobjs[vc->ID()] = (void*)vc;
 }
 
@@ -934,9 +942,9 @@ void GLWidget::makePlane(plane* p)
 {
 	if (!p)
 		return;
-	vplane *vpp = new vplane(p->objectName());
+	vplane *vpp = new vplane(p->Name());
 	vpp->makePlaneGeometry((float)p->L1(), p->XW().To<float>(), p->PA().To<float>(), p->PB().To<float>(), p->U1().To<float>());
-	v_objs[p->objectName()] = vpp;
+	v_objs[p->Name()] = vpp;
 	v_wobjs[vpp->ID()] = (void*)vpp;
 }
 
@@ -944,12 +952,12 @@ void GLWidget::makeCylinder(cylinder* cy)
 {
 	if (!cy)
 		return;
-	vcylinder *vcy = new vcylinder(cy->objectName());
-	vcy->makeCylinderGeometry((float)cy->baseRadisu(), (float)cy->topRadius(), (float)cy->length(), cy->origin().To<float>(), cy->basePos().To<float>(), cy->topPos().To<float>());
-	vcy->copyCoordinate(coordinate);
-	//cy->setOrientation(M_PI * vcy->eulerAngle_1()/180, M_PI * vcy->eulerAngle_2() / 180, M_PI * vcy->eulerAngle_3()/180);
-	v_objs[cy->objectName()] = vcy;
-	v_wobjs[vcy->ID()] = (void*)vcy;
+// 	vcylinder *vcy = new vcylinder(cy->Name());
+// 	vcy->makeCylinderGeometry((float)cy->baseRadius(), (float)cy->topRadius(), (float)cy->length(), cy->origin().To<float>(), cy->basePos().To<float>(), cy->topPos().To<float>());
+// 	vcy->copyCoordinate(coordinate);
+// 	//cy->setOrientation(M_PI * vcy->eulerAngle_1()/180, M_PI * vcy->eulerAngle_2() / 180, M_PI * vcy->eulerAngle_3()/180);
+// 	v_objs[cy->Name()] = vcy;
+// 	v_wobjs[vcy->ID()] = (void*)vcy;
 }
 
 void GLWidget::makeLine()
@@ -959,31 +967,41 @@ void GLWidget::makeLine()
 
 void GLWidget::makePolygonObject(polygonObject* po)
 {
-	vpolygon* vpoly = new vpolygon(po->objectName());
-	vpoly->define(po->getOrigin(), po->hostPolygonInfo(), po->hostSphereSet(), po->vertexSet(), po->indexSet(), po->numIndex(), po->numVertex());
-	v_pobjs[po->objectName()] = vpoly;
+	vpolygon* vpoly = new vpolygon(po->Name());
+	vpoly->define(po->getOrigin(), po->normalSet(), po->hostSphereSet(), po->vertexSet(), po->indexSet(), po->numIndex(), po->numVertex());
+	v_objs[po->Name()] = vpoly;
 	v_wobjs[vpoly->ID()] = (void*)vpoly;
  }
 
-void GLWidget::makeParticle(particle_system* ps)
+void GLWidget::makeParticle(double* pos, unsigned int n)
 {
-	if (!ps){
-		return;
+	if (!vp)
+	{
+		vp = new vparticles;
 	}
-	if (!vp){
-		vp = new vparticles(ps);
-		if (vp->define())
-			isSetParticle = true;
-		v_objs[ps->baseObject()]->setDisplay(true);
+	if (vp->define(pos, n))
+		isSetParticle = true;
+	else
+	{
+		vp->resizeMemory(pos, n);
 	}
-	else{
-		vp->resizeMemory();
-		vp->define();
-	}
+// 	if (!ps){
+// 		return;
+// 	}
+// 	if (!vp){
+// 		vp = new vparticles(ps);
+// 		if (vp->define())
+// 			isSetParticle = true;
+// 		v_objs[ps->baseObject()]->setDisplay(true);
+// 	}
+// 	else{
+// 		vp->resizeMemory();
+// 		vp->define();
+// 	}
 }
 
 void GLWidget::openResults(QStringList& fl)
 {
-	vp->setResultFileList(fl);
-	vcontroller::setTotalFrame(fl.size());
+// 	vp->setResultFileList(fl);
+// 	vcontroller::setTotalFrame(fl.size());
 }

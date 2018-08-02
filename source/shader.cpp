@@ -9,6 +9,7 @@
 *
 */
 
+
 #define STRINGIFY(A) #A
 
 // vertex shader
@@ -24,13 +25,14 @@ void main()
 	float dist = length(posEye);
 	//float div = 0.0;
 	if (projFactor > 0.f)
-		dist = orthoDist;
+		gl_PointSize = gl_Vertex.w * pointScale;// = orthoDist;
+	else
+		gl_PointSize = gl_Vertex.w * (pointScale / dist);///*orthoDist*/;// (pointScale / dist);
 	//else if(isOrtho == 1) div = dist;
-	gl_PointSize = gl_Vertex.w * (pointScale / dist);///*orthoDist*/;// (pointScale / dist);
-
+	
 	gl_TexCoord[0] = gl_MultiTexCoord0;
 	gl_Position = gl_ModelViewProjectionMatrix * vec4(gl_Vertex.xyz, 1.0);
-
+	
 	gl_FrontColor = gl_Color;
 }
 );
@@ -39,7 +41,7 @@ void main()
 const char *spherePixelShader = STRINGIFY(
 	void main()
 {
-	const vec3 lightDir = vec3(0.577, 0.577, 0.577);
+	const vec3 lightDir = vec3(0.0, 0.0, 1.0);
 
 	// calculate normal from texture coordinates
 	vec3 N;
@@ -52,6 +54,45 @@ const char *spherePixelShader = STRINGIFY(
 	float diffuse = max(0.0, dot(lightDir, N));
 
 	gl_FragColor = gl_Color * diffuse;
+}
+);
+
+const char *polygonVertexShader = STRINGIFY(
+varying vec3 N;
+varying vec3 v;
+void main()
+{
+	v = vec3(gl_ModelViewMatrix * gl_Vertex);
+	N = normalize(gl_NormalMatrix * gl_Normal);
+
+	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+	//gl_Position = gl_ModelViewProjectionMatrix * vec4(gl_Vertex.xyz, 1.0);
+}
+);
+
+const char *polygonFragmentShader = STRINGIFY(
+varying vec3 N;
+varying vec3 v;
+void main()
+{
+	vec3 L = normalize(gl_LightSource[0].position.xyz - v);
+	vec3 E = normalize(-v); // we are in Eye Coordinates, so EyePos is (0,0,0)  
+	vec3 R = normalize(-reflect(L, N));
+
+	//calculate Ambient Term:  
+	vec4 Iamb = gl_FrontLightProduct[0].ambient;
+
+	//calculate Diffuse Term:  
+	vec4 Idiff = gl_FrontLightProduct[0].diffuse * max(dot(N, L), 0.0);
+
+	// calculate Specular Term:
+	vec4 Ispec = gl_FrontLightProduct[0].specular
+		* pow(max(dot(R, E), 0.0), 0.3*gl_FrontMaterial.shininess);
+
+	// write Total Color:  
+//	gl_FragColor = gl_FrontLightModelProduct.sceneColor + Iamb + Idiff + Ispec;
+	vec4 color = gl_Color + Iamb + Idiff;/* + Ispec*/;
+	gl_FragColor = vec4(color.xyz, 1.0);// gl_Color + Iamb + Idiff + Ispec;
 }
 );
 

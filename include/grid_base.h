@@ -1,23 +1,21 @@
 #ifndef GRID_BASE_H
 #define GRID_BASE_H
 
-#include <iostream>
-#include <string>
-#include "mphysics_numeric.h"
-#include "grid_base.cuh"
-
-class modeler;
+#include <QString>
+#include "vectorTypes.h"
 
 class grid_base
 {
 public:
+	enum Type{ NEIGHBORHOOD };
 	grid_base();
-	grid_base(std::string _name, modeler* _md);
+	grid_base(Type t);
 	virtual ~grid_base();
 
 	void clear();
 	//virtual void detection(VEC4D_PTR pos) = 0;
-	virtual void detection(double *pos) = 0;
+	void initialize(unsigned int np);
+	virtual void detection(double *pos, unsigned int np) = 0;
 
 	void setWorldOrigin(VEC3D _wo) { wo = _wo; }
 	void setCellSize(float _cs) { cs = _cs; }
@@ -31,39 +29,35 @@ public:
 //	static VEC3I getCellNumber(double x, double y, double z);
 	static VEC3I getCellNumber(double x, double y, double z);
 	static unsigned int getHash(VEC3I& c3);
-	static unsigned int sortedID(unsigned int id) { return sorted_id[id]; }
-	static unsigned int cellID(unsigned int id) { return cell_id[id]; }
-	static unsigned int bodyID(unsigned int id) { return body_id[id]; }
-	static unsigned int cellStart(unsigned int id) { return cell_start[id]; }
-	static unsigned int cellEnd(unsigned int id) { return cell_end[id]; }
-
-	static unsigned int* cuSortedID() { return d_sorted_id; }
-	static unsigned int* cuCellStart() { return d_cell_start; }
-	static unsigned int* cuCellEnd() { return d_cell_end; }
+	unsigned int sortedID(unsigned int id) { return sorted_id[id]; }
+	unsigned int cellID(unsigned int id) { return cell_id[id]; }
+	unsigned int bodyID(unsigned int id) { return body_id[id]; }
+	unsigned int cellStart(unsigned int id) { return cell_start[id]; }
+	unsigned int cellEnd(unsigned int id) { return cell_end[id]; }
+	unsigned int* sortedID() { return d_sorted_id; }
+	unsigned int* cellStart() { return d_cell_start; }
+	unsigned int* cellEnd() { return d_cell_end; }
 
 	static VEC3D wo;			// world origin
 	static double cs;			// cell size
 	static VEC3UI gs;			// grid size
 
 protected:
-	std::string name;
+	Type type;
+	unsigned int* sorted_id;
+	unsigned int* cell_id;
+	unsigned int* body_id;
+	unsigned int* cell_start;
+	unsigned int* cell_end;
 
-	static unsigned int* sorted_id;
-	static unsigned int* cell_id;
-	static unsigned int* body_id;
-	static unsigned int* cell_start;
-	static unsigned int* cell_end;
-
-	static unsigned int *d_sorted_id;
+	unsigned int *d_sorted_id;
 	unsigned int *d_cell_id;
 	unsigned int *d_body_id;
-	static unsigned int *d_cell_start;
-	static unsigned int *d_cell_end;
+	unsigned int *d_cell_start;
+	unsigned int *d_cell_end;
 
 	unsigned int nse;   // number of sorting elements
 	unsigned int ng;	// the number of grid
-
-	modeler *md;
 };
 
 #endif

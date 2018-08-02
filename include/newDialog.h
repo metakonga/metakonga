@@ -2,13 +2,10 @@
 #define NEWDIALOG_H
 
 #include <QDialog>
-#include "mphysics_types.h"
+#include "types.h"
+#include "ui_newModel.h"
 
-namespace Ui{
-	class newModelDialog;
-}
-
-class newDialog : public QDialog
+class newDialog : public QDialog, private Ui::DLG_NewModel
 {
 	Q_OBJECT
 
@@ -16,27 +13,14 @@ public:
 	explicit newDialog(QWidget *parent = 0);
 	~newDialog();
 
-	bool callDialog();
-	QString name() { return _name; }
-	QString path() { return _path; }
-	QString fullPath() { return _fullPath; }
-	tUnit unit() { return _unit; }
-	tGravity gravityDirection() { return _dir_g; }
+	bool isBrowser;
 
-private:
-// 	QLineEdit *LEName;
-// 	QLineEdit *LEPath;
+	QString name;
+	QString path;
+	QString fullPath;
 
-	QString _name;
-	QString _path;
-	QString _fullPath;
-
-	tUnit _unit;
-	tGravity _dir_g;
-
-	bool isDialogOk;
-
-	Ui::newModelDialog *ui;
+	unit_type unit;
+	gravity_direction dir_g;
 
 private slots:
 	void Click_ok();

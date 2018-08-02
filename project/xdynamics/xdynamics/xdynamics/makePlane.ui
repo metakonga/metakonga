@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DLG_MAKEPLANE</class>
+ <widget class="QDialog" name="DLG_MAKEPLANE">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>323</width>
+    <height>385</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Make plane object</string>
+  </property>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>137</x>
+     <y>350</y>
+     <width>171</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QPushButton" name="PB_Ok">
+      <property name="text">
+       <string>Ok</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="PB_Cancle">
+      <property name="text">
+       <string>Cancle</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="GB_Information">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>301</width>
+     <height>161</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Information</string>
+   </property>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>21</y>
+      <width>281</width>
+      <height>126</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0">
+      <widget class="QLabel" name="L_Name">
+       <property name="text">
+        <string>Name</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="LE_Name"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="L_Point_a">
+       <property name="text">
+        <string>Point a</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="LE_Point_a"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="L_Point_b">
+       <property name="text">
+        <string>Point b</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="LE_Point_b"/>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="L_Point_c">
+       <property name="text">
+        <string>Point c</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="LE_Point_c"/>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="L_Point_d">
+       <property name="text">
+        <string>Point d</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="LE_Point_d"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="GB_MaterialProperty">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>180</y>
+     <width>301</width>
+     <height>161</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Material property</string>
+   </property>
+   <widget class="QWidget" name="layoutWidget_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>21</y>
+      <width>281</width>
+      <height>126</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="L_Type">
+       <property name="text">
+        <string>Type</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QComboBox" name="CB_Type"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="L_YoungsModulus">
+       <property name="text">
+        <string>Youngs modulus</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="LE_Youngs"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="L_Density">
+       <property name="text">
+        <string>Density</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="LE_Density"/>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="L_PoissonRatio">
+       <property name="text">
+        <string>Poisson ratio</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="LE_PoissonRatio"/>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="L_ShearModulus">
+       <property name="text">
+        <string>Shear modulus</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="LE_ShearModulus"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>LE_Name</tabstop>
+  <tabstop>LE_Point_a</tabstop>
+  <tabstop>LE_Point_b</tabstop>
+  <tabstop>LE_Point_c</tabstop>
+  <tabstop>LE_Point_d</tabstop>
+  <tabstop>CB_Type</tabstop>
+  <tabstop>LE_Youngs</tabstop>
+  <tabstop>LE_Density</tabstop>
+  <tabstop>LE_PoissonRatio</tabstop>
+  <tabstop>LE_ShearModulus</tabstop>
+  <tabstop>PB_Ok</tabstop>
+  <tabstop>PB_Cancle</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

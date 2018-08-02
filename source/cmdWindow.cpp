@@ -30,7 +30,7 @@ void cmdWindow::write(tWriting tw, QString& c)
 	c.prepend(t);
 	//QString cc = cmd->toPlainText();
 	cmd->appendPlainText(c);
-	c.clear();
+	//c.clear();
 }
 
 void cmdWindow::printLine()

@@ -23,24 +23,24 @@ public:
 	cylinderDialog();
 	//cube(std::map<QString, QObject*> *_objs);
 	~cylinderDialog();
-	cylinder* callDialog(modeler *md);
+// 	cylinder* callDialog(modeler *md);
+// 
+// 	bool isDialogOk;
+// 	//QLabel *LMaterial;
+// 	//QComboBox *CBMaterial;
+// 	QLineEdit *LEName;
+// 	QLineEdit *LEBaseRadius;
+// 	QLineEdit *LETopRadius;
+// 	//QLineEdit *LELength;
+// 	QLineEdit *LEBasePos;
+// 	QLineEdit *LETopPos;
+// 	//QGridLayout *cubeLayout;
+// 	//QPushButton *PBOk;
+// 	//QPushButton *PBCancel;
 
-	bool isDialogOk;
-	//QLabel *LMaterial;
-	//QComboBox *CBMaterial;
-	QLineEdit *LEName;
-	QLineEdit *LEBaseRadius;
-	QLineEdit *LETopRadius;
-	//QLineEdit *LELength;
-	QLineEdit *LEBasePos;
-	QLineEdit *LETopPos;
-	//QGridLayout *cubeLayout;
-	//QPushButton *PBOk;
-	//QPushButton *PBCancel;
-
-	private slots:
-	void Click_ok();
-	void Click_cancel();
+// 	private slots:
+// 	void Click_ok();
+// 	void Click_cancel();
 };
 
 #endif

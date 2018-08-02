@@ -84,11 +84,11 @@ void cu_reorderDataAndFindCellStart(
 	unsigned int* cend,
 	unsigned int* sorted_index,
 	unsigned int np,
-	unsigned int nsphere,
+	//unsigned int nsphere,
 	unsigned int ncell)
 {
 	//std::cout << "step 1" << std::endl;
-	unsigned int tnp = np + nsphere;
+	unsigned int tnp = np;// +nsphere;
 	thrust::sort_by_key(thrust::device_ptr<unsigned>(hash),
 		thrust::device_ptr<unsigned>(hash + tnp),
 		thrust::device_ptr<unsigned>(index));
@@ -124,7 +124,7 @@ void cu_calculate_p2p(
 	const int tcm, double* pos, double* vel, 
 	double* omega, double* force, double* moment, 
 	double* mass, unsigned int* sorted_index, unsigned int* cstart, 
-	unsigned int* cend, contact_parameter* cp, unsigned int np)
+	unsigned int* cend, device_contact_property* cp, unsigned int np)
 {
 	computeGridSize(np, 256, numBlocks, numThreads);
 	switch (tcm)
@@ -148,32 +148,54 @@ void cu_calculate_p2p(
 	}
 }
 
-void cu_plane_hertzian_contact_force(
+void cu_plane_contact_force(
 	const int tcm, device_plane_info* plan, 
 	double* pos, double* vel, double* omega, 
 	double* force, double* moment, double* mass, 
-	unsigned int np, contact_parameter *cp)
+	unsigned int np, device_contact_property *cp)
 {
 	computeGridSize(np, 256, numBlocks, numThreads);
 	switch (tcm)
 	{
-	case 0: plane_hertzian_contact_force_kernel<0> << < numBlocks, numThreads >> >(
+	case 0: plane_contact_force_kernel<0> << < numBlocks, numThreads >> >(
 		plan, (double4 *)pos, (double3 *)vel, (double3 *)omega,
 		(double3 *)force, (double3 *)moment, cp, mass);
 		break;
-	case 1: plane_hertzian_contact_force_kernel<1> << < numBlocks, numThreads >> >(
+	case 1: plane_contact_force_kernel<1> << < numBlocks, numThreads >> >(
 		plan, (double4 *)pos, (double3 *)vel, (double3 *)omega,
 		(double3 *)force, (double3 *)moment, cp, mass);
 		break;
 	}
-	
+}
+
+void cu_cube_contact_force(
+	const int tcm, device_plane_info* plan,
+	double* pos, double* vel, double* omega,
+	double* force, double* moment, double* mass,
+	unsigned int np, device_contact_property *cp)
+{
+	computeGridSize(np, 256, numBlocks, numThreads);
+	for (unsigned int i = 0; i < 6; i++)
+	{
+		switch (tcm)
+		{
+		case 0: plane_contact_force_kernel<0> << < numBlocks, numThreads >> >(
+			plan + i, (double4 *)pos, (double3 *)vel, (double3 *)omega,
+			(double3 *)force, (double3 *)moment, cp, mass);
+			break;
+		case 1: plane_contact_force_kernel<1> << < numBlocks, numThreads >> >(
+			plan + i, (double4 *)pos, (double3 *)vel, (double3 *)omega,
+			(double3 *)force, (double3 *)moment, cp, mass);
+			break;
+		}
+	}
 }
 
 void cu_cylinder_hertzian_contact_force(
 	const int tcm, device_cylinder_info* cyl, 
 	double* pos, double* vel, double* omega, 
 	double* force, double* moment, 
-	double* mass, unsigned int np, contact_parameter *cp,
+	double* mass, unsigned int np, device_contact_property *cp,
 	double3* mpos, double3* mf, double3* mm, double3& _mf, double3& _mm)
 {
 	computeGridSize(np, 512, numBlocks, numThreads);
@@ -195,7 +217,7 @@ void cu_particle_polygonObject_collision(
 	const int tcm, device_polygon_info* dpi, double* dsph, device_polygon_mass_info* dpmi, 
 	double* pos, double* vel, double* omega, 
 	double* force, double* moment, double* mass, 
-	unsigned int* sorted_index, unsigned int* cstart, unsigned int* cend, contact_parameter *cp,
+	unsigned int* sorted_index, unsigned int* cstart, unsigned int* cend, device_contact_property *cp,
 	unsigned int np, double3* mpos, double3* mf, double3* mm, double3& _mf, double3& _mm)
 {
 	computeGridSize(np, 256, numBlocks, numThreads);

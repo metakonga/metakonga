@@ -1,39 +1,30 @@
 #ifndef PLANEDIALOG_H
 #define PLANEDIALOG_H
 
-#include <QDialog>
+#include "ui_makePlane.h"
+#include "vectorTypes.h"
 
-QT_BEGIN_NAMESPACE
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QComboBox;
-QT_END_NAMESPACE
-
-class modeler;
-class plane;
-
-class planeDialog : public QDialog
+class planeDialog : public QDialog, private Ui::DLG_MAKEPLANE
 {
 	Q_OBJECT
 
 public:
-	planeDialog();
+	planeDialog(QWidget* parent = NULL);
 	~planeDialog();
 
-	plane* callDialog(modeler *md);
-
-	bool isDialogOk;
-	QLabel *LMaterial;
-	QComboBox *CBMaterial;
-	QDialog *rectDialog;
-	QLineEdit *LEName;
-	QLineEdit *LEPa;
-	QLineEdit *LEPb;
-	QLineEdit *LEPc;
-	QLineEdit *LEPd;
+	QString name;
+	int type;
+	double youngs;
+	double poisson;
+	double density;
+	double shear;
+	VEC3D Pa;
+	VEC3D Pb;
+	VEC3D Pc;
+	VEC3D Pd;
 
 private slots:
+	void changeComboBox(int);
 	void Click_ok();
 	void Click_cancel();
 };

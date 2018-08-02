@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>newModelDialog</class>
- <widget class="QDialog" name="newModelDialog">
+ <class>DLG_NewModel</class>
+ <widget class="QDialog" name="DLG_NewModel">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -58,7 +58,7 @@
    <property name="title">
     <string>New Model</string>
    </property>
-   <widget class="QPushButton" name="PBOK">
+   <widget class="QPushButton" name="PB_Ok">
     <property name="geometry">
      <rect>
       <x>330</x>
@@ -76,7 +76,7 @@
      <string>OK</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>11</x>
@@ -89,21 +89,21 @@
      <item>
       <layout class="QVBoxLayout" name="layout_1">
        <item>
-        <widget class="QLabel" name="LName">
+        <widget class="QLabel" name="L_Name">
          <property name="text">
           <string>Name</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="LUnit">
+        <widget class="QLabel" name="L_Unit">
          <property name="text">
           <string>Unit</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="LGravity">
+        <widget class="QLabel" name="L_Gravity">
          <property name="text">
           <string>Gravity</string>
          </property>
@@ -114,10 +114,10 @@
      <item>
       <layout class="QVBoxLayout" name="Layout_2">
        <item>
-        <widget class="QLineEdit" name="LEName"/>
+        <widget class="QLineEdit" name="LE_Name"/>
        </item>
        <item>
-        <widget class="QComboBox" name="CBUnit">
+        <widget class="QComboBox" name="CB_Unit">
          <item>
           <property name="text">
            <string>MKS(Meter/Kilogram/Newton/Second)</string>
@@ -126,7 +126,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="CBGravity">
+        <widget class="QComboBox" name="CB_GravityDirection">
          <item>
           <property name="text">
            <string>+X</string>
@@ -177,7 +177,7 @@
     <string>Open Model</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="PBBrowse">
+  <widget class="QPushButton" name="PB_Browse">
    <property name="geometry">
     <rect>
      <x>340</x>
@@ -200,6 +200,13 @@
    </property>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>LE_Name</tabstop>
+  <tabstop>CB_Unit</tabstop>
+  <tabstop>CB_GravityDirection</tabstop>
+  <tabstop>PB_Ok</tabstop>
+  <tabstop>PB_Browse</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

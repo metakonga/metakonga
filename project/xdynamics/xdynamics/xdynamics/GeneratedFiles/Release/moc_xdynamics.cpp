@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'xdynamics.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.7.0)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.7.1)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -12,15 +12,15 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'xdynamics.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.7.0. It"
+#error "This file was generated using the moc from 5.7.1. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
 
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_xdynamics_t {
-    QByteArrayData data[37];
-    char stringdata0[451];
+    QByteArrayData data[42];
+    char stringdata0[564];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -42,44 +42,52 @@ QT_MOC_LITERAL(9, 141, 6), // "mySlot"
 QT_MOC_LITERAL(10, 148, 7), // "newproj"
 QT_MOC_LITERAL(11, 156, 8), // "openproj"
 QT_MOC_LITERAL(12, 165, 8), // "saveproj"
-QT_MOC_LITERAL(13, 174, 14), // "ani_previous2x"
-QT_MOC_LITERAL(14, 189, 14), // "ani_previous1x"
-QT_MOC_LITERAL(15, 204, 8), // "ani_play"
-QT_MOC_LITERAL(16, 213, 8), // "sim_play"
-QT_MOC_LITERAL(17, 222, 8), // "sim_stop"
-QT_MOC_LITERAL(18, 231, 9), // "ani_pause"
-QT_MOC_LITERAL(19, 241, 13), // "ani_forward1x"
-QT_MOC_LITERAL(20, 255, 13), // "ani_forward2x"
-QT_MOC_LITERAL(21, 269, 13), // "ani_scrollbar"
-QT_MOC_LITERAL(22, 283, 8), // "makeCube"
-QT_MOC_LITERAL(23, 292, 9), // "makePlane"
-QT_MOC_LITERAL(24, 302, 8), // "makeLine"
-QT_MOC_LITERAL(25, 311, 11), // "makePolygon"
-QT_MOC_LITERAL(26, 323, 12), // "makeCylinder"
-QT_MOC_LITERAL(27, 336, 12), // "makeParticle"
-QT_MOC_LITERAL(28, 349, 8), // "makeMass"
-QT_MOC_LITERAL(29, 358, 8), // "makeHMCM"
-QT_MOC_LITERAL(30, 367, 5), // "solve"
-QT_MOC_LITERAL(31, 373, 10), // "exitThread"
-QT_MOC_LITERAL(32, 384, 15), // "recieveProgress"
-QT_MOC_LITERAL(33, 400, 15), // "openPinfoDialog"
-QT_MOC_LITERAL(34, 416, 15), // "deleteFileByEXT"
-QT_MOC_LITERAL(35, 432, 3), // "ext"
-QT_MOC_LITERAL(36, 436, 14) // "waitSimulation"
+QT_MOC_LITERAL(13, 174, 11), // "onGoToBegin"
+QT_MOC_LITERAL(14, 186, 12), // "onPrevious2X"
+QT_MOC_LITERAL(15, 199, 12), // "onPrevious1X"
+QT_MOC_LITERAL(16, 212, 18), // "onSetPlayAnimation"
+QT_MOC_LITERAL(17, 231, 15), // "onAnimationPlay"
+QT_MOC_LITERAL(18, 247, 19), // "onAnimationPlayBack"
+QT_MOC_LITERAL(19, 267, 16), // "onAnimationPause"
+QT_MOC_LITERAL(20, 284, 11), // "onForward1X"
+QT_MOC_LITERAL(21, 296, 11), // "onForward2X"
+QT_MOC_LITERAL(22, 308, 9), // "onGoToEnd"
+QT_MOC_LITERAL(23, 318, 13), // "onGoFirstStep"
+QT_MOC_LITERAL(24, 332, 13), // "ani_scrollbar"
+QT_MOC_LITERAL(25, 346, 8), // "makeCube"
+QT_MOC_LITERAL(26, 355, 9), // "makePlane"
+QT_MOC_LITERAL(27, 365, 8), // "makeLine"
+QT_MOC_LITERAL(28, 374, 11), // "makePolygon"
+QT_MOC_LITERAL(29, 386, 12), // "makeCylinder"
+QT_MOC_LITERAL(30, 399, 12), // "makeParticle"
+QT_MOC_LITERAL(31, 412, 8), // "makeMass"
+QT_MOC_LITERAL(32, 421, 15), // "makeContactPair"
+QT_MOC_LITERAL(33, 437, 17), // "changePaletteMode"
+QT_MOC_LITERAL(34, 455, 24), // "changeProjectionViewMode"
+QT_MOC_LITERAL(35, 480, 5), // "solve"
+QT_MOC_LITERAL(36, 486, 10), // "exitThread"
+QT_MOC_LITERAL(37, 497, 15), // "recieveProgress"
+QT_MOC_LITERAL(38, 513, 15), // "openPinfoDialog"
+QT_MOC_LITERAL(39, 529, 15), // "deleteFileByEXT"
+QT_MOC_LITERAL(40, 545, 3), // "ext"
+QT_MOC_LITERAL(41, 549, 14) // "waitSimulation"
 
     },
     "xdynamics\0ChangeShape\0\0ChangeParticleFromFile\0"
     "DEMRESULTASCII_Export\0MS3DASCII_Import\0"
     "MBDRESULTASCII_Export\0OBJPROPERTY_Dialog\0"
     "ChangeComboBox\0mySlot\0newproj\0openproj\0"
-    "saveproj\0ani_previous2x\0ani_previous1x\0"
-    "ani_play\0sim_play\0sim_stop\0ani_pause\0"
-    "ani_forward1x\0ani_forward2x\0ani_scrollbar\0"
+    "saveproj\0onGoToBegin\0onPrevious2X\0"
+    "onPrevious1X\0onSetPlayAnimation\0"
+    "onAnimationPlay\0onAnimationPlayBack\0"
+    "onAnimationPause\0onForward1X\0onForward2X\0"
+    "onGoToEnd\0onGoFirstStep\0ani_scrollbar\0"
     "makeCube\0makePlane\0makeLine\0makePolygon\0"
     "makeCylinder\0makeParticle\0makeMass\0"
-    "makeHMCM\0solve\0exitThread\0recieveProgress\0"
-    "openPinfoDialog\0deleteFileByEXT\0ext\0"
-    "waitSimulation"
+    "makeContactPair\0changePaletteMode\0"
+    "changeProjectionViewMode\0solve\0"
+    "exitThread\0recieveProgress\0openPinfoDialog\0"
+    "deleteFileByEXT\0ext\0waitSimulation"
 };
 #undef QT_MOC_LITERAL
 
@@ -89,7 +97,7 @@ static const uint qt_meta_data_xdynamics[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      34,   14, // methods
+      40,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -97,40 +105,46 @@ static const uint qt_meta_data_xdynamics[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,  184,    2, 0x08 /* Private */,
-       3,    0,  185,    2, 0x08 /* Private */,
-       4,    0,  186,    2, 0x08 /* Private */,
-       5,    0,  187,    2, 0x08 /* Private */,
-       6,    0,  188,    2, 0x08 /* Private */,
-       7,    0,  189,    2, 0x08 /* Private */,
-       8,    1,  190,    2, 0x08 /* Private */,
-       9,    0,  193,    2, 0x08 /* Private */,
-      10,    0,  194,    2, 0x08 /* Private */,
-      11,    0,  195,    2, 0x08 /* Private */,
-      12,    0,  196,    2, 0x08 /* Private */,
-      13,    0,  197,    2, 0x08 /* Private */,
-      14,    0,  198,    2, 0x08 /* Private */,
-      15,    0,  199,    2, 0x08 /* Private */,
-      16,    0,  200,    2, 0x08 /* Private */,
-      17,    0,  201,    2, 0x08 /* Private */,
-      18,    0,  202,    2, 0x08 /* Private */,
-      19,    0,  203,    2, 0x08 /* Private */,
-      20,    0,  204,    2, 0x08 /* Private */,
-      21,    0,  205,    2, 0x08 /* Private */,
-      22,    0,  206,    2, 0x08 /* Private */,
-      23,    0,  207,    2, 0x08 /* Private */,
-      24,    0,  208,    2, 0x08 /* Private */,
-      25,    0,  209,    2, 0x08 /* Private */,
-      26,    0,  210,    2, 0x08 /* Private */,
-      27,    0,  211,    2, 0x08 /* Private */,
-      28,    0,  212,    2, 0x08 /* Private */,
-      29,    0,  213,    2, 0x08 /* Private */,
-      30,    0,  214,    2, 0x08 /* Private */,
-      31,    0,  215,    2, 0x08 /* Private */,
-      32,    1,  216,    2, 0x08 /* Private */,
-      33,    0,  219,    2, 0x08 /* Private */,
-      34,    1,  220,    2, 0x08 /* Private */,
-      36,    0,  223,    2, 0x08 /* Private */,
+       1,    0,  214,    2, 0x08 /* Private */,
+       3,    0,  215,    2, 0x08 /* Private */,
+       4,    0,  216,    2, 0x08 /* Private */,
+       5,    0,  217,    2, 0x08 /* Private */,
+       6,    0,  218,    2, 0x08 /* Private */,
+       7,    0,  219,    2, 0x08 /* Private */,
+       8,    1,  220,    2, 0x08 /* Private */,
+       9,    0,  223,    2, 0x08 /* Private */,
+      10,    0,  224,    2, 0x08 /* Private */,
+      11,    0,  225,    2, 0x08 /* Private */,
+      12,    0,  226,    2, 0x08 /* Private */,
+      13,    0,  227,    2, 0x08 /* Private */,
+      14,    0,  228,    2, 0x08 /* Private */,
+      15,    0,  229,    2, 0x08 /* Private */,
+      16,    0,  230,    2, 0x08 /* Private */,
+      17,    0,  231,    2, 0x08 /* Private */,
+      18,    0,  232,    2, 0x08 /* Private */,
+      19,    0,  233,    2, 0x08 /* Private */,
+      20,    0,  234,    2, 0x08 /* Private */,
+      21,    0,  235,    2, 0x08 /* Private */,
+      22,    0,  236,    2, 0x08 /* Private */,
+      23,    0,  237,    2, 0x08 /* Private */,
+      24,    0,  238,    2, 0x08 /* Private */,
+      25,    0,  239,    2, 0x08 /* Private */,
+      26,    0,  240,    2, 0x08 /* Private */,
+      27,    0,  241,    2, 0x08 /* Private */,
+      28,    0,  242,    2, 0x08 /* Private */,
+      29,    0,  243,    2, 0x08 /* Private */,
+      30,    0,  244,    2, 0x08 /* Private */,
+      31,    0,  245,    2, 0x08 /* Private */,
+      32,    0,  246,    2, 0x08 /* Private */,
+      33,    0,  247,    2, 0x08 /* Private */,
+      34,    0,  248,    2, 0x08 /* Private */,
+      35,    0,  249,    2, 0x08 /* Private */,
+      36,    0,  250,    2, 0x08 /* Private */,
+      37,    3,  251,    2, 0x08 /* Private */,
+      37,    2,  258,    2, 0x28 /* Private | MethodCloned */,
+      38,    0,  263,    2, 0x08 /* Private */,
+      39,    1,  264,    2, 0x08 /* Private */,
+      41,    0,  267,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
@@ -163,9 +177,15 @@ static const uint qt_meta_data_xdynamics[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::UInt,    2,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QString,   35,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::Int, QMetaType::QString, QMetaType::QString,    2,    2,    2,
+    QMetaType::Void, QMetaType::Int, QMetaType::QString,    2,    2,
+    QMetaType::Void,
+    QMetaType::Void, QMetaType::QString,   40,
     QMetaType::Void,
 
        0        // eod
@@ -188,29 +208,35 @@ void xdynamics::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
         case 8: _t->newproj(); break;
         case 9: _t->openproj(); break;
         case 10: _t->saveproj(); break;
-        case 11: _t->ani_previous2x(); break;
-        case 12: _t->ani_previous1x(); break;
-        case 13: _t->ani_play(); break;
-        case 14: _t->sim_play(); break;
-        case 15: _t->sim_stop(); break;
-        case 16: _t->ani_pause(); break;
-        case 17: _t->ani_forward1x(); break;
-        case 18: _t->ani_forward2x(); break;
-        case 19: _t->ani_scrollbar(); break;
-        case 20: _t->makeCube(); break;
-        case 21: _t->makePlane(); break;
-        case 22: _t->makeLine(); break;
-        case 23: _t->makePolygon(); break;
-        case 24: _t->makeCylinder(); break;
-        case 25: _t->makeParticle(); break;
-        case 26: _t->makeMass(); break;
-        case 27: _t->makeHMCM(); break;
-        case 28: _t->solve(); break;
-        case 29: _t->exitThread(); break;
-        case 30: _t->recieveProgress((*reinterpret_cast< uint(*)>(_a[1]))); break;
-        case 31: _t->openPinfoDialog(); break;
-        case 32: _t->deleteFileByEXT((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 33: _t->waitSimulation(); break;
+        case 11: _t->onGoToBegin(); break;
+        case 12: _t->onPrevious2X(); break;
+        case 13: _t->onPrevious1X(); break;
+        case 14: _t->onSetPlayAnimation(); break;
+        case 15: _t->onAnimationPlay(); break;
+        case 16: _t->onAnimationPlayBack(); break;
+        case 17: _t->onAnimationPause(); break;
+        case 18: _t->onForward1X(); break;
+        case 19: _t->onForward2X(); break;
+        case 20: _t->onGoToEnd(); break;
+        case 21: _t->onGoFirstStep(); break;
+        case 22: _t->ani_scrollbar(); break;
+        case 23: _t->makeCube(); break;
+        case 24: _t->makePlane(); break;
+        case 25: _t->makeLine(); break;
+        case 26: _t->makePolygon(); break;
+        case 27: _t->makeCylinder(); break;
+        case 28: _t->makeParticle(); break;
+        case 29: _t->makeMass(); break;
+        case 30: _t->makeContactPair(); break;
+        case 31: _t->changePaletteMode(); break;
+        case 32: _t->changeProjectionViewMode(); break;
+        case 33: _t->solve(); break;
+        case 34: _t->exitThread(); break;
+        case 35: _t->recieveProgress((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3]))); break;
+        case 36: _t->recieveProgress((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 37: _t->openPinfoDialog(); break;
+        case 38: _t->deleteFileByEXT((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 39: _t->waitSimulation(); break;
         default: ;
         }
     }
@@ -241,13 +267,13 @@ int xdynamics::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 34)
+        if (_id < 40)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 34;
+        _id -= 40;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 34)
+        if (_id < 40)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 34;
+        _id -= 40;
     }
     return _id;
 }

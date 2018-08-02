@@ -2,8 +2,8 @@
 #define CONTACTCONSTANT_H
 
 /*#include "Object.h"*/
-#include "mphysics_types.h"
-#include "mphysics_numeric.h"
+#include "types.h"
+#include "vectorTypes.h"
 #include <QObject>
 #include <QDialog>
 

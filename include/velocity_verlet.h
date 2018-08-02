@@ -7,7 +7,7 @@ class velocity_verlet : public dem_integrator
 {
 public:
 	velocity_verlet();
-	velocity_verlet(modeler *_md);
+//	velocity_verlet(modeler *_md);
 	~velocity_verlet();
 
 	//virtual void updatePosition(double dt);

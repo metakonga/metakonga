@@ -1,6 +1,7 @@
 #include "vplane.h"
 #include <QTextStream>
 
+
 vplane::vplane()
 	: vobject()
 {
@@ -68,10 +69,23 @@ bool vplane::makePlaneGeometry(float l, VEC3F& xw, VEC3F& pa, VEC3F& pb, VEC3F& 
 void vplane::draw(GLenum eMode)
 {
 	if (display){
+		glPolygonMode(GL_FRONT_AND_BACK, drawingMode);
 		glPushMatrix();
 		glDisable(GL_LIGHTING);
-		if (eMode == GL_SELECT) glLoadName((GLuint)ID());
+		glColor3f(clr.redF(), clr.greenF(), clr.blueF());
+		if (eMode == GL_SELECT)
+			glLoadName((GLuint)ID());
 		glCallList(glList);
+		if (isSelected)
+		{
+			glLineWidth(2.0);
+			glLineStipple(5, 0x5555);
+			glEnable(GL_LINE_STIPPLE);
+			glColor3f(1.0f, 0.0f, 0.0f);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			glCallList(glHiList);
+			glDisable(GL_LINE_STIPPLE);
+		}
 		glPopMatrix();
 		glEnable(GL_LIGHTING);
 	}
@@ -95,5 +109,17 @@ bool vplane::define()
 	glEnd();
 	glEndList();
 
+	glHiList = glGenLists(1);
+	glNewList(glHiList, GL_COMPILE);
+	glBegin(GL_QUADS);
+	{
+		glVertex3f(p0[0], p0[1], p0[2]);
+		glVertex3f(p1[0], p1[1], p1[2]);
+		glVertex3f(p2[0], p2[1], p2[2]);
+		glVertex3f(p3[0], p3[1], p3[2]);
+		//glVertex3f(p0[0], p0[1], p0[2]);
+	}
+	glEnd();
+	glEndList();
 	return true;
 }

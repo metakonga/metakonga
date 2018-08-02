@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DLG_IMPORT_SHAPE</class>
+ <widget class="QDialog" name="DLG_IMPORT_SHAPE">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>321</width>
+    <height>253</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Import</string>
+  </property>
+  <widget class="QGroupBox" name="GB_MaterialProperty">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>50</y>
+     <width>301</width>
+     <height>161</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Material property</string>
+   </property>
+   <widget class="QWidget" name="layoutWidget_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>21</y>
+      <width>281</width>
+      <height>126</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="L_Type">
+       <property name="text">
+        <string>Type</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QComboBox" name="CB_Type"/>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="L_YoungsModulus">
+       <property name="text">
+        <string>Youngs modulus</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="LE_Youngs"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="L_Density">
+       <property name="text">
+        <string>Density</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="LE_Density"/>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="L_PoissonRatio">
+       <property name="text">
+        <string>Poisson ratio</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="LE_PoissonRatio"/>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="L_ShearModulus">
+       <property name="text">
+        <string>Shear modulus</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="LE_ShearModulus"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>220</y>
+     <width>171</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QPushButton" name="PB_Ok">
+      <property name="text">
+       <string>Ok</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="PB_Cancle">
+      <property name="text">
+       <string>Cancle</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>301</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QLineEdit" name="LE_FilePath"/>
+    </item>
+    <item>
+     <widget class="QPushButton" name="PB_FileBrowser">
+      <property name="maximumSize">
+       <size>
+        <width>31</width>
+        <height>31</height>
+       </size>
+      </property>
+      <property name="text">
+       <string>&lt;&lt;</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

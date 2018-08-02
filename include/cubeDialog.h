@@ -1,43 +1,28 @@
 #ifndef CUBEDIALOG_H
 #define CUBEDIALOG_H
 
-#include <QDialog>
+#include "ui_makeCube.h"
+#include "types.h"
 
-QT_BEGIN_NAMESPACE
-class QLabel;
-class QLineEdit;
-class QPushButton;
-class QGridLayout;
-class QComboBox;
-QT_END_NAMESPACE
-
-class modeler;
-class cube;
-
-class cubeDialog : public QDialog
+class cubeDialog : public QDialog, private Ui::DLG_MAKECUBE
 {
 	Q_OBJECT
 
 public:
-	cubeDialog();
-	//cube(std::map<QString, QObject*> *_objs);
+	cubeDialog(QWidget* parent = NULL);
 	~cubeDialog();
-	cube* callDialog(modeler *md);
 
-	bool isDialogOk;
-	QLabel *LMaterial;
-	QComboBox *CBMaterial;
-	QLabel *LStartPoint;
-	QLabel *LEndPoint;
-	QLabel *LName;
-	QLineEdit *LEName;
-	QLineEdit *LEStartPoint;
-	QLineEdit *LEEndPoint;
-	QGridLayout *cubeLayout;
-	QPushButton *PBOk;
-	QPushButton *PBCancel;
+	QString name;
+	int type;
+	double youngs;
+	double poisson;
+	double density;
+	double shear;
+	VEC3D start;
+	VEC3D end;
 
 private slots:
+	void changeComboBox(int);
 	void Click_ok();
 	void Click_cancel();
 };

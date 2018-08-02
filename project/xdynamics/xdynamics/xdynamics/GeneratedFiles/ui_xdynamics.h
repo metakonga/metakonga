@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'xdynamics.ui'
+** Form generated from reading UI file 'xdynamicssv6984.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef UI_XDYNAMICS_H
-#define UI_XDYNAMICS_H
+#ifndef XDYNAMICSSV6984_H
+#define XDYNAMICSSV6984_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -29,7 +29,7 @@ class Ui_xdynamics
 {
 public:
     QAction *actionChange_Shape;
-    QAction *actionMilkShape_3D_ASCII;
+    QAction *Import_MilkShape_3D_ASCII;
     QAction *actionMBD_Result_ASCII;
     QAction *actionDEM_Result_ASCII;
     QAction *actionProperty;
@@ -43,19 +43,18 @@ public:
     QMenu *menuExport;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
-    QToolBar *secToolBar;
 
     void setupUi(QMainWindow *xdynamics)
     {
         if (xdynamics->objectName().isEmpty())
             xdynamics->setObjectName(QStringLiteral("xdynamics"));
-        xdynamics->resize(1010, 802);
+        xdynamics->resize(1010, 801);
         xdynamics->setTabShape(QTabWidget::Rounded);
         actionChange_Shape = new QAction(xdynamics);
         actionChange_Shape->setObjectName(QStringLiteral("actionChange_Shape"));
         actionChange_Shape->setCheckable(true);
-        actionMilkShape_3D_ASCII = new QAction(xdynamics);
-        actionMilkShape_3D_ASCII->setObjectName(QStringLiteral("actionMilkShape_3D_ASCII"));
+        Import_MilkShape_3D_ASCII = new QAction(xdynamics);
+        Import_MilkShape_3D_ASCII->setObjectName(QStringLiteral("Import_MilkShape_3D_ASCII"));
         actionMBD_Result_ASCII = new QAction(xdynamics);
         actionMBD_Result_ASCII->setObjectName(QStringLiteral("actionMBD_Result_ASCII"));
         actionDEM_Result_ASCII = new QAction(xdynamics);
@@ -73,7 +72,7 @@ public:
         GraphicArea->setWidgetResizable(true);
         scrollAreaWidgetContents = new QWidget();
         scrollAreaWidgetContents->setObjectName(QStringLiteral("scrollAreaWidgetContents"));
-        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 990, 717));
+        scrollAreaWidgetContents->setGeometry(QRect(0, 0, 990, 728));
         GraphicArea->setWidget(scrollAreaWidgetContents);
 
         gridLayout->addWidget(GraphicArea, 0, 0, 1, 1);
@@ -97,17 +96,13 @@ public:
         statusBar = new QStatusBar(xdynamics);
         statusBar->setObjectName(QStringLiteral("statusBar"));
         xdynamics->setStatusBar(statusBar);
-        secToolBar = new QToolBar(xdynamics);
-        secToolBar->setObjectName(QStringLiteral("secToolBar"));
-        xdynamics->addToolBar(Qt::TopToolBarArea, secToolBar);
-        xdynamics->insertToolBarBreak(secToolBar);
 
         menuBar->addAction(menu->menuAction());
         menu->addAction(actionChange_Shape);
         menu->addAction(menuExport->menuAction());
         menu->addAction(menuImport->menuAction());
         menu->addAction(actionProperty);
-        menuImport->addAction(actionMilkShape_3D_ASCII);
+        menuImport->addAction(Import_MilkShape_3D_ASCII);
         menuExport->addAction(actionMBD_Result_ASCII);
         menuExport->addAction(actionDEM_Result_ASCII);
 
@@ -120,14 +115,13 @@ public:
     {
         xdynamics->setWindowTitle(QApplication::translate("xdynamics", "xdynamics", Q_NULLPTR));
         actionChange_Shape->setText(QApplication::translate("xdynamics", "Change Shape", Q_NULLPTR));
-        actionMilkShape_3D_ASCII->setText(QApplication::translate("xdynamics", "MilkShape 3D ASCII", Q_NULLPTR));
+        Import_MilkShape_3D_ASCII->setText(QApplication::translate("xdynamics", "MilkShape 3D ASCII", Q_NULLPTR));
         actionMBD_Result_ASCII->setText(QApplication::translate("xdynamics", "MBD Result ASCII", Q_NULLPTR));
         actionDEM_Result_ASCII->setText(QApplication::translate("xdynamics", "DEM Result ASCII", Q_NULLPTR));
         actionProperty->setText(QApplication::translate("xdynamics", "Property", Q_NULLPTR));
-        menu->setTitle(QApplication::translate("xdynamics", "\352\270\260\353\212\245", Q_NULLPTR));
+        menu->setTitle(QApplication::translate("xdynamics", "File", Q_NULLPTR));
         menuImport->setTitle(QApplication::translate("xdynamics", "Import", Q_NULLPTR));
         menuExport->setTitle(QApplication::translate("xdynamics", "Export", Q_NULLPTR));
-        secToolBar->setWindowTitle(QApplication::translate("xdynamics", "toolBar", Q_NULLPTR));
     } // retranslateUi
 
 };
@@ -138,4 +132,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // UI_XDYNAMICS_H
+#endif // XDYNAMICSSV6984_H

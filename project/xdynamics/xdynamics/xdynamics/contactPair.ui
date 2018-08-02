@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DLG_ContactPair</class>
+ <widget class="QDialog" name="DLG_ContactPair">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>344</width>
+    <height>324</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Make contact pair</string>
+  </property>
+  <widget class="QTabWidget" name="TB_METHOD">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>50</y>
+     <width>328</width>
+     <height>235</height>
+    </rect>
+   </property>
+   <widget class="QWidget" name="T_DHS">
+    <attribute name="title">
+     <string>DHS</string>
+    </attribute>
+    <widget class="QGroupBox" name="GB_ContactPair">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>301</width>
+       <height>80</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Contact pair</string>
+     </property>
+     <widget class="QWidget" name="">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>281</width>
+        <height>48</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="L_FirstObject">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>First object</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="CB_FirstObject"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="L_SecondObject">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Second object</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="CB_SecondObject"/>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="GB_Parameter">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>100</y>
+       <width>301</width>
+       <height>103</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>Parameter</string>
+     </property>
+     <widget class="QWidget" name="">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>281</width>
+        <height>74</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="0" column="0">
+        <widget class="QLabel" name="L_Restitution">
+         <property name="text">
+          <string>Restitution</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="LE_Restitution"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="L_StiffnessRatio">
+         <property name="text">
+          <string>Stiffness ratio</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="LE_StiffnessRatio"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="L_Friction">
+         <property name="text">
+          <string>Friction</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="LE_Friction"/>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+    <zorder>GB_Parameter</zorder>
+    <zorder>GB_ContactPair</zorder>
+    <zorder>GB_ContactPair</zorder>
+    <zorder>GB_Parameter</zorder>
+   </widget>
+   <widget class="QWidget" name="tab_2">
+    <attribute name="title">
+     <string>Tab 2</string>
+    </attribute>
+   </widget>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>290</y>
+     <width>181</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QPushButton" name="PB_Ok">
+      <property name="text">
+       <string>Ok</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="PB_Cancle">
+      <property name="text">
+       <string>Cancle</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>20</y>
+     <width>321</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QLabel" name="L_Name">
+      <property name="text">
+       <string>Name</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="LE_Name"/>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

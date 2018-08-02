@@ -132,7 +132,7 @@ __global__ void vv_update_velocity_kernel(
 	vel[id] = v;
 	omega[id] = av;
 	acc[id] = L;
-	alpha[id] = av;
+	alpha[id] = aa;
 }
 
 
@@ -385,10 +385,10 @@ __device__ void DHSModel(
 		double ds = mag_e * cte.dt;
 		Ft = min(c.ks * ds + c.vs * (dot(dv, sh)), c.mu * length(Fn)) * sh;
 		M = cross(ir * unit, Ft);
-		if (length(iomega)){
+		/*if (length(iomega)){
 			double3 on = iomega / length(iomega);
 			M += c.ms * fsn * rcon * on;
-		}
+		}*/
 	}
 }
 
@@ -398,7 +398,7 @@ __global__ void calculate_p2p_kernel(
 	double3* omega,	double3* force, 
 	double3* moment, double* mass,
 	unsigned int* sorted_index, unsigned int* cstart,
-	unsigned int* cend, contact_parameter* cp)
+	unsigned int* cend, device_contact_property* cp)
 {
 	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
@@ -476,7 +476,8 @@ __global__ void calculate_p2p_kernel(
 	moment[id] += sumM;
 }
 
-__device__ double particle_plane_contact_detection(device_plane_info *pe, double3& xp, double3& wp, double3& u, double r)
+__device__ double particle_plane_contact_detection(
+	device_plane_info *pe, double3& xp, double3& wp, double3& u, double r)
 {
 	double a_l1 = pow(wp.x - pe->l1, 2.0);
 	double b_l2 = pow(wp.y - pe->l2, 2.0);
@@ -561,11 +562,11 @@ __device__ double particle_plane_contact_detection(device_plane_info *pe, double
 }
 
 template <int TCM>
-__global__ void plane_hertzian_contact_force_kernel(
+__global__ void plane_contact_force_kernel(
 	device_plane_info *plane,
 	double4* pos, double3* vel, double3* omega, 
 	double3* force, double3* moment,
-	contact_parameter *cp, double* mass)
+	device_contact_property *cp, double* mass)
 {
 	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
@@ -712,7 +713,7 @@ template<int TCM>
 __global__ void cylinder_hertzian_contact_force_kernel(
 	device_cylinder_info *cy,
 	double4* pos, double3* vel, double3* omega, 
-	double3* force,	double3* moment, contact_parameter *cp,
+	double3* force, double3* moment, device_contact_property *cp,
 	double* mass, double3* mpos, double3* mf, double3* mm)
 {
 	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
@@ -913,7 +914,7 @@ __global__ void particle_polygonObject_collision_kernel(
 	device_polygon_info* dpi, double4* dsph, device_polygon_mass_info* dpmi,
 	double4 *pos, double3 *vel, double3 *omega, double3 *force, double3 *moment,
 	double* mass, unsigned int* sorted_index, unsigned int* cstart, unsigned int* cend, 
-	contact_parameter *cp, double3* mpos, double3* mf, double3* mm)
+	device_contact_property *cp, double3* mpos, double3* mf, double3* mm)
 {
 	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
 

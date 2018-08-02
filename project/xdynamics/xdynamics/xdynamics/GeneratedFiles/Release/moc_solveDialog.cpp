@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'solveDialog.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.7.0)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.7.1)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -12,7 +12,7 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'solveDialog.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.7.0. It"
+#error "This file was generated using the moc from 5.7.1. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -20,7 +20,7 @@
 QT_BEGIN_MOC_NAMESPACE
 struct qt_meta_stringdata_solveDialog_t {
     QByteArrayData data[4];
-    char stringdata0[38];
+    char stringdata0[35];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -30,12 +30,12 @@ struct qt_meta_stringdata_solveDialog_t {
 static const qt_meta_stringdata_solveDialog_t qt_meta_stringdata_solveDialog = {
     {
 QT_MOC_LITERAL(0, 0, 11), // "solveDialog"
-QT_MOC_LITERAL(1, 12, 11), // "Click_Solve"
-QT_MOC_LITERAL(2, 24, 0), // ""
-QT_MOC_LITERAL(3, 25, 12) // "Click_Cancel"
+QT_MOC_LITERAL(1, 12, 8), // "click_ok"
+QT_MOC_LITERAL(2, 21, 0), // ""
+QT_MOC_LITERAL(3, 22, 12) // "click_cancle"
 
     },
-    "solveDialog\0Click_Solve\0\0Click_Cancel"
+    "solveDialog\0click_ok\0\0click_cancle"
 };
 #undef QT_MOC_LITERAL
 
@@ -69,8 +69,8 @@ void solveDialog::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id,
         solveDialog *_t = static_cast<solveDialog *>(_o);
         Q_UNUSED(_t)
         switch (_id) {
-        case 0: _t->Click_Solve(); break;
-        case 1: _t->Click_Cancel(); break;
+        case 0: _t->click_ok(); break;
+        case 1: _t->click_cancle(); break;
         default: ;
         }
     }

@@ -1,40 +1,52 @@
 #include "grid_base.h"
+#include "simulation.h"
 #include "mphysics_cuda_dec.cuh"
 
 VEC3D grid_base::wo;				// world origin
 double grid_base::cs = 0.0;			// cell size
 VEC3UI grid_base::gs;				// grid size
-
-unsigned int* grid_base::sorted_id = NULL;
-unsigned int* grid_base::cell_id = NULL;
-unsigned int* grid_base::body_id = NULL;
-unsigned int* grid_base::cell_start = NULL;
-unsigned int* grid_base::cell_end = NULL;
-unsigned int* grid_base::d_sorted_id = NULL;
-unsigned int* grid_base::d_cell_start = NULL;
-unsigned int* grid_base::d_cell_end = NULL;
+// 
+// unsigned int* grid_base::sorted_id = NULL;
+// unsigned int* grid_base::cell_id = NULL;
+// unsigned int* grid_base::body_id = NULL;
+// unsigned int* grid_base::cell_start = NULL;
+// unsigned int* grid_base::cell_end = NULL;
+// unsigned int* grid_base::d_sorted_id = NULL;
+// unsigned int* grid_base::d_cell_start = NULL;
+// unsigned int* grid_base::d_cell_end = NULL;
 
 grid_base::grid_base()
-	: name("grid_base")
-	//, d_sorted_id(NULL)
+	: type(NEIGHBORHOOD)
+	, sorted_id(NULL)
+	, cell_id(NULL)
+	, body_id(NULL)
+	, cell_start(NULL)
+	, cell_end(NULL)
+	, d_sorted_id(NULL)
+	, d_cell_start(NULL)
+	, d_cell_end(NULL)
 	, d_cell_id(NULL)
 	, d_body_id(NULL)
-	//, d_cell_start(NULL)
-	//, d_cell_end(NULL)
 	, nse(0)
+	, ng(0)
 {
 
 }
 
-grid_base::grid_base(std::string _name, modeler* _md)
-	: name(_name)
-	, md(_md)
-	//, d_sorted_id(NULL)
+grid_base::grid_base(Type t)
+	: type(t)
+	, sorted_id(NULL)
+	, cell_id(NULL)
+	, body_id(NULL)
+	, cell_start(NULL)
+	, cell_end(NULL)
+	, d_sorted_id(NULL)
+	, d_cell_start(NULL)
+	, d_cell_end(NULL)
 	, d_cell_id(NULL)
 	, d_body_id(NULL)
-	//, d_cell_start(NULL)
-	//, d_cell_end(NULL)
 	, nse(0)
+	, ng(0)
 {
 
 }
@@ -46,17 +58,37 @@ grid_base::~grid_base()
 
 void grid_base::clear()
 {
-	if (cell_id) delete[] cell_id; cell_id = NULL;
-	if (body_id) delete[] body_id; body_id = NULL;
-	if (sorted_id) delete[] sorted_id; sorted_id = NULL;
-	if (cell_start) delete[] cell_start; cell_start = NULL;
-	if (cell_end) delete[] cell_end; cell_end = NULL;
+	if (simulation::isCpu())
+	{
+		if (cell_id) delete[] cell_id; cell_id = NULL;
+		if (body_id) delete[] body_id; body_id = NULL;
+		if (sorted_id) delete[] sorted_id; sorted_id = NULL;
+		if (cell_start) delete[] cell_start; cell_start = NULL;
+		if (cell_end) delete[] cell_end; cell_end = NULL;
+	}
+	else
+	{
+		if (d_cell_id) checkCudaErrors(cudaFree(d_cell_id)); d_cell_id = NULL;
+		if (d_body_id) checkCudaErrors(cudaFree(d_body_id)); d_body_id = NULL;
+		if (d_sorted_id) checkCudaErrors(cudaFree(d_sorted_id)); d_sorted_id = NULL;
+		if (d_cell_start) checkCudaErrors(cudaFree(d_cell_start)); d_cell_start = NULL;
+		if (d_cell_end) checkCudaErrors(cudaFree(d_cell_end)); d_cell_start = NULL;
+	}	
+}
 
-	if (d_cell_id) checkCudaErrors(cudaFree(d_cell_id)); d_cell_id = NULL;
-	if (d_body_id) checkCudaErrors(cudaFree(d_body_id)); d_body_id = NULL;
-	if (d_sorted_id) checkCudaErrors(cudaFree(d_sorted_id)); d_sorted_id = NULL;
-	if (d_cell_start) checkCudaErrors(cudaFree(d_cell_start)); d_cell_start = NULL;
-	if (d_cell_end) checkCudaErrors(cudaFree(d_cell_end)); d_cell_start = NULL;
+void grid_base::initialize(unsigned int np)
+{
+	if (simulation::isGpu())
+		cuAllocMemory(np);
+	else
+	{
+		allocMemory(np);
+		d_cell_id = cell_id;
+		d_body_id = body_id;
+		d_sorted_id = sorted_id;
+		d_cell_start = cell_start;
+		d_cell_end = cell_end;
+	}
 }
 
 void grid_base::allocMemory(unsigned int n)
