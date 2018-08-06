@@ -31,6 +31,8 @@ public:
 	void Save(QTextStream& qts);
 	void Open(QTextStream& qts);
 
+	QMap<QString, QString>& Logs() { return logs; }
+	QMap<QString, particlesInfo>& ParticleInfomations() { return pinfos; }
 	unsigned int Np() { return np; }
 	object* Object() { return obj; }
 	double* Position() { return (double*)pos; }

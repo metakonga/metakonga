@@ -858,6 +858,9 @@ void xdynamics::makeParticle()
 			 );
 			break;
 		}
+		cmd->printLine();
+		cmd->write(CMD_INFO, pm->Logs()[pd.name]);
+		cmd->printLine();
 		/*gl->makeParticle((double*)pos, pm->Np());*/
 	}
 }
@@ -901,6 +904,9 @@ void xdynamics::makeContactPair()
 			cpd.name, cpd.method, o1, o2,
 			cpd.restitution, cpd.stiffnessRatio, cpd.friction
 			);
+		cmd->printLine();
+		cmd->write(CMD_INFO, mg->ContactManager()->Logs()[cpd.name]);
+		cmd->printLine();
 	}
 //	hmcmDialog hmcm(this, md);
 }

@@ -25,7 +25,7 @@ bool contact_particles_cube::collision(
 	unsigned int *cell_end,
 	unsigned int np)
 {
-	simulation::isCpu()
+	simulation::isGpu()
 		? cu_cube_contact_force(1, cu->deviceCubeInfo(), pos, vel, omega, force, moment, mass, np, dcp)
 		: hostCollision(pos, vel, omega, mass, force, moment, np);
 	return true;
@@ -52,9 +52,9 @@ void contact_particles_cube::cudaMemoryAlloc()
 		_dpi[i].w4 = make_double3(pe.W4().x, pe.W4().y, pe.W4().z);
 	}
 
-	checkCudaErrors(cudaMalloc((void**)&_dpi, sizeof(device_plane_info) * 6));
+	checkCudaErrors(cudaMalloc((void**)&dpi, sizeof(device_plane_info) * 6));
 	checkCudaErrors(cudaMemcpy(dpi, _dpi, sizeof(device_plane_info) * 6, cudaMemcpyHostToDevice));
-	delete _dpi;
+	delete [] _dpi;
 }
 
 bool contact_particles_cube::hostCollision(

@@ -72,7 +72,7 @@ void particleDialog::setCubeData()
 	LE_MIN_RADIUS->setText(QString("%1").arg(min_radius));
 	LE_MAX_RADIUS->setText(QString("%1").arg(max_radius));
 	LE_NUM_PARTICLE->setText(QString("%1").arg(ncubex * ncubey * ncubez));
-	LE_CUBE_LOC->setText("0.0 0.1 0.0");
+	LE_CUBE_LOC->setText("0.0 0.02 0.0");
 }
 
 void particleDialog::setPlaneData()
@@ -83,7 +83,7 @@ void particleDialog::setPlaneData()
 	LE_MIN_RADIUS->setText(QString("%1").arg(min_radius));
 	LE_MAX_RADIUS->setText(QString("%1").arg(max_radius));
 	LE_NUM_PARTICLE->setText(QString("%1").arg(nplanex * nplanez));
-	LE_PLANE_LOC->setText("0.0 0.1 0.0");
+	LE_PLANE_LOC->setText("0.0 0.02 0.0");
 }
 
 void particleDialog::changeTab(int idx)

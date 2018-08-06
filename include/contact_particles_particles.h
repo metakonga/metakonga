@@ -26,7 +26,12 @@ public:
 private:
 	object* obj1;
 	object* obj2;
-	bool DHSModel(
+// 	bool hostCollision(
+// 		double *dpos /* = NULL */, double *dvel /* = NULL  */,
+// 		double *domega /* = NULL */, double *dmass /* = NULL  */,
+// 		double *dforce /* = NULL  */, double *dmoment /* = NULL */,
+// 		unsigned int np);
+	bool hostCollision(
 		double *dpos /* = NULL */, double *dvel /* = NULL  */,
 		double *domega /* = NULL */, double *dmass /* = NULL  */,
 		double *dforce /* = NULL  */, double *dmoment /* = NULL */,

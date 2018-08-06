@@ -53,7 +53,7 @@ public:
 	void makeLine();
 	void makeCylinder(cylinder* cy);
 	void makeParticle(double* pos, unsigned int n);
-	void makePolygonObject(polygonObject* po);
+	void makePolygonObject(QString _nm, import_shape_type t, QString file);
 //	bool change(QString& fp, tChangeType ct, tFileType ft);
 	void makeMassCoordinate(QString& _name);
 
@@ -62,7 +62,7 @@ public:
 	int zRotation() const { return zRot; }
 	float& getZoom() { return zoom; }
 	void setKeyState(bool s, int i) { keyID[i] = s; };
-
+	void actionDelete(const QString& tg);
 	std::list<parview::contactConstant>* ContactConstants(){ return NULL; }// &cconsts;	}
 	void onAnimation() { isAnimation = true; }
 	GLuint makePolygonObject(double* points, double* normals, int* indice, int size);
@@ -111,7 +111,7 @@ private:
 	float& horizontalMovement() { return trans_x; }
 	void DrawCartesianCoordinates(vector3<double>& pos, vector3<double>& angle);
 	GLuint makeCoordinate();
-	void actionDelete(const QString& tg);
+	
 	//GLuint makePolygonObject(float* points, float* normals, int* indice, int size);
 	void normalizeAngle(int *angle);
 	int viewOption;

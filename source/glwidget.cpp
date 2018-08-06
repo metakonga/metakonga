@@ -174,7 +174,7 @@ void GLWidget::ShowContextMenu(const QPoint& pos)
 	{
 		QString name;
 		for (unsigned int i = 0; i < selectedIndice.size(); i++)
-		{
+		{ 
 			
 			unsigned int id = selectedIndice.at(i);
 			//if (id < 1000){
@@ -933,8 +933,10 @@ void GLWidget::makeCube(cube* c)
 	if (!c)
 		return;
 	vcube *vc = new vcube(c->Name());
+	qDebug() << c->Name();
 	vc->makeCubeGeometry(c->Name(), c->RollType(), c->MaterialType(), c->min_point().To<float>(), c->cube_size().To<float>());
 	v_objs[c->Name()] = vc;
+	qDebug() << vc; 
 	v_wobjs[vc->ID()] = (void*)vc;
 }
 
@@ -965,11 +967,11 @@ void GLWidget::makeLine()
 
 }
 
-void GLWidget::makePolygonObject(polygonObject* po)
+void GLWidget::makePolygonObject(QString _nm, import_shape_type t, QString file)
 {
-	vpolygon* vpoly = new vpolygon(po->Name());
-	vpoly->define(po->getOrigin(), po->normalSet(), po->hostSphereSet(), po->vertexSet(), po->indexSet(), po->numIndex(), po->numVertex());
-	v_objs[po->Name()] = vpoly;
+	vpolygon* vpoly = new vpolygon(_nm);
+	vpoly->define(t, file);
+	v_objs[_nm] = vpoly;
 	v_wobjs[vpoly->ID()] = (void*)vpoly;
  }
 

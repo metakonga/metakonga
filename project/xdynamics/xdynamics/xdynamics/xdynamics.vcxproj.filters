@@ -146,9 +146,6 @@
     <ClCompile Include="GeneratedFiles\Release\moc_solveProcess.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\source\collision\collision_particles_polygonObject.cpp">
-      <Filter>Source Files\collision</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\source\collision\collision_particles_cylinder.cpp">
       <Filter>Source Files\collision</Filter>
     </ClCompile>
@@ -410,6 +407,9 @@
     <ClCompile Include="GeneratedFiles\Release\moc_importDialog.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\source\collision\contact_particles_polygonObject.cpp">
+      <Filter>Source Files\collision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="xdynamics.h">
@@ -520,9 +520,6 @@
       <Filter>Generated Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\collision_particles_cylinder.h">
-      <Filter>Header Files\collision</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\include\collision_particles_polygonObject.h">
       <Filter>Header Files\collision</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\simulation\dem_simulation.h">
@@ -731,6 +728,9 @@
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_import.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\contact_particles_polygonObject.h">
+      <Filter>Header Files\collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

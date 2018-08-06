@@ -72,62 +72,62 @@ void contact_particles_plane::cudaMemoryAlloc()
 }
 
 double contact_particles_plane::particle_plane_contact_detection(
-	VEC3D& u, VEC3D& xp, VEC3D& wp, double r
+	plane* _pe, VEC3D& u, VEC3D& xp, VEC3D& wp, double r
 	)
 {
-	double a_l1 = pow(wp.x - pe->L1(), 2.0);
-	double b_l2 = pow(wp.y - pe->L2(), 2.0);
+	double a_l1 = pow(wp.x - _pe->L1(), 2.0);
+	double b_l2 = pow(wp.y - _pe->L2(), 2.0);
 	double sqa = wp.x * wp.x;
 	double sqb = wp.y * wp.y;
 	double sqc = wp.z * wp.z;
 	double sqr = r*r;
 
 	// The sphere contacts with the wall face
-	if (abs(wp.z) < r && (wp.x > 0 && wp.x < pe->L1()) && (wp.y > 0 && wp.y < pe->L2())){
-		VEC3D dp = xp - pe->XW();
-		vector3<double> uu = pe->UW() / pe->UW().length();
-		int pp = -sign(dp.dot(pe->UW()));
+	if (abs(wp.z) < r && (wp.x > 0 && wp.x < _pe->L1()) && (wp.y > 0 && wp.y < _pe->L2())){
+		VEC3D dp = xp - _pe->XW();
+		vector3<double> uu = _pe->UW() / _pe->UW().length();
+		int pp = -sign(dp.dot(_pe->UW()));
 		u = pp * uu;
 		double collid_dist = r - abs(dp.dot(u));
 		return collid_dist;
 	}
 
 	if (wp.x < 0 && wp.y < 0 && (sqa + sqb + sqc) < sqr){
-		VEC3D Xsw = xp - pe->XW();
+		VEC3D Xsw = xp - _pe->XW();
 		double h = Xsw.length();
 		u = Xsw / h;
 		return r - h;
 	}
-	else if (wp.x > pe->L1() && wp.y < 0 && (a_l1 + sqb + sqc) < sqr){
-		VEC3D Xsw = xp - pe->W2();
+	else if (wp.x > _pe->L1() && wp.y < 0 && (a_l1 + sqb + sqc) < sqr){
+		VEC3D Xsw = xp - _pe->W2();
 		double h = Xsw.length();
 		u = Xsw / h;
 		return r - h;
 	}
-	else if (wp.x > pe->L1() && wp.y > pe->L2() && (a_l1 + b_l2 + sqc) < sqr){
-		VEC3D Xsw = xp - pe->W3();
+	else if (wp.x > _pe->L1() && wp.y > _pe->L2() && (a_l1 + b_l2 + sqc) < sqr){
+		VEC3D Xsw = xp - _pe->W3();
 		double h = Xsw.length();
 		u = Xsw / h;
 		return r - h;
 	}
-	else if (wp.x < 0 && wp.y > pe->L2() && (sqa + b_l2 + sqc) < sqr){
-		VEC3D Xsw = xp - pe->W4();
+	else if (wp.x < 0 && wp.y > _pe->L2() && (sqa + b_l2 + sqc) < sqr){
+		VEC3D Xsw = xp - _pe->W4();
 		double h = Xsw.length();
 		u = Xsw / h;
 		return r - h;
 	}
-	if ((wp.x > 0 && wp.x < pe->L1()) && wp.y < 0 && (sqb + sqc) < sqr){
-		VEC3D Xsw = xp - pe->XW();
-		VEC3D wj_wi = pe->W2() - pe->XW();
+	if ((wp.x > 0 && wp.x < _pe->L1()) && wp.y < 0 && (sqb + sqc) < sqr){
+		VEC3D Xsw = xp - _pe->XW();
+		VEC3D wj_wi = _pe->W2() - _pe->XW();
 		VEC3D us = wj_wi / wj_wi.length();
 		VEC3D h_star = Xsw - (Xsw.dot(us)) * us;
 		double h = h_star.length();
 		u = -h_star / h;
 		return r - h;
 	}
-	else if ((wp.x > 0 && wp.x < pe->L1()) && wp.y > pe->L2() && (b_l2 + sqc) < sqr){
-		VEC3D Xsw = xp - pe->W4();
-		VEC3D wj_wi = pe->W3() - pe->W4();
+	else if ((wp.x > 0 && wp.x < _pe->L1()) && wp.y > _pe->L2() && (b_l2 + sqc) < sqr){
+		VEC3D Xsw = xp - _pe->W4();
+		VEC3D wj_wi = _pe->W3() - _pe->W4();
 		VEC3D us = wj_wi / wj_wi.length();
 		VEC3D h_star = Xsw - (Xsw.dot(us)) * us;
 		double h = h_star.length();
@@ -135,18 +135,18 @@ double contact_particles_plane::particle_plane_contact_detection(
 		return r - h;
 
 	}
-	else if ((wp.x > 0 && wp.y < pe->L2()) && wp.x < 0 && (sqr + sqc) < sqr){
-		VEC3D Xsw = xp - pe->XW();
-		VEC3D wj_wi = pe->W4() - pe->XW();
+	else if ((wp.x > 0 && wp.y < _pe->L2()) && wp.x < 0 && (sqr + sqc) < sqr){
+		VEC3D Xsw = xp - _pe->XW();
+		VEC3D wj_wi = _pe->W4() - _pe->XW();
 		VEC3D us = wj_wi / wj_wi.length();
 		VEC3D h_star = Xsw - (Xsw.dot(us)) * us;
 		double h = h_star.length();
 		u = -h_star / h;
 		return r - h;
 	}
-	else if ((wp.x > 0 && wp.y < pe->L2()) && wp.x > pe->L1() && (a_l1 + sqc) < sqr){
-		VEC3D Xsw = xp - pe->W2();
-		VEC3D wj_wi = pe->W3() - pe->W2();
+	else if ((wp.x > 0 && wp.y < _pe->L2()) && wp.x > _pe->L1() && (a_l1 + sqc) < sqr){
+		VEC3D Xsw = xp - _pe->W2();
+		VEC3D wj_wi = _pe->W3() - _pe->W2();
 		VEC3D us = wj_wi / wj_wi.length();
 		VEC3D h_star = Xsw - (Xsw.dot(us)) * us;
 		double h = h_star.length();
@@ -166,13 +166,13 @@ void contact_particles_plane::singleCollision(
 	VEC3D wp = VEC3D(dp.dot(_pe->U1()), dp.dot(_pe->U2()), dp.dot(_pe->UW()));
 	VEC3D u;
 
-	double cdist = particle_plane_contact_detection(u, pos, wp, rad);
+	double cdist = particle_plane_contact_detection(_pe, u, pos, wp, rad);
 	if (cdist > 0){
 		double rcon = rad - 0.5 * cdist;
 		VEC3D cp = pos + rcon * u;
 		//unsigned int ci = (unsigned int)(i / particle_cluster::perCluster());
 		//VEC3D c2p = cp - ps->getParticleClusterFromParticleID(ci)->center();
-		VEC3D dv = -(dv + omega.cross(rad * u));
+		VEC3D dv = -(vel + omega.cross(rad * u));
 
 		contactParameters c = getContactParameters(
 			rad, 0.0,

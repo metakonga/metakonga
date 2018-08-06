@@ -26,7 +26,7 @@ void contact::DHSModel
 		//M = (p.w * u).cross(Ft);
 		M = cp.cross(Ft);
 	}
-	F = Fn + Ft;
+	F = Fn;// + Ft;
 }
 
 contact::contact(QString nm, contactForce_type t)
@@ -35,6 +35,7 @@ contact::contact(QString nm, contactForce_type t)
 	, stiffnessRatio(0)
 	, friction(0)
 	, f_type(t)
+	, dcp(NULL)
 	, type(NO_CONTACT_PAIR)
 {
 	count++;
@@ -43,6 +44,7 @@ contact::contact(QString nm, contactForce_type t)
 
 contact::contact(const contact* c)
 	: name(c->Name())
+	, dcp(NULL)
 	, restitution(c->Restitution())
 	, friction(c->Friction())
 	, stiffnessRatio(c->StiffnessRatio())
@@ -51,7 +53,11 @@ contact::contact(const contact* c)
 	, type(c->PairType())
 {
 	if (c->DeviceContactProperty())
+	{
+		checkCudaErrors(cudaMalloc((void**)&dcp, sizeof(device_contact_property)));
 		checkCudaErrors(cudaMemcpy(dcp, c->DeviceContactProperty(), sizeof(device_contact_property), cudaMemcpyDeviceToDevice));
+	}
+		
 }
 
 contact::~contact()

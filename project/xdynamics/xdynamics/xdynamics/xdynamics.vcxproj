@@ -185,7 +185,7 @@
     <ClCompile Include="..\..\..\..\source\collision\collision_particles_cylinder.cpp" />
     <ClCompile Include="..\..\..\..\source\collision\contact_particles_particles.cpp" />
     <ClCompile Include="..\..\..\..\source\collision\contact_particles_plane.cpp" />
-    <ClCompile Include="..\..\..\..\source\collision\collision_particles_polygonObject.cpp" />
+    <ClCompile Include="..\..\..\..\source\collision\contact_particles_polygonObject.cpp" />
     <ClCompile Include="..\..\..\..\source\contactCoefficientTable.cpp" />
     <ClCompile Include="..\..\..\..\source\contactConstant.cpp" />
     <ClCompile Include="..\..\..\..\source\cubeDialog.cpp" />
@@ -782,7 +782,7 @@
     <ClInclude Include="..\..\..\..\include\collision_particles_cylinder.h" />
     <ClInclude Include="..\..\..\..\include\contact_particles_particles.h" />
     <ClInclude Include="..\..\..\..\include\contact_particles_plane.h" />
-    <ClInclude Include="..\..\..\..\include\collision_particles_polygonObject.h" />
+    <ClInclude Include="..\..\..\..\include\contact_particles_polygonObject.h" />
     <CustomBuild Include="..\..\..\..\include\widget\database.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing database.h...</Message>

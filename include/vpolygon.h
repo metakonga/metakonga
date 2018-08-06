@@ -18,7 +18,7 @@ public:
 
 	virtual void draw(GLenum eMode);
 	
-	bool define(VEC3D org, VEC3D* nor, VEC4D* _sphere, VEC3D* vset, VEC3UI* iset, unsigned int nid, unsigned int nvt);
+	bool define(import_shape_type t, QString file);
 	bool makePolygonGeometry(VEC3F& P, VEC3F& Q, VEC3F& R);
 	void setResultData(unsigned int nout);
 	void insertResultData(unsigned int i, VEC3D& p, EPD& r);
@@ -29,7 +29,7 @@ public:
 
 private:
 	void _drawPolygons();
-
+	void _loadMS3DASCII(QString f);
 	//QString nm;
 	//bool isSelected;
 	//static int pcnt;
@@ -42,10 +42,11 @@ private:
 	unsigned int m_normal_vbo;
 	float origin[3];
 	float ang[3];
-	VEC3F *vertice;
-	VEC3F *normals;
-	VEC3UI *indice;
-	VEC4F *colors;
+	float *vertice;
+	float *normals;
+	float *texture;
+	unsigned int *indice;
+	float *colors;
 	VEC4F *spheres;
 
 // 	VEC3D* outPos;

@@ -24,19 +24,9 @@ bool contact_particles_particles::collision(
 	unsigned int np
 	)
 {
-	switch (f_type)
-	{
-// 	case HMCM: 
-// 		cu_calculate_p2p(
-// 			0, dpos, dvel, domega, dforce, dmoment, dmass,
-// 			grid_base::cuSortedID(), grid_base::cuCellStart(), grid_base::cuCellEnd(), dcp, ps->numParticle());
-// 		break;
-	case DHS:
-		simulation::isGpu() 
-			? cu_calculate_p2p(1, pos, vel, omega, force, moment, mass, sorted_id, cell_start, cell_end, dcp, np)
-			: DHSModel(pos, vel, omega, mass, force, moment, sorted_id, cell_start, cell_end, np);
-		break;
-	}
+	simulation::isGpu() 
+		? cu_calculate_p2p(1, pos, vel, omega, force, moment, mass, sorted_id, cell_start, cell_end, dcp, np)
+		: hostCollision(pos, vel, omega, mass, force, moment, sorted_id, cell_start, cell_end, np);
 	return true;
 }
 
@@ -54,7 +44,7 @@ void contact_particles_particles::cudaMemoryAlloc()
 // 	return true;
 // }
 
-bool contact_particles_particles::DHSModel(
+bool contact_particles_particles::hostCollision(
 	double *m_pos, double *m_vel, double *m_omega, 
 	double *m_mass, double *m_force, double *m_moment, 
 	unsigned int *sorted_id, unsigned int *cell_start, 
@@ -65,7 +55,7 @@ bool contact_particles_particles::DHSModel(
 	double dist, cdist, mag_e, ds;
 	unsigned int hash, sid, eid;
 	contactParameters c;
-	VEC3D ipos, jpos, rp, u, rv, Fn, e, sh, M;
+	VEC3D ipos, jpos, rp, u, rv, Fn, Ft, e, sh, M;
 	VEC4D *pos = (VEC4D*)m_pos;
 	VEC3D *vel = (VEC3D*)m_vel;
 	VEC3D *omega = (VEC3D*)m_omega;
@@ -99,7 +89,7 @@ bool contact_particles_particles::DHSModel(
 								VEC3D cp = ipos + pos[i].w * u;
 								//unsigned int ci = (unsigned int)(i / particle_cluster::perCluster());
 								//VEC3D c2p = cp - ps->getParticleClusterFromParticleID(ci)->center();
-								double rcon = pos[i].w - 0.5 * cdist;
+								//double rcon = pos[i].w - 0.5 * cdist;
 								rv = vel[k] + omega[k].cross(-pos[k].w * u) - (vel[i] + omega[i].cross(pos[i].w * u));
 								c = getContactParameters(
 									pos[i].w, pos[k].w, 
@@ -107,25 +97,12 @@ bool contact_particles_particles::DHSModel(
 									mpp.Ei, mpp.Ej, 
 									mpp.pri, mpp.prj, 
 									mpp.Gi, mpp.Gj);
-								double cor = u.length();
-								double fsn = -c.kn * pow(cdist, 1.5);
-								//double fca = cohesionForce(pos[i].w, pos[k].w, ps->youngs(), ps->youngs(), ps->poisson(), ps->poisson(), fsn);
-								double fsd = rv.dot(u) * c.vn;
-
-								Fn = (fsn/* + fca*/ + fsd) * u;
-								double dd = rv.dot(u);
-								e = rv - rv.dot(u) * u;
-								mag_e = e.length();
-								VEC3D Ft;
-								if (mag_e){
-									sh = e / mag_e;
-									ds = mag_e * simulation::dt;
-									double ft1 = c.ks * ds + c.vs * (rv.dot(sh));
-									double ft2 = friction * Fn.length();
-									Ft = min(ft1, ft2) * sh;
-									M = (pos[i].w * u).cross(Ft);
+								switch (f_type)
+								{
+								case DHS: DHSModel(c, cdist, cp, rv, u, Fn, Ft); break;
 								}
-								fr[i] += Fn + Ft;
+			
+								fr[i] += Fn/* + Ft*/;
 								mm[i] += M;
 							}
 						}

@@ -30,7 +30,7 @@ public:
 	virtual void cudaMemoryAlloc();
 
 private:
-	double particle_plane_contact_detection(VEC3D& u, VEC3D& xp, VEC3D& wp, double r);
+	double particle_plane_contact_detection(plane* _pe, VEC3D& u, VEC3D& xp, VEC3D& wp, double r);
 	bool hostCollision(
 		double *dpos /* = NULL */, double *dvel /* = NULL  */,
 		double *domega /* = NULL */, double *dmass /* = NULL  */,

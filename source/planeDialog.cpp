@@ -2,7 +2,7 @@
 #include "msgBox.h"
 #include "types.h"
 /*#include "checkFunctions.h"*/
-#include "geometryObjects.h"
+#include "plane.h"
 /*#include "plane.h"*/
 #include <QtWidgets>
 
@@ -17,7 +17,7 @@ planeDialog::planeDialog(QWidget* parent)
 	LE_PoissonRatio->setText(QString("%1").arg(cmt.poisson));
 	LE_Density->setText(QString("%1").arg(cmt.density));
 	LE_ShearModulus->setText(QString("%1").arg(cmt.shear));
-	name = "Plane" + QString("%1").arg(geometryObjects::nPlane);
+	name = "Plane" + QString("%1").arg(plane::Number());
 	LE_Name->setText(name);
 	LE_Point_a->setText("-1.0 0.0 -1.0");
 	LE_Point_b->setText("-1.0 0.0 1.0");

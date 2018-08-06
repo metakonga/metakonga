@@ -1,6 +1,6 @@
 #include "cubeDialog.h"
 #include "msgBox.h"
-#include "geometryObjects.h"
+#include "cube.h"
 #include <QtWidgets>
 #include "types.h"
 
@@ -15,7 +15,7 @@ cubeDialog::cubeDialog(QWidget* parent)
 	LE_PoissonRatio->setText(QString("%1").arg(cmt.poisson));
 	LE_Density->setText(QString("%1").arg(cmt.density));
 	LE_ShearModulus->setText(QString("%1").arg(cmt.shear));
-	name = "Cube" + QString("%1").arg(geometryObjects::nCube);
+	name = "Cube" + QString("%1").arg(cube::Number());
 	LE_Name->setText(name);
 	LE_StartPoint->setText("0.0 0.0 0.0");
 	LE_EndPoint->setText("0.2 0.2 0.2");

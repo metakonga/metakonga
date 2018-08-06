@@ -10,6 +10,7 @@
 //#include <helper_cuda.h>
 
 //__constant__ device_parameters cte;
+//double3 toDouble3(VEC3D& v3) { return double3(v3.x, v3.y, v3.z); }
 
 struct device_parameters
 {
@@ -133,11 +134,11 @@ void cu_cube_contact_force(
 
 // Function for contact between particle and polygonObject
 void cu_particle_polygonObject_collision(
-	const int tcm, device_polygon_info* dpi, double* dsph, device_polygon_mass_info* dpmi,
+	const int tcm, device_polygon_info* dpi, double* dsph, /*device_polygon_mass_info* dpmi,*/
 	double* pos, double* vel, double* omega, 
 	double* force, double* moment, double* mass, 
 	unsigned int* sidx, unsigned int* cstart, unsigned int* cend, device_contact_property *cp,
-	unsigned int np, double3* mpos, double3* mf, double3* mm, double3& _mf, double3& _mm);
+	unsigned int np/*, double3* mpos, double3* mf, double3* mm, double3& _mf, double3& _mm*/);
 
 // Function for contact between particle and cylinder
 void cu_cylinder_hertzian_contact_force(

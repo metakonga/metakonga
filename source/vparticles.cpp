@@ -93,7 +93,7 @@ void vparticles::draw(GLenum eModem, int wHeight, int protype, double z)
 		projFactor = 1.f;
  	}
  	else{
-		pscale = (wHeight) / tanf(60 * 0.5*M_PI / 180.0);		
+		pscale = (wHeight) / tanf(60 * 0.48*M_PI / 180.0);		
 	}
 	//float ptype = 100.f;
 	//glUniform1f(glGetUniformLocation(m_program, "isOrgho"), projFactor);

@@ -176,10 +176,13 @@ bool dem_simulation::initialize(contactManager* _cm)
 		checkCudaErrors(cudaMemcpy(dmoment, moment, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
 		checkCudaErrors(cudaMemcpy(dmass, mass, sizeof(double) * np, cudaMemcpyHostToDevice));
 		checkCudaErrors(cudaMemcpy(diner, inertia, sizeof(double) * np, cudaMemcpyHostToDevice));
-		foreach(contact* c, cm->Contacts())
+		if (cm)
 		{
-			c->cudaMemoryAlloc();
-		}
+			foreach(contact* c, cm->Contacts())
+			{
+				c->cudaMemoryAlloc();
+			}
+		}		
 		device_parameters dp;
 		dp.np = np;
 		dp.nsphere = 0;

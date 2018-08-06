@@ -1,5 +1,6 @@
 #include "database.h"
 #include "modelManager.h"
+#include "glwidget.h"
 #include <QMenu>
 
 database* db;
@@ -72,22 +73,23 @@ void database::addChild(tRoot tr, QString& _nm)
 void database::contextMenu(const QPoint& pos)
 {
 	QTreeWidgetItem* item = vtree->itemAt(pos);
+	int col = vtree->currentColumn();
 	if (!item)
 		return;
 	if (!item->parent())
 		return;
 	//QString c = item->text(0);
-	QAction *act0 = new QAction(tr("Property"), this);
-	act0->setWhatsThis(item->text(0));
-	act0->setStatusTip(tr("property menu"));
-	QAction *act1 = new QAction(tr("Delete"), this);
-	act1->setStatusTip(tr("delete menu"));
+	//QAction act0(tr("Property"), this);
+	//act0.setWhatsThis(item->text(0));
+	//act0.setStatusTip(tr("property menu"));
+	//QAction act1(tr("Delete"), this);
+	//act1.setStatusTip(tr("delete menu"));
 // 	connect(act0, SIGNAL(triggered()), this, SLOT(actProperty()));
 // 	connect(act1, SIGNAL(triggered()), this, SLOT(actDelete()));
-
+	QString it = item->text(0);
 	QMenu menu(item->text(0), this);
-	menu.addAction(act0);
-	menu.addAction(act1);
+	menu.addAction("Delete");
+	menu.addAction("Property");
 
 	QPoint pt(pos);
 	QAction *a = menu.exec(vtree->mapToGlobal(pos));
@@ -96,8 +98,16 @@ void database::contextMenu(const QPoint& pos)
 	{
 		QString txt = a->text();
 		if (txt == "Delete")
-			modelManager::MM()->ActionDelete(item->text(0));
+		{
+			QTreeWidgetItem* parent = item->parent();
+ 			modelManager::MM()->ActionDelete(item->text(0));
+ 			GLWidget::GLObject()->actionDelete(item->text(0));
+ 			parent->removeChild(item);
+			delete item;
+		}			
 	}
+	menu.clear();
+//	qDeleteAll(menu);
 }
 
 // void database::actProperty()
