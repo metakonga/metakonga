@@ -30,6 +30,7 @@ struct device_parameters
 
 struct device_polygon_info
 {
+	int id;
 	double3 P;
 	double3 Q;
 	double3 R;

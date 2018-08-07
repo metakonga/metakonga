@@ -1,9 +1,13 @@
 #include "dem_simulation.h"
+//#include "modelManager.h"
 #include "velocity_verlet.h"
 #include "neighborhood_cell.h"
+//#include "polygonObject.h"
 
 dem_simulation::dem_simulation()
 	: simulation()
+	, np(0)
+	, nPolySphere(0)
 	, dtor(NULL)
 	, itor(NULL)
 	, md(NULL)
@@ -23,6 +27,8 @@ dem_simulation::dem_simulation()
 
 dem_simulation::dem_simulation(dem_model *_md)
 	: simulation()
+	, np(0)
+	, nPolySphere(0)
 	, dtor(NULL)
 	, itor(NULL)
 	, md(_md)
@@ -97,10 +103,10 @@ void dem_simulation::clearMemory()
 void dem_simulation::allocationMemory(unsigned int _np)
 {
 	clearMemory();
-	np = _np;
+	//np = _np;
 	mass = new double[np];
 	inertia = new double[np];
-	pos = new double[np * 4];
+	pos = new double[(np + nPolySphere) * 4];
 	vel = new double[np * 3];
 	acc = new double[np * 3];
 	avel = new double[np * 3];
@@ -111,7 +117,7 @@ void dem_simulation::allocationMemory(unsigned int _np)
 	{
 		checkCudaErrors(cudaMalloc((void**)&dmass, sizeof(double) * np));
 		checkCudaErrors(cudaMalloc((void**)&diner, sizeof(double) * np));
-		checkCudaErrors(cudaMalloc((void**)&dpos, sizeof(double) * np * 4));
+		checkCudaErrors(cudaMalloc((void**)&dpos, sizeof(double) * (np + nPolySphere) * 4));
 		checkCudaErrors(cudaMalloc((void**)&dvel, sizeof(double) * np * 3));
 		checkCudaErrors(cudaMalloc((void**)&dacc, sizeof(double) * np * 3));
 		checkCudaErrors(cudaMalloc((void**)&davel, sizeof(double) * np * 3));
@@ -124,18 +130,57 @@ void dem_simulation::allocationMemory(unsigned int _np)
 
 bool dem_simulation::initialize(contactManager* _cm)
 {
+	double maxRadius = 0;
+	np = pm->Np();
 	cm = _cm;
+	if (cm->ContactPoly())
+	{
+		maxRadius = cm->ContactPoly()->MaxRadius();
+		nPolySphere = cm->ContactPoly()->NumPolySphere();
+	}
+	else
+	{
+		maxRadius = 0;
+		nPolySphere = 0;
+	}
+	
+// 	foreach(object* obj, modelManager::MM()->GeometryObject()->Objects())
+// 	{
+// 		if (obj->ObjectType() == POLYGON_SHAPE)
+// 		{
+// 			polygonObject* pobj = dynamic_cast<polygonObject*>(obj);
+// 			if (maxRadius < pobj->maxRadius())
+// 				maxRadius = pobj->maxRadius();
+// 			nPolySphere += pobj->NumTriangle();
+// 		}
+// 	}
+
 	particleManager* pm = md->ParticleManager();
-	allocationMemory(pm->Np());
+	allocationMemory();
 
 	memcpy(pos, pm->Position(), sizeof(double) * np * 4);
+	if(nPolySphere)
+		memcpy(pos + np * 4, cm->PolySphereSet
+		(), sizeof(double) * nPolySphere * 4);
 	memset(vel, 0, sizeof(double) * np * 3);
 	memset(acc, 0, sizeof(double) * np * 3);
 	memset(avel, 0, sizeof(double) * np * 3);
 	memset(aacc, 0, sizeof(double) * np * 3);
 	memset(force, 0, sizeof(double) * np * 3);
 	memset(moment, 0, sizeof(double) * np * 3);
-	double maxRadius = 0;
+
+//	nPolySphere = 0;
+// 	foreach(object* obj, modelManager::MM()->GeometryObject()->Objects())
+// 	{
+// 		if (obj->ObjectType() == POLYGON_SHAPE)
+// 		{
+// 			polygonObject* pobj = dynamic_cast<polygonObject*>(obj);
+// 			unsigned int ntri = pobj->NumTriangle();
+// 			memcpy(pos + (np + nPolySphere) * 4, pobj->hostSphereSet(), sizeof(double) * ntri * 4);
+// 			nPolySphere += ntri;
+// 		}
+// 	}
+	
 	//VEC3D minWorld;
 	for (unsigned int i = 0; i < np; i++)
 	{
@@ -148,7 +193,7 @@ bool dem_simulation::initialize(contactManager* _cm)
 		if (r > maxRadius)
 			maxRadius = r;
 	}
-
+	
 	switch (md->SortType())
 	{
 	case grid_base::NEIGHBORHOOD: dtor = new neighborhood_cell; break;
@@ -158,7 +203,7 @@ bool dem_simulation::initialize(contactManager* _cm)
 		dtor->setWorldOrigin(VEC3D(-1.0, -1.0, -1.0));
 		dtor->setGridSize(VEC3UI(128, 128, 128));
 		dtor->setCellSize(maxRadius * 2.0);
-		dtor->initialize(np);
+		dtor->initialize(np + nPolySphere);
 	}	
 	switch (md->IntegrationType())
 	{
@@ -167,7 +212,7 @@ bool dem_simulation::initialize(contactManager* _cm)
 
 	if (simulation::isGpu())
 	{
-		checkCudaErrors(cudaMemcpy(dpos, pos, sizeof(double) * np * 4, cudaMemcpyHostToDevice));
+		checkCudaErrors(cudaMemcpy(dpos, pos, sizeof(double) * (np + nPolySphere) * 4, cudaMemcpyHostToDevice));
 		checkCudaErrors(cudaMemcpy(dvel, vel, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
 		checkCudaErrors(cudaMemcpy(dacc, acc, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
 		checkCudaErrors(cudaMemcpy(davel, avel, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
@@ -222,7 +267,7 @@ bool dem_simulation::oneStepAnalysis()
 {
 	if (itor->integrationType() == dem_integrator::VELOCITY_VERLET)
 		itor->updatePosition(dpos, dvel, dacc, np);
-	dtor->detection(dpos, np);
+	dtor->detection(dpos, np + nPolySphere);
 	//applyMassForce();
 	cm->runCollision(
 		dpos, dvel, davel, 

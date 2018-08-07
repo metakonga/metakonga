@@ -53,7 +53,7 @@ public:
 	void makeLine();
 	void makeCylinder(cylinder* cy);
 	void makeParticle(double* pos, unsigned int n);
-	void makePolygonObject(QString _nm, import_shape_type t, QString file);
+	vpolygon* makePolygonObject(QString _nm, import_shape_type t, QString file);
 //	bool change(QString& fp, tChangeType ct, tFileType ft);
 	void makeMassCoordinate(QString& _name);
 

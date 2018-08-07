@@ -967,12 +967,13 @@ void GLWidget::makeLine()
 
 }
 
-void GLWidget::makePolygonObject(QString _nm, import_shape_type t, QString file)
+vpolygon* GLWidget::makePolygonObject(QString _nm, import_shape_type t, QString file)
 {
 	vpolygon* vpoly = new vpolygon(_nm);
 	vpoly->define(t, file);
 	v_objs[_nm] = vpoly;
 	v_wobjs[vpoly->ID()] = (void*)vpoly;
+	return vpoly;
  }
 
 void GLWidget::makeParticle(double* pos, unsigned int n)

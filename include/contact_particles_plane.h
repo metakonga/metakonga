@@ -39,7 +39,7 @@ private:
 
 	friend class contact_particles_cube;
 	void singleCollision(
-		, double mass, double rad, VEC3D& pos, VEC3D& vel, 
+		plane* _pe, double mass, double rad, VEC3D& pos, VEC3D& vel,
 		VEC3D& omega, VEC3D& force, VEC3D& moment);
 
 	object* p;

@@ -8,13 +8,15 @@
 vpolygon::vpolygon()
 	//: vglew()
 	: vobject()
+	, vertexList(NULL)
+	, indexList(NULL)
 	, vertice(NULL)
 	, indice(NULL)
 	, normals(NULL)
 	, colors(NULL)
 	, texture(NULL)
 	, nvertex(0)
-	, nindex(0)
+	, ntriangle(0)
 	, m_index_vbo(0)
 	, m_vertex_vbo(0)
 	, m_normal_vbo(0)
@@ -27,13 +29,15 @@ vpolygon::vpolygon()
 vpolygon::vpolygon(QString& _name)
 	//: vglew()
 	: vobject(_name)
+	, vertexList(NULL)
+	, indexList(NULL)
 	, vertice(NULL)
 	, indice(NULL)
 	, normals(NULL)
 	, colors(NULL)
 	, texture(NULL)
 	, nvertex(0)
-	, nindex(0)
+	, ntriangle(0)
 	, m_index_vbo(0)
 	, m_vertex_vbo(0)
 	, m_normal_vbo(0)
@@ -47,6 +51,8 @@ vpolygon::vpolygon(QString& _name)
 
 vpolygon::~vpolygon()
 {
+	if (vertexList) delete[] vertexList; vertexList = NULL;
+	if (indexList) delete[] indexList; indexList = NULL;
 	if (vertice) delete[] vertice; vertice = NULL;
 	if (indice) delete[] indice; indice = NULL;
 	if (normals) delete[] normals; normals = NULL;
@@ -97,25 +103,29 @@ void vpolygon::_loadMS3DASCII(QString f)
 	QString _name = ch.mid(begin + 1, end - 1);
 	unsigned int nvert = 0;
 	qts >> ch >> ch >> nvert;
-	float *vertexList = new float[nvert * 3];
-	float *textureList = new float[nvert * 2]; 
+	vertexList = new double[nvert * 3];
+	double* textureList = new double[nvert * 2];
 	int flag, bone;
-	float x, y, z, u, v;
-
+	double x, y, z, u, v;
+	//float cx = 0, cy = 0, cz = 0;
 	for (unsigned int i = 0; i < nvert; i++)
 	{
 		qts >> flag >> x >> y >> z >> u >> v >> bone;
 		vertexList[i * 3 + 0] = 0.001 * x;
 		vertexList[i * 3 + 1] = 0.001 * y;
 		vertexList[i * 3 + 2] = 0.001 * z;
-
+// 		cx += x;
+// 		cy += y;
+// 		cz += z;
 		textureList[i * 2 + 0] = u;
 		textureList[i * 2 + 1] = v;
 	}
-
+// 	origin[0] = 0.001 * cx / nvert;
+// 	origin[1] = 0.001 * cy / nvert;
+// 	origin[2] = 0.001 * cz / nvert;
 	unsigned int nnorm = 0;
 	qts >> nnorm;
-	float* normalList = new float[nnorm * 3];
+	double* normalList = new double[nnorm * 3];
 	for (unsigned int i = 0; i < nnorm; i++)
 	{
 		qts >> x >> y >> z;
@@ -127,41 +137,44 @@ void vpolygon::_loadMS3DASCII(QString f)
 	qts >> nidx;
 	vertice = new float[nidx * 9];
 	normals = new float[nidx * 9];
-	texture = new float[nidx * 6];
+//	texture = new float[nidx * 6];
+	indexList = new unsigned int[nidx * 3];
 	unsigned int a, b, c, n1, n2, n3;
 	for (unsigned int i = 0; i < nidx; i++)
 	{
 		qts >> flag >> a >> b >> c >> n1 >> n2 >> n3 >> bone;
-		vertice[i * 9 + 0] = vertexList[a * 3 + 0];
-		vertice[i * 9 + 1] = vertexList[a * 3 + 1];
-		vertice[i * 9 + 2] = vertexList[a * 3 + 2];
-		vertice[i * 9 + 3] = vertexList[b * 3 + 0];
-		vertice[i * 9 + 4] = vertexList[b * 3 + 1];
-		vertice[i * 9 + 5] = vertexList[b * 3 + 2];
-		vertice[i * 9 + 6] = vertexList[c * 3 + 0];
-		vertice[i * 9 + 7] = vertexList[c * 3 + 1];
-		vertice[i * 9 + 8] = vertexList[c * 3 + 2];
+		indexList[i * 3 + 0] = a;
+		indexList[i * 3 + 1] = b;
+		indexList[i * 3 + 2] = c;
+		vertice[i * 9 + 0] = (float)vertexList[a * 3 + 0];
+		vertice[i * 9 + 1] = (float)vertexList[a * 3 + 1];
+		vertice[i * 9 + 2] = (float)vertexList[a * 3 + 2];
+		vertice[i * 9 + 3] = (float)vertexList[b * 3 + 0];
+		vertice[i * 9 + 4] = (float)vertexList[b * 3 + 1];
+		vertice[i * 9 + 5] = (float)vertexList[b * 3 + 2];
+		vertice[i * 9 + 6] = (float)vertexList[c * 3 + 0];
+		vertice[i * 9 + 7] = (float)vertexList[c * 3 + 1];
+		vertice[i * 9 + 8] = (float)vertexList[c * 3 + 2];
 
-		normals[i * 9 + 0] = normalList[n1 * 3 + 0];
-		normals[i * 9 + 1] = normalList[n1 * 3 + 1];
-		normals[i * 9 + 2] = normalList[n1 * 3 + 2];
-		normals[i * 9 + 3] = normalList[n2 * 3 + 0];
-		normals[i * 9 + 4] = normalList[n2 * 3 + 1];
-		normals[i * 9 + 5] = normalList[n2 * 3 + 2];
-		normals[i * 9 + 6] = normalList[n3 * 3 + 0];
-		normals[i * 9 + 7] = normalList[n3 * 3 + 1];
-		normals[i * 9 + 8] = normalList[n3 * 3 + 2];
+		normals[i * 9 + 0] = (float)normalList[n1 * 3 + 0];
+		normals[i * 9 + 1] = (float)normalList[n1 * 3 + 1];
+		normals[i * 9 + 2] = (float)normalList[n1 * 3 + 2];
+		normals[i * 9 + 3] = (float)normalList[n2 * 3 + 0];
+		normals[i * 9 + 4] = (float)normalList[n2 * 3 + 1];
+		normals[i * 9 + 5] = (float)normalList[n2 * 3 + 2];
+		normals[i * 9 + 6] = (float)normalList[n3 * 3 + 0];
+		normals[i * 9 + 7] = (float)normalList[n3 * 3 + 1];
+		normals[i * 9 + 8] = (float)normalList[n3 * 3 + 2];
 
-		texture[i * 6 + 0] = textureList[a * 2 + 0];
-		texture[i * 6 + 1] = textureList[a * 2 + 1];
-		texture[i * 6 + 2] = textureList[b * 2 + 0];
-		texture[i * 6 + 3] = textureList[b * 2 + 1];
-		texture[i * 6 + 4] = textureList[c * 2 + 0];
-		texture[i * 6 + 5] = textureList[c * 2 + 1];
+// 		texture[i * 6 + 0] = textureList[a * 2 + 0];
+// 		texture[i * 6 + 1] = textureList[a * 2 + 1];
+// 		texture[i * 6 + 2] = textureList[b * 2 + 0];
+// 		texture[i * 6 + 3] = textureList[b * 2 + 1];
+// 		texture[i * 6 + 4] = textureList[c * 2 + 0];
+// 		texture[i * 6 + 5] = textureList[c * 2 + 1];
 	}
 	nvertex = nvert;
-	nindex = nidx;
-	delete[] vertexList;
+	ntriangle = nidx;
 	delete[] normalList;
 	delete[] textureList;
 	qf.close();
@@ -224,7 +237,7 @@ bool vpolygon::define(import_shape_type t, QString file)
 	{
 		glGenBuffers(1, &m_vertex_vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, m_vertex_vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * nindex * 9, (float*)vertice, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * ntriangle * 9, (float*)vertice, GL_DYNAMIC_DRAW);
 	}
 // 	if (!m_index_vbo){
 // 		glGenBuffers(1, &m_index_vbo);
@@ -241,7 +254,7 @@ bool vpolygon::define(import_shape_type t, QString file)
 	{
 		glGenBuffers(1, &m_normal_vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, m_normal_vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * nindex * 9, (float*)normals, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * ntriangle * 9, (float*)normals, GL_STATIC_DRAW);
 		//glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(VEC3F)*nvertex, &(normals[0].x));
 		//glBufferSubData(GL_ARRAY_BUFFER, sizeof(VEC3F)*nvt, sizeof(VEC3F) * nid, &(normals[0].x));
 	}
@@ -261,7 +274,7 @@ void vpolygon::_drawPolygons()
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_vbo);
 		glVertexPointer(3, GL_FLOAT, 0, 0);
 		glEnableClientState(GL_VERTEX_ARRAY);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)*nindex * 9, vertice);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)*ntriangle * 9, vertice);
 // 		if (m_index_vbo)
 // 		{
 // 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_vbo);
@@ -278,11 +291,11 @@ void vpolygon::_drawPolygons()
 			glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_normal_vbo);
 			glNormalPointer(GL_FLOAT, 0, 0);
 			glEnableClientState(GL_NORMAL_ARRAY);
-			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)*nindex * 9, normals);
+			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)*ntriangle * 9, normals);
 		}
 
 		//glDrawElements(GL_TRIANGLES, nindex * 3, GL_UNSIGNED_INT, 0);
-		glDrawArrays(GL_TRIANGLES, 0, nindex * 3);
+		glDrawArrays(GL_TRIANGLES, 0, ntriangle * 3);
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 		//glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, 0);
 		if(m_vertex_vbo)

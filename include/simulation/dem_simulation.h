@@ -21,10 +21,11 @@ public:
 private:
 	void applyMassForce();
 	void clearMemory();
-	void allocationMemory(unsigned int _np);
+	void allocationMemory();
 
 private:
 	unsigned int np;
+	unsigned int nPolySphere;
 	dem_model* md;
 	grid_base* dtor;
 	dem_integrator* itor;

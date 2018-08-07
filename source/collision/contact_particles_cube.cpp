@@ -26,7 +26,7 @@ bool contact_particles_cube::collision(
 	unsigned int np)
 {
 	simulation::isGpu()
-		? cu_cube_contact_force(1, cu->deviceCubeInfo(), pos, vel, omega, force, moment, mass, np, dcp)
+		? cu_cube_contact_force(1, dpi, pos, vel, omega, force, moment, mass, np, dcp)
 		: hostCollision(pos, vel, omega, mass, force, moment, np);
 	return true;
 }

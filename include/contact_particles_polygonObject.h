@@ -9,12 +9,17 @@ class object;
 
 class contact_particles_polygonObject : public contact
 {
+	typedef struct  
+	{
+		double rest;
+		double sratio;
+		double fric;
+	}contactParameters;
+
 public:
 	contact_particles_polygonObject(
-		QString _name, contactForce_type t, object* o1, object* o2);
+		QString _name, contactForce_type t, object* o1, QMap<int, polygonObject*>* o2);
 	virtual ~contact_particles_polygonObject();
-
-//	void setPlane(plane* _pe);
 
 	virtual bool collision(
 		double *dpos, double *dvel,
@@ -27,6 +32,12 @@ public:
 		);
 
 	virtual void cudaMemoryAlloc();
+	VEC4D* PolySphereSet() { return hsphere; }
+	unsigned int NumPolySphere() { return nPolySphere; }
+	double MaxRadius() { return maxRadii; }
+	void insertContactParameters(unsigned int id, double r, double rt, double fr);
+	void allocPolygonInformation(unsigned int _nPolySphere);
+	void definePolygonInformation(unsigned int id, unsigned int nPolySphere, unsigned int ePolySphere, double *vLIst, double *iList);
 
 private:
 	double particle_polygon_contact_detection(device_polygon_info& dpi, VEC3D& p, double r);
@@ -37,8 +48,12 @@ private:
 		unsigned int *sorted_id, unsigned int *cell_start, unsigned int *cell_end,
 		unsigned int np);
 
+	unsigned int nPolySphere;
+	double maxRadii;
 	object* p;
-	polygonObject* po;
+	QMap<int, polygonObject*>* pobjs;
+	QMap<int, contactParameters> cps;
+	VEC4D* hsphere;
 	host_polygon_info* hpi;
 	device_polygon_info* dpi;
 	//plane *pe;

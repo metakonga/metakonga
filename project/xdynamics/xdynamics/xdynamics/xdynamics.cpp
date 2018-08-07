@@ -751,11 +751,15 @@ void xdynamics::MS3DASCII_Import()
 	{
 		if (!id.file_path.isEmpty())
 		{
+			int begin = id.file_path.lastIndexOf("/") + 1;
+			int end = id.file_path.lastIndexOf(".");
+			QString _nm = id.file_path.mid(begin, end - begin);
+			vpolygon * vp = gl->makePolygonObject(_nm, MILKSHAPE_3D_ASCII, id.file_path);
 			if (!mg->GeometryObject(model::name))
 				mg->CreateModel(model::name, modelManager::OBJECTS, true);
 			polygonObject* po =
 				mg->GeometryObject()->makePolygonObject
-				(MILKSHAPE_3D_ASCII, id.file_path, BOUNDAR_WALL
+				(_nm, BOUNDAR_WALL, id.file_path, MILKSHAPE_3D_ASCII, vp->NumTriangles(), vp->VertexList(), vp->IndexList()
 				,(material_type)id.type, id.youngs, id.poisson, id.density, id.shear);
 			cmd->printLine();
 			cmd->write(CMD_INFO, mg->GeometryObject()->Logs()[po->Name()]);

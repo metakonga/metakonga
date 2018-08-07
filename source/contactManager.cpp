@@ -5,6 +5,7 @@
 #include "contact_particles_particles.h"
 #include "contact_particles_cube.h"
 #include "contact_particles_plane.h"
+#include "contact_particles_polygonObject.h"
 
 contactManager::contactManager()
 {
@@ -91,12 +92,6 @@ void contactManager::CreateContactPair(
 	double rest, double ratio, double fric)
 {
 	contact::pairType pt = contact::getContactPair(o1->ObjectType(), o2->ObjectType());
-	material_property_pair mpp =
-	{
-		o1->Youngs(), o2->Youngs(),
-		o1->Poisson(), o2->Poisson(),
-		o1->Shear(), o2->Shear()
-	};
 	contact *c = NULL;
 	switch (pt)
 	{
@@ -110,6 +105,13 @@ void contactManager::CreateContactPair(
 		c = new contact_particles_plane(n, (contactForce_type)method, o1, o2);
 		break;
 	}
+	material_property_pair mpp =
+	{
+		o1->Youngs(), o2->Youngs(),
+		o1->Poisson(), o2->Poisson(),
+		o1->Shear(), o2->Shear()
+	};
+	
 	c->setMaterialPair(mpp);
 	c->setContactParameters(rest, ratio, fric);
 	this->insertContact(c);
@@ -125,4 +127,25 @@ void contactManager::CreateContactPair(
 		<< "RATIO " << ratio << endl
 		<< "FRICTION " << fric << endl;
 	logs[c->Name()] = log;
+}
+
+void contactManager::CreateParticlePolygonsPairs(
+	QString n, int method, object* po, QMap<int, polygonObject*>& pobjs,
+	double rest, double ratio, double fric)
+{
+	contact_particles_polygonObject *c = new contact_particles_polygonObject(n, (contactForce_type)method, po, &pobjs);
+	unsigned int nPolySphere = 0;
+	foreach(polygonObject* pobj, pobjs)
+	{
+		c->insertContactParameters(pobj->Number(), rest, ratio, fric);
+		nPolySphere += pobj->NumTriangle();
+	}
+	c->allocPolygonInformation(nPolySphere);
+	nPolySphere = 0;
+	foreach(polygonObject* pobj, pobjs)
+	{
+		c->definePolygonInformation(pobj->Number(), nPolySphere, pobj->NumTriangle(), pobj->VertexList(), pobj->IndexList());
+		nPolySphere += pobj->NumTriangle();
+	}
+	cppoly = c;
 }

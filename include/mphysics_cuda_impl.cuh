@@ -136,10 +136,10 @@ __global__ void vv_update_velocity_kernel(
 }
 
 
-__global__ void calculateHashAndIndex_kernel(unsigned int* hash, unsigned int* index, double4* pos)
+__global__ void calculateHashAndIndex_kernel(unsigned int* hash, unsigned int* index, double4* pos, unsigned int np)
 {
 	unsigned id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
-	if (id >= (cte.np)) return;
+	if (id >= (np)) return;
 	volatile double4 p = pos[id];
 
 	int3 gridPos = calcGridPos(make_double3(p.x, p.y, p.z));
@@ -161,16 +161,22 @@ __global__ void calculateHashAndIndexForPolygonSphere_kernel(unsigned int* hash,
 	index[sid + id] = sid + id;
 }
 
-__global__ void reorderDataAndFindCellStart_kernel(unsigned int* hash, unsigned int* index, unsigned int* cstart, unsigned int* cend, unsigned int* sorted_index)
+__global__ void reorderDataAndFindCellStart_kernel(
+	unsigned int* hash, 
+	unsigned int* index, 
+	unsigned int* cstart, 
+	unsigned int* cend, 
+	unsigned int* sorted_index,
+	unsigned int np)
 {
 	extern __shared__ uint sharedHash[];	//blockSize + 1 elements
 	unsigned id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
 	unsigned _hash;
 
-	unsigned int tnp = cte.np + cte.nsphere;
+	//unsigned int tnp = ;// cte.np + cte.nsphere;
 
-	if (id < tnp)
+	if (id < np)
 	{
 		_hash = hash[id];
 
@@ -183,7 +189,7 @@ __global__ void reorderDataAndFindCellStart_kernel(unsigned int* hash, unsigned 
 	}
 	__syncthreads();
 
-	if (id < tnp)
+	if (id < np)
 	{
 		if (id == 0 || _hash != sharedHash[threadIdx.x])
 		{
@@ -193,7 +199,7 @@ __global__ void reorderDataAndFindCellStart_kernel(unsigned int* hash, unsigned 
 				cend[sharedHash[threadIdx.x]] = id;
 		}
 
-		if (id == tnp - 1)
+		if (id == np - 1)
 		{
 			cend[_hash] = id + 1;
 		}

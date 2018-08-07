@@ -60,9 +60,7 @@ void cu_calculateHashAndIndex(
 	unsigned int np)
 {
 	computeGridSize(np, 256, numBlocks, numThreads);
-	calculateHashAndIndex_kernel <<< numBlocks, numThreads >>>(hash, index, (double4 *)pos);
-
-
+	calculateHashAndIndex_kernel <<< numBlocks, numThreads >>>(hash, index, (double4 *)pos, np);
 }
 
 void cu_calculateHashAndIndexForPolygonSphere(
@@ -88,12 +86,12 @@ void cu_reorderDataAndFindCellStart(
 	unsigned int ncell)
 {
 	//std::cout << "step 1" << std::endl;
-	unsigned int tnp = np;// +nsphere;
+	//unsigned int tnp = np;// +nsphere;
 	thrust::sort_by_key(thrust::device_ptr<unsigned>(hash),
-		thrust::device_ptr<unsigned>(hash + tnp),
+		thrust::device_ptr<unsigned>(hash + np),
 		thrust::device_ptr<unsigned>(index));
 	//std::cout << "step 2" << std::endl;
-	computeGridSize(tnp, 256, numBlocks, numThreads);
+	computeGridSize(np, 256, numBlocks, numThreads);
 	checkCudaErrors(cudaMemset(cstart, 0xffffffff, ncell*sizeof(unsigned int)));
 	checkCudaErrors(cudaMemset(cend, 0, ncell*sizeof(unsigned int)));
 	unsigned smemSize = sizeof(unsigned int)*(numThreads + 1);
@@ -103,7 +101,8 @@ void cu_reorderDataAndFindCellStart(
 		index,
 		cstart,
 		cend,
-		sorted_index);
+		sorted_index,
+		np);
 //  	std::fstream fs;
 //  	fs.open("C:/C++/gpu_cstart_cend.txt", std::ios::out);
 //  	unsigned int *h_start = new unsigned int[nc];

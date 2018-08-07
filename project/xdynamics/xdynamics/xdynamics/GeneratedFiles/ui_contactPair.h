@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'contactPair.ui'
 **
-** Created by: Qt User Interface Compiler version 5.7.1
+** Created by: Qt User Interface Compiler version 5.10.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -191,19 +191,19 @@ public:
 
     void retranslateUi(QDialog *DLG_ContactPair)
     {
-        DLG_ContactPair->setWindowTitle(QApplication::translate("DLG_ContactPair", "Make contact pair", Q_NULLPTR));
-        GB_ContactPair->setTitle(QApplication::translate("DLG_ContactPair", "Contact pair", Q_NULLPTR));
-        L_FirstObject->setText(QApplication::translate("DLG_ContactPair", "First object", Q_NULLPTR));
-        L_SecondObject->setText(QApplication::translate("DLG_ContactPair", "Second object", Q_NULLPTR));
-        GB_Parameter->setTitle(QApplication::translate("DLG_ContactPair", "Parameter", Q_NULLPTR));
-        L_Restitution->setText(QApplication::translate("DLG_ContactPair", "Restitution", Q_NULLPTR));
-        L_StiffnessRatio->setText(QApplication::translate("DLG_ContactPair", "Stiffness ratio", Q_NULLPTR));
-        L_Friction->setText(QApplication::translate("DLG_ContactPair", "Friction", Q_NULLPTR));
-        TB_METHOD->setTabText(TB_METHOD->indexOf(T_DHS), QApplication::translate("DLG_ContactPair", "DHS", Q_NULLPTR));
-        TB_METHOD->setTabText(TB_METHOD->indexOf(tab_2), QApplication::translate("DLG_ContactPair", "Tab 2", Q_NULLPTR));
-        PB_Ok->setText(QApplication::translate("DLG_ContactPair", "Ok", Q_NULLPTR));
-        PB_Cancle->setText(QApplication::translate("DLG_ContactPair", "Cancle", Q_NULLPTR));
-        L_Name->setText(QApplication::translate("DLG_ContactPair", "Name", Q_NULLPTR));
+        DLG_ContactPair->setWindowTitle(QApplication::translate("DLG_ContactPair", "Make contact pair", nullptr));
+        GB_ContactPair->setTitle(QApplication::translate("DLG_ContactPair", "Contact pair", nullptr));
+        L_FirstObject->setText(QApplication::translate("DLG_ContactPair", "First object", nullptr));
+        L_SecondObject->setText(QApplication::translate("DLG_ContactPair", "Second object", nullptr));
+        GB_Parameter->setTitle(QApplication::translate("DLG_ContactPair", "Parameter", nullptr));
+        L_Restitution->setText(QApplication::translate("DLG_ContactPair", "Restitution", nullptr));
+        L_StiffnessRatio->setText(QApplication::translate("DLG_ContactPair", "Stiffness ratio", nullptr));
+        L_Friction->setText(QApplication::translate("DLG_ContactPair", "Friction", nullptr));
+        TB_METHOD->setTabText(TB_METHOD->indexOf(T_DHS), QApplication::translate("DLG_ContactPair", "DHS", nullptr));
+        TB_METHOD->setTabText(TB_METHOD->indexOf(tab_2), QApplication::translate("DLG_ContactPair", "Tab 2", nullptr));
+        PB_Ok->setText(QApplication::translate("DLG_ContactPair", "Ok", nullptr));
+        PB_Cancle->setText(QApplication::translate("DLG_ContactPair", "Cancle", nullptr));
+        L_Name->setText(QApplication::translate("DLG_ContactPair", "Name", nullptr));
     } // retranslateUi
 
 };

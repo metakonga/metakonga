@@ -8,6 +8,8 @@
 
 class geometryObjects;
 class particleManager;
+class polygonObject;
+class contact_particles_polygonObject;
 
 class contactManager
 {
@@ -20,10 +22,14 @@ public:
 	void CreateContactPair(
 		QString n, int method, object* fo, object* so, 
 		double rest, double ratio, double fric);
+	void CreateParticlePolygonsPairs(
+		QString n, int method, object* po, QMap<int, polygonObject*>& pobjs,
+		double rest, double ratio, double fric);
 	void insertContact(contact* c);
 	contact* Contact(QString n);// { return cots[n]; }
 	QMap<QString, QString>& Logs() { return logs; }
 	QMap<QString, contact*>& Contacts() { return cots; }
+	contact_particles_polygonObject* ContactPoly() { return cppoly; }
 	bool runCollision(
 		double *pos, double *vel,
 		double *omega, double *mass,
@@ -36,6 +42,8 @@ public:
 private:
 	QMap<QString, QString> logs;
 	QMap<QString, contact*> cots;
+
+	contact_particles_polygonObject* cppoly;
 };
 
 #endif

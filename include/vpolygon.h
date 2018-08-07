@@ -25,6 +25,9 @@ public:
 
 	//unsigned int ID() { return id; }
 //	QString name() { return nm; }
+	unsigned int NumTriangles() { return ntriangle; }
+	double* VertexList() { return vertexList; }
+	unsigned int* IndexList() { return indexList; }
 	void setSelected(bool b) { isSelected = b; }
 
 private:
@@ -35,7 +38,7 @@ private:
 	//static int pcnt;
 	//unsigned int id;
 	unsigned int nvertex;
-	unsigned int nindex;
+	unsigned int ntriangle;
 	unsigned int m_vertex_vbo;
 	unsigned int m_index_vbo;
 	unsigned int m_color_vbo;
@@ -43,6 +46,8 @@ private:
 	float origin[3];
 	float ang[3];
 	float *vertice;
+	double *vertexList;
+	unsigned int *indexList;
 	float *normals;
 	float *texture;
 	unsigned int *indice;

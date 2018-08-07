@@ -1,33 +1,35 @@
 #include "contact_particles_polygonObject.h"
 
 contact_particles_polygonObject::contact_particles_polygonObject(
-	QString _name, contactForce_type t, object* o1, object* o2)
+	QString _name, contactForce_type t, object* o1, QMap<int, polygonObject*>* o2)
 	: contact(_name, t)
 	, dpi(NULL)
 	, hpi(NULL)
+	, hsphere(NULL)
+	, maxRadii(0)
+	, p(o1)
+	, pobjs(o2)
 {
- 	po = dynamic_cast<polygonObject*>((o1->ObjectType() == POLYGON_SHAPE ? o1 : o2));
- 	p = o1->ObjectType() != POLYGON_SHAPE ? o1 : o2;
-
-	hpi = new host_polygon_info[po->numIndex()];
-	for (unsigned int i = 0; i < po->numIndex(); i++)
-	{
-		host_polygon_info d;
-		d.P = po->Vertex0(i);//vertice[indice[i].x];
-		d.Q = po->Vertex1(i);
-		d.R = po->Vertex2(i);
-		d.V = d.Q - d.P;
-		d.W = d.R - d.P;
-		d.N = d.V.cross(d.W);
-		d.N = d.N / d.N.length();
-		hpi[i] = d;
-	}
+// 	hpi = new host_polygon_info[po->numIndex()];
+// 	for (unsigned int i = 0; i < po->numIndex(); i++)
+// 	{
+// 		host_polygon_info d;
+// 		d.P = po->Vertex0(i);//vertice[indice[i].x];
+// 		d.Q = po->Vertex1(i);
+// 		d.R = po->Vertex2(i);
+// 		d.V = d.Q - d.P;
+// 		d.W = d.R - d.P;
+// 		d.N = d.V.cross(d.W);
+// 		d.N = d.N / d.N.length();
+// 		hpi[i] = d;
+// 	}
 }
 
 contact_particles_polygonObject::~contact_particles_polygonObject()
 {
 	if (hpi) delete[] hpi; hpi = NULL;
 	if (dpi) checkCudaErrors(cudaFree(dpi)); dpi = NULL;
+	if (hsphere) delete[] hsphere; hsphere = NULL;
 }
 
 bool contact_particles_polygonObject::collision(
@@ -51,9 +53,80 @@ void contact_particles_polygonObject::cudaMemoryAlloc()
 	contact::cudaMemoryAlloc();
 	if (!dpi)
 	{
-		checkCudaErrors(cudaMalloc((void**)&dpi, sizeof(device_polygon_info) * po->numIndex()));
-		checkCudaErrors(cudaMemcpy(dpi, hpi, sizeof(device_polygon_info) * po->numIndex(), cudaMemcpyHostToDevice));
+		checkCudaErrors(cudaMalloc((void**)&dpi, sizeof(device_polygon_info) * nPolySphere));
+		checkCudaErrors(cudaMemcpy(dpi, hpi, sizeof(device_polygon_info) * nPolySphere, cudaMemcpyHostToDevice));
 	}
+}
+
+void contact_particles_polygonObject::insertContactParameters(unsigned int id, double r, double rt, double fr)
+{
+	contactParameters cp = { r, rt, fr };
+	cps[id] = cp;
+}
+
+void contact_particles_polygonObject::allocPolygonInformation(unsigned int _nPolySphere)
+{
+	nPolySphere = _nPolySphere;
+	hsphere = new VEC4D[nPolySphere];
+	hpi = new host_polygon_info[nPolySphere];
+}
+
+void contact_particles_polygonObject::definePolygonInformation(
+	unsigned int id, unsigned int bPolySphere, unsigned int ePolySphere, double *vList, double *iList)
+{
+	unsigned int a, b, c;
+	maxRadii = 0;
+	for (unsigned int i = bPolySphere; i < bPolySphere + ePolySphere; i++)
+	{
+		a = iList[i * 3 + 0];
+		b = iList[i * 3 + 1];
+		c = iList[i * 3 + 2];
+		host_polygon_info po;
+		po.id = id;
+		po.P = VEC3D(vList[a * 3 + 0], vList[a * 3 + 1], vList[a * 3 + 2]);
+		po.Q = VEC3D(vList[b * 3 + 0], vList[b * 3 + 1], vList[b * 3 + 2]);
+		po.R = VEC3D(vList[c * 3 + 0], vList[c * 3 + 1], vList[c * 3 + 2]);
+		po.V = po.Q - po.P;
+		po.W = po.R - po.P;
+		po.N = po.V.cross(po.W);
+		po.N = po.N / po.N.length();
+		hpi[i] = po;
+		VEC3D M1 = (po.Q + po.P) / 2;
+		VEC3D M2 = (po.R + po.P) / 2;
+		VEC3D D1 = po.N.cross(po.V);
+		VEC3D D2 = po.N.cross(po.W);
+		double t = 0;
+		if (abs(D1.x*D2.y - D1.y*D2.x) > 1E-13)
+		{
+			t = (D2.x*(M1.y - M2.y)) / (D1.x*D2.y - D1.y*D2.x) - (D2.y*(M1.x - M2.x)) / (D1.x*D2.y - D1.y*D2.x);
+		}
+		else if (abs(D1.x*D2.z - D1.z*D2.x) > 1E-13)
+		{
+			t = (D2.x*(M1.z - M2.z)) / (D1.x*D2.z - D1.z*D2.x) - (D2.z*(M1.x - M2.x)) / (D1.x*D2.z - D1.z*D2.x);
+		}
+		else if (abs(D1.y*D2.z - D1.z*D2.y) > 1E-13)
+		{
+			t = (D2.y*(M1.z - M2.z)) / (D1.y*D2.z - D1.z*D2.y) - (D2.z*(M1.y - M2.y)) / (D1.y*D2.z - D1.z*D2.y);
+		}
+		VEC3D Ctri = M1 + t * D1;
+		VEC4D sph;
+		sph.w = (Ctri - po.P).length();
+		sph.x = Ctri.x; sph.y = Ctri.y; sph.z = Ctri.z;
+		//com += Ctri;
+		// 		while (abs(fc - ft) > 0.00001)
+		// 		{
+		// 			d = ft * sph.w;
+		// 			double p = d / po.N.length();
+		// 			VEC3D _c = Ctri - p * po.N;
+		// 			sph.x = _c.x; sph.y = _c.y; sph.z = _c.z;
+		// 			sph.w = (_c - po.P).length();
+		// 			fc = d / sph.w;
+		// 		}
+		if (sph.w > maxRadii)
+			maxRadii = sph.w;
+		hsphere[i] = sph;
+	}
+//	com = com / ntriangle;
 }
 
 bool contact_particles_polygonObject::hostCollision(
