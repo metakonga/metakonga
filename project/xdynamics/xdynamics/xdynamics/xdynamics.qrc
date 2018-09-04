@@ -38,5 +38,7 @@
         <file>Resources/ani_tobegin.png</file>
         <file>Resources/ani_toEnd.png</file>
         <file>Resources/stop.png</file>
+        <file>Resources/TSDA_icon.png</file>
+        <file>Resources/preDefinedMBD_icon.png</file>
     </qresource>
 </RCC>

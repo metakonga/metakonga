@@ -16,7 +16,7 @@ public:
 	cmdWindow(QWidget* parent);
 	~cmdWindow();
 
-	void write(tWriting tw, QString& c);
+	void write(tWriting tw, QString c);
 	void printLine();
 	//void addChild(tRoot, QString& _nm);
 

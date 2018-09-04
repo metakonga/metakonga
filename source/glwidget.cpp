@@ -56,24 +56,28 @@ GLuint makeCubeObject(int* index, float* vertex)
 GLWidget::GLWidget(int argc, char** argv, QWidget *parent)
 	: QGLWidget(parent)
 	, vp(NULL)
+	, ground_marker(NULL)
+	, zRotationFlag(false)
 	//, Doc(_Doc)
 {
+	//eye[0] = 0; eye[1] = 0; eye[2] = 2;
+
 	ogl = this;
 	gridSize = 0.1f;
 	viewOption = 0;
-	xRot =  0;
-	yRot =  0;
+	xRot = 0;
+	yRot = 0;
 	zRot = 0;
 	unit = 1;
-	zoom = -1.0;
+	trans_z = -1.0;
 	//zoom = -6.16199875;
-	trans_x =  0;
+	trans_x = 0;
 	moveScale = 0.01f;
-	trans_y =  0;
+	trans_y = 0;
 	IconScale = 0.1;
 	isSetParticle = false;
-// 	sketch = { 0, };
-// 	sketch.space = 0.02;
+	// 	sketch = { 0, };
+	// 	sketch.space = 0.02;
 	//particle_ptr = NULL;
 	QTimer *timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this, SLOT(updateGL()));
@@ -91,7 +95,7 @@ GLWidget::GLWidget(int argc, char** argv, QWidget *parent)
 	isAnimation = false;
 	aFrame = 0;
 	for (int i(0); i < 256; i++){
-		polygons[i] = 0; 
+		polygons[i] = 0;
 	}
 	numPolygons = 0;
 	//selectedIndex = -1;
@@ -100,19 +104,21 @@ GLWidget::GLWidget(int argc, char** argv, QWidget *parent)
 	//drawingMode = GL_LINE;
 	vglew::vglew(argc, argv);
 	setFocusPolicy(Qt::StrongFocus);
+	memset(minView, 0, sizeof(float) * 3);
+	memset(maxView, 0, sizeof(float) * 3);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	
-// 	QPen penBorder;
-// 	penBorder.setColor(QColor(0, 0, 0));
-// 	penBorder.setWidth(1);
-// 	m_rectHovered = new QGraphicsRectItem();
-// 	m_rectHovered->setBrush(QBrush(Qt::yellow));
-// 	m_coordHoverX = new QGraphicsSimpleTextItem(m_rectHovered);
-// 	m_coordHoverY = new QGraphicsSimpleTextItem(m_rectHovered);
-// 	penBorder.setColor(QColor(0, 0, 0));
-// 	penBorder.setWidth(1);
-// 	m_coordHoverX->setPen(penBorder);
-// 	m_coordHoverY->setPen(penBorder);
+
+	// 	QPen penBorder;
+	// 	penBorder.setColor(QColor(0, 0, 0));
+	// 	penBorder.setWidth(1);
+	// 	m_rectHovered = new QGraphicsRectItem();
+	// 	m_rectHovered->setBrush(QBrush(Qt::yellow));
+	// 	m_coordHoverX = new QGraphicsSimpleTextItem(m_rectHovered);
+	// 	m_coordHoverY = new QGraphicsSimpleTextItem(m_rectHovered);
+	// 	penBorder.setColor(QColor(0, 0, 0));
+	// 	penBorder.setWidth(1);
+	// 	m_coordHoverX->setPen(penBorder);
+	// 	m_coordHoverY->setPen(penBorder);
 }
 
 GLWidget::~GLWidget()
@@ -129,8 +135,9 @@ GLWidget* GLWidget::GLObject()
 
 void GLWidget::glObjectClear()
 {
-//	qDeleteAll(v_pobjs);
+	//	qDeleteAll(v_pobjs);
 	qDeleteAll(v_objs);
+	if (ground_marker) delete ground_marker; ground_marker = NULL;
 	if (vp) delete vp; vp = NULL;
 }
 
@@ -174,17 +181,17 @@ void GLWidget::ShowContextMenu(const QPoint& pos)
 	{
 		QString name;
 		for (unsigned int i = 0; i < selectedIndice.size(); i++)
-		{ 
-			
+		{
+
 			unsigned int id = selectedIndice.at(i);
 			//if (id < 1000){
 			vobj = static_cast<vobject*>(v_wobjs[id]);
 			name = vobj->name();
 			//}
-// 			else{
-// 				vpolygon* vpobj = (vpolygon*)(v_wobjs[id]);
-// 				name = vpobj->name();
-// 			}
+			// 			else{
+			// 				vpolygon* vpobj = (vpolygon*)(v_wobjs[id]);
+			// 				name = vpobj->name();
+			// 			}
 			QMenu *subMenu = new QMenu(name);
 			subMenu->addAction("Delete");
 			subMenu->addAction("Property");
@@ -198,7 +205,7 @@ void GLWidget::ShowContextMenu(const QPoint& pos)
 	}
 
 	QAction *selectedItem = myMenu.exec(globalPos);
-	
+
 	if (selectedItem && vobj){
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
@@ -206,36 +213,46 @@ void GLWidget::ShowContextMenu(const QPoint& pos)
 		QString txt = selectedItem->text();
 		if (txt == "Wireframe"){
 			vobj->setDrawingMode(GL_LINE);
-			//drawingMode = GL_LINE;
-		//	glDisable(GL_BLEND);
 		}
 		else if (txt == "Solid"){
 			vobj->setDrawingMode(GL_FILL);
-		//	drawingMode = GL_FILL;
-		//	glDisable(GL_BLEND);
 		}
 		else if (txt == "Shade"){
 			glEnable(GL_BLEND);
 			glDisable(GL_DEPTH_TEST);
 			glDepthFunc(GL_LEQUAL);
 			vobj->setDrawingMode(GL_FILL);
-		//	drawingMode = GL_FILL;
-			
 		}
-		else{	
+		else{
 			QString pmenuTitle = ((QMenu*)selectedItem->parentWidget())->title();
 			if (txt == "Delete"){
 				actionDelete(pmenuTitle);
 				modelManager::MM()->ActionDelete(pmenuTitle);
-// 				md->actionDelete(pmenuTitle);
-// 				this->actionDelete(pmenuTitle);
 			}
 			else if (txt == "Property"){
 
 			}
-		}		
+		}
 	}
 	qDeleteAll(menus);
+}
+
+void GLWidget::fitView()
+{
+	VEC3D ang(DEG2RAD * xRot / 16, DEG2RAD * yRot / 16, DEG2RAD * zRot / 16);
+	VEC3D maxp = local2global_bryant(ang, VEC3D(maxView[0], maxView[1], maxView[2]));
+	VEC3D minp = local2global_bryant(ang, VEC3D(minView[0], minView[1], minView[2]));
+	VEC3D dp = maxp - minp;
+
+	trans_x = dp.x;
+	trans_y = dp.y;
+	trans_z = dp.z - 1.0;
+}
+
+void GLWidget::renderText(double x, double y, double z, const QString& str, QColor& c)
+{
+	qglColor(c);
+	QGLWidget::renderText(x, y, z, str);
 }
 
 void GLWidget::actionDelete(const QString& tg)
@@ -243,16 +260,13 @@ void GLWidget::actionDelete(const QString& tg)
 	vobject* vobj = v_objs.take(tg);
 	if (vobj)
 		delete vobj;
-// 	vpolygon* pobj = v_pobjs.take(tg);
-// 	if (pobj)
-// 		delete pobj;	
 }
 
 void GLWidget::initializeGL()
 {
 	glEnable(GL_DEPTH_TEST);
 	glShadeModel(GL_SMOOTH);                              // 매끄러운 세이딩 사용
-//	glEnable(GL_CULL_FACE);                               // 후면 제거
+	//	glEnable(GL_CULL_FACE);                               // 후면 제거
 
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
@@ -263,10 +277,10 @@ void GLWidget::initializeGL()
 	GLfloat LightSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	GLfloat Lightemissive[] = { 0.f, 0.f, 0.f, 1.0f };
 	GLfloat LightPosition[] = { 100.0f, 100.0f, 100.0f, 1.0f };
-	
+
 	glLightfv(GL_LIGHT0, GL_AMBIENT, LightAmbient);		// Setup The Ambient Light
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDiffuse);		// Setup The Diffuse Light
- 	glLightfv(GL_LIGHT0, GL_SPECULAR, LightSpecular);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, LightSpecular);
 	glLightfv(GL_LIGHT0, GL_POSITION, LightPosition);	// Position The Light
 
 	GLfloat material_Ka[] = { 0.5f, 0.0f, 0.0f, 1.0f };
@@ -281,19 +295,43 @@ void GLWidget::initializeGL()
 	glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, material_Ke);
 	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, material_Se);
 
-	coordinate = makeCoordinate();
+	ref_marker.setName("ref_marker");
+	ref_marker.setMarkerScaleFlag(false);
+	ref_marker.define(VEC3F(-0.85f, -0.85f, 0.0));
+
+	ground_marker = new vmarker(QString("ground_marker"), false);
+	ground_marker->define(VEC3F(0.0f, 0.0f, 0.0f));
+	v_wobjs[ground_marker->ID()] = (void*)ground_marker;
+
 	protype = PERSPECTIVE_PROJECTION;
-	//protype = ORTHO_PROJECTION;
-
-	//glEnable(GL_NORMALIZE);
-
-	//glClearColor(1.0, 1.0, 1.0, 1.0);
 }
 
 void GLWidget::makeMassCoordinate(QString& _name)
 {
 	QMap<QString, vobject*>::iterator it = v_objs.find(_name);
 	vobject* vobj = it.value();
+}
+
+void GLWidget::drawReferenceCoordinate()
+{
+	VEC3D ang(DEG2RAD * xRot / 16, DEG2RAD * yRot / 16, DEG2RAD * zRot / 16);
+	VEC3D xp = VEC3D(-0.85, -0.85, 0.0) + local2global_bryant(ang, VEC3D(0.13, 0.0, 0.0));
+	VEC3D yp = VEC3D(-0.85, -0.85, 0.0) + local2global_bryant(ang, VEC3D(0.0, 0.13, 0.0));
+	VEC3D zp = VEC3D(-0.85, -0.85, 0.0) + local2global_bryant(ang, VEC3D(0.0, 0.0, 0.13));
+	renderText(xp.x, xp.y, xp.z, QString("X"), QColor(255, 0, 0));
+	renderText(yp.x, yp.y, yp.z, QString("Y"), QColor(0, 255, 0));
+	renderText(zp.x, zp.y, zp.z, QString("Z"), QColor(0, 0, 255));
+	ref_marker.setCurrentAngle(VEC3F(xRot, yRot, zRot));
+	ref_marker.draw(GL_RENDER);
+}
+
+void GLWidget::drawGroundCoordinate(GLenum eMode)
+{
+	VEC3D ang(DEG2RAD * xRot / 16, DEG2RAD * yRot / 16, DEG2RAD * zRot / 16);
+	renderText(0.13, 0.0, 0.0, QString("X"), QColor(255, 0, 0));
+	renderText(0.0, 0.13, 0.0, QString("Y"), QColor(0, 255, 0));
+	renderText(0.0, 0.0, 0.13, QString("Z"), QColor(0, 0, 255));
+	ground_marker->draw(eMode);
 }
 
 vobject* GLWidget::getVObjectFromName(QString name)
@@ -304,7 +342,6 @@ vobject* GLWidget::getVObjectFromName(QString name)
 vpolygon* GLWidget::getVPolyObjectFromName(QString name)
 {
 	return NULL;
-	//return v_pobjs.find(name).value();
 }
 
 GLuint GLWidget::makePolygonObject(double* points, double* normals, int* indice, int size)
@@ -329,140 +366,23 @@ GLuint GLWidget::makePolygonObject(double* points, double* normals, int* indice,
 	return list;
 }
 
-GLuint GLWidget::makeCoordinate()
-{
-	GLuint list = glGenLists(1);
-	glNewList(list, GL_COMPILE);
-	glShadeModel(GL_FLAT);
-
-	qglColor(QColor(255, 0, 0));
-	glBegin(GL_LINES);
-	{
-		glVertex3f(0.0f, 0.0f, 0.0f);
-		glVertex3f(IconScale*1.0f, 0.0f, 0.0f);
-	}
-	glEnd();
-	glBegin(GL_TRIANGLE_FAN);
-	{
-		glVertex3f(IconScale*1.5f, 0.0f, 0.0f);
-		float angInc = (float)(45 * (M_PI / 180));
-		for (int i = 0; i < 9; i++)
-		{
-			float rad = angInc * i;
-			glVertex3f(IconScale*1.0f, cos(rad)*IconScale*0.15f, sin(rad)*IconScale*0.15f);
-		}
-	}
-	glEnd();
-	glBegin(GL_LINES);
-	{
-		glVertex3f(IconScale*1.5f, IconScale*(-0.1f), 0.0f);
-		glVertex3f(IconScale*1.3f, IconScale*(-0.3f), 0.0f);
-		glVertex3f(IconScale*1.3f, IconScale*(-0.1f), 0.0f);
-		glVertex3f(IconScale*1.5f, IconScale*(-0.3f), 0.0f);
-	}
-	glEnd();
-
-	qglColor(QColor(0, 255, 0));
-	glBegin(GL_LINES);
-	{
-		glVertex3f(0.0f, 0.0f, 0.0f);
-		glVertex3f(0.0f, IconScale*1.0f, 0.0f);
-	}
-	glEnd();
-	glBegin(GL_TRIANGLE_FAN);
-	{
-		glVertex3f(0.0f, IconScale*1.5f, 0.0f);
-		float angInc = (float)(45 * (M_PI / 180));
-		for (int i = 0; i < 9; i++)
-		{
-			float rad = angInc * i;
-			glVertex3f(cos(rad)*IconScale*0.15f, IconScale*1.0f, sin(rad)*IconScale*0.15f);
-		}
-	}
-	glEnd();
-
-	glBegin(GL_LINES);
-	{
-		glVertex3f(IconScale*(-0.1f), IconScale*1.5f, 0.0f);
-		glVertex3f(IconScale*(-0.2f), IconScale*1.4f, 0.0f);
-		glVertex3f(IconScale*(-0.3f), IconScale*1.5f, 0.0f);
-		glVertex3f(IconScale*(-0.2f), IconScale*1.4f, 0.0f);
-		glVertex3f(IconScale*(-0.2f), IconScale*1.4f, 0.0f);
-		glVertex3f(IconScale*(-0.2f), IconScale*1.25f, 0.0f);
-	}
-	glEnd();
-
-	qglColor(QColor(0, 0, 255));
-	glBegin(GL_LINES);
-	{
-		glVertex3f(0.0f, 0.0f, 0.0f);
-		glVertex3f(0.0f, 0.0f, IconScale*1.0f);
-	}
-	glEnd();
-	glBegin(GL_TRIANGLE_FAN);
-	{
-		glVertex3f(0.0f, 0.0f, IconScale*1.5f);
-		float angInc = (float)(45 * (M_PI / 180));
-		for (int i = 0; i < 9; i++)
-		{
-			float rad = angInc * i;
-			glVertex3f(cos(rad)*IconScale*0.15f, sin(rad)*IconScale*0.15f, IconScale*1.0f);
-		}
-	}
-	glEnd();
-
-	glBegin(GL_LINES);
-	{
-		glVertex3f(IconScale*(-0.3f), 0.0f, IconScale*1.5f);
-		glVertex3f(IconScale*(-0.1f), 0.0f, IconScale*1.5f);
-		glVertex3f(IconScale*(-0.1f), 0.0f, IconScale*1.5f);
-		glVertex3f(IconScale*(-0.3f), IconScale*(-0.2f), IconScale*1.5f);
-		glVertex3f(IconScale*(-0.3f), IconScale*(-0.2f), IconScale*1.5f);
-		glVertex3f(IconScale*(-0.1f), IconScale*(-0.2f), IconScale*1.5f);
-	}
-	glEnd();
-
-	glEndList();
-	return list;
-}
-
-void GLWidget::DrawCartesianCoordinates(vector3<double>& pos, vector3<double>& angle)
-{
-	glDisable(GL_LIGHTING);
-	glTranslated(unit*pos.x, unit*pos.y, unit*pos.z);
-	glRotated(angle.x / 16, 1.0, 0.0, 0.0);
-	glRotated(angle.y / 16, 0.0, 1.0, 0.0);
-	glRotated(angle.z / 16, 0.0, 0.0, 1.0);
-	glCallList(coordinate);
-	glEnable(GL_LIGHTING);
-}
 
 void GLWidget::drawObject(GLenum eMode)
 {
-	glTranslatef(0.0f, 0.0f, zoom);
-	glTranslatef(trans_x, trans_y, 0.0f);
+	glTranslatef(trans_x, trans_y, trans_z);
 	glRotated(xRot / 16.0, 1.0, 0.0, 0.0);
 	glRotated(yRot / 16.0, 0.0, 1.0, 0.0);
 	glRotated(zRot / 16.0, 0.0, 0.0, 1.0);
-
-	//glLightfv(GL_LIGHT0, GL_POSITION, LightPosition);	// Position The Light
+	qDebug() << xRot << " " << yRot << " " << zRot;
+	drawGroundCoordinate(eMode);
 	QMapIterator<QString, vobject*> obj(v_objs);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	while (obj.hasNext()){
 		obj.next();
-	//	obj.value()->color().setAlpha(0.2);
-		//qglColor(obj.value()->color());
 		obj.value()->draw(eMode);
 	}
 	glDisable(GL_BLEND);
-// 	QMapIterator<QString, vpolygon*> pobj(v_pobjs);
-// 	while (pobj.hasNext()){
-// 		pobj.next();
-// 		//qglColor(QColor("red"));
-// 		pobj.value()->draw(eMode);
-// 	}
-	
 }
 
 void GLWidget::processHits(unsigned int uHits, unsigned int *pBuffer)
@@ -486,7 +406,7 @@ void GLWidget::processHits(unsigned int uHits, unsigned int *pBuffer)
 #endif
 		//static_cast<vobject*>(v_wobjs[id])->setSelected(true);
 		ptr++;
-	}	
+	}
 }
 
 void GLWidget::setSketchSpace()
@@ -497,81 +417,80 @@ void GLWidget::setSketchSpace()
 
 void GLWidget::sketchingMode()
 {
-	
-// 	glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
-// 	gluOrtho2D(-1.02f, 1.02f, -1.02f, 1.02f);
-// 	unsigned int numGrid = static_cast<unsigned int>(1.0f / gridSize) * 2 + 1;
-// 	glMatrixMode(GL_MODELVIEW);
-// 	glLoadIdentity();
- 	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-// 	/*glPushMatrix();*/
- 	//glDisable(GL_LIGHTING);
-// 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-// 	glBegin(GL_LINES);
-// 	{
-// 		double sx = floor((sketch.sx + (sketch.ex - sketch.sx) * 0.1) * 10) * 0.1;
-// 		double ex = -sx;
-// 		double sy = floor((sketch.sy + (sketch.ey - sketch.sy) * 0.1) * 10) * 0.1;
-// 		double ey = -sy;
-// 		double lx = (floor(ex / sketch.space)) * sketch.space;
-// 		double ly = (floor(ey / sketch.space)) * sketch.space;
-// 		glPushMatrix();
-// 		glVertex3d(sx, sy, 0); glVertex3d(ex, sy, 0);
-// 		glVertex3d(ex, sy, 0); glVertex3d(ex, ey, 0);
-// 		glVertex3d(ex, ey, 0); glVertex3d(sx, ey, 0);
-// 		glVertex3d(sx, ey, 0); glVertex3d(sx, sy, 0);
-// 		glPopMatrix();
-// 		int nx = static_cast<int>((ex - sx) / sketch.space + 1e-9);
-// 		int ny = static_cast<int>((ey - sy) / sketch.space + 1e-9);
-// 		float fTmp1[16] = { 0.f, };
-// 		glGetFloatv(GL_PROJECTION_MATRIX, fTmp1);
-// 		for (int ix = 1; ix < nx; ix++)
-// 		{
-// 			double x = sx + sketch.space * ix;
-// 			glPushMatrix();
-// 			glVertex3d(x, sy, 0);
-// 			glVertex3d(x, ey, 0);
-// 			glPopMatrix();
-//  			
-// 		}
-// 		for (int iy = 1; iy < ny; iy++)
-// 		{
-// 			double y = sy + sketch.space * iy;
-// 			glPushMatrix();
-// 			glVertex3d(sx, y, 0);
-// 			glVertex3d(ex, y, 0);
-// 			glPopMatrix();
-// 		}
-// // 		for (double x = sx; x < ex; x += sketch.space){
-// // 			double rx = floor(x + 10e-9);
-// // 			for (double y = sy; y < ey; y += sketch.space){
-// // 				double ry = floor(y + 10e-9);
-// // 				glPushMatrix();
-// // 				glVertex3d(x, y, 0);
-// // 				glVertex3d(lx, y, 0);
-// // 
-// // // 				glVertex3f(x, y, 0.f);
-// // // 				glVertex3f(x, ly, 0.f);
-// // 				glPopMatrix();
-// // 			}
-// // 			glPushMatrix();
-// // 			glVertex3d(x, sy, 0);
-// // 			glVertex3d(x, ly, 0);
-// // 			glPopMatrix();
-// // 		}
-// // // 		glVertex2f(-0.98f, -0.98f);
-// // // 		glVertex2f(-0.98f, 0.98f);
-// // // 
-// // // 		glVertex2f(-0.98f, 0.98f);
-// // // 		glVertex2f(0.98f, 0.98f);
-// // // 
-// // // 		glVertex2f(0.98f, 0.98f);
-// // // 		glVertex2f(0.98f, -0.98f);
-// // // 
-// // // 		glVertex2f(0.98f, -0.98f);
-// // // 		glVertex2f(-0.98f, -0.98f);
-//  	}
-//  	glEnd();
+	// 	glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
+	// 	gluOrtho2D(-1.02f, 1.02f, -1.02f, 1.02f);
+	// 	unsigned int numGrid = static_cast<unsigned int>(1.0f / gridSize) * 2 + 1;
+	// 	glMatrixMode(GL_MODELVIEW);
+	// 	glLoadIdentity();
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	// 	/*glPushMatrix();*/
+	//glDisable(GL_LIGHTING);
+	// 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	// 	glBegin(GL_LINES);
+	// 	{
+	// 		double sx = floor((sketch.sx + (sketch.ex - sketch.sx) * 0.1) * 10) * 0.1;
+	// 		double ex = -sx;
+	// 		double sy = floor((sketch.sy + (sketch.ey - sketch.sy) * 0.1) * 10) * 0.1;
+	// 		double ey = -sy;
+	// 		double lx = (floor(ex / sketch.space)) * sketch.space;
+	// 		double ly = (floor(ey / sketch.space)) * sketch.space;
+	// 		glPushMatrix();
+	// 		glVertex3d(sx, sy, 0); glVertex3d(ex, sy, 0);
+	// 		glVertex3d(ex, sy, 0); glVertex3d(ex, ey, 0);
+	// 		glVertex3d(ex, ey, 0); glVertex3d(sx, ey, 0);
+	// 		glVertex3d(sx, ey, 0); glVertex3d(sx, sy, 0);
+	// 		glPopMatrix();
+	// 		int nx = static_cast<int>((ex - sx) / sketch.space + 1e-9);
+	// 		int ny = static_cast<int>((ey - sy) / sketch.space + 1e-9);
+	// 		float fTmp1[16] = { 0.f, };
+	// 		glGetFloatv(GL_PROJECTION_MATRIX, fTmp1);
+	// 		for (int ix = 1; ix < nx; ix++)
+	// 		{
+	// 			double x = sx + sketch.space * ix;
+	// 			glPushMatrix();
+	// 			glVertex3d(x, sy, 0);
+	// 			glVertex3d(x, ey, 0);
+	// 			glPopMatrix();
+	//  			
+	// 		}
+	// 		for (int iy = 1; iy < ny; iy++)
+	// 		{
+	// 			double y = sy + sketch.space * iy;
+	// 			glPushMatrix();
+	// 			glVertex3d(sx, y, 0);
+	// 			glVertex3d(ex, y, 0);
+	// 			glPopMatrix();
+	// 		}
+	// // 		for (double x = sx; x < ex; x += sketch.space){
+	// // 			double rx = floor(x + 10e-9);
+	// // 			for (double y = sy; y < ey; y += sketch.space){
+	// // 				double ry = floor(y + 10e-9);
+	// // 				glPushMatrix();
+	// // 				glVertex3d(x, y, 0);
+	// // 				glVertex3d(lx, y, 0);
+	// // 
+	// // // 				glVertex3f(x, y, 0.f);
+	// // // 				glVertex3f(x, ly, 0.f);
+	// // 				glPopMatrix();
+	// // 			}
+	// // 			glPushMatrix();
+	// // 			glVertex3d(x, sy, 0);
+	// // 			glVertex3d(x, ly, 0);
+	// // 			glPopMatrix();
+	// // 		}
+	// // // 		glVertex2f(-0.98f, -0.98f);
+	// // // 		glVertex2f(-0.98f, 0.98f);
+	// // // 
+	// // // 		glVertex2f(-0.98f, 0.98f);
+	// // // 		glVertex2f(0.98f, 0.98f);
+	// // // 
+	// // // 		glVertex2f(0.98f, 0.98f);
+	// // // 		glVertex2f(0.98f, -0.98f);
+	// // // 
+	// // // 		glVertex2f(0.98f, -0.98f);
+	// // // 		glVertex2f(-0.98f, -0.98f);
+	//  	}
+	//  	glEnd();
 
 }
 
@@ -579,29 +498,24 @@ void GLWidget::paintGL()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
+
 	glLoadIdentity();
 	glClearColor(0.0, 0.0, 0.0, 1.0);
-	//}
 	gluOrtho2D(-1.0f, 1.0f, -1.0f, 1.0f);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glPushMatrix();
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	DrawCartesianCoordinates(vector3<double>(-0.9, -0.9f, 0.0f), vector3<double>(xRot, yRot, zRot));
-	glPopMatrix();
+	drawReferenceCoordinate();
+	resizeGL(wWidth, wHeight);
 
-	resizeGL(wWidth, wHeight/*, -trans_x, -trans_y*/);
-	
-	//glDisable(GL_DEPTH_TEST);
-	//glDisable(GL_LIGHTING);
 	drawObject(GL_RENDER);
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	//glDisable(GL_LIGHTING);
+
 	if (vp)
-		vp->draw(GL_RENDER, wHeight, protype, abs(zoom));
-	//glEnable(GL_LIGHTING);
+		vp->draw(GL_RENDER, wHeight, protype, abs(trans_z));
+
 	if (vcontroller::Play()){
 		vcontroller::update_frame();
 		emit mySignal();
@@ -613,15 +527,13 @@ void GLWidget::paintGL()
 void GLWidget::resizeGL(int width, int height)
 {
 	wWidth = width; wHeight = height;
-// 	if (isSketching)
-// 		return;
+
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-// 	if (!isSketching)
-// 	{
+
 	ratio = (GLfloat)(width) / (GLfloat)(height);
-	float z = abs(zoom);
+	float z = abs(trans_z);
 	float c = z * tanf(30.0f * M_PI / 180.0f);
 	switch (protype)
 	{
@@ -631,13 +543,9 @@ void GLWidget::resizeGL(int width, int height)
 	case ORTHO_PROJECTION:
 		if (width <= height){
 			glOrtho(-1.0f * c, 1.0f * c, (-1.0f / ratio) * c, (1.0f / ratio) * c, 0.01f, 1000.f);
-// 			sketch.sx = -1 * z; sketch.ex = 1.f * z;
-// 			sketch.sy = -1 / ratio * z; sketch.ey = 1.f / ratio * z;
 		}
 		else{
 			glOrtho(-1.0f * c * ratio, 1.0f * c * ratio, -1.0f * c, 1.0f * c, 0.01f, 1000.f);
-// 			sketch.sx = -1.f * z * ratio; sketch.ex = 1.f * ratio * z;
-// 			sketch.sy = -1.f * z; sketch.ey = 1.f * z;
 		}
 		break;
 	}
@@ -649,24 +557,14 @@ void GLWidget::resizeGL(int width, int height)
 void GLWidget::wheelEvent(QWheelEvent *e)
 {
 	QPoint  p = e->angleDelta();
-	float pzoom = zoom;
-// 	if (isSketching){
-// 		gridSize *= p.y() > 0 ? 0.1f : 10.0f;
-// 		if (gridSize > 0.99f)
-// 			gridSize = 0.1f;
-// 		else if (gridSize < 0.00099)
-// 			gridSize = 0.001f;
-// 	}
-// 	else
-		p.y() > 0 ? zoom -= 2.0f*moveScale : zoom += 2.0f*moveScale;
-	
+	float pzoom = trans_z;
+	p.y() > 0 ? trans_z -= 2.0f*moveScale : trans_z += 2.0f*moveScale;
+
 	setFocusPolicy(Qt::StrongFocus);
 }
 
 void GLWidget::mousePressEvent(QMouseEvent *event)
 {
-	// 	if(event->type() == QEvent::None) 
-	// 		return;
 	lastPos = event->pos();
 	if (event->button() == Qt::RightButton){
 		picking(lastPos.x(), lastPos.y());
@@ -674,14 +572,11 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 	if (event->button() == Qt::MiddleButton){
 		onZoom = true;
 	}
-	//if (!keyID[90] && !keyID[84] && !keyID[82]){
 	if (event->button() == Qt::LeftButton){
-		//int choose = selection(lastPos.x(), lastPos.y());
 		if (keyID[82])
 			onRotation = true;
 		else
 			picking(lastPos.x(), lastPos.y());
-	//}
 	}
 }
 
@@ -707,40 +602,22 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 {
 	int dx = event->x() - lastPos.x();
 	int dy = event->y() - lastPos.y();
-// 	m_rectHovered->setRect(event->x(), event->y() - 31, 40, 30);
-// 	qreal rectX = m_rectHovered->rect().x();
-// 	qreal rectY = m_rectHovered->rect().y();
-// 	qreal rectW = m_rectHovered->rect().width();
-// 	qreal rectH = m_rectHovered->rect().height();
-// 	m_coordHoverX->setPos(rectX + rectW / 4 - 3, rectY + 1);
-// 	m_coordHoverY->setPos(rectX + rectW / 4 - 3, rectY + rectH / 2 + 1);
-// 	m_coordHoverX->setText(QString("%1").arg(event->x(), 4, 'f', 2, '0'));
-// 	m_coordHoverY->setText(QString("%1").arg(event->y(), 4, 'f', 2, '0'));
-// 	//QGLWidget::mapToParent()
-// 	if (sketch.isSketching)
-// 	{
-// 		m_coordHoverX->setVisible(true);
-// 		m_coordHoverY->setVisible(true);
-// 		m_rectHovered->setVisible(true);
-// 	}
-// 	else
-// 	{
-// 		m_coordHoverX->setVisible(false);
-// 		m_coordHoverY->setVisible(false);
-// 		m_rectHovered->setVisible(false);
-// 	}
-	//glMap
 	if (keyID[84]){
 		dy > 0 ? trans_y -= 0.1f*moveScale*dy : trans_y -= 0.1f*moveScale*dy;
 		dx > 0 ? trans_x += 0.1f*moveScale*dx : trans_x += 0.1f*moveScale*dx;
 	}
 	if (keyID[82] && onRotation) {
-		setXRotation(xRot + 8 * dy);
-		setYRotation(yRot + 8 * dx);
+		if (zRotationFlag)
+			setZRotation(zRot - 8 * dx);
+		else
+		{
+			setXRotation(xRot + 8 * dy);
+			setYRotation(yRot + 8 * dx);
+		}
 	}
 	if (onZoom)
 	{
-		dy > 0 ? zoom -= 0.01f*moveScale : zoom += 0.01f*moveScale;
+		dy > 0 ? trans_z -= 0.01f*moveScale : trans_z += 0.01f*moveScale;
 	}
 	lastPos = event->pos();
 }
@@ -770,23 +647,32 @@ void GLWidget::picking(int x, int y)
 	case PERSPECTIVE_PROJECTION: gluPerspective(60.0, ratio, 0.01f, 1000.0f); break;
 	case ORTHO_PROJECTION:
 		if (wWidth <= wHeight)
-			glOrtho(-1.f * abs(zoom), 1.f * abs(zoom), -1.f / ratio * abs(zoom), 1.f / ratio * abs(zoom), 0.01f, 1000.f);
+			glOrtho(-1.f * abs(trans_z), 1.f * abs(trans_z), -1.f / ratio * abs(trans_z), 1.f / ratio * abs(trans_z), 0.01f, 1000.f);
 		else
-			glOrtho(-1.f * abs(zoom) * ratio, 1.f * ratio * abs(zoom), -1.f * abs(zoom), 1.f * abs(zoom), 0.01f, 1000.f);
-		
-			
+			glOrtho(-1.f * abs(trans_z) * ratio, 1.f * ratio * abs(trans_z), -1.f * abs(trans_z), 1.f * abs(trans_z), 0.01f, 1000.f);
 		break;
 	}
-	
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+	//gluLookAt(eye[0], eye[1], eye[2], 0, 0, 0, 0, 1, 0);
 	drawObject(GL_SELECT);
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	uiHits = glRenderMode(GL_RENDER);
 	processHits(uiHits, aSelectBuffer);
 	glMatrixMode(GL_MODELVIEW);
-	
+
+}
+
+void GLWidget::keyReleaseEvent(QKeyEvent *e)
+{
+	switch (e->key())
+	{
+	case Qt::Key_Control:
+		zRotationFlag = false;
+		break;
+	}
 }
 
 void GLWidget::keyPressEvent(QKeyEvent *e)
@@ -818,6 +704,10 @@ void GLWidget::keyPressEvent(QKeyEvent *e)
 		if (vp)
 			vp->downParticleScale(1);
 		break;
+	case Qt::Key_Control:
+		if (keyID[82])
+			zRotationFlag = true;
+		break;
 	case 90:
 		setKeyState(true, 90);
 		break;
@@ -833,6 +723,20 @@ void GLWidget::keyPressEvent(QKeyEvent *e)
 	}
 }
 
+void GLWidget::setMaxViewPosition(float x, float y, float z)
+{
+	if (x > maxView[0]) maxView[0] = x;
+	if (y > maxView[1]) maxView[1] = y;
+	if (z > maxView[2]) maxView[2] = z;
+}
+
+void GLWidget::setMinViewPosition(float x, float y, float z)
+{
+	if (x < minView[0]) minView[0] = x;
+	if (y < minView[1]) minView[1] = y;
+	if (z < minView[2]) minView[2] = z;
+}
+
 void GLWidget::normalizeAngle(int *angle)
 {
 	while (*angle < 0)
@@ -840,33 +744,6 @@ void GLWidget::normalizeAngle(int *angle)
 	while (*angle > 360 * 16)
 		*angle -= 360 * 16;
 }
-
-// bool GLWidget::change(QString& fp, tChangeType ct, tFileType ft)
-// {
-// 	QFile pf(fp);
-// 	pf.open(QIODevice::ReadOnly);
-// 	switch (ct)
-// 	{
-// 	case CHANGE_PARTICLE_POSITION:{
-// 			VEC4D_PTR _pos = new VEC4D[vp->Np()];
-// 			VEC3D_PTR _vel = new VEC3D[vp->Np()];
-// 			float time = 0.f;
-// 			unsigned int _np = 0;
-// 			pf.read((char*)&_np, sizeof(unsigned int));
-// 			pf.read((char*)&time, sizeof(double));
-// 			pf.read((char*)_pos, sizeof(VEC4D) * vp->Np());
-// 			pf.read((char*)_vel, sizeof(VEC3D) * vp->Np());
-// 			vp->changeParticles(_pos);
-// 			vp->getParticleSystem()->setVelocity(&(_vel[0].x));
-// 			delete[] _pos;
-// 			delete[] _vel;
-// 		}
-// 		break;
-// 	}
-// 	pf.close();
-// 
-// 	return true;
-// }
 
 void GLWidget::openMbd(QString& file)
 {
@@ -888,7 +765,7 @@ void GLWidget::openMbd(QString& file)
 	qf.read((char*)&nm, sizeof(unsigned int));
 	qf.read((char*)&nout, sizeof(unsigned int));
 	while (!qf.atEnd()){
-		
+
 		qf.read((char*)&cnt, sizeof(unsigned int));
 		for (unsigned int i = 0; i < nm; i++){
 			QString str;
@@ -905,18 +782,10 @@ void GLWidget::openMbd(QString& file)
 			qf.read((char*)&ev, sizeof(EPD));
 			qf.read((char*)&a, sizeof(VEC3D));
 			qf.read((char*)&ea, sizeof(EPD));
- 			//it = names.find(id);
-// 			if (v_pobjs.find(str) != v_pobjs.end()){
-// 				vpolygon* vpoly = v_pobjs.find(str).value();
-// 				vpoly->setResultData(nout);
-// 				vpoly->insertResultData(cnt, p, ep);
-// 			}
-			
+
 			vobject* vobj = v_objs.find(str).value();
 			vobj->setResultData(nout);
 			vobj->insertResultData(cnt, p, ep);
-			
-			
 		}
 	}
 
@@ -936,7 +805,7 @@ void GLWidget::makeCube(cube* c)
 	qDebug() << c->Name();
 	vc->makeCubeGeometry(c->Name(), c->RollType(), c->MaterialType(), c->min_point().To<float>(), c->cube_size().To<float>());
 	v_objs[c->Name()] = vc;
-	qDebug() << vc; 
+	qDebug() << vc;
 	v_wobjs[vc->ID()] = (void*)vc;
 }
 
@@ -954,12 +823,6 @@ void GLWidget::makeCylinder(cylinder* cy)
 {
 	if (!cy)
 		return;
-// 	vcylinder *vcy = new vcylinder(cy->Name());
-// 	vcy->makeCylinderGeometry((float)cy->baseRadius(), (float)cy->topRadius(), (float)cy->length(), cy->origin().To<float>(), cy->basePos().To<float>(), cy->topPos().To<float>());
-// 	vcy->copyCoordinate(coordinate);
-// 	//cy->setOrientation(M_PI * vcy->eulerAngle_1()/180, M_PI * vcy->eulerAngle_2() / 180, M_PI * vcy->eulerAngle_3()/180);
-// 	v_objs[cy->Name()] = vcy;
-// 	v_wobjs[vcy->ID()] = (void*)vcy;
 }
 
 void GLWidget::makeLine()
@@ -974,7 +837,7 @@ vpolygon* GLWidget::makePolygonObject(QString _nm, import_shape_type t, QString 
 	v_objs[_nm] = vpoly;
 	v_wobjs[vpoly->ID()] = (void*)vpoly;
 	return vpoly;
- }
+}
 
 void GLWidget::makeParticle(double* pos, unsigned int n)
 {
@@ -988,23 +851,20 @@ void GLWidget::makeParticle(double* pos, unsigned int n)
 	{
 		vp->resizeMemory(pos, n);
 	}
-// 	if (!ps){
-// 		return;
-// 	}
-// 	if (!vp){
-// 		vp = new vparticles(ps);
-// 		if (vp->define())
-// 			isSetParticle = true;
-// 		v_objs[ps->baseObject()]->setDisplay(true);
-// 	}
-// 	else{
-// 		vp->resizeMemory();
-// 		vp->define();
-// 	}
+}
+
+void GLWidget::makeMarker(QString n, VEC3D p, bool mcf)
+{
+	vmarker* vm = new vmarker(n, mcf);
+	vm->define(VEC3F((float)p.x, (float)p.y, (float)p.z));
+	v_objs[n] = vm;
+	v_wobjs[vm->ID()] = (void*)vm;
+
+	setMaxViewPosition(p.x, p.y, p.z);
+	setMinViewPosition(p.x, p.y, p.z);
 }
 
 void GLWidget::openResults(QStringList& fl)
 {
-// 	vp->setResultFileList(fl);
-// 	vcontroller::setTotalFrame(fl.size());
+
 }

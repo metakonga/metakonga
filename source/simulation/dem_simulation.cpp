@@ -2,6 +2,7 @@
 //#include "modelManager.h"
 #include "velocity_verlet.h"
 #include "neighborhood_cell.h"
+#include "contact_particles_polygonObjects.h"
 //#include "polygonObject.h"
 
 dem_simulation::dem_simulation()
@@ -100,7 +101,7 @@ void dem_simulation::clearMemory()
 	}	
 }
 
-void dem_simulation::allocationMemory(unsigned int _np)
+void dem_simulation::allocationMemory()
 {
 	clearMemory();
 	//np = _np;
@@ -131,37 +132,20 @@ void dem_simulation::allocationMemory(unsigned int _np)
 bool dem_simulation::initialize(contactManager* _cm)
 {
 	double maxRadius = 0;
+	particleManager* pm = md->ParticleManager();
 	np = pm->Np();
 	cm = _cm;
-	if (cm->ContactPoly())
-	{
-		maxRadius = cm->ContactPoly()->MaxRadius();
-		nPolySphere = cm->ContactPoly()->NumPolySphere();
-	}
-	else
-	{
-		maxRadius = 0;
-		nPolySphere = 0;
-	}
-	
-// 	foreach(object* obj, modelManager::MM()->GeometryObject()->Objects())
-// 	{
-// 		if (obj->ObjectType() == POLYGON_SHAPE)
-// 		{
-// 			polygonObject* pobj = dynamic_cast<polygonObject*>(obj);
-// 			if (maxRadius < pobj->maxRadius())
-// 				maxRadius = pobj->maxRadius();
-// 			nPolySphere += pobj->NumTriangle();
-// 		}
-// 	}
 
-	particleManager* pm = md->ParticleManager();
+	nPolySphere = cm->setupParticlesPolygonObjectsContact();
+	maxRadius = cm->ContactParticlesPolygonObjects()->MaxRadiusOfPolySphere();
 	allocationMemory();
 
 	memcpy(pos, pm->Position(), sizeof(double) * np * 4);
 	if(nPolySphere)
-		memcpy(pos + np * 4, cm->PolySphereSet
-		(), sizeof(double) * nPolySphere * 4);
+		memcpy(
+		pos + np * 4, 
+		cm->ContactParticlesPolygonObjects()->HostSphereData(), 
+		sizeof(double) * nPolySphere * 4);
 	memset(vel, 0, sizeof(double) * np * 3);
 	memset(acc, 0, sizeof(double) * np * 3);
 	memset(avel, 0, sizeof(double) * np * 3);
@@ -185,11 +169,12 @@ bool dem_simulation::initialize(contactManager* _cm)
 	for (unsigned int i = 0; i < np; i++)
 	{
 		double r = pos[i * 4 + 3];
+		//vel[i * 3 + 0] = 0.1;
 		mass[i] = pm->Object()->Density() * (4.0 / 3.0) * M_PI * pow(r, 3.0);
 		inertia[i] = (2.0 / 5.0) * mass[i] * pow(r, 2.0);
-		acc[i * 3 + 0] = model::gravity.x;
-		acc[i * 3 + 1] = model::gravity.y;
-		acc[i * 3 + 2] = model::gravity.z;
+		force[i * 3 + 0] = mass[i] * model::gravity.x;
+		force[i * 3 + 1] = mass[i] * model::gravity.y;
+		force[i * 3 + 2] = mass[i] * model::gravity.z;
 		if (r > maxRadius)
 			maxRadius = r;
 	}

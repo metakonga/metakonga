@@ -27,27 +27,33 @@ database::database(QWidget* parent, modelManager* _md)
 	roots[CUBE_ROOT] = new QTreeWidgetItem(vtree);
 	roots[CYLINDER_ROOT] = new QTreeWidgetItem(vtree);
 	roots[POLYGON_ROOT] = new QTreeWidgetItem(vtree);
-	roots[MASS_ROOT] = new QTreeWidgetItem(vtree);
+	roots[RIGID_BODY_ROOT] = new QTreeWidgetItem(vtree);
 	roots[COLLISION_ROOT] = new QTreeWidgetItem(vtree);
 	roots[PARTICLES_ROOT] = new QTreeWidgetItem(vtree);
+	roots[CONSTRAINT_ROOT] = new QTreeWidgetItem(vtree);
+	roots[SPRING_DAMPER_ROOT] = new QTreeWidgetItem(vtree);
 
 	roots[PLANE_ROOT]->setText(0, "Plane");
 	roots[LINE_ROOT]->setText(0, "Line");
 	roots[CUBE_ROOT]->setText(0, "Cube");
 	roots[CYLINDER_ROOT]->setText(0, "Cylinder");
 	roots[POLYGON_ROOT]->setText(0, "Polygon");
-	roots[MASS_ROOT]->setText(0, "Mass");
+	roots[RIGID_BODY_ROOT]->setText(0, "Mass");
 	roots[COLLISION_ROOT]->setText(0, "Collision");
 	roots[PARTICLES_ROOT]->setText(0, "Particles");
+	roots[CONSTRAINT_ROOT]->setText(0, "Constraint");
+	roots[SPRING_DAMPER_ROOT]->setText(0, "SpringDamper");
 
 	roots[PLANE_ROOT]->setIcon(0, QIcon(":/Resources/icRect.png"));
 	roots[LINE_ROOT]->setIcon(0, QIcon(":/Resources/icLine.png"));
 	roots[CUBE_ROOT]->setIcon(0, QIcon(":/Resources/pRec.png"));
 	roots[CYLINDER_ROOT]->setIcon(0, QIcon(":/Resources/cylinder.png"));
 	roots[POLYGON_ROOT]->setIcon(0, QIcon(":/Resources/icPolygon.png"));
-	roots[MASS_ROOT]->setIcon(0, QIcon(":/Resources/mass.png"));
+	roots[RIGID_BODY_ROOT]->setIcon(0, QIcon(":/Resources/mass.png"));
 	roots[COLLISION_ROOT]->setIcon(0, QIcon(":/Resources/collision.png"));
 	roots[PARTICLES_ROOT]->setIcon(0, QIcon(":/Resources/particle.png"));
+	roots[CONSTRAINT_ROOT]->setIcon(0, QIcon(":/Resources/spherical.png"));
+	roots[SPRING_DAMPER_ROOT]->setIcon(0, QIcon(":/Resources/TSDA_icon.png"));
 	connect(vtree, &QTreeWidget::customContextMenuRequested, this, &database::contextMenu);
 	md->setDatabase(this);
 }
@@ -78,14 +84,6 @@ void database::contextMenu(const QPoint& pos)
 		return;
 	if (!item->parent())
 		return;
-	//QString c = item->text(0);
-	//QAction act0(tr("Property"), this);
-	//act0.setWhatsThis(item->text(0));
-	//act0.setStatusTip(tr("property menu"));
-	//QAction act1(tr("Delete"), this);
-	//act1.setStatusTip(tr("delete menu"));
-// 	connect(act0, SIGNAL(triggered()), this, SLOT(actProperty()));
-// 	connect(act1, SIGNAL(triggered()), this, SLOT(actDelete()));
 	QString it = item->text(0);
 	QMenu menu(item->text(0), this);
 	menu.addAction("Delete");

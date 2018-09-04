@@ -11,7 +11,12 @@
 class contact
 {
 public:
-	enum pairType{ NO_CONTACT_PAIR = 0, PARTICLE_PARTICLE = 26, PARTICLE_CUBE = 15, PARTICLE_PANE = 16 };
+	enum pairType{ 
+		NO_CONTACT_PAIR = 0, 
+		PARTICLE_PARTICLE = 26, 
+		PARTICLE_CUBE = 15,
+		PARTICLE_PANE = 16,
+	    PARTICLE_POLYGON_SHAPE = 32};
 	typedef struct { double kn, vn, ks, vs; }contactParameters;
 
 	contact(const contact* c);
@@ -24,7 +29,7 @@ public:
 	double Friction() const { return friction; }
 	double StiffnessRatio() const { return stiffnessRatio; }
 	contactForce_type ForceMethod() const { return f_type; }
-	material_property_pair MaterialPropertyPair() const { return mpp; }
+	material_property_pair* MaterialPropertyPair() const { return mpp; }
 	device_contact_property* DeviceContactProperty() const { return dcp; }
 	pairType PairType() const { return type; }
 	
@@ -35,20 +40,20 @@ public:
 		double ip, double jp,
 		double is, double js);
 // 		contactForce_type cft, double rest, double ratio, double fric);
-	void setMaterialPair(material_property_pair _mpp) { mpp = _mpp; }
+	void setMaterialPair(material_property_pair _mpp);// { mpp = _mpp; }
 	
 	static pairType getContactPair(geometry_type t1, geometry_type t2);
 
 	/*virtual bool collision(double dt) = 0;*/
-	virtual bool collision(
-		double *dpos, double *dvel, 
-		double *domega, double *dmass, 
-		double *dforce, double *dmoment, 
-		unsigned int *sorted_id, 
-		unsigned int *cell_start, 
-		unsigned int *cell_end,
-		unsigned int np
-		) = 0;
+	virtual void collision(
+		double r, double m, VEC3D& pos, VEC3D& vel, VEC3D& omega, VEC3D& fn, VEC3D& ft);
+// 		double *domega, double *dmass, 
+// 		double *dforce, double *dmoment, 
+// 		unsigned int *sorted_id, 
+// 		unsigned int *cell_start, 
+// 		unsigned int *cell_end,
+// 		unsigned int np
+// 		);
 	virtual void cudaMemoryAlloc();
 	static unsigned int count;
 
@@ -60,7 +65,7 @@ protected:
 	QString name;
 	pairType type;
 	contactForce_type f_type;
-	material_property_pair mpp;
+	material_property_pair* mpp;
 	//contact_parameter cp;
 	device_contact_property* dcp;
 

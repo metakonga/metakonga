@@ -401,19 +401,27 @@
   </widget>
  </widget>
  <tabstops>
+  <tabstop>LE_Name</tabstop>
   <tabstop>TB_Method</tabstop>
-  <tabstop>LE_CUBE_NX</tabstop>
-  <tabstop>LE_CUBE_NY</tabstop>
-  <tabstop>LE_CUBE_NZ</tabstop>
+  <tabstop>LE_PLANE_NX</tabstop>
+  <tabstop>LE_PLANE_NZ</tabstop>
+  <tabstop>LE_PLANE_DIR</tabstop>
+  <tabstop>LE_PLANE_LOC</tabstop>
   <tabstop>LE_MIN_RADIUS</tabstop>
   <tabstop>LE_MAX_RADIUS</tabstop>
   <tabstop>LE_P_SPACING</tabstop>
   <tabstop>LE_NUM_PARTICLE</tabstop>
+  <tabstop>CB_Type</tabstop>
+  <tabstop>LE_Youngs</tabstop>
+  <tabstop>LE_Density</tabstop>
+  <tabstop>LE_PoissonRatio</tabstop>
+  <tabstop>LE_ShearModulus</tabstop>
   <tabstop>PB_Ok</tabstop>
   <tabstop>PB_Cancle</tabstop>
-  <tabstop>LE_PLANE_NX</tabstop>
-  <tabstop>LE_PLANE_NZ</tabstop>
-  <tabstop>LE_PLANE_DIR</tabstop>
+  <tabstop>LE_CUBE_NX</tabstop>
+  <tabstop>LE_CUBE_NY</tabstop>
+  <tabstop>LE_CUBE_LOC</tabstop>
+  <tabstop>LE_CUBE_NZ</tabstop>
  </tabstops>
  <resources/>
  <connections/>

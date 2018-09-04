@@ -1,6 +1,8 @@
 #include "xDynamicsSolver.h"
 #include "modelManager.h"
+#include "errors.h"
 #include <QTime>
+#include <QDebug>
 
 xDynamicsSolver::xDynamicsSolver(modelManager* _mg)
 	: mg(_mg)
@@ -26,18 +28,20 @@ xDynamicsSolver::~xDynamicsSolver()
 
 bool xDynamicsSolver::initialize()
 {
-	unsigned int np = mg->DEMModel()->ParticleManager()->Np();
+	
 	nstep = static_cast<unsigned int>((simulation::et / simulation::dt) + 1);
 	npart = static_cast<unsigned int>((nstep / simulation::st) + 1);
 	if (dem)
 	{
+		unsigned int np = mg->DEMModel()->ParticleManager()->Np();
 		dem->initialize(mg->ContactManager());
+		model::rs->setResultMemoryDEM(npart, np);
 	}
 	if (mbd)
 	{
 		mbd->initialize();
 	}
-	model::rs->setResultMemoryDEM(npart, np);
+	
 	savePart(0, 0);
 	return true;
 }
@@ -116,8 +120,22 @@ void xDynamicsSolver::run()
 		cstep++;
 		eachStep++;
 		ct += simulation::dt;
+#ifdef _DEBUG
+		qDebug() << ct;
+#endif
 		simulation::setCurrentTime(ct);
-		if (dem) dem->oneStepAnalysis();
+		if (dem) 
+			dem->oneStepAnalysis();
+		if (mbd)
+		{
+			mbd_state = mbd->oneStepAnalysis(ct, cstep);
+			if (!mbd_state)
+			{
+				errors::Error(mbd->MbdModel()->modelName());
+				break;
+			}
+		}
+			
 		if (!((cstep) % simulation::st))
 		{
 			double dur_time = tme.elapsed() * 0.001;
@@ -143,6 +161,7 @@ void xDynamicsSolver::run()
 			eachStep = 0;
 		}
 	}
+	model::rs->exportEachResult2TXT(model::path);
 	sendProgress(0, "__line__");
 	QTime endingTime = tme.currentTime();
 	QDate endingDate = QDate::currentDate();

@@ -60,10 +60,10 @@ void vobject::copyCoordinate(GLuint _coord)
 	coord = _coord;
 }
 
-void vobject::animationFrame(float ox, float oy, float oz)
+void vobject::animationFrame()
 {
 	unsigned int f = vcontroller::getFrame();
-	glTranslated(outPos[f].x + ox, outPos[f].y + oy, outPos[f].z + oz);
+	glTranslated(outPos[f].x + pos0.x, outPos[f].y + pos0.y, outPos[f].z + pos0.z);
 	VEC3D e = ep2e(outRot[f]);
 	double xi = (e.x * 180) / M_PI;
 	double th = (e.y * 180) / M_PI;

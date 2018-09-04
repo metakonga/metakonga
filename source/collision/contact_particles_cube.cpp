@@ -17,18 +17,18 @@ contact_particles_cube::~contact_particles_cube()
 
 }
 
-bool contact_particles_cube::collision(
-	double *pos, double *vel, double *omega,
-	double *mass, double *force, double *moment,
-	unsigned int *sorted_id,
-	unsigned int *cell_start, 
-	unsigned int *cell_end,
-	unsigned int np)
+void contact_particles_cube::collision(
+	double r, double m, VEC3D& pos, VEC3D& vel, VEC3D& omega, VEC3D& F, VEC3D& M)
 {
-	simulation::isGpu()
-		? cu_cube_contact_force(1, dpi, pos, vel, omega, force, moment, mass, np, dcp)
-		: hostCollision(pos, vel, omega, mass, force, moment, np);
-	return true;
+	contact_particles_plane cpps(this);
+	plane* planes = cu->Planes();
+	for (unsigned int j = 0; j < 6; j++)
+	{
+		VEC3D m_f, m_m;
+		cpps.singleCollision(planes + j, m, r, pos, vel, omega, m_f, m_m);
+		F += m_f;
+		M += m_m;
+	}
 }
 
 void contact_particles_cube::cudaMemoryAlloc()
@@ -56,38 +56,38 @@ void contact_particles_cube::cudaMemoryAlloc()
 	checkCudaErrors(cudaMemcpy(dpi, _dpi, sizeof(device_plane_info) * 6, cudaMemcpyHostToDevice));
 	delete [] _dpi;
 }
-
-bool contact_particles_cube::hostCollision(
-	double *m_pos, double *m_vel, double *m_omega,
-	double *m_mass, double *m_force, double *m_moment,
-	unsigned int np)
-{
-	VEC4D* pos = (VEC4D*)m_pos;
-	VEC3D* vel = (VEC3D*)m_vel;
-	VEC3D* omega = (VEC3D*)m_omega;
-	VEC3D* force = (VEC3D*)m_force;
-	VEC3D* moment = (VEC3D*)m_moment;
-	double* mass = m_mass;
-
-	contact_particles_plane cpps(this);
-	plane* planes = cu->Planes();
-	for (unsigned int i = 0; i < np; i++)
-	{
-		double ms = mass[i];
-		double rad = pos[i].w;
-		VEC3D p = VEC3D(pos[i].x, pos[i].y, pos[i].z);
-		VEC3D v = vel[i];
-		VEC3D w = omega[i];
-		VEC3D F, M;
-		for (unsigned int j = 0; j < 6; j++)
-		{
-			cpps.singleCollision(planes + j, ms, rad, p, v, w, F, M);
-			force[i] += F;
-			moment[i] += M;
-		}
-	}
-	return true;
-}
+// 
+// bool contact_particles_cube::hostCollision(
+// 	double *m_pos, double *m_vel, double *m_omega,
+// 	double *m_mass, double *m_force, double *m_moment,
+// 	unsigned int np)
+// {
+// 	VEC4D* pos = (VEC4D*)m_pos;
+// 	VEC3D* vel = (VEC3D*)m_vel;
+// 	VEC3D* omega = (VEC3D*)m_omega;
+// 	VEC3D* force = (VEC3D*)m_force;
+// 	VEC3D* moment = (VEC3D*)m_moment;
+// 	double* mass = m_mass;
+// 
+// 	contact_particles_plane cpps(this);
+// 	plane* planes = cu->Planes();
+// 	for (unsigned int i = 0; i < np; i++)
+// 	{
+// 		double ms = mass[i];
+// 		double rad = pos[i].w;
+// 		VEC3D p = VEC3D(pos[i].x, pos[i].y, pos[i].z);
+// 		VEC3D v = vel[i];
+// 		VEC3D w = omega[i];
+// 		VEC3D F, M;
+// 		for (unsigned int j = 0; j < 6; j++)
+// 		{
+// 			cpps.singleCollision(planes + j, ms, rad, p, v, w, F, M);
+// 			force[i] += F;
+// 			moment[i] += M;
+// 		}
+// 	}
+// 	return true;
+// }
 
 // 
 // collision_particles_cube::~collision_particles_cube()

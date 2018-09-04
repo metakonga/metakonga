@@ -4,6 +4,7 @@
 #include "vobject.h"
 #include "vparticles.h"
 #include "vpolygon.h"
+#include "vmarker.h"
 #include "contactConstant.h"
 /*#include <QGLWidget>*/
 #include <QMenu>
@@ -53,14 +54,19 @@ public:
 	void makeLine();
 	void makeCylinder(cylinder* cy);
 	void makeParticle(double* pos, unsigned int n);
+	void makeMarker(QString n, VEC3D p, bool mcf = true);
 	vpolygon* makePolygonObject(QString _nm, import_shape_type t, QString file);
 //	bool change(QString& fp, tChangeType ct, tFileType ft);
 	void makeMassCoordinate(QString& _name);
+	void drawReferenceCoordinate();
+	void drawGroundCoordinate(GLenum eMode);
 
 	int xRotation() const { return xRot; }
 	int yRotation() const { return yRot; }
 	int zRotation() const { return zRot; }
-	float& getZoom() { return zoom; }
+	void fitView();
+	void renderText(double x, double y, double z, const QString& str, QColor& c);
+	float& getZoom() { return trans_z; }
 	void setKeyState(bool s, int i) { keyID[i] = s; };
 	void actionDelete(const QString& tg);
 	std::list<parview::contactConstant>* ContactConstants(){ return NULL; }// &cconsts;	}
@@ -103,14 +109,17 @@ protected:
 	void mouseReleaseEvent(QMouseEvent *event);
 	void mouseMoveEvent(QMouseEvent *event);
 	void keyPressEvent(QKeyEvent *);
+	void keyReleaseEvent(QKeyEvent *);
 	void wheelEvent(QWheelEvent *);
 
 private:
 	void picking(int x, int y);
 	float& verticalMovement() { return trans_y; }
 	float& horizontalMovement() { return trans_x; }
-	void DrawCartesianCoordinates(vector3<double>& pos, vector3<double>& angle);
-	GLuint makeCoordinate();
+	void setMaxViewPosition(float x, float y, float z);
+	void setMinViewPosition(float x, float y, float z);
+	//void DrawCartesianCoordinates(vector3<double>& pos, vector3<double>& angle);
+	//GLuint makeCoordinate();
 	
 	//GLuint makePolygonObject(float* points, float* normals, int* indice, int size);
 	void normalizeAngle(int *angle);
@@ -129,13 +138,15 @@ private:
 	float gridSize;
 	float moveScale;
 	float ratio;
-	float zoom;
+	//float zoom;
 	float trans_x;
 	float trans_y;
+	float trans_z;
 
 	float IconScale;
 
 	//bool isSketching;
+	bool zRotationFlag;
 	bool onZoom;
 	bool onRotation;
 	bool keyID[256];
@@ -148,10 +159,9 @@ private:
 	bool isAnimation;
 
 	float times[1000];
-
-
-//	sketchParameters sketch;
-
+	
+	vmarker ref_marker;
+	vmarker *ground_marker;
 	viewObjectType votype;
 	projectionType protype;
 	QMap<QString, vobject*> v_objs;
@@ -160,10 +170,12 @@ private:
 	vparticles *vp;
 	QStringList outputNameList;
 
-	float maxViewPoint[3];
-	float minViewPoint[3];
+// 	float maxViewPoint[3];
+// 	float minViewPoint[3];
 
-	
+	float minView[3];
+	float maxView[3];
+	//float up[3];
 
 signals:
 	void mySignal();

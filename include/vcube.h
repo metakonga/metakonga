@@ -24,7 +24,7 @@ private:
 	void setNormalList();
 	unsigned int glList;
 	unsigned int glHiList;
-	float origin[3];
+	//float origin[3];
 	int indice[24];
 	float vertice[24];
 	float normal[18];

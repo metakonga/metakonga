@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'makeParticle.ui'
+** Form generated from reading UI file 'makeParticleGgxAlL.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.10.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef UI_MAKEPARTICLE_H
-#define UI_MAKEPARTICLE_H
+#ifndef MAKEPARTICLEGGXALL_H
+#define MAKEPARTICLEGGXALL_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -361,18 +361,26 @@ public:
         LE_Name = new QLineEdit(GB_BASIC);
         LE_Name->setObjectName(QStringLiteral("LE_Name"));
         LE_Name->setGeometry(QRect(60, 21, 301, 20));
-        QWidget::setTabOrder(TB_Method, LE_CUBE_NX);
-        QWidget::setTabOrder(LE_CUBE_NX, LE_CUBE_NY);
-        QWidget::setTabOrder(LE_CUBE_NY, LE_CUBE_NZ);
-        QWidget::setTabOrder(LE_CUBE_NZ, LE_MIN_RADIUS);
+        QWidget::setTabOrder(LE_Name, TB_Method);
+        QWidget::setTabOrder(TB_Method, LE_PLANE_NX);
+        QWidget::setTabOrder(LE_PLANE_NX, LE_PLANE_NZ);
+        QWidget::setTabOrder(LE_PLANE_NZ, LE_PLANE_DIR);
+        QWidget::setTabOrder(LE_PLANE_DIR, LE_PLANE_LOC);
+        QWidget::setTabOrder(LE_PLANE_LOC, LE_MIN_RADIUS);
         QWidget::setTabOrder(LE_MIN_RADIUS, LE_MAX_RADIUS);
         QWidget::setTabOrder(LE_MAX_RADIUS, LE_P_SPACING);
         QWidget::setTabOrder(LE_P_SPACING, LE_NUM_PARTICLE);
-        QWidget::setTabOrder(LE_NUM_PARTICLE, PB_Ok);
+        QWidget::setTabOrder(LE_NUM_PARTICLE, CB_Type);
+        QWidget::setTabOrder(CB_Type, LE_Youngs);
+        QWidget::setTabOrder(LE_Youngs, LE_Density);
+        QWidget::setTabOrder(LE_Density, LE_PoissonRatio);
+        QWidget::setTabOrder(LE_PoissonRatio, LE_ShearModulus);
+        QWidget::setTabOrder(LE_ShearModulus, PB_Ok);
         QWidget::setTabOrder(PB_Ok, PB_Cancle);
-        QWidget::setTabOrder(PB_Cancle, LE_PLANE_NX);
-        QWidget::setTabOrder(LE_PLANE_NX, LE_PLANE_NZ);
-        QWidget::setTabOrder(LE_PLANE_NZ, LE_PLANE_DIR);
+        QWidget::setTabOrder(PB_Cancle, LE_CUBE_NX);
+        QWidget::setTabOrder(LE_CUBE_NX, LE_CUBE_NY);
+        QWidget::setTabOrder(LE_CUBE_NY, LE_CUBE_LOC);
+        QWidget::setTabOrder(LE_CUBE_LOC, LE_CUBE_NZ);
 
         retranslateUi(DLG_MakeParticle);
 
@@ -421,4 +429,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // UI_MAKEPARTICLE_H
+#endif // MAKEPARTICLEGGXALL_H

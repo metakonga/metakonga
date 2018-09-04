@@ -24,9 +24,9 @@ void contact::DHSModel
 		double ft2 = friction * Fn.length();
 		Ft = min(ft1, ft2) * s_hat;
 		//M = (p.w * u).cross(Ft);
-		M = cp.cross(Ft);
+ 		M = cp.cross(Ft);
 	}
-	F = Fn;// + Ft;
+	F = Fn + Ft;
 }
 
 contact::contact(QString nm, contactForce_type t)
@@ -36,6 +36,7 @@ contact::contact(QString nm, contactForce_type t)
 	, friction(0)
 	, f_type(t)
 	, dcp(NULL)
+	, mpp(NULL)
 	, type(NO_CONTACT_PAIR)
 {
 	count++;
@@ -45,24 +46,27 @@ contact::contact(QString nm, contactForce_type t)
 contact::contact(const contact* c)
 	: name(c->Name())
 	, dcp(NULL)
+	, mpp(NULL)
 	, restitution(c->Restitution())
 	, friction(c->Friction())
 	, stiffnessRatio(c->StiffnessRatio())
 	, f_type(c->ForceMethod())
-	, mpp(c->MaterialPropertyPair())
+	//, mpp(c->MaterialPropertyPair())
 	, type(c->PairType())
 {
+	mpp = new material_property_pair;
+	memcpy(mpp, c->MaterialPropertyPair(), sizeof(material_property_pair));
 	if (c->DeviceContactProperty())
 	{
 		checkCudaErrors(cudaMalloc((void**)&dcp, sizeof(device_contact_property)));
 		checkCudaErrors(cudaMemcpy(dcp, c->DeviceContactProperty(), sizeof(device_contact_property), cudaMemcpyDeviceToDevice));
 	}
-		
 }
 
 contact::~contact()
 {
 	if (dcp) cudaFree(dcp); dcp = NULL;
+	if (mpp) delete[] mpp; mpp = NULL;
 }
 
 void contact::setContactParameters(double r, double rt, double f)
@@ -76,7 +80,7 @@ void contact::cudaMemoryAlloc()
 {
 	device_contact_property hcp = device_contact_property
 	{
-		mpp.Ei, mpp.Ej, mpp.pri, mpp.prj, mpp.Gi, mpp.Gj,
+		mpp->Ei, mpp->Ej, mpp->pri, mpp->prj, mpp->Gi, mpp->Gj,
 		restitution, friction, 0.0, 0.0, stiffnessRatio
 	};
 	checkCudaErrors(cudaMalloc((void**)&dcp, sizeof(device_contact_property)));
@@ -121,9 +125,22 @@ contact::contactParameters contact::getContactParameters
 	return cp;
 }
 
+void contact::setMaterialPair(material_property_pair _mpp)
+{
+	if (!mpp)
+		mpp = new material_property_pair;
+	memcpy(mpp, &_mpp, sizeof(material_property_pair));
+}
+
 contact::pairType contact::getContactPair(geometry_type t1, geometry_type t2)
 {
 	return static_cast<pairType>(t1 + t2);
+}
+
+void contact::collision(
+	double r, double m, VEC3D& pos, VEC3D& vel, VEC3D& omega, VEC3D& fn, VEC3D& ft)
+{
+
 }
 
 // #include "collision.h"

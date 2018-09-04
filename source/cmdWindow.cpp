@@ -18,7 +18,7 @@ cmdWindow::~cmdWindow()
 	if (cmd) delete cmd; cmd = NULL;
 }
 
-void cmdWindow::write(tWriting tw, QString& c)
+void cmdWindow::write(tWriting tw, QString c)
 {
 	QString t;
 	switch (tw)

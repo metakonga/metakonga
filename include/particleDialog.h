@@ -40,6 +40,7 @@ private slots:
 	void changeTab(int);
 	void click_ok();
 	void click_cancle();
+	void update_tnp();
 };
 
 #endif

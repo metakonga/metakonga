@@ -22,7 +22,7 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_xdynamics_t {
     QByteArrayData data[42];
-    char stringdata0[564];
+    char stringdata0[559];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -36,47 +36,47 @@ QT_MOC_LITERAL(1, 10, 11), // "ChangeShape"
 QT_MOC_LITERAL(2, 22, 0), // ""
 QT_MOC_LITERAL(3, 23, 22), // "ChangeParticleFromFile"
 QT_MOC_LITERAL(4, 46, 21), // "DEMRESULTASCII_Export"
-QT_MOC_LITERAL(5, 68, 16), // "MS3DASCII_Import"
-QT_MOC_LITERAL(6, 85, 21), // "MBDRESULTASCII_Export"
-QT_MOC_LITERAL(7, 107, 18), // "OBJPROPERTY_Dialog"
-QT_MOC_LITERAL(8, 126, 14), // "ChangeComboBox"
-QT_MOC_LITERAL(9, 141, 6), // "mySlot"
-QT_MOC_LITERAL(10, 148, 7), // "newproj"
-QT_MOC_LITERAL(11, 156, 8), // "openproj"
-QT_MOC_LITERAL(12, 165, 8), // "saveproj"
-QT_MOC_LITERAL(13, 174, 11), // "onGoToBegin"
-QT_MOC_LITERAL(14, 186, 12), // "onPrevious2X"
-QT_MOC_LITERAL(15, 199, 12), // "onPrevious1X"
-QT_MOC_LITERAL(16, 212, 18), // "onSetPlayAnimation"
-QT_MOC_LITERAL(17, 231, 15), // "onAnimationPlay"
-QT_MOC_LITERAL(18, 247, 19), // "onAnimationPlayBack"
-QT_MOC_LITERAL(19, 267, 16), // "onAnimationPause"
-QT_MOC_LITERAL(20, 284, 11), // "onForward1X"
-QT_MOC_LITERAL(21, 296, 11), // "onForward2X"
-QT_MOC_LITERAL(22, 308, 9), // "onGoToEnd"
-QT_MOC_LITERAL(23, 318, 13), // "onGoFirstStep"
-QT_MOC_LITERAL(24, 332, 13), // "ani_scrollbar"
-QT_MOC_LITERAL(25, 346, 8), // "makeCube"
-QT_MOC_LITERAL(26, 355, 9), // "makePlane"
-QT_MOC_LITERAL(27, 365, 8), // "makeLine"
-QT_MOC_LITERAL(28, 374, 11), // "makePolygon"
-QT_MOC_LITERAL(29, 386, 12), // "makeCylinder"
-QT_MOC_LITERAL(30, 399, 12), // "makeParticle"
-QT_MOC_LITERAL(31, 412, 8), // "makeMass"
-QT_MOC_LITERAL(32, 421, 15), // "makeContactPair"
-QT_MOC_LITERAL(33, 437, 17), // "changePaletteMode"
-QT_MOC_LITERAL(34, 455, 24), // "changeProjectionViewMode"
-QT_MOC_LITERAL(35, 480, 5), // "solve"
-QT_MOC_LITERAL(36, 486, 10), // "exitThread"
-QT_MOC_LITERAL(37, 497, 15), // "recieveProgress"
-QT_MOC_LITERAL(38, 513, 15), // "openPinfoDialog"
-QT_MOC_LITERAL(39, 529, 15), // "deleteFileByEXT"
-QT_MOC_LITERAL(40, 545, 3), // "ext"
-QT_MOC_LITERAL(41, 549, 14) // "waitSimulation"
+QT_MOC_LITERAL(5, 68, 12), // "SHAPE_Import"
+QT_MOC_LITERAL(6, 81, 21), // "MBDRESULTASCII_Export"
+QT_MOC_LITERAL(7, 103, 18), // "OBJPROPERTY_Dialog"
+QT_MOC_LITERAL(8, 122, 14), // "ChangeComboBox"
+QT_MOC_LITERAL(9, 137, 6), // "mySlot"
+QT_MOC_LITERAL(10, 144, 7), // "newproj"
+QT_MOC_LITERAL(11, 152, 8), // "openproj"
+QT_MOC_LITERAL(12, 161, 8), // "saveproj"
+QT_MOC_LITERAL(13, 170, 11), // "onGoToBegin"
+QT_MOC_LITERAL(14, 182, 12), // "onPrevious2X"
+QT_MOC_LITERAL(15, 195, 12), // "onPrevious1X"
+QT_MOC_LITERAL(16, 208, 18), // "onSetPlayAnimation"
+QT_MOC_LITERAL(17, 227, 15), // "onAnimationPlay"
+QT_MOC_LITERAL(18, 243, 19), // "onAnimationPlayBack"
+QT_MOC_LITERAL(19, 263, 16), // "onAnimationPause"
+QT_MOC_LITERAL(20, 280, 11), // "onForward1X"
+QT_MOC_LITERAL(21, 292, 11), // "onForward2X"
+QT_MOC_LITERAL(22, 304, 9), // "onGoToEnd"
+QT_MOC_LITERAL(23, 314, 13), // "onGoFirstStep"
+QT_MOC_LITERAL(24, 328, 13), // "ani_scrollbar"
+QT_MOC_LITERAL(25, 342, 8), // "makeCube"
+QT_MOC_LITERAL(26, 351, 9), // "makePlane"
+QT_MOC_LITERAL(27, 361, 8), // "makeLine"
+QT_MOC_LITERAL(28, 370, 11), // "makePolygon"
+QT_MOC_LITERAL(29, 382, 12), // "makeCylinder"
+QT_MOC_LITERAL(30, 395, 12), // "makeParticle"
+QT_MOC_LITERAL(31, 408, 8), // "makeMass"
+QT_MOC_LITERAL(32, 417, 15), // "makeContactPair"
+QT_MOC_LITERAL(33, 433, 13), // "preDefinedMBD"
+QT_MOC_LITERAL(34, 447, 17), // "changePaletteMode"
+QT_MOC_LITERAL(35, 465, 24), // "changeProjectionViewMode"
+QT_MOC_LITERAL(36, 490, 5), // "solve"
+QT_MOC_LITERAL(37, 496, 10), // "exitThread"
+QT_MOC_LITERAL(38, 507, 15), // "recieveProgress"
+QT_MOC_LITERAL(39, 523, 15), // "openPinfoDialog"
+QT_MOC_LITERAL(40, 539, 15), // "deleteFileByEXT"
+QT_MOC_LITERAL(41, 555, 3) // "ext"
 
     },
     "xdynamics\0ChangeShape\0\0ChangeParticleFromFile\0"
-    "DEMRESULTASCII_Export\0MS3DASCII_Import\0"
+    "DEMRESULTASCII_Export\0SHAPE_Import\0"
     "MBDRESULTASCII_Export\0OBJPROPERTY_Dialog\0"
     "ChangeComboBox\0mySlot\0newproj\0openproj\0"
     "saveproj\0onGoToBegin\0onPrevious2X\0"
@@ -86,10 +86,10 @@ QT_MOC_LITERAL(41, 549, 14) // "waitSimulation"
     "onGoToEnd\0onGoFirstStep\0ani_scrollbar\0"
     "makeCube\0makePlane\0makeLine\0makePolygon\0"
     "makeCylinder\0makeParticle\0makeMass\0"
-    "makeContactPair\0changePaletteMode\0"
-    "changeProjectionViewMode\0solve\0"
-    "exitThread\0recieveProgress\0openPinfoDialog\0"
-    "deleteFileByEXT\0ext\0waitSimulation"
+    "makeContactPair\0preDefinedMBD\0"
+    "changePaletteMode\0changeProjectionViewMode\0"
+    "solve\0exitThread\0recieveProgress\0"
+    "openPinfoDialog\0deleteFileByEXT\0ext"
 };
 #undef QT_MOC_LITERAL
 
@@ -142,11 +142,11 @@ static const uint qt_meta_data_xdynamics[] = {
       34,    0,  248,    2, 0x08 /* Private */,
       35,    0,  249,    2, 0x08 /* Private */,
       36,    0,  250,    2, 0x08 /* Private */,
-      37,    3,  251,    2, 0x08 /* Private */,
-      37,    2,  258,    2, 0x28 /* Private | MethodCloned */,
-      38,    0,  263,    2, 0x08 /* Private */,
-      39,    1,  264,    2, 0x08 /* Private */,
-      41,    0,  267,    2, 0x08 /* Private */,
+      37,    0,  251,    2, 0x08 /* Private */,
+      38,    3,  252,    2, 0x08 /* Private */,
+      38,    2,  259,    2, 0x28 /* Private | MethodCloned */,
+      39,    0,  264,    2, 0x08 /* Private */,
+      40,    1,  265,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
@@ -184,11 +184,11 @@ static const uint qt_meta_data_xdynamics[] = {
     QMetaType::Void,
     QMetaType::Void,
     QMetaType::Void,
+    QMetaType::Void,
     QMetaType::Void, QMetaType::Int, QMetaType::QString, QMetaType::QString,    2,    2,    2,
     QMetaType::Void, QMetaType::Int, QMetaType::QString,    2,    2,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QString,   40,
-    QMetaType::Void,
+    QMetaType::Void, QMetaType::QString,   41,
 
        0        // eod
 };
@@ -202,7 +202,7 @@ void xdynamics::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
         case 0: _t->ChangeShape(); break;
         case 1: _t->ChangeParticleFromFile(); break;
         case 2: _t->DEMRESULTASCII_Export(); break;
-        case 3: _t->MS3DASCII_Import(); break;
+        case 3: _t->SHAPE_Import(); break;
         case 4: _t->MBDRESULTASCII_Export(); break;
         case 5: _t->OBJPROPERTY_Dialog(); break;
         case 6: _t->ChangeComboBox((*reinterpret_cast< int(*)>(_a[1]))); break;
@@ -230,15 +230,15 @@ void xdynamics::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
         case 28: _t->makeParticle(); break;
         case 29: _t->makeMass(); break;
         case 30: _t->makeContactPair(); break;
-        case 31: _t->changePaletteMode(); break;
-        case 32: _t->changeProjectionViewMode(); break;
-        case 33: _t->solve(); break;
-        case 34: _t->exitThread(); break;
-        case 35: _t->recieveProgress((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3]))); break;
-        case 36: _t->recieveProgress((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
-        case 37: _t->openPinfoDialog(); break;
-        case 38: _t->deleteFileByEXT((*reinterpret_cast< QString(*)>(_a[1]))); break;
-        case 39: _t->waitSimulation(); break;
+        case 31: _t->preDefinedMBD(); break;
+        case 32: _t->changePaletteMode(); break;
+        case 33: _t->changeProjectionViewMode(); break;
+        case 34: _t->solve(); break;
+        case 35: _t->exitThread(); break;
+        case 36: _t->recieveProgress((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3]))); break;
+        case 37: _t->recieveProgress((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 38: _t->openPinfoDialog(); break;
+        case 39: _t->deleteFileByEXT((*reinterpret_cast< QString(*)>(_a[1]))); break;
         default: ;
         }
     }

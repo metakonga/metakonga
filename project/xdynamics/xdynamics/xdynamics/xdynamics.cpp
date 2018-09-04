@@ -7,6 +7,7 @@
 #include "contactCoefficientTable.h"
 #include "ExportDialog.h"
 #include "cylinderDialog.h"
+#include "preDefinedMBDDialog.h"
 #include "newDialog.h"
 //#include "polygonDialog.h"
 #include "massDialog.h"
@@ -60,161 +61,10 @@ xdynamics::~xdynamics()
 
 void xdynamics::setBaseAction()
 {
-// 	newAct = new QAction(QIcon(":/Resources/new.png"), tr("&New"), this);
-// 	newAct->setStatusTip(tr("New"));
-// 	connect(newAct, SIGNAL(triggered()), this, SLOT(newproj()));
-// 
-// 	openAct = new QAction(QIcon(":/Resources/open.png"), tr("&Open"), this);
-// 	openAct->setStatusTip(tr("Open project"));
-// 	connect(openAct, SIGNAL(triggered()), this, SLOT(openproj()));
-// 
-// 	saveAct = new QAction(QIcon(":/Resources/save.png"), tr("&Save"), this);
-// 	saveAct->setStatusTip(tr("Save project"));
-// 	connect(saveAct, SIGNAL(triggered()), this, SLOT(saveproj()));
-// 
-// 	ui.mainToolBar->addAction(newAct);
-// 	ui.mainToolBar->addAction(openAct);
-// 	ui.mainToolBar->addAction(saveAct);
-
 	connect(ui.actionChange_Shape, SIGNAL(triggered()), this, SLOT(ChangeShape()));
 	connect(ui.actionDEM_Result_ASCII, SIGNAL(triggered()), this, SLOT(DEMRESULTASCII_Export()));
 	connect(ui.actionMBD_Result_ASCII, SIGNAL(triggered()), this, SLOT(MBDRESULTASCII_Export()));
 	connect(ui.actionProperty, SIGNAL(triggered()), this, SLOT(OBJPROPERTY_Dialog()));
-}
-
-void xdynamics::setMainAction()
-{
-// 	makeCubeAct = new QAction(QIcon(":/Resources/pRec.png"), tr("&Create Cube Object"), this);
-// 	makeCubeAct->setStatusTip(tr("Create Cube Object"));
-// 	connect(makeCubeAct, SIGNAL(triggered()), this, SLOT(makeCube()));
-// 
-// 	makeRectAct = new QAction(QIcon(":/Resources/icRect.png"), tr("&Create Rectangle Object"), this);
-// 	makeRectAct->setStatusTip(tr("Create Rectangle Object"));
-// 	connect(makeRectAct, SIGNAL(triggered()), this, SLOT(makePlane()));
-// 
-// 	makeLineAct = new QAction(QIcon(":/Resources/icLine.png"), tr("&Create Line Object"), this);
-// 	makeLineAct->setStatusTip(tr("Create Line Object"));
-// 	connect(makeLineAct, SIGNAL(triggered()), this, SLOT(makeLine()));
-// 
-// 	makePolyAct = new QAction(QIcon(":/Resources/icPolygon.png"), tr("&Create Polygon Object"), this);
-// 	makePolyAct->setStatusTip(tr("Create Polygon Object"));
-// 	connect(makePolyAct, SIGNAL(triggered()), this, SLOT(makePolygon()));
-// 
-// 	makeCylinderAct = new QAction(QIcon(":/Resources/cylinder.png"), tr("&Create Cylinder Object"), this);
-// 	makeCylinderAct->setStatusTip(tr("Create Cylinder Object"));
-// 	connect(makeCylinderAct, SIGNAL(triggered()), this, SLOT(makeCylinder()));
-// 
-// 	makeParticleAct = new QAction(QIcon(":/Resources/particle.png"), tr("&Create particles"), this);
-// 	makeParticleAct->setStatusTip(tr("Create particles"));
-// 	connect(makeParticleAct, SIGNAL(triggered()), this, SLOT(makeParticle()));
-// 
-// 	makeMassAct = new QAction(QIcon(":/Resources/mass.png"), tr("&Create mass"), this);
-// 	makeMassAct->setStatusTip(tr("Create mass"));
-// 	connect(makeMassAct, SIGNAL(triggered()), this, SLOT(makeMass()));
-// 
-// 	collidConstAct = new QAction(QIcon(":/Resources/collision.png"), tr("&Create Contact Element"), this);
-// 	collidConstAct->setStatusTip(tr("Create Contact Element"));
-// 	connect(collidConstAct, SIGNAL(triggered()), this, SLOT(makeContactPair()));
-// 
-// 	solveProcessAct = new QAction(QIcon(":/Resources/solve.png"), tr("&Solve the model"), this);
-// 	solveProcessAct->setStatusTip(tr("Solve the model"));
-// 	connect(solveProcessAct, SIGNAL(triggered()), this, SLOT(solve()));
-// 
-// 	changeParticleAct = new QAction(QIcon(":/Resources/icChangeParticle.png"), tr("&Change particle from file"), this);
-// 	changeParticleAct->setStatusTip(tr("Change particles from file"));
-// 	connect(changeParticleAct, SIGNAL(triggered()), this, SLOT(ChangeParticleFromFile()));
-// 	
-// 	projectionViewAct = new QAction(QIcon(":/Resources/perspective.png"), tr("&Change perspective view mode"), this);
-// 	projectionViewAct->setStatusTip(tr("Change perspective view mode"));
-// 	connect(projectionViewAct, SIGNAL(triggered()), this, SLOT(changeProjectionViewMode()));
-// 
-// 	paletteAct = new QAction(QIcon(":/Resources/sketch.png"), tr("&Change sketch mode"), this);
-// 	paletteAct->setStatusTip(tr("Change sketch mode"));
-// 	connect(paletteAct, SIGNAL(triggered()), this, SLOT(changePaletteMode()));
-// 
-// 	ui.mainToolBar->addAction(makeCubeAct);
-// 	ui.mainToolBar->addAction(makeRectAct);
-// 	ui.mainToolBar->addAction(makeLineAct);
-// 	ui.mainToolBar->addAction(makePolyAct);
-// 	ui.mainToolBar->addAction(makeCylinderAct);
-// 	ui.mainToolBar->addAction(makeParticleAct);
-// 	ui.mainToolBar->addAction(makeMassAct);
-// 	ui.mainToolBar->addAction(changeParticleAct);
-// 	ui.mainToolBar->addAction(collidConstAct);
-// 	ui.mainToolBar->addAction(solveProcessAct);
-// 	ui.mainToolBar->insertSeparator(solveProcessAct);
-// 	ui.mainToolBar->addAction(projectionViewAct);
-// 	ui.mainToolBar->addAction(paletteAct);
-
-// 	viewObjectComboBox = new QComboBox;
-// 	viewObjectComboBox->insertItem(0, "All display");
-// 	viewObjectComboBox->insertItem(1, "Only frame");
-// 	viewObjectComboBox->insertItem(2, "Only particle");
-// 	connect(viewObjectComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(ChangeComboBox(int)));
-// 	ui.secToolBar->addWidget(viewObjectComboBox);
-
-// 	aniPreviousAct2 = new QAction(QIcon(":/Resources/ani_moreprevious.png"), tr("&previous2x"), this);
-// 	aniPreviousAct2->setStatusTip(tr("2x previous for animation."));
-// 	connect(aniPreviousAct2, SIGNAL(triggered()), this, SLOT(ani_previous2x()));
-// 
-// 	aniPreviousAct = new QAction(QIcon(":/Resources/ani_previous.png"), tr("&previous1x"), this);
-// 	aniPreviousAct->setStatusTip(tr("1x previous for animation."));
-// 	connect(aniPreviousAct, SIGNAL(triggered()), this, SLOT(ani_previous1x()));
-// 
-// 	aniPlayAct = new QAction(QIcon(":/Resources/ani_play.png"), tr("&play"), this);
-// 	aniPlayAct->setStatusTip(tr("play for animation."));
-// 	connect(aniPlayAct, SIGNAL(triggered()), this, SLOT(ani_play()));
-// 
-// 	simPlayAct = new QAction(QIcon(":/Resources/ani_play.png"), tr("&simulation"), this);
-// 	simPlayAct->setStatusTip(tr("control simulation"));
-// 	connect(simPlayAct, SIGNAL(triggered()), this, SLOT(sim_play()));
-// 
-// 	aniForwardAct = new QAction(QIcon(":/Resources/ani_fast.png"), tr("&forward1x"), this);
-// 	aniForwardAct->setStatusTip(tr("1x forward for animation."));
-// 	connect(aniForwardAct, SIGNAL(triggered()), this, SLOT(ani_forward1x()));
-// 
-// 	aniForwardAct2 = new QAction(QIcon(":/Resources/ani_morefast.png"), tr("&forward2x"), this);
-// 	aniForwardAct2->setStatusTip(tr("2x forward for animation."));
-// 	connect(aniForwardAct2, SIGNAL(triggered()), this, SLOT(ani_forward2x()));
-// 
-// 	ui.secToolBar->addAction(aniPreviousAct2);
-// 	ui.secToolBar->addAction(aniPreviousAct);
-// 	ui.secToolBar->addAction(aniPlayAct);
-// 	ui.secToolBar->addAction(simPlayAct);
-// 	simPlayAct->setEnabled(false);
-// 	ui.secToolBar->addAction(aniForwardAct);
-// 	ui.secToolBar->addAction(aniForwardAct2);
-// 	setAnimationAction(false);
-// 	HSlider = new QSlider(Qt::Orientation::Horizontal, this);
-// 
-// 	HSlider->setFixedWidth(100);
-// 	connect(HSlider, SIGNAL(valueChanged(int)), this, SLOT(ani_scrollbar()));
-// 	ui.secToolBar->addWidget(HSlider);
-// 
-// // 	QLineEdit *sketch_space = new QLineEdit;
-// // 	sketch_space->setText("0.02");
-// // 	connect(sketch_space, SIGNAL(editingFinished()), gl, SLOT(setSketchSpace()));
-// // 	ui.secToolBar->addWidget(sketch_space);
-// 
-// 	LEframe = new QLineEdit(this);
-// 	LEframe->setText(QString("0"));
-// 	LEframe->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-// 	LEframe->setFixedWidth(50);
-// 	LEframe->setContentsMargins(QMargins(5, 0, 0, 0));
-// 	ui.secToolBar->addWidget(LEframe);
-// 	Lframe = new QLabel(this);
-// 	Lframe->setText(QString("/ 0"));
-// 	Lframe->setContentsMargins(QMargins(5, 0, 0, 0));
-// 	ui.secToolBar->addWidget(Lframe);
-// 	LETimes = new QLineEdit(this);
-// 	LETimes->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-// 	LEframe->setFixedWidth(50);
-// 	LETimes->setFixedWidth(50);
-// 	QLabel *LTimes = new QLabel(this);
-// 	LTimes->setText(QString("Time : "));
-// 	LTimes->setContentsMargins(QMargins(10, 0, 0, 0));
-// 	ui.secToolBar->addWidget(LTimes);
-// 	ui.secToolBar->addWidget(LETimes);
 }
 
 void xdynamics::createMainOperations()
@@ -242,7 +92,7 @@ void xdynamics::createMainOperations()
 	{
 		ui.mainToolBar->addAction(myMainActions.at(i));
 	}
-	connect(ui.Import_MilkShape_3D_ASCII, SIGNAL(triggered()), this, SLOT(MS3DASCII_Import()));
+	connect(ui.Menu_import, SIGNAL(triggered()), this, SLOT(SHAPE_Import()));
 }
 
 void xdynamics::createToolOperations()
@@ -303,6 +153,11 @@ void xdynamics::createToolOperations()
 	a->setStatusTip(tr("Change perspective view mode"));
 	connect(a, SIGNAL(triggered()), this, SLOT(changeProjectionViewMode()));
 	myModelingActions.insert(CHANGE_PROJECTION_VIEW, a);
+
+	a = new QAction(QIcon(":/Resources/preDefinedMBD_icon.png"), tr("&Apply mbd model from list"), this);
+	a->setStatusTip(tr("Apply mbd model from list"));
+	connect(a, SIGNAL(triggered()), this, SLOT(preDefinedMBD()));
+	myModelingActions.insert(PRE_DEFINE_MBD, a);
 
 // 	paletteAct = new QAction(QIcon(":/Resources/sketch.png"), tr("&Change sketch mode"), this);
 // 	paletteAct->setStatusTip(tr("Change sketch mode"));
@@ -431,11 +286,6 @@ void xdynamics::newproj()
 			mg = new modelManager;
 		db = new database(this, mg);
 		addDockWidget(Qt::RightDockWidgetArea, db);
-		//mg->openModeler(gl, nd->fullPath());
-		//ui.PTEdit->appendPlainText("Open file : " + nd->fullPath());
-		if (!_isOnMainActions)
-			setMainAction();
-		_isOnMainActions = true;
 	}
 	cmd = new cmdWindow(this);
 	addDockWidget(Qt::BottomDockWidgetArea, cmd);
@@ -743,7 +593,7 @@ void xdynamics::MBDRESULTASCII_Export()
 // 	qfi.close();
 }
 
-void xdynamics::MS3DASCII_Import()
+void xdynamics::SHAPE_Import()
 {
 	importDialog id(this);
 	int ret = id.exec();
@@ -754,12 +604,18 @@ void xdynamics::MS3DASCII_Import()
 			int begin = id.file_path.lastIndexOf("/") + 1;
 			int end = id.file_path.lastIndexOf(".");
 			QString _nm = id.file_path.mid(begin, end - begin);
-			vpolygon * vp = gl->makePolygonObject(_nm, MILKSHAPE_3D_ASCII, id.file_path);
+			import_shape_type ist;
+			QString fmt = id.file_path.mid(end, id.file_path.length() - end);
+			if (fmt == ".stl")
+				ist = STL_ASCII;
+			else if (fmt == ".txt")
+				ist = MILKSHAPE_3D_ASCII;
+			vpolygon * vp = gl->makePolygonObject(_nm, ist, id.file_path);
 			if (!mg->GeometryObject(model::name))
 				mg->CreateModel(model::name, modelManager::OBJECTS, true);
 			polygonObject* po =
 				mg->GeometryObject()->makePolygonObject
-				(_nm, BOUNDAR_WALL, id.file_path, MILKSHAPE_3D_ASCII, vp->NumTriangles(), vp->VertexList(), vp->IndexList()
+				(_nm, BOUNDAR_WALL, id.file_path, ist, vp->NumTriangles(), vp->VertexList(), vp->IndexList()
 				,(material_type)id.type, id.youngs, id.poisson, id.density, id.shear);
 			cmd->printLine();
 			cmd->write(CMD_INFO, mg->GeometryObject()->Logs()[po->Name()]);
@@ -915,6 +771,36 @@ void xdynamics::makeContactPair()
 //	hmcmDialog hmcm(this, md);
 }
 
+void xdynamics::preDefinedMBD()
+{
+	preDefinedMBDDialog pdmbd(this);
+	pdmbd.setupPreDefinedMBDList(getPreDefinedMBDList());
+	int ret = pdmbd.exec();
+	if (ret)
+	{
+		bool ret = false;
+		cmd->printLine();
+		foreach(QString s, pdmbd.checked_items)
+		{
+			cmd->write(CMD_INFO, "Selected pre-define multi-body dynamics model is " + s);
+			if (s == "FullCarModel")
+				ret = mg->defineFullCarModel();
+// 			if (s == "SliderCrank3D")
+// 				//ret = mg->defineSliderCrank3D();
+			if (ret)
+				cmd->write(CMD_INFO, "Model " + s + " was defined.");
+			else
+			{
+				cmd->write(CMD_INFO, "Model " + s + " was not defined.");
+				break;
+			}
+				
+		}
+		cmd->printLine();
+	//	gl->fitView();
+	}
+}
+
 void xdynamics::exitThread()
 {
 	onAnimationPause();
@@ -927,16 +813,6 @@ void xdynamics::exitThread()
 		delete pBar;
 		pBar = NULL;
 	}
-// 	if (th->isRunning()){
-// 		ui.statusBar->removeWidget(pBar);
-// 		delete pBar;
-// 		pBar = NULL;
-// 
-// 		th->exit();
-// 		delete solver;
-// 		solver = NULL;
-// 		simPlayAct->setDisabled(true);
-// 	}
 }
 
 void xdynamics::recieveProgress(int pt, QString ch, QString info)
@@ -964,7 +840,7 @@ void xdynamics::recieveProgress(int pt, QString ch, QString info)
 
 void xdynamics::deleteFileByEXT(QString ext)
 {
-	QString dDir = model::path + model::name + "/";
+	QString dDir = model::path + "/";
 	QDir dir = QDir(dDir);
 	QStringList delFileList;
 	delFileList = dir.entryList(QStringList("*." + ext), QDir::Files | QDir::NoSymLinks);
@@ -974,16 +850,6 @@ void xdynamics::deleteFileByEXT(QString ext)
 		QFile::remove(deleteFilePath);
 	}
 	qDebug() << "Complete delete.";
-}
-
-void xdynamics::waitSimulation()
-{
-// 	disconnect(simPlayAct);
-// 	simPlayAct->setIcon(QIcon(":/Resources/ani_play.png"));
-// 	simPlayAct->setStatusTip(tr("Restart for simulation."));
-// 	connect(simPlayAct, SIGNAL(triggered()), this, SLOT(sim_play()));
-// 	//simPlayAct->setEnabled(true);
-// 	sim->wait();
 }
 
 void xdynamics::solve()
@@ -997,6 +863,7 @@ void xdynamics::solve()
 	simulation::st = sd.save_step;
 	simulation::dev = sd.isCpu ? simulation::CPU : simulation::GPU;
 
+	deleteFileByEXT("txt");
 	deleteFileByEXT("bin");
 	if (!solver)
 		solver = new xDynamicsSolver(mg);
@@ -1018,66 +885,6 @@ void xdynamics::solve()
 	saveproj();
 	solver->start();
 	setAnimationAction(true);
-// 	solveDialog sd;
-// 	if (!sd.callDialog())
-// 		return;
-// 
-// 	//qDebug() << "Delete *.bin files of " << md->modelPath();
-// 	deleteFileByEXT("bin");
-// 
-// // 	if (th == NULL)
-// // 		th = new QThread;
-// 	if (!solver)
-// 		solver = new xDynamicsSolver(mg);
-// // 	if (sim == NULL){
-// // 		if (md->numParticle() && !md->numMass()){
-// // 			sim = new dem_simulation(md);
-// // 		}
-// // 		else if (!md->numParticle() && md->numMass()){
-// // 			sim = new mbd_simulation(md);
-// // 		}
-// // 		else if (md->numParticle() && md->numMass()){
-// // 			sim = new dembd_simulation(md, new dem_simulation(md), new mbd_simulation(md));
-// // 		}
-// // 	}
-// 	simulation::st = sd.saveStep;
-// 	simulation::dt = sd.timeStep;
-// 	simulation::et = sd.simTime;
-// 	simulation::dev = static_cast<simulation::deviceType>(sd.dev);
-// 	connect(solver, SIGNAL(finishedThread()), this, SLOT(exitThread()));
-// 	connect(solver, SIGNAL(sendProgress(int, QString, QString)), this, SLOT(recieveProgress(int, QString, QString)));
-// 	//sim->setSimulationCondition(sd.simTime, sd.timeStep, sd.saveStep);
-// 	if (solver->initialize())
-// 	{
-// 		//sim->setCommandWindow(cmd);
-// 		cmd->write(CMD_INFO, QString("Simulation is initialized."));
-// 		//qDebug() << "- Initialization of simulation ---------------------------- DONE";
-// 		if (pBar == NULL)
-// 			pBar = new QProgressBar;
-// 		pBar->setMaximum(simulation::nstep);
-// 		ui.statusBar->addWidget(pBar, 1);
-// 		//sim->moveToThread(th);
-// // 		connect(sim, SIGNAL(finished()), this, SLOT(exitThread()));
-// // 		connect(sim, SIGNAL(sendProgress(unsigned int)), this, SLOT(recieveProgress(unsigned int)));
-// 		//connect(newAct, SIGNAL(triggered()), this, SLOT(waitSimulation()));
-// 	}
-// 	else
-// 	{
-// 		delete solver;
-// 		solver = NULL;
-// 		return;
-// 	}
-// 	//md->setSolveDevice((tSolveDevice)!sd.isCpu);
-// 	disconnect(simPlayAct);
-// 	simPlayAct->setIcon(QIcon(":/Resources/ani_pause.png"));
-// 	simPlayAct->setStatusTip(tr("Pause for simulation."));
-// 	connect(simPlayAct, SIGNAL(triggered()), this, SLOT(sim_stop()));
-// 	simPlayAct->setEnabled(true);
-// 	saveproj();
-// 	solver->start();
-// 	//qDebug() << "- Simulation Thread On (CPU) -";
-// 	// 	if (neigh) delete neigh; neigh = NULL;
-// 	// 	if (vv) delete vv; vv = NULL;
 }
 
 void xdynamics::changePaletteMode()
@@ -1091,9 +898,10 @@ void xdynamics::changePaletteMode()
 
 void xdynamics::changeProjectionViewMode()
 {
-	projectionType pt = gl->changeProjectionViewMode();
-	if (pt == ORTHO_PROJECTION)
-		myModelingActions[CHANGE_PROJECTION_VIEW]->setIcon(QIcon(":/Resources/perspective.png"));
-	else if (pt == PERSPECTIVE_PROJECTION)
-		myModelingActions[CHANGE_PROJECTION_VIEW]->setIcon(QIcon(":/Resources/ortho.png"));
+	gl->fitView();
+// 	projectionType pt = gl->changeProjectionViewMode();
+// 	if (pt == ORTHO_PROJECTION)
+// 		myModelingActions[CHANGE_PROJECTION_VIEW]->setIcon(QIcon(":/Resources/perspective.png"));
+// 	else if (pt == PERSPECTIVE_PROJECTION)
+// 		myModelingActions[CHANGE_PROJECTION_VIEW]->setIcon(QIcon(":/Resources/ortho.png"));
 }

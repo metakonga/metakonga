@@ -33,13 +33,13 @@ public:
     QAction *actionMBD_Result_ASCII;
     QAction *actionDEM_Result_ASCII;
     QAction *actionProperty;
+    QAction *Menu_import;
     QWidget *centralWidget;
     QGridLayout *gridLayout;
     QScrollArea *GraphicArea;
     QWidget *scrollAreaWidgetContents;
     QMenuBar *menuBar;
     QMenu *menu;
-    QMenu *menuImport;
     QMenu *menuExport;
     QToolBar *mainToolBar;
     QStatusBar *statusBar;
@@ -61,6 +61,8 @@ public:
         actionDEM_Result_ASCII->setObjectName(QStringLiteral("actionDEM_Result_ASCII"));
         actionProperty = new QAction(xdynamics);
         actionProperty->setObjectName(QStringLiteral("actionProperty"));
+        Menu_import = new QAction(xdynamics);
+        Menu_import->setObjectName(QStringLiteral("Menu_import"));
         centralWidget = new QWidget(xdynamics);
         centralWidget->setObjectName(QStringLiteral("centralWidget"));
         gridLayout = new QGridLayout(centralWidget);
@@ -83,8 +85,6 @@ public:
         menuBar->setGeometry(QRect(0, 0, 1010, 21));
         menu = new QMenu(menuBar);
         menu->setObjectName(QStringLiteral("menu"));
-        menuImport = new QMenu(menu);
-        menuImport->setObjectName(QStringLiteral("menuImport"));
         menuExport = new QMenu(menu);
         menuExport->setObjectName(QStringLiteral("menuExport"));
         xdynamics->setMenuBar(menuBar);
@@ -99,10 +99,9 @@ public:
 
         menuBar->addAction(menu->menuAction());
         menu->addAction(actionChange_Shape);
+        menu->addAction(Menu_import);
         menu->addAction(menuExport->menuAction());
-        menu->addAction(menuImport->menuAction());
         menu->addAction(actionProperty);
-        menuImport->addAction(Import_MilkShape_3D_ASCII);
         menuExport->addAction(actionMBD_Result_ASCII);
         menuExport->addAction(actionDEM_Result_ASCII);
 
@@ -119,8 +118,8 @@ public:
         actionMBD_Result_ASCII->setText(QApplication::translate("xdynamics", "MBD Result ASCII", nullptr));
         actionDEM_Result_ASCII->setText(QApplication::translate("xdynamics", "DEM Result ASCII", nullptr));
         actionProperty->setText(QApplication::translate("xdynamics", "Property", nullptr));
+        Menu_import->setText(QApplication::translate("xdynamics", "Import", nullptr));
         menu->setTitle(QApplication::translate("xdynamics", "File", nullptr));
-        menuImport->setTitle(QApplication::translate("xdynamics", "Import", nullptr));
         menuExport->setTitle(QApplication::translate("xdynamics", "Export", nullptr));
     } // retranslateUi
 

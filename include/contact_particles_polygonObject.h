@@ -9,53 +9,49 @@ class object;
 
 class contact_particles_polygonObject : public contact
 {
-	typedef struct  
-	{
-		double rest;
-		double sratio;
-		double fric;
-	}contactParameters;
-
 public:
 	contact_particles_polygonObject(
-		QString _name, contactForce_type t, object* o1, QMap<int, polygonObject*>* o2);
+		QString _name, contactForce_type t, object* o1, object* o2);
 	virtual ~contact_particles_polygonObject();
 
-	virtual bool collision(
-		double *dpos, double *dvel,
-		double *domega, double *dmass,
-		double *dforce, double *dmoment,
-		unsigned int *sorted_id,
-		unsigned int *cell_start,
-		unsigned int *cell_end,
-		unsigned int np
-		);
+// 	virtual bool collision(
+// 		double *dpos, double *dvel,
+// 		double *domega, double *dmass,
+// 		double *dforce, double *dmoment,
+// 		unsigned int *sorted_id,
+// 		unsigned int *cell_start,
+// 		unsigned int *cell_end,
+// 		unsigned int np
+// 		);
 
 	virtual void cudaMemoryAlloc();
-	VEC4D* PolySphereSet() { return hsphere; }
-	unsigned int NumPolySphere() { return nPolySphere; }
-	double MaxRadius() { return maxRadii; }
+//	VEC4D* PolySphereSet() { return hsphere; }
+	//unsigned int NumPolySphere() { return nPolySphere; }
+	//double MaxRadius() { return maxRadii; }
 	void insertContactParameters(unsigned int id, double r, double rt, double fr);
-	void allocPolygonInformation(unsigned int _nPolySphere);
-	void definePolygonInformation(unsigned int id, unsigned int nPolySphere, unsigned int ePolySphere, double *vLIst, double *iList);
+	//void allocPolygonInformation(unsigned int _nPolySphere);
+// 	void definePolygonInformation(
+// 		unsigned int id, unsigned int nPolySphere, 
+// 		unsigned int ePolySphere, double *vLIst, unsigned int *iList);
+
+	polygonObject* PolygonObject() { return dynamic_cast<polygonObject*>(po); }
 
 private:
-	double particle_polygon_contact_detection(device_polygon_info& dpi, VEC3D& p, double r);
-	bool hostCollision(
-		double *dpos /* = NULL */, double *dvel /* = NULL  */,
-		double *domega /* = NULL */, double *dmass /* = NULL  */,
-		double *dforce /* = NULL  */, double *dmoment /* = NULL */,
-		unsigned int *sorted_id, unsigned int *cell_start, unsigned int *cell_end,
-		unsigned int np);
+	/*double particle_polygon_contact_detection(device_polygon_info& dpi, VEC3D& p, double r);*/
+// 	bool hostCollision(
+// 		double *dpos /* = NULL */, double *dvel /* = NULL  */,
+// 		double *domega /* = NULL */, double *dmass /* = NULL  */,
+// 		double *dforce /* = NULL  */, double *dmoment /* = NULL */,
+// 		unsigned int *sorted_id, unsigned int *cell_start, unsigned int *cell_end,
+// 		unsigned int np);
 
 	unsigned int nPolySphere;
 	double maxRadii;
 	object* p;
-	QMap<int, polygonObject*>* pobjs;
-	QMap<int, contactParameters> cps;
-	VEC4D* hsphere;
-	host_polygon_info* hpi;
-	device_polygon_info* dpi;
+	object* po;
+	//VEC4D* hsphere;
+// 	host_polygon_info* hpi;
+// 	device_polygon_info* dpi;
 	//plane *pe;
 	//device_plane_info *dpi;
 };

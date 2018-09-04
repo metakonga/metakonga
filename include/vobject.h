@@ -30,11 +30,16 @@ public:
 	vobject(QString& _name);
 	virtual ~vobject();
 
-	void animationFrame(float ox, float oy, float oz);
+	void setInitialPosition(VEC3F ip) { pos0 = ip; }
+	void setInitialAngle(VEC3F ia) { ang0 = ia; }
+	void setCurrentPosition(VEC3F cp) { cpos = cp; }
+	void setCurrentAngle(VEC3F ca) { cang = ca; }
+	void animationFrame();
 	void setResultData(unsigned int n);
 	void insertResultData(unsigned int i, VEC3D& p, EPD& r);
 	int ID() { return id; }
 	QString& name() { return nm; }
+	void setName(QString n) { nm = n; }
 	void setDisplay(bool _dis) { display = _dis; }
 	QColor color() { return clr; }
 	static void msgBox(QString ch, QMessageBox::Icon ic);
@@ -52,6 +57,10 @@ protected:
 	bool display;
 	QColor clr;
 	static int count;
+	VEC3F pos0;
+	VEC3F ang0;
+	VEC3F cpos;
+	VEC3F cang;
 	VEC3D* outPos;
 	EPD* outRot;
 };

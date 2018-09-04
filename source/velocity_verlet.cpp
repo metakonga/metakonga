@@ -60,7 +60,7 @@ void velocity_verlet::updateVelocity(
 			aa[i] = inv_i * m[i];
 			v[i] += 0.5 * simulation::dt * a[i];
 			o[i] += 0.5 * simulation::dt * aa[i];
-			f[i] = model::gravity;
+			f[i] = dmass[i] * model::gravity;
 			m[i] = 0.0;
 		}
 	}

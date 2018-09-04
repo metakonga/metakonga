@@ -296,14 +296,21 @@ void mbd_simulation::sparseConstraintJacobian()
 	EPD ep;
 	cjaco.zeroCount();
 	sr = tdim - md->pointMasses().size() + 1;
-	for (massIterator it = md->pointMasses().begin(); it != md->pointMasses().end(); it++){
-		mass* m = it.value();
-		if (m->ID() == 0)
+	foreach(pointMass* pm, md->pointMasses())
+	{
+		if (pm->MassType() == pointMass::GROUND || pm->NumDOF() == DIM2)
 			continue;
-		EPD ep2 = 2 * m->getEP();
-		cjaco.extraction(sr++, i * 7 + 3, ep2.Pointer(), 4);
-		i++;
+		EPD ep2 = 2 * pm->getEP();
+		cjaco.extraction(sr++, pm->ID() * 7 + 3, ep2.Pointer(), 4);
 	}
+// 	for (massIterator it = md->pointMasses().begin(); it != md->pointMasses().end(); it++){
+// 		mass* m = it.value();
+// 		if (m->ID() == 0)
+// 			continue;
+// 		EPD ep2 = 2 * m->getEP();
+// 		cjaco.extraction(sr++, i * 7 + 3, ep2.Pointer(), 4);
+// 		i++;
+// 	}
 	for (kConstIterator it = md->kinConstraint().begin(); it != md->kinConstraint().end(); it++){
 		kinematicConstraint* kconst = it.value();
 		sr = kconst->startRow() + (md->pointMasses().size() - 1) * 7;

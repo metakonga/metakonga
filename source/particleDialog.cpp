@@ -31,6 +31,11 @@ particleDialog::particleDialog(QWidget* parent)
 	connect(PB_Ok, SIGNAL(clicked()), this, SLOT(click_ok()));
 	connect(PB_Cancle, SIGNAL(clicked()), this, SLOT(click_cancle()));
 	connect(CB_Type, SIGNAL(currentIndexChanged(int)), this, SLOT(changeComboBox(int)));
+	connect(LE_CUBE_NX, SIGNAL(editingFinished()), this, SLOT(update_tnp()));
+	connect(LE_CUBE_NY, SIGNAL(editingFinished()), this, SLOT(update_tnp()));
+	connect(LE_CUBE_NZ, SIGNAL(editingFinished()), this, SLOT(update_tnp()));
+	connect(LE_PLANE_NX, SIGNAL(editingFinished()), this, SLOT(update_tnp()));
+	connect(LE_PLANE_NZ, SIGNAL(editingFinished()), this, SLOT(update_tnp()));
 }
 
 particleDialog::~particleDialog()
@@ -141,6 +146,24 @@ void particleDialog::click_cancle()
 	this->close();
 	this->setResult(QDialog::Rejected);
 }
+
+void particleDialog::update_tnp()
+{
+	method = TB_Method->currentIndex();
+	unsigned int np = 0;
+	if (method == 0)
+	{
+		np = LE_CUBE_NX->text().toUInt() * LE_CUBE_NY->text().toUInt() * LE_CUBE_NZ->text().toUInt();
+		
+	}
+	else if (method == 1)
+	{
+		np = LE_PLANE_NX->text().toUInt() * LE_PLANE_NZ->text().toUInt();
+		LE_NUM_PARTICLE->setText(QString("%1").arg(np));
+	}
+	LE_NUM_PARTICLE->setText(QString("%1").arg(np));
+}
+
 // #include "particleDialog.h"
 // #include "particle_system.h"
 // #include "modeler.h"

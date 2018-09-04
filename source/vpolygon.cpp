@@ -180,11 +180,82 @@ void vpolygon::_loadMS3DASCII(QString f)
 	qf.close();
 }
 
+void vpolygon::_loadSTLASCII(QString f)
+{
+	QFile qf(f);
+	qf.open(QIODevice::ReadOnly);
+	QTextStream qts(&qf);
+	QString ch;
+	//unsigned int nvertex = 0;
+	//unsigned int npoly = 0;
+	qts >> ch >> ch >> ch;// >> ch >> ch >> ch >> ch >> ch >> ch >> ch;
+	unsigned int ntri = 0;
+	while (!qts.atEnd())
+	{
+		qts >> ch;
+		if (ch == "facet")
+			ntri++;
+	}
+ 	vertexList = new double[ntri * 9];
+// 	normalList = new double[ntri * 3];
+	vertice = new float[ntri * 9];
+	normals = new float[ntri * 9];
+	double x, y, z;
+	float nx, ny, nz;
+	qf.reset();
+	qts >> ch >> ch >> ch;
+	for (unsigned int i = 0; i < ntri; i++)
+	{
+		qts >> ch >> ch >> nx >> ny >> nz;
+		normals[i * 9 + 0] = nx;
+		normals[i * 9 + 1] = ny;
+		normals[i * 9 + 2] = nz;
+		normals[i * 9 + 3] = nx;
+		normals[i * 9 + 4] = ny;
+		normals[i * 9 + 5] = nz;
+		normals[i * 9 + 6] = nx;
+		normals[i * 9 + 7] = ny;
+		normals[i * 9 + 8] = nz;
+		qts >> ch >> ch;
+		qts >> ch >> x >> y >> z;
+		vertexList[i * 9 + 0] = 0.001 * x;
+		vertexList[i * 9 + 1] = 0.001 * y;
+		vertexList[i * 9 + 2] = 0.001 * z;
+		vertice[i * 9 + 0] = (float)vertexList[i * 9 + 0];
+		vertice[i * 9 + 1] = (float)vertexList[i * 9 + 1];
+		vertice[i * 9 + 2] = (float)vertexList[i * 9 + 2];
+
+		qts >> ch >> x >> y >> z;
+		vertexList[i * 9 + 3] = 0.001 * x;
+		vertexList[i * 9 + 4] = 0.001 * y;
+		vertexList[i * 9 + 5] = 0.001 * z;
+		vertice[i * 9 + 3] = (float)vertexList[i * 9 + 3];
+		vertice[i * 9 + 4] = (float)vertexList[i * 9 + 4];
+		vertice[i * 9 + 5] = (float)vertexList[i * 9 + 5];
+
+		qts >> ch >> x >> y >> z;
+		vertexList[i * 9 + 6] = 0.001 * x;
+		vertexList[i * 9 + 7] = 0.001 * y;
+		vertexList[i * 9 + 8] = 0.001 * z;
+		vertice[i * 9 + 6] = (float)vertexList[i * 9 + 6];
+		vertice[i * 9 + 7] = (float)vertexList[i * 9 + 7];
+		vertice[i * 9 + 8] = (float)vertexList[i * 9 + 8];
+
+		qts >> ch >> ch;
+	}
+//	nvertex = nvert;
+	ntriangle = ntri;
+// 	delete[] normalList;
+// 	delete[] textureList;
+	qf.close();
+}
+
 bool vpolygon::define(import_shape_type t, QString file)
 {
 	switch (t)
 	{
 	case MILKSHAPE_3D_ASCII: _loadMS3DASCII(file); break;
+	case STL_ASCII: _loadSTLASCII(file); break;
 	}
 	//GLenum check = glewInit();
 	origin[0] = 0;// org.x;

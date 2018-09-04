@@ -17,26 +17,11 @@ public:
 
 	void setPlane(plane* _pe);
 
-	virtual bool collision(
-		double *dpos, double *dvel,
-		double *domega, double *dmass,
-		double *dforce, double *dmoment,
-		unsigned int *sorted_id,
-		unsigned int *cell_start,
-		unsigned int *cell_end,
-		unsigned int np
-		);
-	                       
+	virtual void collision(double r, double m, VEC3D& pos, VEC3D& vel, VEC3D& omega, VEC3D& F, VEC3D& M);	                     
 	virtual void cudaMemoryAlloc();
 
 private:
 	double particle_plane_contact_detection(plane* _pe, VEC3D& u, VEC3D& xp, VEC3D& wp, double r);
-	bool hostCollision(
-		double *dpos /* = NULL */, double *dvel /* = NULL  */,
-		double *domega /* = NULL */, double *dmass /* = NULL  */,
-		double *dforce /* = NULL  */, double *dmoment /* = NULL */,
-		unsigned int np);
-
 	friend class contact_particles_cube;
 	void singleCollision(
 		plane* _pe, double mass, double rad, VEC3D& pos, VEC3D& vel,

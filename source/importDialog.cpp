@@ -71,6 +71,7 @@ void importDialog::Click_ok()
 	poisson = LE_PoissonRatio->text().toDouble();
 	density = LE_Density->text().toDouble();
 	shear = LE_ShearModulus->text().toDouble();
+
 	this->close();
 	this->setResult(QDialog::Accepted);
 }

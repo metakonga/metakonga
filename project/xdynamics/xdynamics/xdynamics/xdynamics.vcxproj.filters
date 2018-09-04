@@ -410,6 +410,21 @@
     <ClCompile Include="..\..\..\..\source\collision\contact_particles_polygonObject.cpp">
       <Filter>Source Files\collision</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\source\contact_particles_polygonObjects.cpp">
+      <Filter>Source Files\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_preDefinedMBDDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_preDefinedMBDDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\preDefinedMBDDialog.cpp">
+      <Filter>Source Files\dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\vmarker.cpp">
+      <Filter>Source Files\display</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="xdynamics.h">
@@ -506,6 +521,12 @@
       <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\..\..\include\importDialog.h">
+      <Filter>Header Files\dialog</Filter>
+    </CustomBuild>
+    <CustomBuild Include="preDefinedMBD.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\preDefinedMBDDialog.h">
       <Filter>Header Files\dialog</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -731,6 +752,21 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\contact_particles_polygonObject.h">
       <Filter>Header Files\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\contact_particles_polygonObjects.h">
+      <Filter>Header Files\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\FullCarModel.hpp">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_preDefinedMBD.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\src\MultibodyDynamics\SliderCrank3D.hpp">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\vmarker.h">
+      <Filter>Header Files\display</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

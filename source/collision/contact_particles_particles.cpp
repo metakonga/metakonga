@@ -14,21 +14,21 @@ contact_particles_particles::~contact_particles_particles()
 
 }
  
-bool contact_particles_particles::collision(
-	double *pos, double *vel,
-	double *omega, double *mass,
-	double *force, double *moment,
-	unsigned int *sorted_id,
-	unsigned int *cell_start,
-	unsigned int *cell_end,
-	unsigned int np
-	)
-{
-	simulation::isGpu() 
-		? cu_calculate_p2p(1, pos, vel, omega, force, moment, mass, sorted_id, cell_start, cell_end, dcp, np)
-		: hostCollision(pos, vel, omega, mass, force, moment, sorted_id, cell_start, cell_end, np);
-	return true;
-}
+// bool contact_particles_particles::collision(
+// 	double *pos, double *vel,
+// 	double *omega, double *mass,
+// 	double *force, double *moment,
+// 	unsigned int *sorted_id,
+// 	unsigned int *cell_start,
+// 	unsigned int *cell_end,
+// 	unsigned int np
+// 	)
+// {
+// 	simulation::isGpu() 
+// 		? cu_calculate_p2p(1, pos, vel, omega, force, moment, mass, sorted_id, cell_start, cell_end, dcp, np)
+// 		: hostCollision(pos, vel, omega, mass, force, moment, sorted_id, cell_start, cell_end, np);
+// 	return true;
+// }
 
 void contact_particles_particles::cudaMemoryAlloc()
 {
@@ -44,74 +44,80 @@ void contact_particles_particles::cudaMemoryAlloc()
 // 	return true;
 // }
 
-bool contact_particles_particles::hostCollision(
-	double *m_pos, double *m_vel, double *m_omega, 
-	double *m_mass, double *m_force, double *m_moment, 
-	unsigned int *sorted_id, unsigned int *cell_start, 
-	unsigned int *cell_end, unsigned int np)
+void contact_particles_particles::cppCollision(
+	double ir, double jr,
+	double im, double jm,
+	VEC3D& ip, VEC3D& jp,
+	VEC3D& iv, VEC3D& jv,
+	VEC3D& io, VEC3D& jo,
+	VEC3D& F, VEC3D& M)
 {
-	unsigned int _np = 0;
-	VEC3I neigh, gp;
-	double dist, cdist, mag_e, ds;
-	unsigned int hash, sid, eid;
-	contactParameters c;
-	VEC3D ipos, jpos, rp, u, rv, Fn, Ft, e, sh, M;
-	VEC4D *pos = (VEC4D*)m_pos;
-	VEC3D *vel = (VEC3D*)m_vel;
-	VEC3D *omega = (VEC3D*)m_omega;
-	VEC3D *fr = (VEC3D*)m_force;
-	VEC3D *mm = (VEC3D*)m_moment;
-	double* ms = m_mass;
-	double dt = simulation::ctime;
-	for (unsigned int i = 0; i < np; i++){
-		ipos = VEC3D(pos[i].x, pos[i].y, pos[i].z);
-		gp = grid_base::getCellNumber(pos[i].x, pos[i].y, pos[i].z);
-		for (int z = -1; z <= 1; z++){
-			for (int y = -1; y <= 1; y++){
-				for (int x = -1; x <= 1; x++){
-					neigh = VEC3I(gp.x + x, gp.y + y, gp.z + z);
-					hash = grid_base::getHash(neigh);
-					sid = cell_start[hash];
-					if (sid != 0xffffffff){
-						eid = cell_end[hash];
-						for (unsigned int j = sid; j < eid; j++){
-							unsigned int k = sorted_id[j];
-							if (i == k || k >= np)
-								continue;
-							jpos = VEC3D(pos[k].x, pos[k].y, pos[k].z);// toVector3();
-							rp = jpos - ipos;
-							dist = rp.length();
-							cdist = (pos[i].w + pos[k].w) - dist;
-							//double rcon = pos[i].w - cdist;
-							unsigned int rid = 0;
-							if (cdist > 0){
-								u = rp / dist;
-								VEC3D cp = ipos + pos[i].w * u;
-								//unsigned int ci = (unsigned int)(i / particle_cluster::perCluster());
-								//VEC3D c2p = cp - ps->getParticleClusterFromParticleID(ci)->center();
-								//double rcon = pos[i].w - 0.5 * cdist;
-								rv = vel[k] + omega[k].cross(-pos[k].w * u) - (vel[i] + omega[i].cross(pos[i].w * u));
-								c = getContactParameters(
-									pos[i].w, pos[k].w, 
-									ms[i], ms[k], 
-									mpp.Ei, mpp.Ej, 
-									mpp.pri, mpp.prj, 
-									mpp.Gi, mpp.Gj);
-								switch (f_type)
-								{
-								case DHS: DHSModel(c, cdist, cp, rv, u, Fn, Ft); break;
-								}
-			
-								fr[i] += Fn/* + Ft*/;
-								mm[i] += M;
-							}
-						}
-					}
-				}
-			}
+	VEC3D m_f, m_m;
+	VEC3D rp = jp - ip;
+	double dist = rp.length();
+	double cdist = (ir + jr) - dist;
+	//double rcon = pos[i].w - cdist;
+	unsigned int rid = 0;
+	if (cdist > 0){
+		VEC3D u = rp / dist;
+		double rcon = ir - 0.5 * cdist;
+		VEC3D cp = rcon * u;
+
+		//unsigned int ci = (unsigned int)(i / particle_cluster::perCluster());
+		//VEC3D c2p = cp - ps->getParticleClusterFromParticleID(ci)->center();
+		//double rcon = pos[i].w - 0.5 * cdist;
+		VEC3D rv = jv + jo.cross(-jr * u) - (iv + io.cross(ir * u));
+		contactParameters c = getContactParameters(
+			ir, jr,
+			im, jm,
+			mpp->Ei, mpp->Ej,
+			mpp->pri, mpp->prj,
+			mpp->Gi, mpp->Gj);
+		switch (f_type)
+		{
+		case DHS: DHSModel(c, cdist, cp, rv, u, m_f, m_m); break;
 		}
+
+		F += m_f/* + Ft*/;
+		M += m_m;
 	}
-	return true;
+		// 	unsigned int _np = 0;
+		// 	VEC3I neigh, gp;
+		// 	double dist, cdist, mag_e, ds;
+		// 	unsigned int hash, sid, eid;
+		// 	contactParameters c;
+		// 	VEC3D ipos, jpos, rp, u, rv, Fn, Ft, e, sh, M;
+		// 	VEC4D *pos = (VEC4D*)m_pos;
+		// 	VEC3D *vel = (VEC3D*)m_vel;
+		// 	VEC3D *omega = (VEC3D*)m_omega;
+		// 	VEC3D *fr = (VEC3D*)m_force;
+		// 	VEC3D *mm = (VEC3D*)m_moment;
+		// 	double* ms = m_mass;
+		// 	double dt = simulation::ctime;
+		// 	for (unsigned int i = 0; i < np; i++){
+		// 		ipos = VEC3D(pos[i].x, pos[i].y, pos[i].z);
+		// 		gp = grid_base::getCellNumber(pos[i].x, pos[i].y, pos[i].z);
+		// 		for (int z = -1; z <= 1; z++){
+		// 			for (int y = -1; y <= 1; y++){
+		// 				for (int x = -1; x <= 1; x++){
+		// 					neigh = VEC3I(gp.x + x, gp.y + y, gp.z + z);
+		// 					hash = grid_base::getHash(neigh);
+		// 					sid = cell_start[hash];
+		// 					if (sid != 0xffffffff){
+		// 						eid = cell_end[hash];
+		// 						for (unsigned int j = sid; j < eid; j++){
+		// 							unsigned int k = sorted_id[j];
+		// 							if (i == k || k >= np)
+		// 								continue;
+		//							jpos = VEC3D(pos[k].x, pos[k].y, pos[k].z);// toVector3();
+// 							}
+// 						}
+// 					}
+// 				}
+// 			}
+// 		}
+// 	}
+// 	return true;
 }
 
 // bool collision_particles_particles::collid(double dt)

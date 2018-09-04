@@ -33,6 +33,7 @@ public:
 private:
 	void _drawPolygons();
 	void _loadMS3DASCII(QString f);
+	void _loadSTLASCII(QString f);
 	//QString nm;
 	//bool isSelected;
 	//static int pcnt;

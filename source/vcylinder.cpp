@@ -31,7 +31,7 @@ void vcylinder::draw(GLenum eMode)
 		glPushMatrix();
 		if (vcontroller::getFrame() && outPos && outRot)
 		{
-			animationFrame(origin[0], origin[1], origin[2]);
+			animationFrame();
 // 			//glPushMatrix();
 // 			unsigned int f = vcontroller::getFrame();
 // 			glTranslated(outPos[f].x, outPos[f].y, outPos[f].z);
@@ -74,7 +74,7 @@ bool vcylinder::define()
 	int iter = (int)(360 / 15);
 
 	float h_len = length * 0.5f;
-	VEC3F to = VEC3F(pb[0] - origin[0], pb[1] - origin[1], pb[2] - origin[2]);
+	VEC3F to = VEC3F(pb[0] - pos0.x, pb[1] - pos0.y, pb[2] - pos0.z);
 	VEC3F u = to / to.length();
 	//VEC3F t = to - to.dot(u) * u;
 	double th = M_PI * 0.5;
@@ -157,7 +157,9 @@ bool vcylinder::makeCylinderGeometry(float br, float tr, float leng, VEC3F org, 
 	baseRadius = br;
 	topRadius = tr;
 	length = leng;
-	origin[0] = org.x;  origin[1] = org.y; origin[2] = org.z;
+	pos0 = org;
+	cpos = pos0;
+//	origin[0] = org.x;  origin[1] = org.y; origin[2] = org.z;
 	pb[0] = _p1.x; pb[1] = _p1.y; pb[2] = _p1.z;
 	pt[0] = _p2.x; pt[1] = _p2.y; pt[2] = _p2.z;
 	this->define();

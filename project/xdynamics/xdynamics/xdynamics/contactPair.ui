@@ -38,7 +38,7 @@
      <property name="title">
       <string>Contact pair</string>
      </property>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -95,7 +95,7 @@
      <property name="title">
       <string>Parameter</string>
      </property>
-     <widget class="QWidget" name="">
+     <widget class="QWidget" name="layoutWidget">
       <property name="geometry">
        <rect>
         <x>10</x>
@@ -138,10 +138,6 @@
       </layout>
      </widget>
     </widget>
-    <zorder>GB_Parameter</zorder>
-    <zorder>GB_ContactPair</zorder>
-    <zorder>GB_ContactPair</zorder>
-    <zorder>GB_Parameter</zorder>
    </widget>
    <widget class="QWidget" name="tab_2">
     <attribute name="title">
@@ -149,7 +145,7 @@
     </attribute>
    </widget>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>150</x>
@@ -175,7 +171,7 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -198,6 +194,17 @@
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>LE_Name</tabstop>
+  <tabstop>TB_METHOD</tabstop>
+  <tabstop>CB_FirstObject</tabstop>
+  <tabstop>CB_SecondObject</tabstop>
+  <tabstop>LE_Restitution</tabstop>
+  <tabstop>LE_StiffnessRatio</tabstop>
+  <tabstop>LE_Friction</tabstop>
+  <tabstop>PB_Ok</tabstop>
+  <tabstop>PB_Cancle</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
