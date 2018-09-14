@@ -46,7 +46,7 @@ void vmarker::draw(GLenum eMode)
 	}	
 }
 
-bool vmarker::define(VEC3F p)
+bool vmarker::define(VEC3D p)
 {
 	cpos = pos0 = p;
 	float icon_scale = 0.08;

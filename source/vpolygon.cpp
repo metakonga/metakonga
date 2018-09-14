@@ -1,4 +1,5 @@
 #include "vpolygon.h"
+#include "numeric_utility.h"
 #include "shader.h"
 #include "vcontroller.h"
 #include <QTextStream>
@@ -23,7 +24,7 @@ vpolygon::vpolygon()
 	, m_color_vbo(0)
 	//, //isSelected(false)
 {
-	//id = pcnt++;
+	vobject::vot = GEOMETRY_OBJECT;
 }
 
 vpolygon::vpolygon(QString& _name)
@@ -46,6 +47,7 @@ vpolygon::vpolygon(QString& _name)
 	//, isSelected(false)
 {
 	vglew::vglew();
+	vobject::vot = GEOMETRY_OBJECT;
 	//id = pcnt++;
 }
 
@@ -204,6 +206,8 @@ void vpolygon::_loadSTLASCII(QString f)
 	float nx, ny, nz;
 	qf.reset();
 	qts >> ch >> ch >> ch;
+	VEC3D p, q, r, c;
+	double vol = 0.0;
 	for (unsigned int i = 0; i < ntri; i++)
 	{
 		qts >> ch >> ch >> nx >> ny >> nz;
@@ -218,35 +222,47 @@ void vpolygon::_loadSTLASCII(QString f)
 		normals[i * 9 + 8] = nz;
 		qts >> ch >> ch;
 		qts >> ch >> x >> y >> z;
-		vertexList[i * 9 + 0] = 0.001 * x;
-		vertexList[i * 9 + 1] = 0.001 * y;
-		vertexList[i * 9 + 2] = 0.001 * z;
+		p.x = vertexList[i * 9 + 0] = 0.001 * x;
+		p.y = vertexList[i * 9 + 1] = 0.001 * y;
+		p.z = vertexList[i * 9 + 2] = 0.001 * z;
 		vertice[i * 9 + 0] = (float)vertexList[i * 9 + 0];
 		vertice[i * 9 + 1] = (float)vertexList[i * 9 + 1];
 		vertice[i * 9 + 2] = (float)vertexList[i * 9 + 2];
 
 		qts >> ch >> x >> y >> z;
-		vertexList[i * 9 + 3] = 0.001 * x;
-		vertexList[i * 9 + 4] = 0.001 * y;
-		vertexList[i * 9 + 5] = 0.001 * z;
+		q.x = vertexList[i * 9 + 3] = 0.001 * x;
+		q.y = vertexList[i * 9 + 4] = 0.001 * y;
+		q.z = vertexList[i * 9 + 5] = 0.001 * z;
 		vertice[i * 9 + 3] = (float)vertexList[i * 9 + 3];
 		vertice[i * 9 + 4] = (float)vertexList[i * 9 + 4];
 		vertice[i * 9 + 5] = (float)vertexList[i * 9 + 5];
 
 		qts >> ch >> x >> y >> z;
-		vertexList[i * 9 + 6] = 0.001 * x;
-		vertexList[i * 9 + 7] = 0.001 * y;
-		vertexList[i * 9 + 8] = 0.001 * z;
+		r.x = vertexList[i * 9 + 6] = 0.001 * x;
+		r.y = vertexList[i * 9 + 7] = 0.001 * y;
+		r.z = vertexList[i * 9 + 8] = 0.001 * z;
 		vertice[i * 9 + 6] = (float)vertexList[i * 9 + 6];
 		vertice[i * 9 + 7] = (float)vertexList[i * 9 + 7];
 		vertice[i * 9 + 8] = (float)vertexList[i * 9 + 8];
-
 		qts >> ch >> ch;
+		//vol += numeric::signed_volume_of_triangle(p, q, r);
+		c += numeric::utility::calculate_center_of_triangle(p, q, r);
 	}
-//	nvertex = nvert;
+	pos0 = c / ntri;
 	ntriangle = ntri;
-// 	delete[] normalList;
-// 	delete[] textureList;
+	for (unsigned int i = 0; i < ntri; i++)
+	{
+		int s = i * 9;
+		vertice[s + 0] -= pos0.x;
+		vertice[s + 1] -= pos0.y;
+		vertice[s + 2] -= pos0.z;
+		vertice[s + 3] -= pos0.x;
+		vertice[s + 4] -= pos0.y;
+		vertice[s + 5] -= pos0.z;
+		vertice[s + 6] -= pos0.x;
+		vertice[s + 7] -= pos0.y;
+		vertice[s + 8] -= pos0.z;
+	}
 	qf.close();
 }
 
@@ -310,17 +326,6 @@ bool vpolygon::define(import_shape_type t, QString file)
 		glBindBuffer(GL_ARRAY_BUFFER, m_vertex_vbo);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * ntriangle * 9, (float*)vertice, GL_DYNAMIC_DRAW);
 	}
-// 	if (!m_index_vbo){
-// 		glGenBuffers(1, &m_index_vbo);
-// 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_vbo);
-// 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * nindex * 3, (unsigned int*)indice, GL_STATIC_DRAW);
-// 	}
-// 	if (!m_color_vbo)
-// 	{
-// 		glGenBuffers(1, &m_color_vbo);
-// 		glBindBuffer(GL_ARRAY_BUFFER, m_color_vbo);
-// 		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * nvertex * 4, (float*)colors, GL_STATIC_DRAW);
-// 	}
 	if (!m_normal_vbo)
 	{
 		glGenBuffers(1, &m_normal_vbo);
@@ -384,85 +389,14 @@ void vpolygon::draw(GLenum eMode)
 	{
 		glLoadName((GLuint)ID());
 	}
-
+	glPushMatrix();
+	glTranslated(pos0.x, pos0.y, pos0.z);
 	glColor3f(clr.redF(), clr.greenF(), clr.blueF());
-//	glColor3f(0.0f, 0.0f, 1.0f);
 	glPolygonMode(GL_FRONT_AND_BACK, drawingMode);
 	glUseProgram(program.Program());
-	//glUniform1f(glGetUniformLocation(program.Program(), "lightDir"), )
 	_drawPolygons();
 	glUseProgram(0);
-
-// 	if (eMode == GL_SELECT) 
-// 		glLoadName((GLuint)ID());
-// 
-// 	glPushMatrix();
-// 	if (vcontroller::getFrame() && outPos && outRot)
-// 	{
-// 		//glPushMatrix();
-// 		unsigned int f = vcontroller::getFrame();
-// 		glTranslated(outPos[f].x, outPos[f].y, outPos[f].z);
-// 		VEC3D e;// = ep2e(outRot[f]);
-// 		double xi = (e.x * 180) / M_PI;// +ang[0];
-// 		double th = (e.y * 180) / M_PI;//; +ang[1];
-// 		double ap = (e.z * 180) / M_PI;// +ang[2];
-// 		glRotated(xi/* - ang[0]*/, 0, 0, 1);
-// 		glRotated(th/* - ang[1]*/, 1, 0, 0);
-// 		glRotated(ap/* - ang[2]*/, 0, 0, 1);
-// 		/*glPopMatrix();*/
-// 		//glCallList(coord);
-// 	}
-// 	else{
-// 		glTranslated(origin[0], origin[1], origin[2]);
-// 		//glPushMatrix();
-// 		glRotated(ang[0], 0, 0, 1);
-// 		glRotated(ang[1], 1, 0, 0);
-// 		glRotated(ang[2], 0, 0, 1);
-// 	}
-// 	
-// 	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-// 	glBindBuffer(GL_ARRAY_BUFFER, m_vertex_vbo);
-// 	//glBindBuffer(GL_ARRAY_BUFFER, m_color_vbo);
-// 	//glBindBuffer(GL_ARRAY_BUFFER, m_normal_vbo);
-// 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_vbo);
-// 
-// 	
-// 	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_vbo);
-// 	//glIndexPointer(GL_UNSIGNED_INT, 0, 0);
-// 
-// 	glEnableClientState(GL_VERTEX_ARRAY);
-// 	//glEnableClientState(GL_NORMAL_ARRAY);
-// //	glEnableClientState(GL_COLOR_ARRAY);
-// 	//glEnableClientState(GL_NORMAL_ARRAY);
-// 
-// 	//glNormalPointer(GL_FLOAT, 0, 0);
-// 	glVertexPointer(3, GL_FLOAT, 0, 0);
-// 	//glColorPointer(3, GL_FLOAT, 0, 0);
-// 	glDrawElements(GL_TRIANGLES, nindex*3, GL_UNSIGNED_INT, 0);
-// 
-// 	//glDrawArrays(GL_TRIANGLES, 0, 5);
-// 	glDisableClientState(GL_VERTEX_ARRAY);
-// 	//glDisableClientState(GL_NORMAL_ARRAY);
-// 	//glDisableClientState(GL_COLOR_ARRAY);
-// 	//glDisableClientState(GL_NORMAL_ARRAY);
-// 
-// 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-// 	//glBindBuffer(GL_ARRAY_BUFFER, 0);
-// 	//glBindBuffer(GL_ARRAY_BUFFER, 0);
-// 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-// 
-// 	if (spheres)
-// 	{
-// // 		glColor3f(1.f, 1.f, 1.f);
-// // 		for (unsigned int i = 0; i < nindex; i++){
-// // 			glPushMatrix();
-// // 			glTranslatef(spheres[i].x, spheres[i].y, spheres[i].z);
-// // 			glutSolidSphere(spheres[i].w, 16, 16);
-// // 			glPopMatrix();
-// // 		}
-// 	}
-// 	glPopMatrix();
-// 	//mmglPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glPopMatrix();
 }
 
 void vpolygon::setResultData(unsigned int n)

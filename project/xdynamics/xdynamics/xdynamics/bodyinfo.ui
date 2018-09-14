@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DLG_BODYINFO</class>
+ <widget class="QDialog" name="DLG_BODYINFO">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>353</width>
+    <height>302</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QGroupBox" name="GB_Property">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>100</y>
+     <width>331</width>
+     <height>135</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Property</string>
+   </property>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>311</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QLabel" name="L_Mass">
+       <property name="text">
+        <string>Mass</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_Mass"/>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>311</width>
+      <height>76</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="L_Ixx">
+         <property name="text">
+          <string>Ixx</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="L_Iyy">
+         <property name="text">
+          <string>Iyy</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="L_Izz">
+         <property name="text">
+          <string>Izz</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLineEdit" name="LE_Ixx"/>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="LE_Iyy"/>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="LE_Izz"/>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <widget class="QLabel" name="L_Ixy">
+         <property name="text">
+          <string>Ixy</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="L_Iyz">
+         <property name="text">
+          <string>Iyz</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="L_Izx">
+         <property name="text">
+          <string>Izx</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QLineEdit" name="LE_Ixy"/>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="LE_Iyz"/>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="LE_Izx"/>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QComboBox" name="CB_Material_Input_Type">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>10</y>
+     <width>171</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>Library</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>User input</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QComboBox" name="CB_Material_Type">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>40</y>
+     <width>171</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="PB_Ok">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>270</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Ok</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="PB_Cancle">
+   <property name="geometry">
+    <rect>
+     <x>267</x>
+     <y>270</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Cancle</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>11</y>
+     <width>111</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_5">
+    <item>
+     <widget class="QLabel" name="L_Material_Input_Type">
+      <property name="text">
+       <string>Material Input Type</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="L_Material_Type">
+      <property name="text">
+       <string>Material Type</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>70</y>
+     <width>321</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <item>
+     <widget class="QLabel" name="L_Position">
+      <property name="text">
+       <string>Position</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="LE_Position"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>240</y>
+     <width>321</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_4">
+    <item>
+     <widget class="QLabel" name="L_Volume">
+      <property name="text">
+       <string>Volume</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="LE_Volume"/>
+    </item>
+   </layout>
+  </widget>
+  <zorder>CB_Material_Input_Type</zorder>
+  <zorder>GB_Property</zorder>
+  <zorder>L_Material_Input_Type</zorder>
+  <zorder>L_Material_Type</zorder>
+  <zorder>CB_Material_Type</zorder>
+  <zorder>L_Volume</zorder>
+  <zorder>LE_Volume</zorder>
+  <zorder>L_Position</zorder>
+  <zorder>LE_Position</zorder>
+  <zorder>PB_Ok</zorder>
+  <zorder>PB_Cancle</zorder>
+ </widget>
+ <tabstops>
+  <tabstop>CB_Material_Input_Type</tabstop>
+  <tabstop>CB_Material_Type</tabstop>
+  <tabstop>LE_Position</tabstop>
+  <tabstop>LE_Mass</tabstop>
+  <tabstop>LE_Ixx</tabstop>
+  <tabstop>LE_Iyy</tabstop>
+  <tabstop>LE_Izz</tabstop>
+  <tabstop>LE_Ixy</tabstop>
+  <tabstop>LE_Iyz</tabstop>
+  <tabstop>LE_Izx</tabstop>
+  <tabstop>LE_Volume</tabstop>
+  <tabstop>PB_Ok</tabstop>
+  <tabstop>PB_Cancle</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

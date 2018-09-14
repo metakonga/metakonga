@@ -14,6 +14,14 @@ public:
 
 	virtual void collision(
 		double r, double m, VEC3D& pos, VEC3D& vel, VEC3D& omega, VEC3D& F, VEC3D& M);
+	virtual void cuda_collision(
+		double *pos, double *vel,
+		double *omega, double *mass,
+		double *force, double *moment,
+		unsigned int *sorted_id,
+		unsigned int *cell_start,
+		unsigned int *cell_end,
+		unsigned int np);
 	virtual void cudaMemoryAlloc();
 
 private:

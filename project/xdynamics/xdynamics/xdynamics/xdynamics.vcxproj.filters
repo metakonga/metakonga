@@ -425,6 +425,24 @@
     <ClCompile Include="..\..\..\..\source\vmarker.cpp">
       <Filter>Source Files\display</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\MultibodyDynamics\drivingConstraint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\contact_plane_polygonObject.cpp">
+      <Filter>Source Files\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\bodyInfoDialog.cpp">
+      <Filter>Source Files\dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_bodyInfoDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_bodyInfoDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\numeric_utility.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="xdynamics.h">
@@ -449,9 +467,6 @@
       <Filter>Header Files\dialog</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\..\..\include\ExportDialog.h">
-      <Filter>Header Files\dialog</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\..\..\..\include\massDialog.h">
       <Filter>Header Files\dialog</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\..\..\include\newDialog.h">
@@ -527,6 +542,12 @@
       <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\..\..\include\preDefinedMBDDialog.h">
+      <Filter>Header Files\dialog</Filter>
+    </CustomBuild>
+    <CustomBuild Include="bodyinfo.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\bodyInfoDialog.h">
       <Filter>Header Files\dialog</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -723,9 +744,6 @@
     <ClInclude Include="..\..\..\..\..\share\inc\messageBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GeneratedFiles\ui_contactPair.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\include\contact.h">
       <Filter>Header Files\collision</Filter>
     </ClInclude>
@@ -767,6 +785,33 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\vmarker.h">
       <Filter>Header Files\display</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\MultibodyDynamics\axialTranslationForce.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\MultibodyDynamics\drivingConstraint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\contact_plane_polygonObject.h">
+      <Filter>Header Files\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_bodyinfo.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="헤더.h">
+      <Filter>Source Files\dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\dialogs.h">
+      <Filter>Header Files\dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_contactPair.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\numeric_utility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\contactPair.h">
+      <Filter>Header Files\collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

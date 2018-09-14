@@ -82,6 +82,7 @@ public:
 	vparticles* vParticles() { return vp; }
 	vobject* getVObjectFromName(QString name);
 	vpolygon* getVPolyObjectFromName(QString name);
+	QString selectedObjectName();// { return selectedObject->name(); }
 	projectionType changeProjectionViewMode() { protype = protype == ORTHO_PROJECTION ? PERSPECTIVE_PROJECTION : ORTHO_PROJECTION; return protype; }
 //	bool changePaletteMode() { sketch.isSketching = sketch.isSketching ? false : true; return sketch.isSketching; }
 	void glObjectClear();
@@ -176,9 +177,11 @@ private:
 	float minView[3];
 	float maxView[3];
 	//float up[3];
+	vobject* selectedObject;
 
 signals:
 	void mySignal();
+	void propertySignal(QString, vobject::viewGeometryObjectType);
 };
 
 

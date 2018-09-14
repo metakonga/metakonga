@@ -43,6 +43,14 @@ public:
 		unsigned int np);
 
 private:
+	void deviceCollision(
+		double *pos, double *vel,
+		double *omega, double *mass,
+		double *force, double *moment,
+		unsigned int *sorted_id,
+		unsigned int *cell_start,
+		unsigned int *cell_end,
+		unsigned int np);
 	void hostCollision(
 		VEC4D *pos, VEC3D *vel,
 		VEC3D *omega, double *mass,

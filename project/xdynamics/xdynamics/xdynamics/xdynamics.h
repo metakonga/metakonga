@@ -70,6 +70,7 @@ public:
 	void solve();
 	void exitThread();
 	void recieveProgress(int, QString, QString = "");
+	void propertySlot(QString, vobject::viewGeometryObjectType);
 
 	void openPinfoDialog();
 	void deleteFileByEXT(QString ext);

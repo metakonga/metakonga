@@ -26,17 +26,20 @@ QColor("blue") };
 class vobject
 {
 public:
+	enum viewGeometryObjectType{ VIEW_OBJECT = 0, GEOMETRY_OBJECT, CONSTRAINT_OBJECT };
+
 	vobject();
 	vobject(QString& _name);
 	virtual ~vobject();
 
-	void setInitialPosition(VEC3F ip) { pos0 = ip; }
-	void setInitialAngle(VEC3F ia) { ang0 = ia; }
-	void setCurrentPosition(VEC3F cp) { cpos = cp; }
-	void setCurrentAngle(VEC3F ca) { cang = ca; }
+	void setInitialPosition(VEC3D ip) { pos0 = ip; }
+	void setInitialAngle(VEC3D ia) { ang0 = ia; }
+	void setCurrentPosition(VEC3D cp) { cpos = cp; }
+	void setCurrentAngle(VEC3D ca) { cang = ca; }
 	void animationFrame();
 	void setResultData(unsigned int n);
 	void insertResultData(unsigned int i, VEC3D& p, EPD& r);
+	VEC3D InitialPosition() { return pos0; }
 	int ID() { return id; }
 	QString& name() { return nm; }
 	void setName(QString n) { nm = n; }
@@ -46,21 +49,23 @@ public:
 	void copyCoordinate(GLuint _coord);
 	void setDrawingMode(GLenum dm) { drawingMode = dm; }
 	void setSelected(bool b) { isSelected = b; }
+	viewGeometryObjectType ViewGeometryObjectType() { return vot; }
 	virtual void draw(GLenum eMode) = 0;
 
 protected:
 	int id;
 	bool isSelected;
+	viewGeometryObjectType vot;
 	QString nm;			// object name
 	GLuint coord;
 	GLenum drawingMode;
 	bool display;
 	QColor clr;
 	static int count;
-	VEC3F pos0;
-	VEC3F ang0;
-	VEC3F cpos;
-	VEC3F cang;
+	VEC3D pos0;
+	VEC3D ang0;
+	VEC3D cpos;
+	VEC3D cang;
 	VEC3D* outPos;
 	EPD* outRot;
 };

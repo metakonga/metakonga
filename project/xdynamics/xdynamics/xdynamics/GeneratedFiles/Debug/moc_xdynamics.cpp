@@ -21,8 +21,8 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_xdynamics_t {
-    QByteArrayData data[42];
-    char stringdata0[559];
+    QByteArrayData data[44];
+    char stringdata0[604];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -70,9 +70,11 @@ QT_MOC_LITERAL(35, 465, 24), // "changeProjectionViewMode"
 QT_MOC_LITERAL(36, 490, 5), // "solve"
 QT_MOC_LITERAL(37, 496, 10), // "exitThread"
 QT_MOC_LITERAL(38, 507, 15), // "recieveProgress"
-QT_MOC_LITERAL(39, 523, 15), // "openPinfoDialog"
-QT_MOC_LITERAL(40, 539, 15), // "deleteFileByEXT"
-QT_MOC_LITERAL(41, 555, 3) // "ext"
+QT_MOC_LITERAL(39, 523, 12), // "propertySlot"
+QT_MOC_LITERAL(40, 536, 31), // "vobject::viewGeometryObjectType"
+QT_MOC_LITERAL(41, 568, 15), // "openPinfoDialog"
+QT_MOC_LITERAL(42, 584, 15), // "deleteFileByEXT"
+QT_MOC_LITERAL(43, 600, 3) // "ext"
 
     },
     "xdynamics\0ChangeShape\0\0ChangeParticleFromFile\0"
@@ -89,6 +91,7 @@ QT_MOC_LITERAL(41, 555, 3) // "ext"
     "makeContactPair\0preDefinedMBD\0"
     "changePaletteMode\0changeProjectionViewMode\0"
     "solve\0exitThread\0recieveProgress\0"
+    "propertySlot\0vobject::viewGeometryObjectType\0"
     "openPinfoDialog\0deleteFileByEXT\0ext"
 };
 #undef QT_MOC_LITERAL
@@ -99,7 +102,7 @@ static const uint qt_meta_data_xdynamics[] = {
        7,       // revision
        0,       // classname
        0,    0, // classinfo
-      40,   14, // methods
+      41,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -107,46 +110,47 @@ static const uint qt_meta_data_xdynamics[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags
-       1,    0,  214,    2, 0x08 /* Private */,
-       3,    0,  215,    2, 0x08 /* Private */,
-       4,    0,  216,    2, 0x08 /* Private */,
-       5,    0,  217,    2, 0x08 /* Private */,
-       6,    0,  218,    2, 0x08 /* Private */,
-       7,    0,  219,    2, 0x08 /* Private */,
-       8,    1,  220,    2, 0x08 /* Private */,
-       9,    0,  223,    2, 0x08 /* Private */,
-      10,    0,  224,    2, 0x08 /* Private */,
-      11,    0,  225,    2, 0x08 /* Private */,
-      12,    0,  226,    2, 0x08 /* Private */,
-      13,    0,  227,    2, 0x08 /* Private */,
-      14,    0,  228,    2, 0x08 /* Private */,
-      15,    0,  229,    2, 0x08 /* Private */,
-      16,    0,  230,    2, 0x08 /* Private */,
-      17,    0,  231,    2, 0x08 /* Private */,
-      18,    0,  232,    2, 0x08 /* Private */,
-      19,    0,  233,    2, 0x08 /* Private */,
-      20,    0,  234,    2, 0x08 /* Private */,
-      21,    0,  235,    2, 0x08 /* Private */,
-      22,    0,  236,    2, 0x08 /* Private */,
-      23,    0,  237,    2, 0x08 /* Private */,
-      24,    0,  238,    2, 0x08 /* Private */,
-      25,    0,  239,    2, 0x08 /* Private */,
-      26,    0,  240,    2, 0x08 /* Private */,
-      27,    0,  241,    2, 0x08 /* Private */,
-      28,    0,  242,    2, 0x08 /* Private */,
-      29,    0,  243,    2, 0x08 /* Private */,
-      30,    0,  244,    2, 0x08 /* Private */,
-      31,    0,  245,    2, 0x08 /* Private */,
-      32,    0,  246,    2, 0x08 /* Private */,
-      33,    0,  247,    2, 0x08 /* Private */,
-      34,    0,  248,    2, 0x08 /* Private */,
-      35,    0,  249,    2, 0x08 /* Private */,
-      36,    0,  250,    2, 0x08 /* Private */,
-      37,    0,  251,    2, 0x08 /* Private */,
-      38,    3,  252,    2, 0x08 /* Private */,
-      38,    2,  259,    2, 0x28 /* Private | MethodCloned */,
-      39,    0,  264,    2, 0x08 /* Private */,
-      40,    1,  265,    2, 0x08 /* Private */,
+       1,    0,  219,    2, 0x08 /* Private */,
+       3,    0,  220,    2, 0x08 /* Private */,
+       4,    0,  221,    2, 0x08 /* Private */,
+       5,    0,  222,    2, 0x08 /* Private */,
+       6,    0,  223,    2, 0x08 /* Private */,
+       7,    0,  224,    2, 0x08 /* Private */,
+       8,    1,  225,    2, 0x08 /* Private */,
+       9,    0,  228,    2, 0x08 /* Private */,
+      10,    0,  229,    2, 0x08 /* Private */,
+      11,    0,  230,    2, 0x08 /* Private */,
+      12,    0,  231,    2, 0x08 /* Private */,
+      13,    0,  232,    2, 0x08 /* Private */,
+      14,    0,  233,    2, 0x08 /* Private */,
+      15,    0,  234,    2, 0x08 /* Private */,
+      16,    0,  235,    2, 0x08 /* Private */,
+      17,    0,  236,    2, 0x08 /* Private */,
+      18,    0,  237,    2, 0x08 /* Private */,
+      19,    0,  238,    2, 0x08 /* Private */,
+      20,    0,  239,    2, 0x08 /* Private */,
+      21,    0,  240,    2, 0x08 /* Private */,
+      22,    0,  241,    2, 0x08 /* Private */,
+      23,    0,  242,    2, 0x08 /* Private */,
+      24,    0,  243,    2, 0x08 /* Private */,
+      25,    0,  244,    2, 0x08 /* Private */,
+      26,    0,  245,    2, 0x08 /* Private */,
+      27,    0,  246,    2, 0x08 /* Private */,
+      28,    0,  247,    2, 0x08 /* Private */,
+      29,    0,  248,    2, 0x08 /* Private */,
+      30,    0,  249,    2, 0x08 /* Private */,
+      31,    0,  250,    2, 0x08 /* Private */,
+      32,    0,  251,    2, 0x08 /* Private */,
+      33,    0,  252,    2, 0x08 /* Private */,
+      34,    0,  253,    2, 0x08 /* Private */,
+      35,    0,  254,    2, 0x08 /* Private */,
+      36,    0,  255,    2, 0x08 /* Private */,
+      37,    0,  256,    2, 0x08 /* Private */,
+      38,    3,  257,    2, 0x08 /* Private */,
+      38,    2,  264,    2, 0x28 /* Private | MethodCloned */,
+      39,    2,  269,    2, 0x08 /* Private */,
+      41,    0,  274,    2, 0x08 /* Private */,
+      42,    1,  275,    2, 0x08 /* Private */,
 
  // slots: parameters
     QMetaType::Void,
@@ -187,8 +191,9 @@ static const uint qt_meta_data_xdynamics[] = {
     QMetaType::Void,
     QMetaType::Void, QMetaType::Int, QMetaType::QString, QMetaType::QString,    2,    2,    2,
     QMetaType::Void, QMetaType::Int, QMetaType::QString,    2,    2,
+    QMetaType::Void, QMetaType::QString, 0x80000000 | 40,    2,    2,
     QMetaType::Void,
-    QMetaType::Void, QMetaType::QString,   41,
+    QMetaType::Void, QMetaType::QString,   43,
 
        0        // eod
 };
@@ -237,8 +242,9 @@ void xdynamics::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
         case 35: _t->exitThread(); break;
         case 36: _t->recieveProgress((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3]))); break;
         case 37: _t->recieveProgress((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
-        case 38: _t->openPinfoDialog(); break;
-        case 39: _t->deleteFileByEXT((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 38: _t->propertySlot((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< vobject::viewGeometryObjectType(*)>(_a[2]))); break;
+        case 39: _t->openPinfoDialog(); break;
+        case 40: _t->deleteFileByEXT((*reinterpret_cast< QString(*)>(_a[1]))); break;
         default: ;
         }
     }
@@ -269,13 +275,13 @@ int xdynamics::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 40)
+        if (_id < 41)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 40;
+        _id -= 41;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 40)
+        if (_id < 41)
             *reinterpret_cast<int*>(_a[0]) = -1;
-        _id -= 40;
+        _id -= 41;
     }
     return _id;
 }

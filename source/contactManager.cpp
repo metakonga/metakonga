@@ -7,6 +7,8 @@
 #include "contact_particles_plane.h"
 #include "contact_particles_polygonObject.h"
 #include "contact_particles_polygonObjects.h"
+
+#include "contact_plane_polygonObject.h"
 #include <QDebug>
 
 contactManager::contactManager()
@@ -98,6 +100,14 @@ bool contactManager::runCollision(
 			sorted_id, cell_start, cell_end, np
 			);
 	}
+	else if (simulation::isGpu())
+	{
+		deviceCollision(
+			pos, vel, omega,
+			mass, force, moment,
+			sorted_id, cell_start, cell_end, np
+			);
+	}
 // 	
 // 	foreach(contact *c, cots)
 // 	{
@@ -112,6 +122,22 @@ bool contactManager::runCollision(
 // 		pos, vel, omega, mass, force, moment,
 // 		sorted_id, cell_start, cell_end, np);
 	return true;
+}
+
+
+
+void contactManager::deviceCollision(
+	double *pos, double *vel, 
+	double *omega, double *mass, 
+	double *force, double *moment, 
+	unsigned int *sorted_id, unsigned int *cell_start, 
+	unsigned int *cell_end, unsigned int np)
+{
+	foreach(contact* c, cots)
+	{
+		c->cuda_collision(
+			pos, vel, omega, mass, force, moment, sorted_id, cell_start, cell_end, np);
+	}
 }
 
 void contactManager::hostCollision(
@@ -201,6 +227,10 @@ void contactManager::CreateContactPair(
 	case contact::PARTICLE_POLYGON_SHAPE:
 		c = new contact_particles_polygonObject(n, (contactForce_type)method, o1, o2);
 		cppos[c->Name()] = dynamic_cast<contact_particles_polygonObject*>(c);
+		break;
+	case contact::PLANE_POLYGON_SHAPE:
+		c = new contact_plane_polygonObject(n, (contactForce_type)method, o1, o2);
+		cots[c->Name()] = c;
 		break;
 	}
 	material_property_pair mpp =

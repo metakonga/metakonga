@@ -1,6 +1,7 @@
 #include "contact_particles_polygonObjects.h"
 #include "contact_particles_polygonObject.h"
 #include "polygonObject.h"
+#include "numeric_utility.h"
 
 contact_particles_polygonObjects::contact_particles_polygonObjects()
 	: contact("particles_polygonObjects", DHS)
@@ -93,47 +94,26 @@ unsigned int contact_particles_polygonObjects::define(
 				po.Q = VEC3D(vList[i * 9 + 3], vList[i * 9 + 4], vList[i * 9 + 5]);
 				po.R = VEC3D(vList[i * 9 + 6], vList[i * 9 + 7], vList[i * 9 + 8]);
 			}
-			po.V = po.Q - po.P;
-			po.W = po.R - po.P;
-			po.N = po.V.cross(po.W);
-			po.N = po.N / po.N.length();
+			VEC3D ctri = numeric::utility::calculate_center_of_triangle(po.P, po.Q, po.R);
+// 			po.V = po.Q - po.P;
+// 			po.W = po.R - po.P;
+// 			po.N = po.V.cross(po.W);
+// 			po.N = po.N / po.N.length();
 			hpi[i] = po;
-			VEC3D M1 = (po.Q + po.P) / 2;
-			VEC3D M2 = (po.R + po.P) / 2;
-			VEC3D D1 = po.N.cross(po.V);
-			VEC3D D2 = po.N.cross(po.W);
-			double t = 0;
-			if (abs(D1.x*D2.y - D1.y*D2.x) > 1E-13)
-			{
-				t = (D2.x*(M1.y - M2.y)) / (D1.x*D2.y - D1.y*D2.x) - (D2.y*(M1.x - M2.x)) / (D1.x*D2.y - D1.y*D2.x);
-			}
-			else if (abs(D1.x*D2.z - D1.z*D2.x) > 1E-13)
-			{
-				t = (D2.x*(M1.z - M2.z)) / (D1.x*D2.z - D1.z*D2.x) - (D2.z*(M1.x - M2.x)) / (D1.x*D2.z - D1.z*D2.x);
-			}
-			else if (abs(D1.y*D2.z - D1.z*D2.y) > 1E-13)
-			{
-				t = (D2.y*(M1.z - M2.z)) / (D1.y*D2.z - D1.z*D2.y) - (D2.z*(M1.y - M2.y)) / (D1.y*D2.z - D1.z*D2.y);
-			}
-			VEC3D Ctri = M1 + t * D1;
+// 			VEC3D M1 = (po.Q + po.P) / 2;
+// 			VEC3D M2 = (po.R + po.P) / 2;
+// 			VEC3D D1 = po.N.cross(po.V);
+// 			VEC3D D2 = po.N.cross(po.W);
+// 			double t = 0;
+// 			t = (D2.y*(M1.z - M2.z)) / (D1.y*D2.z - D1.z*D2.y) - (D2.z*(M1.y - M2.y)) / (D1.y*D2.z - D1.z*D2.y);
+// 			VEC3D Ctri = M1 + t * D1;
 			VEC4D sph;
-			sph.w = (Ctri - po.P).length();
-			sph.x = Ctri.x; sph.y = Ctri.y; sph.z = Ctri.z;
-			//com += Ctri;
-			// 		while (abs(fc - ft) > 0.00001)
-			// 		{
-			// 			d = ft * sph.w;
-			// 			double p = d / po.N.length();
-			// 			VEC3D _c = Ctri - p * po.N;
-			// 			sph.x = _c.x; sph.y = _c.y; sph.z = _c.z;
-			// 			sph.w = (_c - po.P).length();
-			// 			fc = d / sph.w;
-			// 		}
+			sph.w = (ctri - po.P).length();
+			sph.x = ctri.x; sph.y = ctri.y; sph.z = ctri.z;
 			if (sph.w > maxRadii)
 				maxRadii = sph.w;
 			hsphere[i] = sph;
 		}
-//		com = com / ntriangle;
 		bPolySphere += pobj->NumTriangle();
 	}
 	maxRadius = maxRadii;
@@ -157,7 +137,7 @@ bool contact_particles_polygonObjects::cppolyCollision(
 	restitution = cpa.rest;
 	friction = cpa.fric;
 	stiffnessRatio = cpa.sratio;
-	VEC3D mp = pm->getPosition();
+	VEC3D mp = pm->Position();
 	VEC3D mv = pm->getVelocity();
 	VEC3D mo = pm->getAngularVelocity();
 	VEC3D cpt = particle_polygon_contact_detection(hpi[idx], p, r, _pct);

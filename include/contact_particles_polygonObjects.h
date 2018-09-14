@@ -27,12 +27,6 @@ public:
 	
 private:
 	VEC3D particle_polygon_contact_detection(host_polygon_info& dpi, VEC3D& p, double r, polygonContactType& _pct);
-// 	bool hostCollision(
-// 		double *dpos, double *dvel,
-// 		double *domega, double *dmass,
-// 		double *dforce, double *dmoment,
-// 		unsigned int *sorted_id, unsigned int *cell_start, unsigned int *cell_end,
-// 		unsigned int np);
 
 	unsigned int ncontact;
 	polygonContactType *pct;

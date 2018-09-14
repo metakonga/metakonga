@@ -31,6 +31,15 @@ void contact_particles_cube::collision(
 	}
 }
 
+void contact_particles_cube::cuda_collision(
+	double *pos, double *vel, double *omega, 
+	double *mass, double *force, double *moment, 
+	unsigned int *sorted_id, unsigned int *cell_start, 
+	unsigned int *cell_end, unsigned int np)
+{
+	cu_cube_contact_force(1, dpi, pos, vel, omega, force, moment, mass, np, dcp);
+}
+
 void contact_particles_cube::cudaMemoryAlloc()
 {
 	contact::cudaMemoryAlloc();

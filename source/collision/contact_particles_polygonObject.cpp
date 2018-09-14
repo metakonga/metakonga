@@ -242,7 +242,7 @@ void contact_particles_polygonObject::insertContactParameters(unsigned int id, d
 // 	double3 _mf = make_double3(0.0, 0.0, 0.0);
 // 	double3 _mm = make_double3(0.0, 0.0, 0.0);
 // 	if (po->pointMass())
-// 		_mp = po->pointMass()->getPosition();
+// 		_mp = po->pointMass()->Position();
 // 	checkCudaErrors(cudaMalloc((void**)&mpos, sizeof(double3)));
 // 	checkCudaErrors(cudaMemcpy(mpos, &_mp, sizeof(double3), cudaMemcpyHostToDevice));
 // 	checkCudaErrors(cudaMalloc((void**)&mforce, sizeof(double3)*ps->numParticle()));

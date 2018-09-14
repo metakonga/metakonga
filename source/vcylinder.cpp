@@ -152,7 +152,7 @@ bool vcylinder::makeCylinderGeometry(QTextStream& in)
 	return true;
 }
 
-bool vcylinder::makeCylinderGeometry(float br, float tr, float leng, VEC3F org, VEC3F _p1, VEC3F _p2)
+bool vcylinder::makeCylinderGeometry(float br, float tr, float leng, VEC3D org, VEC3D _p1, VEC3D _p2)
 {
 	baseRadius = br;
 	topRadius = tr;

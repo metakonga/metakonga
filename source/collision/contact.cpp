@@ -143,6 +143,11 @@ void contact::collision(
 
 }
 
+void contact::cuda_collision(double *pos, double *vel, double *omega, double *mass, double *force, double *moment, unsigned int *sorted_id, unsigned int *cell_start, unsigned int *cell_end, unsigned int np)
+{
+
+}
+
 // #include "collision.h"
 // #include "object.h"
 // #include <cmath>

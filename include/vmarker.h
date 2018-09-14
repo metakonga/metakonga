@@ -16,7 +16,7 @@ public:
 	virtual void draw(GLenum eMode);
 
 	//void setMarkerScale
-	bool define(VEC3F p);
+	bool define(VEC3D p);
 	void setMarkerScaleFlag(bool b) { markerScaleFlag = b; }
 	static void setMarkerScale(float sc) { scale = sc; }
 	//bool makeCubeGeometry(QTextStream& in);

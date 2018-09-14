@@ -20,7 +20,7 @@ public:
 
 	bool define();
 	bool makeCylinderGeometry(QTextStream& in);
-	bool makeCylinderGeometry(float br, float tr, float leng, VEC3F org, VEC3F p1, VEC3F p2);
+	bool makeCylinderGeometry(float br, float tr, float leng, VEC3D org, VEC3D p1, VEC3D p2);
 
 private:
 	void setIndexList();

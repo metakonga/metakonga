@@ -3,21 +3,11 @@
 #include "Objects.h"
 #include "vparticles.h"
 #include "vcontroller.h"
-#include "solveDialog.h"
 #include "contactCoefficientTable.h"
-#include "ExportDialog.h"
-#include "cylinderDialog.h"
-#include "preDefinedMBDDialog.h"
-#include "newDialog.h"
-//#include "polygonDialog.h"
-#include "massDialog.h"
-//#include "ccDialog.h"
-#include "hmcmDialog.h"
 #include "objProperty.h"
 #include "xDynamicsSolver.h"
-#include "msgBox.h"
+#include "messageBox.h"
 #include "database.h"
-//#include "solveProcess.h"
 #include <QThread>
 #include <QDebug>
 #include <QtWidgets>
@@ -227,6 +217,7 @@ void xdynamics::createAnimationOperations()
 	HSlider->setFixedWidth(100);
 	connect(HSlider, SIGNAL(valueChanged(int)), this, SLOT(ani_scrollbar()));
 	connect(gl, SIGNAL(mySignal()), SLOT(mySlot()));
+	connect(gl, SIGNAL(propertySignal(QString, vobject::viewGeometryObjectType)), this, SLOT(propertySlot(QString, vobject::viewGeometryObjectType)));
 	myAnimationBar->addWidget(HSlider);
 
 	LEframe = new QLineEdit(this);
@@ -278,6 +269,8 @@ void xdynamics::newproj()
 			gravity_direction dg = nd.dir_g;
 			model::setGravity(DEFAULT_GRAVITY, dg);
 			model::unit = nd.unit;
+			mg->CreateModel(model::name, modelManager::DEM, true);
+		//	mg->CreateModel(model::name, modelManager::MBD, true);
 		}		
 	}
 	else
@@ -524,7 +517,7 @@ void xdynamics::ChangeParticleFromFile()
 // 	if (file.isEmpty())
 // 		return;
 // 	if (gl->change(file, CHANGE_PARTICLE_POSITION, BIN)){
-// 		md->particleSystem()->changeParticlesFromVP(gl->vParticles()->getPosition());
+// 		md->particleSystem()->changeParticlesFromVP(gl->vParticles()->Position());
 // 	}
 }
 
@@ -615,7 +608,7 @@ void xdynamics::SHAPE_Import()
 				mg->CreateModel(model::name, modelManager::OBJECTS, true);
 			polygonObject* po =
 				mg->GeometryObject()->makePolygonObject
-				(_nm, BOUNDAR_WALL, id.file_path, ist, vp->NumTriangles(), vp->VertexList(), vp->IndexList()
+				(_nm, BOUNDAR_WALL, id.file_path, ist, vp->InitialPosition(), vp->NumTriangles(), vp->VertexList(), vp->IndexList()
 				,(material_type)id.type, id.youngs, id.poisson, id.density, id.shear);
 			cmd->printLine();
 			cmd->write(CMD_INFO, mg->GeometryObject()->Logs()[po->Name()]);
@@ -694,11 +687,8 @@ void xdynamics::makeParticle()
 	if (ret)
 	{
 		VEC4D* pos;
-		if (!mg->DEMModel(model::name))
-		{
-			mg->CreateModel(model::name, modelManager::DEM, true);
+		if (!mg->DEMModel()->ParticleManager())
 			mg->CreateModel(model::name, modelManager::PARTICLE_MANAGER, true);
-		}
 		particleManager *pm = mg->DEMModel()->ParticleManager();
 		switch (pd.method)
 		{
@@ -727,6 +717,27 @@ void xdynamics::makeParticle()
 
 void xdynamics::makeMass()
 {
+	bodyInfoDialog bid;
+	QString sname = gl->selectedObjectName();
+	if (sname == "")
+	{
+		messageBox::run("No selected geometry.");
+		return;
+	}
+	pointMass* pm = bid.setBodyInfomation(mg->GeometryObject()->Object(gl->selectedObjectName()));
+	int ret = bid.exec();
+	if (ret)
+	{
+		if (!mg->MBDModel())
+			mg->CreateModel(model::name, modelManager::MBD, true);
+		pm->setPosition(VEC3D(bid.x, bid.y, bid.z));
+		pm->setDiagonalInertia(bid.ixx, bid.iyy, bid.izz);
+		pm->setSymetryInertia(bid.ixy, bid.iyz, bid.izx);
+		cmaterialType cmt = getMaterialConstant(bid.mt);
+		pm->setMaterial((material_type)bid.mt, cmt.youngs, cmt.density, cmt.poisson);
+		gl->Objects()[pm->Name()]->setInitialPosition(pm->Position());
+		mg->MBDModel()->pointMasses()[pm->Name()] = pm;
+	}
 // 	massDialog msd;
 // 	mass* ms = msd.callDialog(md);
 // 	if (ms)
@@ -736,16 +747,23 @@ void xdynamics::makeMass()
 // 		else
 // 			ms->setGeometryObject(gl->getVObjectFromName(ms->name()));
 // 	}
-// 		//ms->setgl->getVObjectFromName(ms->name());
-// 		//gl->makeMassCoordinate(ms->name());
+		//ms->setgl->getVObjectFromName(ms->name());
+		//gl->makeMassCoordinate(ms->name());
 }
 
 void xdynamics::makeContactPair()
 {
 	contactPairDialog cpd;
 	QStringList list;
+	if (!mg->DEMModel())
+	{
+		messageBox::run("No DEM model");
+		return;
+	}
+		
 	if (mg->DEMModel()->ParticleManager())
 		list.push_back("particles");
+		
 	list.append(mg->GeometryObject()->Objects().keys());
 	cpd.setObjectLists(list);
 	int ret = cpd.exec();
@@ -836,6 +854,44 @@ void xdynamics::recieveProgress(int pt, QString ch, QString info)
 	{
 		cmd->write(CMD_INFO, ch);
 	}
+}
+
+void xdynamics::propertySlot(QString nm, vobject::viewGeometryObjectType vot)
+{
+	if (!mg->MBDModel())
+	{
+		messageBox::run("Multi-body dynamics model is not created.\nMulti-body dynamics model is automatically created by defining the point mass element.");
+		return;
+	}
+	pointMass* pm = NULL;
+	bodyInfoDialog bid;
+	int ret = 0;
+	switch (vot)
+	{
+	case vobject::GEOMETRY_OBJECT:
+		pm = mg->MBDModel()->PointMass(nm);
+		if (!pm)
+		{
+			messageBox::run(nm + " is not defined as the point mass.");
+			return;
+		}
+		pm = bid.setBodyInfomation(pm);
+		ret = bid.exec();
+		if (ret)
+		{
+			pm->setPosition(VEC3D(bid.x, bid.y, bid.z));
+			pm->setDiagonalInertia(bid.ixx, bid.iyy, bid.izz);
+			pm->setSymetryInertia(bid.ixy, bid.iyz, bid.izx);
+			cmaterialType cmt = getMaterialConstant(bid.mt);
+			pm->setMaterial((material_type)bid.mt, cmt.youngs, cmt.density, cmt.poisson);
+			gl->Objects()[pm->Name()]->setInitialPosition(pm->Position());
+		}
+		/*mass*/
+		break;
+	case vobject::CONSTRAINT_OBJECT:
+		break;
+	}
+		
 }
 
 void xdynamics::deleteFileByEXT(QString ext)

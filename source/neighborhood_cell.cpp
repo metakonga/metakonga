@@ -74,14 +74,7 @@ void neighborhood_cell::detection(double *pos, unsigned int np)
 	if (simulation::isGpu())
 	{
 		cu_calculateHashAndIndex(d_cell_id, d_body_id, pos, np);
-		//std::cout << "step 2" << std::endl;
-
-// 		for (unsigned int i = 0; i < md->polyObjects().size(); i++){
-// 			cu_calculateHashAndIndexForPolygonSphere(d_cell_id, d_body_id, np, md->polyObjects().at(i)->numIndex(), md->polyObjects().at(i)->deviceSphereSet());
-// 		}
-		//std::cout << "step 3" << std::endl;
 		cu_reorderDataAndFindCellStart(d_cell_id, d_body_id, d_cell_start, d_cell_end, d_sorted_id, np,/* md->numPolygonSphere(),*/ ng);
-		//std::cout << "step 4" << std::endl
 	}
 	else
 		_detection((VEC4D_PTR)pos, np);

@@ -16,7 +16,8 @@ public:
 		PARTICLE_PARTICLE = 26, 
 		PARTICLE_CUBE = 15,
 		PARTICLE_PANE = 16,
-	    PARTICLE_POLYGON_SHAPE = 32};
+	    PARTICLE_POLYGON_SHAPE = 32,
+		PLANE_POLYGON_SHAPE = 22};
 	typedef struct { double kn, vn, ks, vs; }contactParameters;
 
 	contact(const contact* c);
@@ -47,13 +48,14 @@ public:
 	/*virtual bool collision(double dt) = 0;*/
 	virtual void collision(
 		double r, double m, VEC3D& pos, VEC3D& vel, VEC3D& omega, VEC3D& fn, VEC3D& ft);
-// 		double *domega, double *dmass, 
-// 		double *dforce, double *dmoment, 
-// 		unsigned int *sorted_id, 
-// 		unsigned int *cell_start, 
-// 		unsigned int *cell_end,
-// 		unsigned int np
-// 		);
+	virtual void cuda_collision(
+		double *pos, double *vel,
+		double *omega, double *mass,
+		double *force, double *moment,
+		unsigned int *sorted_id,
+		unsigned int *cell_start,
+		unsigned int *cell_end,
+		unsigned int np);
 	virtual void cudaMemoryAlloc();
 	static unsigned int count;
 

@@ -57,11 +57,12 @@ GLWidget::GLWidget(int argc, char** argv, QWidget *parent)
 	: QGLWidget(parent)
 	, vp(NULL)
 	, ground_marker(NULL)
+	, selectedObject(NULL)
 	, zRotationFlag(false)
 	//, Doc(_Doc)
 {
 	//eye[0] = 0; eye[1] = 0; eye[2] = 2;
-
+	
 	ogl = this;
 	gridSize = 0.1f;
 	viewOption = 0;
@@ -106,19 +107,6 @@ GLWidget::GLWidget(int argc, char** argv, QWidget *parent)
 	setFocusPolicy(Qt::StrongFocus);
 	memset(minView, 0, sizeof(float) * 3);
 	memset(maxView, 0, sizeof(float) * 3);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	// 	QPen penBorder;
-	// 	penBorder.setColor(QColor(0, 0, 0));
-	// 	penBorder.setWidth(1);
-	// 	m_rectHovered = new QGraphicsRectItem();
-	// 	m_rectHovered->setBrush(QBrush(Qt::yellow));
-	// 	m_coordHoverX = new QGraphicsSimpleTextItem(m_rectHovered);
-	// 	m_coordHoverY = new QGraphicsSimpleTextItem(m_rectHovered);
-	// 	penBorder.setColor(QColor(0, 0, 0));
-	// 	penBorder.setWidth(1);
-	// 	m_coordHoverX->setPen(penBorder);
-	// 	m_coordHoverY->setPen(penBorder);
 }
 
 GLWidget::~GLWidget()
@@ -176,7 +164,8 @@ void GLWidget::ShowContextMenu(const QPoint& pos)
 	QPoint globalPos = this->mapToGlobal(pos);
 	QMenu myMenu;
 	QList<QMenu*> menus;
-	vobject* vobj = NULL;
+	//selectedObject = NULL;
+	//vobject* vobj = NULL;
 	if (selectedIndice.size())
 	{
 		QString name;
@@ -185,7 +174,7 @@ void GLWidget::ShowContextMenu(const QPoint& pos)
 
 			unsigned int id = selectedIndice.at(i);
 			//if (id < 1000){
-			vobj = static_cast<vobject*>(v_wobjs[id]);
+			vobject* vobj = static_cast<vobject*>(v_wobjs[id]);
 			name = vobj->name();
 			//}
 			// 			else{
@@ -206,22 +195,22 @@ void GLWidget::ShowContextMenu(const QPoint& pos)
 
 	QAction *selectedItem = myMenu.exec(globalPos);
 
-	if (selectedItem && vobj){
+	if (selectedItem){
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
 		QString txt = selectedItem->text();
 		if (txt == "Wireframe"){
-			vobj->setDrawingMode(GL_LINE);
+			selectedObject->setDrawingMode(GL_LINE);
 		}
 		else if (txt == "Solid"){
-			vobj->setDrawingMode(GL_FILL);
+			selectedObject->setDrawingMode(GL_FILL);
 		}
 		else if (txt == "Shade"){
 			glEnable(GL_BLEND);
 			glDisable(GL_DEPTH_TEST);
 			glDepthFunc(GL_LEQUAL);
-			vobj->setDrawingMode(GL_FILL);
+			selectedObject->setDrawingMode(GL_FILL);
 		}
 		else{
 			QString pmenuTitle = ((QMenu*)selectedItem->parentWidget())->title();
@@ -230,7 +219,7 @@ void GLWidget::ShowContextMenu(const QPoint& pos)
 				modelManager::MM()->ActionDelete(pmenuTitle);
 			}
 			else if (txt == "Property"){
-
+				emit propertySignal(pmenuTitle, selectedObject->ViewGeometryObjectType());
 			}
 		}
 	}
@@ -297,10 +286,10 @@ void GLWidget::initializeGL()
 
 	ref_marker.setName("ref_marker");
 	ref_marker.setMarkerScaleFlag(false);
-	ref_marker.define(VEC3F(-0.85f, -0.85f, 0.0));
+	ref_marker.define(VEC3D(-0.85, -0.85, 0.0));
 
 	ground_marker = new vmarker(QString("ground_marker"), false);
-	ground_marker->define(VEC3F(0.0f, 0.0f, 0.0f));
+	ground_marker->define(VEC3D(0.0, 0.0, 0.0));
 	v_wobjs[ground_marker->ID()] = (void*)ground_marker;
 
 	protype = PERSPECTIVE_PROJECTION;
@@ -321,7 +310,7 @@ void GLWidget::drawReferenceCoordinate()
 	renderText(xp.x, xp.y, xp.z, QString("X"), QColor(255, 0, 0));
 	renderText(yp.x, yp.y, yp.z, QString("Y"), QColor(0, 255, 0));
 	renderText(zp.x, zp.y, zp.z, QString("Z"), QColor(0, 0, 255));
-	ref_marker.setCurrentAngle(VEC3F(xRot, yRot, zRot));
+	ref_marker.setCurrentAngle(VEC3D(xRot, yRot, zRot));
 	ref_marker.draw(GL_RENDER);
 }
 
@@ -342,6 +331,11 @@ vobject* GLWidget::getVObjectFromName(QString name)
 vpolygon* GLWidget::getVPolyObjectFromName(QString name)
 {
 	return NULL;
+}
+
+QString GLWidget::selectedObjectName()
+{
+	return selectedObject ? selectedObject->name() : "";
 }
 
 GLuint GLWidget::makePolygonObject(double* points, double* normals, int* indice, int size)
@@ -373,7 +367,7 @@ void GLWidget::drawObject(GLenum eMode)
 	glRotated(xRot / 16.0, 1.0, 0.0, 0.0);
 	glRotated(yRot / 16.0, 0.0, 1.0, 0.0);
 	glRotated(zRot / 16.0, 0.0, 0.0, 1.0);
-	qDebug() << xRot << " " << yRot << " " << zRot;
+	//qDebug() << xRot << " " << yRot << " " << zRot;
 	drawGroundCoordinate(eMode);
 	QMapIterator<QString, vobject*> obj(v_objs);
 	glEnable(GL_BLEND);
@@ -390,6 +384,7 @@ void GLWidget::processHits(unsigned int uHits, unsigned int *pBuffer)
 	unsigned int i, j;
 	unsigned int uiName, *ptr;
 	ptr = pBuffer;
+	selectedObject = NULL;
 	foreach(int v, selectedIndice)
 		static_cast<vobject*>(v_wobjs[v])->setSelected(false);
 	if (selectedIndice.size())
@@ -401,6 +396,7 @@ void GLWidget::processHits(unsigned int uHits, unsigned int *pBuffer)
 		unsigned int id = *ptr;
 		vobject* obj = static_cast<vobject*>(v_wobjs[id]);
 		obj->setSelected(true);
+		selectedObject = obj;
 #ifdef _DEBUG
 		qDebug() << obj->name() << " is selected.";
 #endif
@@ -856,7 +852,7 @@ void GLWidget::makeParticle(double* pos, unsigned int n)
 void GLWidget::makeMarker(QString n, VEC3D p, bool mcf)
 {
 	vmarker* vm = new vmarker(n, mcf);
-	vm->define(VEC3F((float)p.x, (float)p.y, (float)p.z));
+	vm->define(p);
 	v_objs[n] = vm;
 	v_wobjs[vm->ID()] = (void*)vm;
 
