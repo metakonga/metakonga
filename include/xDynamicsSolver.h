@@ -8,6 +8,7 @@
 #include <QThread>
 
 class modelManager;
+class startingModel;
 
 class xDynamicsSolver : public QThread
 {
@@ -17,7 +18,7 @@ public:
 	xDynamicsSolver(modelManager* _mg);
 	~xDynamicsSolver();
 
-	bool initialize();
+	bool initialize(startingModel* stm = NULL);
 	unsigned int totalStep() { return nstep; }
 	unsigned int totalPart() { return npart; }
 
@@ -28,6 +29,7 @@ private:
 	void run() Q_DECL_OVERRIDE;
 
 	bool savePart(double ct, unsigned int pt);
+	bool saveFinalResult(double ct);
 	
 	bool isStop;
 	unsigned int nstep;
@@ -40,6 +42,7 @@ private:
 signals:
 	void finishedThread();
 	void sendProgress(int, QString, QString info = "");
+	void excuteMessageBox();
 };
 
 #endif

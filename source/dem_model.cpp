@@ -1,4 +1,5 @@
 #include "dem_model.h"
+#include "startingModel.h"
 #include <direct.h>
 #include <QString>
 #include <QPlainTextEdit>

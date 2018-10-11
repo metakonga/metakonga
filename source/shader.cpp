@@ -73,6 +73,7 @@ void main()
 const char *polygonFragmentShader = STRINGIFY(
 varying vec3 N;
 varying vec3 v;
+uniform vec4 ucolor;
 void main()
 {
 	vec3 L = normalize(gl_LightSource[0].position.xyz - v);
@@ -91,7 +92,7 @@ void main()
 
 	// write Total Color:  
 //	gl_FragColor = gl_FrontLightModelProduct.sceneColor + Iamb + Idiff + Ispec;
-	vec4 color = gl_Color + Iamb + Idiff;/* + Ispec*/;
+	vec4 color = ucolor + Iamb + Idiff;/* + Ispec*/;
 	gl_FragColor = vec4(color.xyz, 1.0);// gl_Color + Iamb + Idiff + Ispec;
 }
 );

@@ -1,6 +1,21 @@
 #include "contact.h"
+#include <QDebug>
 
 unsigned int contact::count = 0;
+
+double contact::cohesionForce(double coh_r, double coh_e, double Fn)
+{
+	double cf = 0.0;
+	if (cohesion){
+// 		double req = (ri * rj / (ri + rj));
+// 		double Eeq_inv = ((1.0 - pri * pri) / Ei) + ((1.0 - prj * prj) / Ej);
+		double rcp = (3.0 * coh_r * (-Fn)) / (4.0 * (1.0 / coh_e));
+		double rc = pow(rcp, 1.0 / 3.0);
+		double Ac = M_PI * rc * rc;
+		cf = cohesion * Ac;
+	}
+	return cf;
+}
 
 void contact::DHSModel
 (
@@ -10,9 +25,10 @@ void contact::DHSModel
 {
 	VEC3D Fn, Ft;
 	double fsn = (-c.kn * pow(cdist, 1.5));
-	//	double fca = cohesionForce(p.w, 0.0, ps->youngs(), 0.0, ps->poisson(), 0.0, fsn);
+	double fca = cohesionForce(c.coh_r, c.coh_e, fsn);
 	double fsd = c.vn * dv.dot(unit);
-	Fn = (fsn/* + fca*/ + c.vn * dv.dot(unit)) * unit;
+	qDebug() << "Cohesion force : " << fca;
+	Fn = (fsn + fca + fsd) * unit;
 	//Fn = (fsn + fca + fsd) * unit;// (-c.kn * pow(collid_dist, 1.5f) + c.vn * dv.dot(unit)) * unit;;// fn * unit;
 	VEC3D e = dv - dv.dot(unit) * unit;
 	double mag_e = e.length();
@@ -34,10 +50,14 @@ contact::contact(QString nm, contactForce_type t)
 	, restitution(0)
 	, stiffnessRatio(0)
 	, friction(0)
+	, ignore_time(0)
 	, f_type(t)
 	, dcp(NULL)
 	, mpp(NULL)
 	, type(NO_CONTACT_PAIR)
+	, iobj(NULL)
+	, jobj(NULL)
+	, is_enabled(true)
 {
 	count++;
 	mpp = { 0, };
@@ -47,6 +67,10 @@ contact::contact(const contact* c)
 	: name(c->Name())
 	, dcp(NULL)
 	, mpp(NULL)
+	, iobj(NULL)
+	, jobj(NULL)
+	, is_enabled(true)
+	, ignore_time(0)
 	, restitution(c->Restitution())
 	, friction(c->Friction())
 	, stiffnessRatio(c->StiffnessRatio())
@@ -69,11 +93,12 @@ contact::~contact()
 	if (mpp) delete[] mpp; mpp = NULL;
 }
 
-void contact::setContactParameters(double r, double rt, double f)
+void contact::setContactParameters(double r, double rt, double f, double c)
 {
 	restitution = r;
 	stiffnessRatio = rt;
 	friction = f;
+	cohesion = c;
 }
 
 void contact::cudaMemoryAlloc()
@@ -81,7 +106,7 @@ void contact::cudaMemoryAlloc()
 	device_contact_property hcp = device_contact_property
 	{
 		mpp->Ei, mpp->Ej, mpp->pri, mpp->prj, mpp->Gi, mpp->Gj,
-		restitution, friction, 0.0, 0.0, stiffnessRatio
+		restitution, friction, 0.0, cohesion, stiffnessRatio
 	};
 	checkCudaErrors(cudaMalloc((void**)&dcp, sizeof(device_contact_property)));
 	checkCudaErrors(cudaMemcpy(dcp, &hcp, sizeof(device_contact_property), cudaMemcpyHostToDevice));
@@ -101,6 +126,8 @@ contact::contactParameters contact::getContactParameters
  	double Meq = jm ? (im * jm) / (im + jm) : im;
  	double Req = jr ? (ir * jr) / (ir + jr) : ir;
  	double Eeq = (iE * jE) / (iE*(1 - jp*jp) + jE*(1 - ip * ip));
+	//double req = (ri * rj / (ri + rj));
+	cp.coh_e = ((1.0 - ip * ip) / iE) + ((1.0 - jp * jp) / jE);
  	double lne = log(restitution);
 	double beta = 0.0;
 // 	//double tk = (16.f / 15.f)*sqrt(er) * eym * pow((15.f * em * 1.0f) / (16.f * sqrt(er) * eym), 0.2f);
@@ -122,6 +149,8 @@ contact::contactParameters contact::getContactParameters
 	// 	c.ks = c.kn * sratio;
 	// 	c.vs = c.vn * sratio;
 	// 	c.mu = fric;
+	cp.coh_r = Req;
+	//cp.coh_e = Eeq_inv;
 	return cp;
 }
 

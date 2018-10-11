@@ -15,7 +15,7 @@ public:
 	void clear();
 	//virtual void detection(VEC4D_PTR pos) = 0;
 	void initialize(unsigned int np);
-	virtual void detection(double *pos, unsigned int np) = 0;
+	virtual void detection(double *pos = NULL, double* spos = NULL, unsigned int np = 0, unsigned int snp = 0) = 0;
 
 	void setWorldOrigin(VEC3D _wo) { wo = _wo; }
 	void setCellSize(float _cs) { cs = _cs; }

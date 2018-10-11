@@ -5,7 +5,7 @@
 #include <QDockWidget>
 #include <QPlainTextEdit>
 
-enum tWriting{ CMD_INFO = 0, CMD_DEBUG, CMD_ERROR };
+enum tWriting{ CMD_INFO = 0, CMD_DEBUG, CMD_ERROR, CMD_QUESTION };
 
 class cmdWindow : public QDockWidget
 {

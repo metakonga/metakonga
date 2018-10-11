@@ -5,12 +5,13 @@
 #include <QTextStream>
 #include "contact.h"
 #include "object.h"
+#include "contact_particles_particles.h"
 
 class geometryObjects;
 class particleManager;
 class polygonObject;
 class contact_particles_polygonObject;
-class contact_particles_particles;
+/*class contact_particles_particles;*/
 class contact_particles_polygonObjects;
 
 class contactManager
@@ -23,15 +24,17 @@ public:
 	void Open(QTextStream& qts, particleManager* pm, geometryObjects* objs);
 	void CreateContactPair(
 		QString n, int method, object* fo, object* so, 
-		double rest, double ratio, double fric);
+		double rest, double ratio, double fric, double coh);
 // 	contact* CreateParticlePolygonsPairs(
 // 		QString n, int method, object* po, QMap<int, polygonObject*>& pobjs,
 // 		double rest, double ratio, double fric);
 	unsigned int setupParticlesPolygonObjectsContact();
+	double* SphereData();
 	void insertContact(contact* c);
 	contact* Contact(QString n);// { return cots[n]; }
 	QMap<QString, QString>& Logs() { return logs; }
 	QMap<QString, contact*>& Contacts() { return cots; }
+	contact_particles_particles* ContactParticles() { return cpp; }
 	contact_particles_polygonObjects* ContactParticlesPolygonObjects() { return cppoly; }
 	bool runCollision(
 		double *pos, double *vel,
@@ -41,6 +44,8 @@ public:
 		unsigned int *cell_start,
 		unsigned int *cell_end,
 		unsigned int np);
+
+	void update();
 
 private:
 	void deviceCollision(

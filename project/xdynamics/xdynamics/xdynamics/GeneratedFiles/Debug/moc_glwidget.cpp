@@ -22,7 +22,7 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_GLWidget_t {
     QByteArrayData data[15];
-    char stringdata0[197];
+    char stringdata0[185];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -39,19 +39,18 @@ QT_MOC_LITERAL(4, 33, 16), // "yRotationChanged"
 QT_MOC_LITERAL(5, 50, 16), // "zRotationChanged"
 QT_MOC_LITERAL(6, 67, 8), // "mySignal"
 QT_MOC_LITERAL(7, 76, 14), // "propertySignal"
-QT_MOC_LITERAL(8, 91, 31), // "vobject::viewGeometryObjectType"
-QT_MOC_LITERAL(9, 123, 12), // "setXRotation"
-QT_MOC_LITERAL(10, 136, 12), // "setYRotation"
-QT_MOC_LITERAL(11, 149, 12), // "setZRotation"
-QT_MOC_LITERAL(12, 162, 15), // "ShowContextMenu"
-QT_MOC_LITERAL(13, 178, 3), // "pos"
-QT_MOC_LITERAL(14, 182, 14) // "setSketchSpace"
+QT_MOC_LITERAL(8, 91, 19), // "context_object_type"
+QT_MOC_LITERAL(9, 111, 12), // "setXRotation"
+QT_MOC_LITERAL(10, 124, 12), // "setYRotation"
+QT_MOC_LITERAL(11, 137, 12), // "setZRotation"
+QT_MOC_LITERAL(12, 150, 15), // "ShowContextMenu"
+QT_MOC_LITERAL(13, 166, 3), // "pos"
+QT_MOC_LITERAL(14, 170, 14) // "setSketchSpace"
 
     },
     "GLWidget\0xRotationChanged\0\0angle\0"
     "yRotationChanged\0zRotationChanged\0"
-    "mySignal\0propertySignal\0"
-    "vobject::viewGeometryObjectType\0"
+    "mySignal\0propertySignal\0context_object_type\0"
     "setXRotation\0setYRotation\0setZRotation\0"
     "ShowContextMenu\0pos\0setSketchSpace"
 };
@@ -111,7 +110,7 @@ void GLWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
         case 1: _t->yRotationChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 2: _t->zRotationChanged((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 3: _t->mySignal(); break;
-        case 4: _t->propertySignal((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< vobject::viewGeometryObjectType(*)>(_a[2]))); break;
+        case 4: _t->propertySignal((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< context_object_type(*)>(_a[2]))); break;
         case 5: _t->setXRotation((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 6: _t->setYRotation((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 7: _t->setZRotation((*reinterpret_cast< int(*)>(_a[1]))); break;
@@ -150,7 +149,7 @@ void GLWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, vo
             }
         }
         {
-            typedef void (GLWidget::*_t)(QString , vobject::viewGeometryObjectType );
+            typedef void (GLWidget::*_t)(QString , context_object_type );
             if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&GLWidget::propertySignal)) {
                 *result = 4;
                 return;
@@ -223,7 +222,7 @@ void GLWidget::mySignal()
 }
 
 // SIGNAL 4
-void GLWidget::propertySignal(QString _t1, vobject::viewGeometryObjectType _t2)
+void GLWidget::propertySignal(QString _t1, context_object_type _t2)
 {
     void *_a[] = { nullptr, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
     QMetaObject::activate(this, &staticMetaObject, 4, _a);

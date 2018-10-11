@@ -8,6 +8,8 @@ contact_particles_cube::contact_particles_cube
 	: contact(_name, t)
 	, cu(NULL)
 {
+	contact::iobj = o1;
+	contact::jobj = o2;
 	cu = dynamic_cast<cube*>((o1->ObjectType() == CUBE ? o1 : o2));
 	p = o1->ObjectType() != CUBE ? o1 : o2;
 }

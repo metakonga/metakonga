@@ -1,6 +1,7 @@
 #ifndef DATABASE_H
 #define DATABASE_H
 
+#include "types.h"
 #include <QMap>
 #include <QDockWidget>
 #include <QTreeWidget>
@@ -25,6 +26,9 @@ public:
 
 	private slots:
 	void contextMenu(const QPoint&);
+
+signals:
+	void propertySignal(QString, context_object_type);
 // 	void actProperty();
 // 	void actDelete();
 

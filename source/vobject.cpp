@@ -6,7 +6,9 @@ vobject::vobject()
 	: outPos(NULL)
 	, outRot(NULL)
 	, vot(VIEW_OBJECT)
-	, drawingMode(GL_FILL)
+	, drawingMode(GL_LINE)
+	, type(V_OBJECT)
+	, display(false)
 	, isSelected(false)
 {
 	count++;
@@ -14,12 +16,14 @@ vobject::vobject()
 	clr = colors[count];
 }
 
-vobject::vobject(QString& _name)
+vobject::vobject(Type tp, QString _name)
 	: nm(_name)
 	, outPos(NULL)
 	, outRot(NULL)
 	, vot(VIEW_OBJECT)
-	, drawingMode(GL_FILL)
+	, drawingMode(GL_LINE)
+	, type(tp)
+	, display(false)
 	, isSelected(false)
 {
 	count++;
@@ -62,11 +66,11 @@ void vobject::copyCoordinate(GLuint _coord)
 	coord = _coord;
 }
 
-void vobject::animationFrame()
+void vobject::animationFrame(VEC3D& p, EPD& ep)
 {
-	unsigned int f = vcontroller::getFrame();
-	glTranslated(outPos[f].x + pos0.x, outPos[f].y + pos0.y, outPos[f].z + pos0.z);
-	VEC3D e = ep2e(outRot[f]);
+	//unsigned int f = vcontroller::getFrame();
+	glTranslated(p.x, p.y, p.z);
+	VEC3D e = ep2e(ep);
 	double xi = (e.x * 180) / M_PI;
 	double th = (e.y * 180) / M_PI;
 	double ap = (e.z * 180) / M_PI;

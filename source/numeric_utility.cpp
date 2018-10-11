@@ -31,3 +31,38 @@ VEC3D numeric::utility::calculate_center_of_triangle(VEC3D& P, VEC3D& Q, VEC3D& 
 	return M1 + t * D1;
 }
 
+double numeric::utility::angle_coefficient(double d, double th)
+{
+	unsigned int n = 0;
+	unsigned int b = 0;
+	unsigned int e = 1;
+	unsigned int c = 0;
+	double v = 0.0;
+	if (th == 0.0)
+		return th;
+	while (1)
+	{
+		double _b = b * M_PI;
+		double _e = e * M_PI;
+		if (d > _b && d < _e)
+		{
+			if (!c)
+				return th;
+			n = 2 * (e / 2);
+			unsigned int m = c % 2;
+			if (m)
+				v = n * M_PI - th;
+			else
+				v = n * M_PI + th;
+			return v;
+		}
+		else
+		{
+			b++;
+			e++;
+			c++;
+		}
+	}
+	return 0.0;
+}
+

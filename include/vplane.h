@@ -17,7 +17,7 @@ public:
 
 	bool define();
 	bool makePlaneGeometry(QTextStream& in);
-	bool makePlaneGeometry(float l1, VEC3F& xw, VEC3F& pa, VEC3F& p2, VEC3F& u1);
+	bool makePlaneGeometry(VEC3D& pa, VEC3D& pb, VEC3D& pc, VEC3D& pd);
 
 private:
 	unsigned int glHiList;

@@ -6,6 +6,8 @@
 #include "types.h"
 #include "vobject.h"
 
+#include <QList>
+
 class QTextStream;
 
 class vpolygon : public vobject// , public vglew
@@ -22,6 +24,8 @@ public:
 	bool makePolygonGeometry(VEC3F& P, VEC3F& Q, VEC3F& R);
 	void setResultData(unsigned int nout);
 	void insertResultData(unsigned int i, VEC3D& p, EPD& r);
+	void splitTriangle(double to);
+	QList<triangle_info> _splitTriangle(triangle_info& ti, double to);
 
 	//unsigned int ID() { return id; }
 //	QString name() { return nm; }

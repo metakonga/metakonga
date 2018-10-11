@@ -24,7 +24,7 @@ void neighborhood_cell::reorderDataAndFindCellStart(unsigned int id, unsigned in
 	}
 }
 
-void neighborhood_cell::_detection(VEC4D_PTR pos, unsigned int np)
+void neighborhood_cell::_detection(VEC4D_PTR pos, VEC4D_PTR spos, unsigned int np, unsigned int snp)
 {
 	//VEC4D_PTR pos = md->particleSystem()->position();
 	VEC4D *psph = NULL;
@@ -39,6 +39,14 @@ void neighborhood_cell::_detection(VEC4D_PTR pos, unsigned int np)
 		cell_id[i] = getHash(cell3d);
 		body_id[i] = i;
 	}
+	if (spos)
+	{
+		for (unsigned int i = 0; i < snp; i++){
+			cell3d = getCellNumber(spos[i].x, spos[i].y, spos[i].z);
+			cell_id[np + i] = getHash(cell3d);
+			body_id[np + i] = np + i;
+		}
+	}
 // 	unsigned int sid = md->numParticle();
 // 	QList<polygonObject*> polys = md->polyObjects();
 // 	for (unsigned int po = 0; po < md->numPoly(); po++){
@@ -51,12 +59,12 @@ void neighborhood_cell::_detection(VEC4D_PTR pos, unsigned int np)
 // 		sid += polys.at(po)->numIndex();
 // 	}
 
-	thrust::sort_by_key(cell_id, cell_id + np, body_id);
+	thrust::sort_by_key(cell_id, cell_id + np + snp, body_id);
 	memset(cell_start, 0xffffffff, sizeof(unsigned int) * ng);
 	memset(cell_end, 0, sizeof(unsigned int)*ng);
 	unsigned int begin = 0, end = 0, id = 0;
 	bool ispass;
-	while (end++ != np/*md->numParticle()*/){
+	while (end++ != np + snp/*md->numParticle()*/){
 		ispass = true;
 		id = cell_id[begin];
 		if (id != cell_id[end]){
@@ -69,15 +77,17 @@ void neighborhood_cell::_detection(VEC4D_PTR pos, unsigned int np)
 	}
 }
 
-void neighborhood_cell::detection(double *pos, unsigned int np)
+void neighborhood_cell::detection(double *pos, double* spos, unsigned int np, unsigned int snp)
 {
 	if (simulation::isGpu())
 	{
 		cu_calculateHashAndIndex(d_cell_id, d_body_id, pos, np);
-		cu_reorderDataAndFindCellStart(d_cell_id, d_body_id, d_cell_start, d_cell_end, d_sorted_id, np,/* md->numPolygonSphere(),*/ ng);
+		if(snp && spos)
+			cu_calculateHashAndIndexForPolygonSphere(d_cell_id, d_body_id, np, snp, spos);
+		cu_reorderDataAndFindCellStart(d_cell_id, d_body_id, d_cell_start, d_cell_end, d_sorted_id, np + snp,/* md->numPolygonSphere(),*/ ng);
 	}
 	else
-		_detection((VEC4D_PTR)pos, np);
+		_detection((VEC4D_PTR)pos, (VEC4D_PTR)spos, np, snp);
 }
 
 void neighborhood_cell::reorderElements(bool isCpu)

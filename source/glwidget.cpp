@@ -285,11 +285,13 @@ void GLWidget::initializeGL()
 	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, material_Se);
 
 	ref_marker.setName("ref_marker");
+	ref_marker.setAttchedMass(false);
 	ref_marker.setMarkerScaleFlag(false);
 	ref_marker.define(VEC3D(-0.85, -0.85, 0.0));
 
 	ground_marker = new vmarker(QString("ground_marker"), false);
 	ground_marker->define(VEC3D(0.0, 0.0, 0.0));
+	ground_marker->setAttchedMass(false);
 	v_wobjs[ground_marker->ID()] = (void*)ground_marker;
 
 	protype = PERSPECTIVE_PROJECTION;
@@ -321,6 +323,34 @@ void GLWidget::drawGroundCoordinate(GLenum eMode)
 	renderText(0.0, 0.13, 0.0, QString("Y"), QColor(0, 255, 0));
 	renderText(0.0, 0.0, 0.13, QString("Z"), QColor(0, 0, 255));
 	ground_marker->draw(eMode);
+}
+
+void GLWidget::setStartingData(QMap<QString, v3epd_type> d)
+{
+	QMapIterator<QString, v3epd_type> it(d);
+	while (it.hasNext())
+	{
+		it.next();
+		QString s = it.key();
+		v3epd_type p = it.value();
+		vobject* vo = Object(s);
+		vobject* vm = Object(s + "_marker");
+		VEC3D ang = ep2e(p.ep);
+		double xi = (ang.x * 180) / M_PI;
+		double th = (ang.y * 180) / M_PI;
+		double ap = (ang.z * 180) / M_PI;
+		if (vo)
+		{
+			vo->setInitialPosition(p.v3);
+			vo->setInitialAngle(VEC3D(xi, th, ap));
+		}
+		if (vm)
+		{
+			vm->setInitialPosition(p.v3);
+			vm->setInitialAngle(VEC3D(xi, th, ap));
+		}
+	
+	}
 }
 
 vobject* GLWidget::getVObjectFromName(QString name)
@@ -375,6 +405,7 @@ void GLWidget::drawObject(GLenum eMode)
 	while (obj.hasNext()){
 		obj.next();
 		obj.value()->draw(eMode);
+		//qDebug() << obj.value()->name();
 	}
 	glDisable(GL_BLEND);
 }
@@ -496,7 +527,7 @@ void GLWidget::paintGL()
 	glMatrixMode(GL_PROJECTION);
 
 	glLoadIdentity();
-	glClearColor(0.0, 0.0, 0.0, 1.0);
+	glClearColor(1.0, 1.0, 1.0, 1.0);
 	gluOrtho2D(-1.0f, 1.0f, -1.0f, 1.0f);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -793,15 +824,24 @@ void GLWidget::ChangeDisplayOption(int oid)
 	viewOption = oid;
 }
 
+vobject* GLWidget::Object(QString nm)
+{
+	QStringList l = v_objs.keys();
+	QStringList::const_iterator it = qFind(l, nm);
+	if (it == l.end())
+		return NULL;
+	return v_objs[nm];
+}
+
 void GLWidget::makeCube(cube* c)
 {
 	if (!c)
 		return;
 	vcube *vc = new vcube(c->Name());
-	qDebug() << c->Name();
+	//qDebug() << c->Name();
 	vc->makeCubeGeometry(c->Name(), c->RollType(), c->MaterialType(), c->min_point().To<float>(), c->cube_size().To<float>());
 	v_objs[c->Name()] = vc;
-	qDebug() << vc;
+	//qDebug() << vc;
 	v_wobjs[vc->ID()] = (void*)vc;
 }
 
@@ -810,9 +850,10 @@ void GLWidget::makePlane(plane* p)
 	if (!p)
 		return;
 	vplane *vpp = new vplane(p->Name());
-	vpp->makePlaneGeometry((float)p->L1(), p->XW().To<float>(), p->PA().To<float>(), p->PB().To<float>(), p->U1().To<float>());
+	vpp->makePlaneGeometry(p->XW(), p->W2(), p->W3(), p->W4());
 	v_objs[p->Name()] = vpp;
 	v_wobjs[vpp->ID()] = (void*)vpp;
+	//qDebug() << p->Name() << " is made";
 }
 
 void GLWidget::makeCylinder(cylinder* cy)
@@ -849,15 +890,18 @@ void GLWidget::makeParticle(double* pos, unsigned int n)
 	}
 }
 
-void GLWidget::makeMarker(QString n, VEC3D p, bool mcf)
+vmarker* GLWidget::makeMarker(QString n, VEC3D p, bool mcf)
 {
-	vmarker* vm = new vmarker(n, mcf);
+	QString _name = n + "_marker";
+	vmarker* vm = new vmarker(_name, mcf);
+	vm->setAttachObject(n);
 	vm->define(p);
-	v_objs[n] = vm;
+	v_objs[_name] = vm;
 	v_wobjs[vm->ID()] = (void*)vm;
 
 	setMaxViewPosition(p.x, p.y, p.z);
 	setMinViewPosition(p.x, p.y, p.z);
+	return vm;
 }
 
 void GLWidget::openResults(QStringList& fl)

@@ -2,18 +2,20 @@
 #define VOBJECT_H
 
 // #ifndef QT_OPENGL_ES_2
- #include <gl/glew.h>
+ 
 // #include <gl/glu.h>
 // #endif
-
+#include <gl/glew.h>
 #include <QGLWidget>
 #include <QString>
 #include <QObject>
 #include <QMessageBox>
 #include <QFile>
-#include <map>
+#include <QDebug>
+#include <QMap>
 
 #include <QColor>
+
 #include "VController.h"
 #include "types.h"
 #include "algebraMath.h"
@@ -26,17 +28,17 @@ QColor("blue") };
 class vobject
 {
 public:
-	enum viewGeometryObjectType{ VIEW_OBJECT = 0, GEOMETRY_OBJECT, CONSTRAINT_OBJECT };
-
+	enum Type { V_OBJECT = 0, V_CUBE, V_CYLINDER, V_PLANE, V_POLYGON, V_MARKER };
 	vobject();
-	vobject(QString& _name);
+	vobject(Type tp, QString _name);
 	virtual ~vobject();
 
+	Type ViewObjectType() { return type; }
 	void setInitialPosition(VEC3D ip) { pos0 = ip; }
 	void setInitialAngle(VEC3D ia) { ang0 = ia; }
 	void setCurrentPosition(VEC3D cp) { cpos = cp; }
 	void setCurrentAngle(VEC3D ca) { cang = ca; }
-	void animationFrame();
+	void animationFrame(VEC3D& p, EPD& ep);
 	void setResultData(unsigned int n);
 	void insertResultData(unsigned int i, VEC3D& p, EPD& r);
 	VEC3D InitialPosition() { return pos0; }
@@ -49,13 +51,15 @@ public:
 	void copyCoordinate(GLuint _coord);
 	void setDrawingMode(GLenum dm) { drawingMode = dm; }
 	void setSelected(bool b) { isSelected = b; }
-	viewGeometryObjectType ViewGeometryObjectType() { return vot; }
+	context_object_type ViewGeometryObjectType() { return vot; }
 	virtual void draw(GLenum eMode) = 0;
 
 protected:
 	int id;
+	Type type;
 	bool isSelected;
-	viewGeometryObjectType vot;
+	geometry_type g_type;
+	context_object_type vot;
 	QString nm;			// object name
 	GLuint coord;
 	GLenum drawingMode;

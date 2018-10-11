@@ -6,7 +6,8 @@ contact_particles_particles::contact_particles_particles(
 	, obj1(o1)
 	, obj2(o2)
  {
- 	
+	 contact::iobj = o1;
+	 contact::jobj = o2;
  }
 
 contact_particles_particles::~contact_particles_particles()
@@ -118,6 +119,15 @@ void contact_particles_particles::cppCollision(
 // 		}
 // 	}
 // 	return true;
+}
+
+void contact_particles_particles::cuda_collision(
+	double *pos, double *vel, double *omega, 
+	double *mass, double *force, double *moment, 
+	unsigned int *sorted_id, unsigned int *cell_start, 
+	unsigned int *cell_end, unsigned int np)
+{
+	cu_calculate_p2p(1, pos, vel, omega, force, moment, mass, sorted_id, cell_start, cell_end, dcp, np);
 }
 
 // bool collision_particles_particles::collid(double dt)

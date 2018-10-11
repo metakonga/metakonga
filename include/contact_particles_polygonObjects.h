@@ -15,15 +15,20 @@ public:
 	~contact_particles_polygonObjects();
 
 	double MaxRadiusOfPolySphere() { return maxRadius; }
-	VEC4D* HostSphereData() { return hsphere; }
+	double* SphereData() { return dsphere; }
 	unsigned int define(QMap<QString, contact_particles_polygonObject*>& cppos);
 	bool cppolyCollision(
 		unsigned int idx, double r, double m,
 		VEC3D& p, VEC3D& v, VEC3D& o, VEC3D& F, VEC3D& M);
 	unsigned int NumContact() { return ncontact; }
 	void setNumContact(unsigned int c) { ncontact = c; }
-
+	void updatePolygonObjectData();
 	virtual void cudaMemoryAlloc();
+	virtual void cuda_collision(
+		double *pos, double *vel, double *omega, 
+		double *mass, double *force, double *moment, 
+		unsigned int *sorted_id, unsigned int *cell_start, unsigned int *cell_end, unsigned int np);
+	void setZeroCollisionForce();
 	
 private:
 	VEC3D particle_polygon_contact_detection(host_polygon_info& dpi, VEC3D& p, double r, polygonContactType& _pct);

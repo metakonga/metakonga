@@ -1,3 +1,4 @@
+#include "errors.h"
 #include "xdynamics.h"
 #include "dialogs.h"
 #include "Objects.h"
@@ -8,6 +9,7 @@
 #include "xDynamicsSolver.h"
 #include "messageBox.h"
 #include "database.h"
+#include "lineEditWidget.h"
 #include <QThread>
 #include <QDebug>
 #include <QtWidgets>
@@ -27,6 +29,8 @@ xdynamics::xdynamics(int argc, char** argv, QWidget *parent)
 	, ptObj(NULL)
 	, db(NULL)
 	, cmd(NULL)
+	, comMgr(NULL)
+	, st_model(NULL)
 {
 	animation_statement = false;
 	ui.setupUi(this);
@@ -47,6 +51,8 @@ xdynamics::~xdynamics()
 	if (db) delete db; db = NULL;
 	if (cmd) delete cmd; cmd = NULL;
 	if (solver) delete solver; solver = NULL;
+	if (comMgr) delete comMgr; comMgr = NULL;
+	if (st_model) delete st_model; st_model = NULL;
 }
 
 void xdynamics::setBaseAction()
@@ -217,7 +223,8 @@ void xdynamics::createAnimationOperations()
 	HSlider->setFixedWidth(100);
 	connect(HSlider, SIGNAL(valueChanged(int)), this, SLOT(ani_scrollbar()));
 	connect(gl, SIGNAL(mySignal()), SLOT(mySlot()));
-	connect(gl, SIGNAL(propertySignal(QString, vobject::viewGeometryObjectType)), this, SLOT(propertySlot(QString, vobject::viewGeometryObjectType)));
+	connect(gl, SIGNAL(propertySignal(QString, context_object_type)), this, SLOT(propertySlot(QString, context_object_type)));
+	connect(db, SIGNAL(propertySignal(QString, context_object_type)), this, SLOT(propertySlot(QString, context_object_type)));
 	myAnimationBar->addWidget(HSlider);
 
 	LEframe = new QLineEdit(this);
@@ -269,7 +276,7 @@ void xdynamics::newproj()
 			gravity_direction dg = nd.dir_g;
 			model::setGravity(DEFAULT_GRAVITY, dg);
 			model::unit = nd.unit;
-			mg->CreateModel(model::name, modelManager::DEM, true);
+			//mg->CreateModel(model::name, modelManager::DEM, true);
 		//	mg->CreateModel(model::name, modelManager::MBD, true);
 		}		
 	}
@@ -281,16 +288,88 @@ void xdynamics::newproj()
 		addDockWidget(Qt::RightDockWidgetArea, db);
 	}
 	cmd = new cmdWindow(this);
+	comm = new QDockWidget(this);
+	comm->setWindowTitle("Command Line");
+	//QGridLayout* layout_comm = new QGridLayout(comm);
+	QLineEdit *LE_Comm = new lineEditWidget;
+	comm->setWidget(LE_Comm);
+	connect(LE_Comm, SIGNAL(up_arrow_key_press()), this, SLOT(write_command_line_passed_data()));
+	connect(LE_Comm, SIGNAL(editingFinished()), this, SLOT(editingCommandLine()));
+	//layout_comm->addWidget(LE_Comm);
+	comMgr = new commandManager;
+	addDockWidget(Qt::TopDockWidgetArea, comm);
 	addDockWidget(Qt::BottomDockWidgetArea, cmd);
 }
 
 // CODEDYN
 void xdynamics::openproj()
 {
-	QString file_path = QFileDialog::getOpenFileName(
+	QStringList file_path = QFileDialog::getOpenFileNames(
 		this, tr("open"), model::path,
-		tr("Model file (*.xdm);;All files (*.*)"));
-	mg->OpenModel(file_path);
+		tr("Model file (*.xdm);;Part Result file (*.bin);;All files (*.*)"));
+	int sz = file_path.size();
+	if (sz == 1)
+	{
+		QString file = file_path.at(0);
+		QString ext = getFileExtend(file);
+		if (ext == "xdm")
+			mg->OpenModel(file);
+		if (ext == "bfr")
+		{
+			if (!st_model)
+			{
+				QFile qf(file_path.at(0));
+				qf.open(QIODevice::ReadOnly);
+				st_model = new startingModel;
+				double et;
+				qf.read((char*)&et, sizeof(double));
+				st_model->setEndTime(et);
+				if (mg->DEMModel())
+				{
+					if (mg->DEMModel()->ParticleManager())
+					{
+						unsigned int np = mg->DEMModel()->ParticleManager()->Np();
+						st_model->setDEMData(np, qf);
+						vparticles* vp = gl->vParticles();
+						if (vp)
+							vp->setParticlePosition(st_model->DEMPosition(), np);
+					}
+				}				
+				if (mg->MBDModel())
+				{
+					st_model->setMBDData(qf);
+					gl->setStartingData(mg->MBDModel()->setStartingData(st_model));
+				}
+			}				
+		}			
+	}
+	else
+	{
+		dem_model* dem = mg->DEMModel();
+		if (!dem)
+		{
+			messageBox::run("No DEM model.");
+			return;
+		}
+		if (!(dem->ParticleManager()))
+		{
+			messageBox::run("No particle manager.");
+			return;
+		}
+			
+		unsigned int _np = mg->DEMModel()->ParticleManager()->Np();
+		model::rs->setResultMemoryDEM(sz, _np);
+		unsigned int pt = 0;
+		foreach(QString f, file_path)
+		{
+			QString ext = getFileExtend(f);
+			if (ext == "bin")
+			{
+				model::rs->setPartDataFromBinary(pt, f);
+				pt++;
+			}
+		}
+	}
 }
 
 void xdynamics::setAnimationAction(bool b)
@@ -687,6 +766,8 @@ void xdynamics::makeParticle()
 	if (ret)
 	{
 		VEC4D* pos;
+		if (!mg->DEMModel())
+			mg->CreateModel(model::name, modelManager::DEM, true);
 		if (!mg->DEMModel()->ParticleManager())
 			mg->CreateModel(model::name, modelManager::PARTICLE_MANAGER, true);
 		particleManager *pm = mg->DEMModel()->ParticleManager();
@@ -724,19 +805,24 @@ void xdynamics::makeMass()
 		messageBox::run("No selected geometry.");
 		return;
 	}
+
 	pointMass* pm = bid.setBodyInfomation(mg->GeometryObject()->Object(gl->selectedObjectName()));
 	int ret = bid.exec();
 	if (ret)
 	{
 		if (!mg->MBDModel())
 			mg->CreateModel(model::name, modelManager::MBD, true);
+		vobject *vo = gl->Objects()[pm->Name()];
+		pm->setViewObject(vo);
 		pm->setPosition(VEC3D(bid.x, bid.y, bid.z));
 		pm->setDiagonalInertia(bid.ixx, bid.iyy, bid.izz);
 		pm->setSymetryInertia(bid.ixy, bid.iyz, bid.izx);
 		cmaterialType cmt = getMaterialConstant(bid.mt);
 		pm->setMaterial((material_type)bid.mt, cmt.youngs, cmt.density, cmt.poisson);
-		gl->Objects()[pm->Name()]->setInitialPosition(pm->Position());
-		mg->MBDModel()->pointMasses()[pm->Name()] = pm;
+		pm->updateView(pm->Position(), ep2e(pm->getEP()));
+		//vo->setInitialPosition(pm->Position());
+		mg->MBDModel()->insertPointMass(pm);
+		//mg->MBDModel()->pointMasses()[pm->Name()] = pm;
 	}
 // 	massDialog msd;
 // 	mass* ms = msd.callDialog(md);
@@ -760,10 +846,8 @@ void xdynamics::makeContactPair()
 		messageBox::run("No DEM model");
 		return;
 	}
-		
 	if (mg->DEMModel()->ParticleManager())
-		list.push_back("particles");
-		
+			list.push_back("particles");		
 	list.append(mg->GeometryObject()->Objects().keys());
 	cpd.setObjectLists(list);
 	int ret = cpd.exec();
@@ -780,7 +864,7 @@ void xdynamics::makeContactPair()
 		mg->ContactManager()->CreateContactPair
 			(
 			cpd.name, cpd.method, o1, o2,
-			cpd.restitution, cpd.stiffnessRatio, cpd.friction
+			cpd.restitution, cpd.stiffnessRatio, cpd.friction, cpd.cohesion
 			);
 		cmd->printLine();
 		cmd->write(CMD_INFO, mg->ContactManager()->Logs()[cpd.name]);
@@ -803,6 +887,8 @@ void xdynamics::preDefinedMBD()
 			cmd->write(CMD_INFO, "Selected pre-define multi-body dynamics model is " + s);
 			if (s == "FullCarModel")
 				ret = mg->defineFullCarModel();
+			if (s == "test_model")
+				ret = mg->defineTestModel();
 // 			if (s == "SliderCrank3D")
 // 				//ret = mg->defineSliderCrank3D();
 			if (ret)
@@ -831,6 +917,7 @@ void xdynamics::exitThread()
 		delete pBar;
 		pBar = NULL;
 	}
+	errors::Error(model::name);
 }
 
 void xdynamics::recieveProgress(int pt, QString ch, QString info)
@@ -856,7 +943,12 @@ void xdynamics::recieveProgress(int pt, QString ch, QString info)
 	}
 }
 
-void xdynamics::propertySlot(QString nm, vobject::viewGeometryObjectType vot)
+void xdynamics::excuteMessageBox()
+{
+	//messageBox::run()
+}
+
+void xdynamics::propertySlot(QString nm, context_object_type vot)
 {
 	if (!mg->MBDModel())
 	{
@@ -864,11 +956,13 @@ void xdynamics::propertySlot(QString nm, vobject::viewGeometryObjectType vot)
 		return;
 	}
 	pointMass* pm = NULL;
+	contact* c = NULL;
 	bodyInfoDialog bid;
+	contactPairDialog *cpd = NULL;
 	int ret = 0;
 	switch (vot)
 	{
-	case vobject::GEOMETRY_OBJECT:
+	case GEOMETRY_OBJECT:
 		pm = mg->MBDModel()->PointMass(nm);
 		if (!pm)
 		{
@@ -888,10 +982,40 @@ void xdynamics::propertySlot(QString nm, vobject::viewGeometryObjectType vot)
 		}
 		/*mass*/
 		break;
-	case vobject::CONSTRAINT_OBJECT:
+	case CONSTRAINT_OBJECT:
+		break;
+	case CONTACT_OBJECT:
+		cpd = new contactPairDialog(this);
+		c = mg->ContactManager()->Contacts()[nm];
+		cpd->setComboBoxString(c->FirstObject()->Name(), c->SecondObject()->Name());
+		//cpd->setIgnoreCondition(c->IsEnabled(), )
 		break;
 	}
 		
+}
+
+void xdynamics::editingCommandLine()
+{
+	QLineEdit* e = (QLineEdit*)sender();
+	QString c = e->text();
+	if (c.isEmpty())
+		return;
+	int code = comMgr->QnA(c);
+	if (code == 0)
+		cmd->write(CMD_INFO, "Complete command.");
+	if (code > 0)
+	{
+		c = comMgr->AnQ(code);
+		cmd->write(CMD_INFO, c);
+	}
+	//comMgr->appendLog(c);
+	e->setText("");
+}
+
+void xdynamics::write_command_line_passed_data()
+{
+	QString c = comMgr->getPassedCommand();
+
 }
 
 void xdynamics::deleteFileByEXT(QString ext)
@@ -923,10 +1047,16 @@ void xdynamics::solve()
 	deleteFileByEXT("bin");
 	if (!solver)
 		solver = new xDynamicsSolver(mg);
-	if (solver->initialize())
+	connect(solver, SIGNAL(finishedThread()), this, SLOT(exitThread()));
+	connect(solver, SIGNAL(excuteMessageBox()), this, SLOT(excuteMessageBox()));
+	connect(solver, SIGNAL(sendProgress(int, QString, QString)), this, SLOT(recieveProgress(int, QString, QString)));
+	if (solver->initialize(st_model))
 	{
-		connect(solver, SIGNAL(finishedThread()), this, SLOT(exitThread()));
-		connect(solver, SIGNAL(sendProgress(int, QString, QString)), this, SLOT(recieveProgress(int, QString, QString)));
+
+	}
+	else
+	{
+		exitThread();
 	}
 	if (!pBar)
 		pBar = new QProgressBar;

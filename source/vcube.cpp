@@ -10,7 +10,7 @@ vcube::vcube()
 }
 
 vcube::vcube(QString& _name)
-	: vobject(_name)
+	: vobject(V_CUBE, _name)
 {
 	setIndexList();
 	setNormalList();
@@ -88,7 +88,7 @@ bool vcube::makeCubeGeometry(QString& _name, geometry_use _tr, material_type _tm
 	pos0.y = _mp.y + _sz.y * 0.5f;
 	pos0.z = _mp.z + _sz.z * 0.5f;
 	cpos = pos0;
-	this->define();
+	display = this->define();
 	return true;
 }
 
@@ -99,7 +99,7 @@ void vcube::draw(GLenum eMode)
 		glPushMatrix();
 		//glDisable(GL_LIGHTING);
 		if (vcontroller::getFrame() && outPos && outRot)
-			animationFrame();
+			//animationFrame();
 		if (eMode == GL_SELECT){
 			glLoadName((GLuint)ID());
 		}

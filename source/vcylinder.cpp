@@ -9,7 +9,7 @@ vcylinder::vcylinder()
 }
 
 vcylinder::vcylinder(QString& _name)
-	: vobject(_name)
+	: vobject(V_CYLINDER, _name)
 {
 
 }
@@ -31,7 +31,7 @@ void vcylinder::draw(GLenum eMode)
 		glPushMatrix();
 		if (vcontroller::getFrame() && outPos && outRot)
 		{
-			animationFrame();
+			//animationFrame();
 // 			//glPushMatrix();
 // 			unsigned int f = vcontroller::getFrame();
 // 			glTranslated(outPos[f].x, outPos[f].y, outPos[f].z);

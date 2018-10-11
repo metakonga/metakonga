@@ -7,6 +7,8 @@
 #include "glwidget.h"
 #include "cmdWindow.h"
 #include "modelManager.h"
+#include "commandManager.h"
+#include "startingModel.h"
 
 class QThread;
 class QLabel;
@@ -69,9 +71,13 @@ public:
 	void changeProjectionViewMode();
 	void solve();
 	void exitThread();
+	//void 
 	void recieveProgress(int, QString, QString = "");
-	void propertySlot(QString, vobject::viewGeometryObjectType);
-
+	void excuteMessageBox();
+	void propertySlot(QString, context_object_type);
+	//void messageSlot(QString);
+	void editingCommandLine();
+	void write_command_line_passed_data();
 	void openPinfoDialog();
 	void deleteFileByEXT(QString ext);
 
@@ -112,8 +118,10 @@ private:
 	QThread *th;
 	database *db;
 	cmdWindow *cmd;
-
+	QDockWidget *comm;
 	modelManager *mg;
+	commandManager *comMgr;
+	startingModel *st_model;
 };
 
 #endif // xdynamics_H

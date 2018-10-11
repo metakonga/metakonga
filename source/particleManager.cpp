@@ -110,7 +110,7 @@ VEC4D* particleManager::CreateCubeParticle(
 	if (min_radius == min_radius)
 		r = min_radius;
 	double gab = 2.0 * r + spacing;
-	double ran = r * 0.001;
+	double ran = r * spacing * 100;
 	unsigned int cnt = 0;
 	for (unsigned int z = 0; z < nz; z++)
 	{
@@ -128,6 +128,10 @@ VEC4D* particleManager::CreateCubeParticle(
 			}
 		}
 	}
+// 	pos[0].x = 0.0;
+// 	pos[0].z = 0.0;
+// 	pos[1].x = 0.01;
+// 	pos[1].z = 0.0;
 	GLWidget::GLObject()->makeParticle((double*)pos, np);
 
 	QString log;

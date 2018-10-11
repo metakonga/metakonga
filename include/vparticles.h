@@ -15,6 +15,7 @@ public:
 	bool define();
 	bool define(double* p, unsigned int n);
 
+	void setParticlePosition(double* p, unsigned int n);
 	void resizeMemory(double* p, unsigned int n);
 	void openResultFromFile(unsigned int idx);
 

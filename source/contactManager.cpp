@@ -2,7 +2,7 @@
 #include "particleManager.h"
 #include "geometryObjects.h"
 #include "database.h"
-#include "contact_particles_particles.h"
+/*#include "contact_particles_particles.h"*/
 #include "contact_particles_cube.h"
 #include "contact_particles_plane.h"
 #include "contact_particles_polygonObject.h"
@@ -42,7 +42,7 @@ void contactManager::Open(QTextStream& qts, particleManager* pm, geometryObjects
 	QString ch;
 	QString _name, obj0, obj1;
 	int method;
-	double rest, ratio, fric;
+	double rest, ratio, fric, coh;
 	qts >> ch;
 	while (ch != "END_DATA")
 	{
@@ -52,11 +52,12 @@ void contactManager::Open(QTextStream& qts, particleManager* pm, geometryObjects
 			>> ch >> obj1
 			>> ch >> rest
 			>> ch >> ratio
-			>> ch >> fric;
+			>> ch >> fric
+			>> ch >> coh;
 		object* o1 = obj0 == "particles" ? pm->Object() : objs->Object(obj0);
 		object* o2 = obj1 == "particles" ? pm->Object() : objs->Object(obj1);
 		CreateContactPair(
-			_name, method, o1, o2, rest, ratio, fric);
+			_name, method, o1, o2, rest, ratio, fric, coh);
 		qts >> ch;
 	}
 }
@@ -124,7 +125,11 @@ bool contactManager::runCollision(
 	return true;
 }
 
-
+void contactManager::update()
+{
+	if (cppoly)
+		cppoly->updatePolygonObjectData();
+}
 
 void contactManager::deviceCollision(
 	double *pos, double *vel, 
@@ -133,11 +138,26 @@ void contactManager::deviceCollision(
 	unsigned int *sorted_id, unsigned int *cell_start, 
 	unsigned int *cell_end, unsigned int np)
 {
+	if (cpp)
+	{
+		cpp->cuda_collision(pos, vel, omega, mass, force, moment, sorted_id, cell_start, cell_end, np);
+	}
 	foreach(contact* c, cots)
 	{
-		c->cuda_collision(
-			pos, vel, omega, mass, force, moment, sorted_id, cell_start, cell_end, np);
+		if (c->IgnoreTime() && (simulation::ctime > c->IgnoreTime()))
+			continue;
+		if (c->IsEnabled())
+			c->cuda_collision(
+				pos, vel, omega, mass, force, moment, sorted_id, cell_start, cell_end, np);
 	}
+	if (cppoly)
+	{
+		cppoly->cuda_collision(pos, vel, omega, mass, force, moment, sorted_id, cell_start, cell_end, np);
+	}
+// 	foreach(polygonObject* pobj, pair_ip)
+// 	{
+// 
+// 	}
 }
 
 void contactManager::hostCollision(
@@ -147,7 +167,11 @@ void contactManager::hostCollision(
 	unsigned int *cell_end, unsigned int np)
 {
 	if (cppoly)
+	{
 		cppoly->setNumContact(0);
+		cppoly->setZeroCollisionForce();
+	}
+		
 	for (unsigned int i = 0; i < np; i++)
 	{
 		VEC3D F, M;
@@ -158,7 +182,10 @@ void contactManager::hostCollision(
 		double r = pos[i].w;
 		foreach(contact* c, cots)
 		{
-			c->collision(r, m, p, v, o, F, M);
+			if (c->IgnoreTime() && (simulation::ctime > c->IgnoreTime()))
+				continue;
+			if (c->IsEnabled())
+				c->collision(r, m, p, v, o, F, M);
 		}
 		VEC3I gp = grid_base::getCellNumber(p.x, p.y, p.z);
 		for (int z = -1; z <= 1; z++){
@@ -201,12 +228,12 @@ void contactManager::hostCollision(
 		force[i] += F;
 		moment[i] += M;             
 	}
-	qDebug() << cppoly->NumContact();
+	//qDebug() << cppoly->NumContact();
 }
 
 void contactManager::CreateContactPair(
 	QString n, int method, object* o1, object* o2, 
-	double rest, double ratio, double fric)
+	double rest, double ratio, double fric, double cohesion)
 {
 	contact::pairType pt = contact::getContactPair(o1->ObjectType(), o2->ObjectType());
 	contact *c = NULL;
@@ -241,7 +268,7 @@ void contactManager::CreateContactPair(
 	};
 	
 	c->setMaterialPair(mpp);
-	c->setContactParameters(rest, ratio, fric);
+	c->setContactParameters(rest, ratio, fric, cohesion);
 	database::DB()->addChild(database::COLLISION_ROOT, c->Name());
 
 	QString log;
@@ -252,19 +279,27 @@ void contactManager::CreateContactPair(
 		<< "OBJECT1 " << o2->Name() << endl
 		<< "RESTITUTION " << rest << endl
 		<< "RATIO " << ratio << endl
-		<< "FRICTION " << fric << endl;
+		<< "FRICTION " << fric << endl
+		<< "COHESION " << cohesion << endl;
 	logs[c->Name()] = log;
 }
 
 unsigned int contactManager::setupParticlesPolygonObjectsContact()
 {
 	unsigned int n = 0;
-	if (!cppoly)
+	if (cppos.size() && !cppoly)
 	{
 		cppoly = new contact_particles_polygonObjects;
 		n = cppoly->define(cppos);
 	}	
 	return n;
+}
+
+double* contactManager::SphereData()
+{
+	if (cppoly)
+		return cppoly->SphereData();
+	return NULL;
 }
 
 // contact* contactManager::CreateParticlePolygonsPairs(

@@ -8,6 +8,8 @@ contact_plane_polygonObject::contact_plane_polygonObject(
 	, po(NULL)
 	, dpi(NULL)
 {
+	contact::iobj = o1;
+	contact::jobj = o2;
 	pe = dynamic_cast<plane*>((o1->ObjectType() == PLANE ? o1 : o2));
 	po = dynamic_cast<polygonObject*>((o1->ObjectType() == PLANE ? o2 : o1));
 }

@@ -1,0 +1,12 @@
+Body Component
+    Car Body
+Front Left Suspension 
+Front Right Suspension
+ Rear Left Suspension
+ Rear Right Suspension
+
+Hardpoint Component
+ Front Left Suspension
+ Front Right Suspension
+ Rear Left Suspension
+ Rear Right Suspension

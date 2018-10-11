@@ -15,8 +15,10 @@ public:
 	virtual ~dem_simulation();
 
 	bool initialize(contactManager* _cm);
-	bool oneStepAnalysis();
+	bool oneStepAnalysis(double ct, unsigned int cstep);
 	QString saveResult(double *vp, double* vv, double ct, unsigned int pt);
+	void saveFinalResult(QFile& qf);
+	void setStartingData(startingModel* stm);
 
 private:
 	void applyMassForce();

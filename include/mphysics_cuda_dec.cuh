@@ -56,9 +56,11 @@ struct device_plane_info
 struct device_polygon_mass_info
 {
 	double3 origin;
+	double4 ep;
 	double3 vel;
 	double3 omega;
-	double4 ep;
+	double3 force;
+	double3 moment;
 };
 
 struct device_cylinder_info
@@ -135,7 +137,7 @@ void cu_cube_contact_force(
 
 // Function for contact between particle and polygonObject
 void cu_particle_polygonObject_collision(
-	const int tcm, device_polygon_info* dpi, double* dsph, /*device_polygon_mass_info* dpmi,*/
+	const int tcm, device_polygon_info* dpi, double* dsph, device_polygon_mass_info* dpmi,
 	double* pos, double* vel, double* omega, 
 	double* force, double* moment, double* mass, 
 	unsigned int* sidx, unsigned int* cstart, unsigned int* cend, device_contact_property *cp,

@@ -1,8 +1,10 @@
 #include "vpolygon.h"
 #include "numeric_utility.h"
 #include "shader.h"
+#include "model.h"
 #include "vcontroller.h"
 #include <QTextStream>
+
 
 //int vpolygon::pcnt = 1000;
 
@@ -29,7 +31,7 @@ vpolygon::vpolygon()
 
 vpolygon::vpolygon(QString& _name)
 	//: vglew()
-	: vobject(_name)
+	: vobject(V_POLYGON, _name)
 	, vertexList(NULL)
 	, indexList(NULL)
 	, vertice(NULL)
@@ -202,12 +204,15 @@ void vpolygon::_loadSTLASCII(QString f)
 // 	normalList = new double[ntri * 3];
 	vertice = new float[ntri * 9];
 	normals = new float[ntri * 9];
+	
 	double x, y, z;
 	float nx, ny, nz;
 	qf.reset();
 	qts >> ch >> ch >> ch;
 	VEC3D p, q, r, c;
 	double vol = 0.0;
+	double min_radius = 10000.0;
+	double max_radius = 0.0;
 	for (unsigned int i = 0; i < ntri; i++)
 	{
 		qts >> ch >> ch >> nx >> ny >> nz;
@@ -246,8 +251,18 @@ void vpolygon::_loadSTLASCII(QString f)
 		vertice[i * 9 + 8] = (float)vertexList[i * 9 + 8];
 		qts >> ch >> ch;
 		//vol += numeric::signed_volume_of_triangle(p, q, r);
-		c += numeric::utility::calculate_center_of_triangle(p, q, r);
+		VEC3D spos = numeric::utility::calculate_center_of_triangle(p, q, r);
+		c += spos;
+		double r = (spos - p).length();
+		if (max_radius < r)
+			max_radius = r;
+		if (min_radius > r)
+			min_radius = r;
 	}
+#ifdef _DEBUG
+	qDebug() << "Maximum radius of " << name() << " is " << max_radius;
+	qDebug() << "Minimum radius of " << name() << " is " << min_radius;
+#endif
 	pos0 = c / ntri;
 	ntriangle = ntri;
 	for (unsigned int i = 0; i < ntri; i++)
@@ -264,6 +279,192 @@ void vpolygon::_loadSTLASCII(QString f)
 		vertice[s + 8] -= pos0.z;
 	}
 	qf.close();
+	splitTriangle(0.015);
+}
+
+QList<triangle_info> vpolygon::_splitTriangle(triangle_info& ti, double to)
+{
+	QList<triangle_info> added_tri;
+	QList<triangle_info> temp_tri;
+	//ati.push_back(ti);
+	bool isAllDone = false;
+	while (!isAllDone)
+	{
+		isAllDone = true;
+		QList<triangle_info> ati;
+		if (temp_tri.size())
+		{
+			ati = temp_tri;
+			temp_tri.clear();
+		}
+		else
+			ati.push_back(ti);
+		foreach(triangle_info t, ati)
+		{
+			if (t.rad > to)
+			{
+				isAllDone = false;
+				int tid = 0;
+				VEC3D midp;
+				double s_pq = (t.q - t.p).length();
+				double s_qr = (t.r - t.q).length();
+				double s_pr = (t.r - t.p).length();
+				if (s_pq > s_qr)
+				{
+					if (s_pq > s_pr)
+					{
+						midp = 0.5 * (t.q + t.p);
+						tid = 3;
+					}
+					else
+					{
+						midp = 0.5 * (t.r + t.p);
+						tid = 2;
+					}
+				}
+				else
+				{
+					if (s_qr > s_pr)
+					{
+						midp = 0.5 * (t.r + t.q);
+						tid = 1;
+					}
+					else
+					{
+						midp = 0.5 * (t.r + t.p);
+						tid = 2;
+					}
+				}
+				VEC3D aspos;//double aspos = 0.0;
+				double arad = 0.0;
+				VEC3D an;
+				VEC3D p = t.p;
+				VEC3D q = t.q;
+				VEC3D r = t.r;
+				if (tid == 1)
+				{
+					aspos = numeric::utility::calculate_center_of_triangle(p, q, midp);
+					an = (q - p).cross(midp - p);
+					an = an / an.length();
+					arad = (p - aspos).length();
+					triangle_info ati0 = { arad, p, q, midp, an };
+					aspos = numeric::utility::calculate_center_of_triangle(p, midp, r);
+					an = (midp - p).cross(r - p);
+					an = an / an.length();
+					arad = (p - aspos).length();
+					triangle_info ati1 = { arad, p, midp, r, an };
+					temp_tri.push_back(ati0);
+					temp_tri.push_back(ati1);
+				}
+				else if (tid == 2)
+				{
+					aspos = numeric::utility::calculate_center_of_triangle(q, r, midp);
+					an = (r - q).cross(midp - q);
+					an = an / an.length();
+					arad = (q - aspos).length();
+					triangle_info ati0 = { arad, q, r, midp, an };
+					aspos = numeric::utility::calculate_center_of_triangle(q, midp, p);
+					an = (midp - q).cross(p - q);
+					an = an / an.length();
+					arad = (q - aspos).length();
+					triangle_info ati1 = { arad, q, midp, p, an };
+					temp_tri.push_back(ati0);
+					temp_tri.push_back(ati1);
+				}
+				else if (tid == 3)
+				{
+					aspos = numeric::utility::calculate_center_of_triangle(r, p, midp);
+					an = (p - r).cross(midp - r);
+					an = an / an.length();
+					arad = (r - aspos).length();
+					triangle_info ati0 = { arad, r, p, midp, an };
+					aspos = numeric::utility::calculate_center_of_triangle(r, midp, q);
+					an = (midp - r).cross(q - r);
+					an = an / an.length();
+					arad = (r - aspos).length();
+					triangle_info ati1 = { arad, r, midp, q, an };
+					temp_tri.push_back(ati0);
+					temp_tri.push_back(ati1);
+				}
+			}
+			else
+			{
+				added_tri.push_back(t);
+			}
+		}
+	}	
+	return added_tri;
+}
+
+void vpolygon::splitTriangle(double to)
+{
+	VEC3D p, q, r, n;
+	
+	QList<triangle_info> temp_tri;
+	for (unsigned int i = 0; i < ntriangle; i++)
+	{
+		int  s = i * 9;
+		p = VEC3D(vertexList[s + 0], vertexList[s + 1], vertexList[s + 2]);
+		q = VEC3D(vertexList[s + 3], vertexList[s + 4], vertexList[s + 5]);
+		r = VEC3D(vertexList[s + 6], vertexList[s + 7], vertexList[s + 8]);
+		VEC3D spos = numeric::utility::calculate_center_of_triangle(p, q, r);
+		double rad = (spos - p).length();
+		triangle_info tinfo = { rad, p, q, r, VEC3D(normals[s + 0], normals[s + 1], normals[s + 2]) };	
+		if (rad > to)
+		{
+			QList<triangle_info> added_tri = _splitTriangle(tinfo, to);
+			foreach(triangle_info t, added_tri)
+			{
+				temp_tri.push_back(t);
+			}
+		}
+		else
+		{
+			temp_tri.push_back(tinfo);
+		}
+	}
+	delete[] vertice;
+	delete[] normals;
+	delete[] vertexList;
+	ntriangle = temp_tri.size();
+	vertice = new float[ntriangle * 9];
+	normals = new float[ntriangle * 9];
+	vertexList = new double[ntriangle * 9];
+	int cnt = 0;
+	foreach(triangle_info t, temp_tri)
+	{
+		int s = cnt * 9;
+		vertexList[s + 0] = t.p.x;
+		vertexList[s + 1] = t.p.y;
+		vertexList[s + 2] = t.p.z;
+		vertexList[s + 3] = t.q.x;
+		vertexList[s + 4] = t.q.y;
+		vertexList[s + 5] = t.q.z;
+		vertexList[s + 6] = t.r.x;
+		vertexList[s + 7] = t.r.y;
+		vertexList[s + 8] = t.r.z;
+
+		vertice[s + 0] = (float)t.p.x - pos0.x;
+		vertice[s + 1] = (float)t.p.y - pos0.y;
+		vertice[s + 2] = (float)t.p.z - pos0.z;
+		vertice[s + 3] = (float)t.q.x - pos0.x;
+		vertice[s + 4] = (float)t.q.y - pos0.y;
+		vertice[s + 5] = (float)t.q.z - pos0.z;
+		vertice[s + 6] = (float)t.r.x - pos0.x;
+		vertice[s + 7] = (float)t.r.y - pos0.y;
+		vertice[s + 8] = (float)t.r.z - pos0.z;
+
+		normals[s + 0] = t.n.x;
+		normals[s + 1] = t.n.y;
+		normals[s + 2] = t.n.z;
+		normals[s + 3] = t.n.x;
+		normals[s + 4] = t.n.y;
+		normals[s + 5] = t.n.z;
+		normals[s + 6] = t.n.x;
+		normals[s + 7] = t.n.y;
+		normals[s + 8] = t.n.z;
+		cnt++;
+	}
 }
 
 bool vpolygon::define(import_shape_type t, QString file)
@@ -291,7 +492,7 @@ bool vpolygon::define(import_shape_type t, QString file)
 
 // 	for (unsigned int i = 0; i < nvertex; i++){
 // 		vertice[i] = VEC3F((float)vset[i].x, (float)vset[i].y, (float(vset[i].z)));
-// 		colors[i] = VEC4F(clr.redF(), clr.greenF(), clr.blueF(), 1.0f);
+// 		//colors[i] = VEC4F(clr.redF(), clr.greenF(), clr.blueF(), 1.0f);
 // 		normals[i] = VEC3F((float)nor[i].x, (float)nor[i].y, (float)nor[i].z);
 // 	}
 // 	for (unsigned int i = 0; i < nindex; i++){
@@ -334,17 +535,28 @@ bool vpolygon::define(import_shape_type t, QString file)
 		//glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(VEC3F)*nvertex, &(normals[0].x));
 		//glBufferSubData(GL_ARRAY_BUFFER, sizeof(VEC3F)*nvt, sizeof(VEC3F) * nid, &(normals[0].x));
 	}
+// 	if (!m_color_vbo)
+// 	{
+// 		glGenBuffers(1, &m_color_vbo);
+// 		glBindBuffer(GL_ARRAY_BUFFER, m_color_vbo);
+// 		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * nvertex * 4, (float*)colors, GL_STATIC_DRAW);
+// 		//glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(VEC3F)*nvertex, &(normals[0].x));
+// 		//glBufferSubData(GL_ARRAY_BUFFER, sizeof(VEC3F)*nvt, sizeof(VEC3F) * nid, &(normals[0].x));
+// 	}
  	glBindBuffer(GL_ARRAY_BUFFER, 0);
 //	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	if (!program.Program())
 		program.compileProgram(polygonVertexShader, polygonFragmentShader);
-
+	display = true;
 	return true;
 }
 
 void vpolygon::_drawPolygons()
 {
+	GLfloat ucolor[4] = { clr.redF(), clr.greenF(), clr.blueF(), clr.alphaF() };
+	int loc_color = glGetUniformLocation(program.Program(), "ucolor");
+	glUniform4fv(loc_color, 1, ucolor);
 	if (m_vertex_vbo)
 	{
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_vbo);
@@ -385,18 +597,47 @@ void vpolygon::_drawPolygons()
 
 void vpolygon::draw(GLenum eMode)
 {
-	if (eMode == GL_SELECT)
+	if (display)
 	{
-		glLoadName((GLuint)ID());
+		if (eMode == GL_SELECT)
+		{
+			glLoadName((GLuint)ID());
+		}
+		glPushMatrix();
+		unsigned int idx = vcontroller::getFrame();
+		if (idx != 0)
+		{
+			if (model::rs->pointMassResults().find(nm) != model::rs->pointMassResults().end())
+			{
+				VEC3D p = model::rs->pointMassResults()[nm].at(idx).pos;
+			//	qDebug() << p.x << " " << p.y << " " << p.z;
+				EPD ep = model::rs->pointMassResults()[nm].at(idx).ep;
+				animationFrame(p, ep);// p.x, p.y, p.z);
+			}
+			else
+			{
+				glTranslated(pos0.x, pos0.y, pos0.z);
+				glRotated(ang0.x, 0, 0, 1);
+				glRotated(ang0.y, 1, 0, 0);
+				glRotated(ang0.z, 0, 0, 1);
+			}				
+		}
+		else
+		{
+			glTranslated(pos0.x, pos0.y, pos0.z);
+			glRotated(ang0.x, 0, 0, 1);
+			glRotated(ang0.y, 1, 0, 0);
+			glRotated(ang0.z, 0, 0, 1);
+		}			
+		
+		glColor3f(1.0f, 0.0f, 0.0f);
+		glPolygonMode(GL_FRONT_AND_BACK, drawingMode);
+		glUseProgram(program.Program());
+		_drawPolygons();
+		glUseProgram(0);
+		glPopMatrix();
 	}
-	glPushMatrix();
-	glTranslated(pos0.x, pos0.y, pos0.z);
-	glColor3f(clr.redF(), clr.greenF(), clr.blueF());
-	glPolygonMode(GL_FRONT_AND_BACK, drawingMode);
-	glUseProgram(program.Program());
-	_drawPolygons();
-	glUseProgram(0);
-	glPopMatrix();
+	
 }
 
 void vpolygon::setResultData(unsigned int n)

@@ -7,6 +7,8 @@ contact_particles_plane::contact_particles_plane(
 	, pe(NULL)
 	, dpi(NULL)
 {
+	contact::iobj = o1;
+	contact::jobj = o2;
 	pe = dynamic_cast<plane*>((o1->ObjectType() == PLANE ? o1 : o2));
 	p = o1->ObjectType() != PLANE ? o1 : o2;
 }
@@ -26,6 +28,11 @@ contact_particles_plane::~contact_particles_plane()
 void contact_particles_plane::setPlane(plane* _pe)
 {
 	pe = _pe;
+}
+
+void contact_particles_plane::cuda_collision(double *pos, double *vel, double *omega, double *mass, double *force, double *moment, unsigned int *sorted_id, unsigned int *cell_start, unsigned int *cell_end, unsigned int np)
+{
+	cu_plane_contact_force(1, dpi, pos, vel, omega, force, moment, mass, np, dcp);
 }
 
 void contact_particles_plane::collision(
@@ -168,7 +175,7 @@ void contact_particles_plane::singleCollision(
 		VEC3D cp = rcon * u;
 		//unsigned int ci = (unsigned int)(i / particle_cluster::perCluster());
 		//VEC3D c2p = cp - ps->getParticleClusterFromParticleID(ci)->center();
-		VEC3D dv = -(vel + omega.cross(rad * u));
+		VEC3D dv = -(vel);// +omega.cross(rad * u));
 
 		contactParameters c = getContactParameters(
 			rad, 0.0,

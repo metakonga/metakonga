@@ -1,7 +1,6 @@
 #include "vplane.h"
 #include <QTextStream>
 
-
 vplane::vplane()
 	: vobject()
 {
@@ -9,7 +8,7 @@ vplane::vplane()
 }
 
 vplane::vplane(QString& _name)
-	: vobject(_name)
+	: vobject(V_PLANE, _name)
 {
 
 }
@@ -54,21 +53,27 @@ bool vplane::makePlaneGeometry(QTextStream& in)
 	return true;
 }
 
-bool vplane::makePlaneGeometry(float l, VEC3F& xw, VEC3F& pa, VEC3F& pb, VEC3F& u1)
+bool vplane::makePlaneGeometry(VEC3D& pa, VEC3D& pb, VEC3D& pc, VEC3D& pd)
 {
-	p0[0] = xw.x; p0[1] = xw.y; p0[2] = xw.z;
-	p1[0] = pa.x + p0[0]; p1[1] = pa.y + p0[1]; p1[2] = pa.z + p0[2];
-	p3[0] = pb.x + p0[0]; p3[1] = pb.y + p0[1]; p3[2] = pb.z + p0[2];
-	p2[0] = p0[0] + pb.x + l * u1.x;
-	p2[1] = p0[1] + pb.y + l * u1.y;
-	p2[2] = p0[2] + pb.z + l * u1.z;
-	this->define();
+	p0[0] = (float)pa.x; p0[1] = (float)pa.y; p0[2] = (float)pa.z;
+	p1[0] = (float)pb.x; p1[1] = (float)pb.y; p1[2] = (float)pb.z;
+	p2[0] = (float)pc.x; p2[1] = (float)pc.y; p2[2] = (float)pc.z;
+	p3[0] = (float)pd.x; p3[1] = (float)pd.y; p3[2] = (float)pd.z;
+// 	p0[0] = xw.x; p0[1] = xw.y; p0[2] = xw.z;
+// 	p1[0] = pa.x + p0[0]; p1[1] = pa.y + p0[1]; p1[2] = pa.z + p0[2];
+// 	p3[0] = pb.x + p0[0]; p3[1] = pb.y + p0[1]; p3[2] = pb.z + p0[2];
+// 	p2[0] = p0[0] + pb.x + l * u1.x;
+// 	p2[1] = p0[1] + pb.y + l * u1.y;
+// 	p2[2] = p0[2] + pb.z + l * u1.z;
+	display = this->define();
 	return true;
 }
 
 void vplane::draw(GLenum eMode)
 {
+	//qDebug() << nm << " is displayed - " << glList << " - " << display;
 	if (display){
+		//qDebug() << nm << " is displayed - " << glList;
 		glPolygonMode(GL_FRONT_AND_BACK, drawingMode);
 		glPushMatrix();
 		glDisable(GL_LIGHTING);
@@ -88,6 +93,7 @@ void vplane::draw(GLenum eMode)
 		}
 		glPopMatrix();
 		glEnable(GL_LIGHTING);
+	//	qDebug() << nm << " is displayed - " << glList;
 	}
 }
 
@@ -108,7 +114,7 @@ bool vplane::define()
 	}
 	glEnd();
 	glEndList();
-
+	//qDebug() << "glList - " << glList;
 	glHiList = glGenLists(1);
 	glNewList(glHiList, GL_COMPILE);
 	glBegin(GL_QUADS);

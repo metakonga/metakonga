@@ -425,9 +425,6 @@
     <ClCompile Include="..\..\..\..\source\vmarker.cpp">
       <Filter>Source Files\display</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\..\..\share\src\MultibodyDynamics\drivingConstraint.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\..\source\contact_plane_polygonObject.cpp">
       <Filter>Source Files\collision</Filter>
     </ClCompile>
@@ -441,6 +438,27 @@
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\..\source\numeric_utility.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\contactPair.cpp">
+      <Filter>Source Files\collision</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\commandManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\lineEditWidget.cpp">
+      <Filter>Source Files\widget</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_lineEditWidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_lineEditWidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\..\share\src\MultibodyDynamics\drivingConstraint.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\source\startingModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -549,6 +567,9 @@
     </CustomBuild>
     <CustomBuild Include="..\..\..\..\include\bodyInfoDialog.h">
       <Filter>Header Files\dialog</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\lineEditWidget.h">
+      <Filter>Header Files\widget</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -789,9 +810,6 @@
     <ClInclude Include="..\..\..\..\..\share\inc\MultibodyDynamics\axialTranslationForce.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\..\share\inc\MultibodyDynamics\drivingConstraint.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\..\include\contact_plane_polygonObject.h">
       <Filter>Header Files\collision</Filter>
     </ClInclude>
@@ -812,6 +830,18 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\contactPair.h">
       <Filter>Header Files\collision</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\commandManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\test_model.hpp">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\share\inc\MultibodyDynamics\drivingConstraint.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\startingModel.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

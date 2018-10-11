@@ -32,7 +32,7 @@ void computeGridSize(unsigned n, unsigned blockSize, unsigned &numBlocks, unsign
 
 void vv_update_position(double *pos, double *vel, double *acc, unsigned int np)
 {
-	computeGridSize(np, 256, numBlocks, numThreads);
+	computeGridSize(np, 512, numBlocks, numThreads);
 	vv_update_position_kernel <<< numBlocks, numThreads >>>(
 		(double4 *)pos,
 		(double3 *)vel,
@@ -41,7 +41,7 @@ void vv_update_position(double *pos, double *vel, double *acc, unsigned int np)
 
 void vv_update_velocity(double *vel, double *acc, double *omega, double *alpha, double *force, double *moment, double* mass, double* iner, unsigned int np)
 {
-	computeGridSize(np, 256, numBlocks, numThreads);
+	computeGridSize(np, 512, numBlocks, numThreads);
 	vv_update_velocity_kernel <<< numBlocks, numThreads >>>(
 		(double3 *)vel,
 		(double3 *)acc,
@@ -59,7 +59,7 @@ void cu_calculateHashAndIndex(
 	double *pos,
 	unsigned int np)
 {
-	computeGridSize(np, 256, numBlocks, numThreads);
+	computeGridSize(np, 512, numBlocks, numThreads);
 	calculateHashAndIndex_kernel <<< numBlocks, numThreads >>>(hash, index, (double4 *)pos, np);
 }
 
@@ -91,7 +91,7 @@ void cu_reorderDataAndFindCellStart(
 		thrust::device_ptr<unsigned>(hash + np),
 		thrust::device_ptr<unsigned>(index));
 	//std::cout << "step 2" << std::endl;
-	computeGridSize(np, 256, numBlocks, numThreads);
+	computeGridSize(np, 512, numBlocks, numThreads);
 	checkCudaErrors(cudaMemset(cstart, 0xffffffff, ncell*sizeof(unsigned int)));
 	checkCudaErrors(cudaMemset(cend, 0, ncell*sizeof(unsigned int)));
 	unsigned smemSize = sizeof(unsigned int)*(numThreads + 1);
@@ -217,22 +217,19 @@ void cu_particle_polygonObject_collision(
 	double* pos, double* vel, double* omega, 
 	double* force, double* moment, double* mass, 
 	unsigned int* sorted_index, unsigned int* cstart, unsigned int* cend, device_contact_property *cp,
-	unsigned int np, double3* mpos, double3* mf, double3* mm, double3& _mf, double3& _mm)
+	unsigned int np)
 {
-	computeGridSize(np, 256, numBlocks, numThreads);
+	computeGridSize(np, 512, numBlocks, numThreads);
 	switch (tcm)
 	{
-	case 0: 
-		particle_polygonObject_collision_kernel<0> << < numBlocks, numThreads >> >(
+	case 1: 
+		particle_polygonObject_collision_kernel<1> << < numBlocks, numThreads >> >(
 		dpi, (double4 *)dsph, dpmi, 
 		(double4 *)pos, (double3 *)vel, (double3 *)omega, 
 		(double3 *)force, (double3 *)moment, mass, 
-		sorted_index, cstart, cend, cp,
-		mpos, mf, mm);
+		sorted_index, cstart, cend, cp);
 		break;
-
 	}
-	
 }
 
 double3 reductionD3(double3* in, unsigned int np)

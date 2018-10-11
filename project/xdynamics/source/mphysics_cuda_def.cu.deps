@@ -381,11 +381,13 @@ c:\program files\nvidia gpu computing toolkit\cuda\v7.5\include\vector_types.h
 C:\metakonga\include\mphysics_cuda_dec.cuh
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include\cuda_runtime.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include\vector_types.h
-C:\ProgramData\NVIDIA Corporation\CUDA Samples\v7.5\common\inc\helper_cuda.h
+C:\ProgramData\NVIDIA Corporation\CUDA Samples\v10.0\common\inc\helper_cuda.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdint.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdio.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\swprintf.inl
-C:\ProgramData\NVIDIA Corporation\CUDA Samples\v7.5\common\inc\helper_string.h
+C:\ProgramData\NVIDIA Corporation\CUDA Samples\v10.0\common\inc\helper_string.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\fstream
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\istream
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\ostream
@@ -459,20 +461,24 @@ C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\share.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\string
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\iterator
 C:\metakonga\include\mphysics_cuda_impl.cuh
-C:\ProgramData\NVIDIA Corporation\CUDA Samples\v7.5\common\inc\helper_math.h
+C:\ProgramData\NVIDIA Corporation\CUDA Samples\v10.0\common\inc\helper_math.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include\cuda_runtime.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include\cuda_runtime.h
-C:\ProgramData\NVIDIA Corporation\CUDA Samples\v7.5\common\inc\helper_functions.h
+C:\ProgramData\NVIDIA Corporation\CUDA Samples\v10.0\common\inc\helper_functions.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
-C:\ProgramData\NVIDIA Corporation\CUDA Samples\v7.5\common\inc\exception.h
+C:\ProgramData\NVIDIA Corporation\CUDA Samples\v10.0\common\inc\exception.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\iostream
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\sstream
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\vector
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xmemory
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\algorithm
-C:\ProgramData\NVIDIA Corporation\CUDA Samples\v7.5\common\inc\helper_timer.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\xmemory
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\vector
+C:\ProgramData\NVIDIA Corporation\CUDA Samples\v10.0\common\inc\helper_image.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
+C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
+C:\ProgramData\NVIDIA Corporation\CUDA Samples\v10.0\common\inc\helper_timer.h
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\windows.h
 C:\Program Files (x86)\Windows Kits\8.1\Include\shared\winapifamily.h
 C:\Program Files (x86)\Windows Kits\8.1\Include\shared\sdkddkver.h
@@ -674,10 +680,6 @@ C:\Program Files (x86)\Windows Kits\8.1\Include\um\winsvc.h
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\mcx.h
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\imm.h
 C:\Program Files (x86)\Windows Kits\8.1\Include\um\ime_cmodes.h
-C:\ProgramData\NVIDIA Corporation\CUDA Samples\v7.5\common\inc\helper_image.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\assert.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\math.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include\thrust/device_ptr.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include\thrust/detail/config.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include\thrust/detail/config/config.h
@@ -868,8 +870,6 @@ C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include\thrust/system/de
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include\thrust/detail/internal_functional.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include\thrust/detail/raw_reference_cast.h
 C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\memory
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\stdint.h
-C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\include\crtdefs.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include\thrust/transform.h
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include\thrust/detail/transform.inl
 C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.5\include\thrust/system/detail/generic/transform.h

@@ -8,6 +8,8 @@
 
 #include "mphysics_cuda_dec.cuh"
 
+class object;
+
 class contact
 {
 public:
@@ -18,14 +20,19 @@ public:
 		PARTICLE_PANE = 16,
 	    PARTICLE_POLYGON_SHAPE = 32,
 		PLANE_POLYGON_SHAPE = 22};
-	typedef struct { double kn, vn, ks, vs; }contactParameters;
+	typedef struct { double coh_r, coh_e, kn, vn, ks, vs; }contactParameters;
 
 	contact(const contact* c);
 	contact(QString nm, contactForce_type t);
 	virtual ~contact();
-
+	double IgnoreTime() { return ignore_time; }
+	void setIgnoreTime(double _t) { ignore_time = _t; }
+	bool IsEnabled() { return is_enabled; }
+	void setEnabled(bool b) { is_enabled = b; }
 	QString Name() const { return name; }
-	void setContactParameters(double r, double rt, double f);
+	object* FirstObject() const { return iobj; }
+	object* SecondObject() const { return jobj; }
+	void setContactParameters(double r, double rt, double f, double c);
 	double Restitution() const { return restitution; }
 	double Friction() const { return friction; }
 	double StiffnessRatio() const { return stiffnessRatio; }
@@ -60,17 +67,23 @@ public:
 	static unsigned int count;
 
 protected:
+	double cohesionForce(double coh_r, double coh_e, double Fn);
 	void DHSModel
 		(contactParameters& c, 
 		double cdist, VEC3D& cp, 
 		VEC3D& dv, VEC3D& unit, VEC3D& F, VEC3D& M);
+	bool is_enabled;
+	double ignore_time;
 	QString name;
 	pairType type;
 	contactForce_type f_type;
 	material_property_pair* mpp;
 	//contact_parameter cp;
 	device_contact_property* dcp;
+	object* iobj;
+	object* jobj;
 
+	double cohesion;
 	double restitution;
 	double stiffnessRatio;
 	double friction;

@@ -117,7 +117,6 @@ __global__ void vv_update_velocity_kernel(
 	double3 aa = alpha[id];
 	double m = mass[id];
 	double in = iner[id];
-
 	v += 0.5 * cte.dt * L;
 	av += 0.5 * cte.dt * aa;
 	L = (1.0 / m) * force[id];
@@ -127,7 +126,7 @@ __global__ void vv_update_velocity_kernel(
 	// 	if(id == 0){
 	// 		printf("Velocity --- > id = %d -> [%f.6, %f.6, %f.6]\n", id, v.x, v.y, v.z);
 	// 	}
-	force[id] = make_double3(0.0, 0.0, 0.0);
+	force[id] = m * cte.gravity;
 	moment[id] = make_double3(0.0, 0.0, 0.0);
 	vel[id] = v;
 	omega[id] = av;
@@ -267,8 +266,8 @@ __device__ double cohesionForce(
 	double cf = 0.f;
 	if (coh){
 		double req = (ri * rj / (ri + rj));
-		double Eeq_inv = ((1.0 - pri * pri) / Ei) + ((1.0 - prj * prj) / Ej);
-		double rcp = (3.0 * req * (-Fn)) / (4.0 * (1.0 / Eeq_inv));
+		double Eeq = ((1.0 - pri * pri) / Ei) + ((1.0 - prj * prj) / Ej);
+		double rcp = (3.0 * req * (-Fn)) / (4.0 * (1.0 / Eeq));
 		double rc = pow(rcp, 1.0 / 3.0);
 		double Ac = M_PI * rc * rc;
 		cf = coh * Ac;
@@ -424,7 +423,7 @@ __global__ void calculate_p2p_kernel(
 	double3 Ft = make_double3(0, 0, 0);
 	double3 Fn = make_double3(0, 0, 0);// [id] * cte.gravity;
 	double3 M = make_double3(0, 0, 0);
-	double3 sumF = im * cte.gravity;
+	double3 sumF = make_double3(0, 0, 0);
 	double3 sumM = make_double3(0, 0, 0);
 	int3 neighbour_pos = make_int3(0, 0, 0);
 	uint grid_hash = 0;
@@ -604,12 +603,12 @@ __global__ void plane_contact_force_kernel(
 		{
 		case 0: 
 			HMCModel(
-				c, 0, 0, 0, 0, 0, 0, 0, rcon, cdist,
+				c, 0, 0, 0, 0, 0, 0, cp->coh, rcon, cdist,
 				iomega, dv, unit, Ft, Fn, M); 
 			break;
 		case 1:
 			DHSModel(
-				c, 0, 0, 0, 0, 0, 0, 0, rcon, cdist, 
+				c, 0, 0, 0, 0, 0, 0, cp->coh, rcon, cdist,
 				iomega, dv, unit, Ft, Fn, M);
 			break;
 		}
@@ -920,7 +919,7 @@ __global__ void particle_polygonObject_collision_kernel(
 	device_polygon_info* dpi, double4* dsph, device_polygon_mass_info* dpmi,
 	double4 *pos, double3 *vel, double3 *omega, double3 *force, double3 *moment,
 	double* mass, unsigned int* sorted_index, unsigned int* cstart, unsigned int* cend, 
-	device_contact_property *cp, double3* mpos, double3* mf, double3* mm)
+	device_contact_property *cp)
 {
 	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
@@ -929,14 +928,13 @@ __global__ void particle_polygonObject_collision_kernel(
 
 	double cdist = 0.0;
 	double im = mass[id];
-	
 	double3 ipos = make_double3(pos[id].x, pos[id].y, pos[id].z);
 	double3 ivel = make_double3(vel[id].x, vel[id].y, vel[id].z);
 	double3 iomega = make_double3(omega[id].x, omega[id].y, omega[id].z);
 	double3 unit = make_double3(0.0, 0.0, 0.0);
 	int3 gridPos = calcGridPos(make_double3(ipos.x, ipos.y, ipos.z));
 	//double3 cpt = make_double3(0.0, 0.0, 0.0);
-	double3 mp = make_double3(mpos->x, mpos->y, mpos->z);
+	//double3 mp = make_double3(mpos->x, mpos->y, mpos->z);
 	double ir = pos[id].w;
 	double3 M = make_double3(0, 0, 0);
 	int3 neighbour_pos = make_int3(0, 0, 0);
@@ -960,22 +958,28 @@ __global__ void particle_polygonObject_collision_kernel(
 							k -= cte.np;
 							double3 distVec;
 							double dist;
+							unsigned int pidx = dpi[k].id;
+							device_contact_property cmp = cp[pidx];
+							device_polygon_mass_info pmi = dpmi[pidx];
 							double3 cpt = closestPtPointTriangle(dpi[k], ipos, ir);
-							double3 po2cp = cpt - dpmi->origin;
-							double3 si = cpt - mp;
+							double3 po2cp = cpt - pmi.origin;
+							//double3 si = cpt - pmi.origin;
 							distVec = ipos - cpt;
 							dist = length(distVec);
 							cdist = ir - dist;
 							Fn = make_double3(0.0, 0.0, 0.0);
 							if (cdist > 0)
 							{
+								double3 qp = dpi[k].Q - dpi[k].P;
+								double3 rp = dpi[k].R - dpi[k].P;
 								double rcon = ir - 0.5 * cdist;
-								unit = -dpi[k].N;
-								double3 dv = dpmi->vel + cross(dpmi->omega, po2cp) - (ivel + cross(iomega, ir * unit));
+								unit = -cross(qp, rp);// -dpi[k].N;
+								unit = unit / length(unit);
+								double3 dv = pmi.vel + cross(pmi.omega, po2cp) - (ivel + cross(iomega, ir * unit));
 								device_force_constant c = getConstant(
-									TCM, ir, 0, im, 0, cp->Ei, cp->Ej,
-									cp->pri, cp->prj, cp->Gi, cp->Gj,
-									cp->rest, cp->fric, cp->rfric, cp->sratio);
+									TCM, ir, 0, im, 0, cmp.Ei, cmp.Ej,
+									cmp.pri, cmp.prj, cmp.Gi, cmp.Gj,
+									cmp.rest, cmp.fric, cmp.rfric, cmp.sratio);
 								switch (TCM)
 								{
 								case 0: 
@@ -992,8 +996,8 @@ __global__ void particle_polygonObject_collision_kernel(
 								double3 sum_f = Fn;// +shear_force;
 								force[id] += make_double3(sum_f.x, sum_f.y, sum_f.z);
 								moment[id] += make_double3(M.x, M.y, M.z);
-								mf[id] += -(sum_f + Ft);// +make_double3(1.0, 5.0, 9.0);
-								mm[id] += -cross(si, sum_f + Ft);
+								dpmi[pidx].force += -(sum_f + Ft);// +make_double3(1.0, 5.0, 9.0);
+								dpmi[pidx].moment += -cross(po2cp, sum_f + Ft);
 							}			
 						}
 					}

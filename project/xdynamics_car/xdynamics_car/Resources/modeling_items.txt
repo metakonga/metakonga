@@ -1,0 +1,64 @@
+Body Component
+ Car Body
+ Front Left Suspension
+  Wheel
+  Knuckle
+  Upper Arm
+  Lower Arm
+ Front Right Suspension
+  Wheel
+  Knuckle
+  Upper Arm
+  Lower Arm
+ Rear Left Suspension
+  Wheel
+  Knuckle
+  Upper Arm
+  Lower Arm
+ Rear Right Suspension
+  Wheel
+  Knuckle
+  Upper Arm
+  Lower Arm
+
+Hardpoint Component
+ Front Left Suspension
+  Wheel-Knuckle
+  Knuckle-Upper Arm
+  Knuckle-Lower Arm
+  Knuckle-Steer link
+  Upper Arm-Car Body
+  Lower Arm-Car Body
+ Front Right Suspension
+  Wheel-Knuckle
+  Knuckle-Upper Arm
+  Knuckle-Lower Arm
+  Knuckle-Steer link
+  Upper Arm-Car Body
+  Lower Arm-Car Body
+ Rear Left Suspension
+  Wheel-Knuckle
+  Knuckle-Upper Arm
+  Knuckle-Lower Arm
+  Knuckle-Steer link
+  Upper Arm-Car Body
+  Lower Arm-Car Body
+ Rear Right Suspension
+  Wheel-Knuckle
+  Knuckle-Upper Arm
+  Knuckle-Lower Arm
+  Knuckle-Steer link
+  Upper Arm-Car Body
+  Lower Arm-Car Body
+
+Force Component
+ Spring Damper
+  Front Left
+  Front Right
+  Rear Left
+  Rear Right
+ Wheel Torque
+  Front Left
+  Front Right
+  Rear Left
+  Rear Right

@@ -1,20 +1,23 @@
 #include "vmarker.h"
+#include "model.h"
 #include "qgl.h"
 
 float vmarker::scale = 1.0;
 
 vmarker::vmarker()
 	: vobject()
-//	, scale(1.0)
+	, attachObject("")
 	, markerScaleFlag(true)
+	, isAttachMass(true)
 {
 	
 }
 
 vmarker::vmarker(QString& n, bool mcf)
-	: vobject(n)
-	///*,*/ scale(1.0)
+	: vobject(V_MARKER, n)
+	, attachObject("")
 	, markerScaleFlag(mcf)
+	, isAttachMass(true)
 {
 
 }
@@ -35,11 +38,42 @@ void vmarker::draw(GLenum eMode)
 		glDisable(GL_LIGHTING);
 		if(markerScaleFlag)
 			glScalef(scale, scale, scale);
-		glTranslated(cpos.x, cpos.y, cpos.z);
-		glRotated(cang.x / 16, 1.0, 0.0, 0.0); 
-		glRotated(cang.y / 16, 0.0, 1.0, 0.0);
-		glRotated(cang.z / 16, 0.0, 0.0, 1.0);
-
+		unsigned int idx = vcontroller::getFrame();
+		if (idx != 0)
+		{
+			if (model::rs->pointMassResults().find(attachObject) != model::rs->pointMassResults().end())
+			{
+				VEC3D p = model::rs->pointMassResults()[attachObject].at(idx).pos;
+				EPD ep = model::rs->pointMassResults()[attachObject].at(idx).ep;
+				animationFrame(p, ep);// p.x, p.y, p.z);
+			}
+			else
+			{
+				glTranslated(pos0.x, pos0.y, pos0.z);
+				glRotated(ang0.x, 0, 0, 1);
+				glRotated(ang0.y, 1, 0, 0);
+				glRotated(ang0.z, 0, 0, 1);
+				if (!isAttachMass)
+				{
+					glRotated(cang.x / 16, 1.0, 0.0, 0.0);
+					glRotated(cang.y / 16, 0.0, 1.0, 0.0);
+					glRotated(cang.z / 16, 0.0, 0.0, 1.0);
+				}
+			}
+		}
+		else
+		{
+			glTranslated(pos0.x, pos0.y, pos0.z);
+			glRotated(ang0.x, 0, 0, 1);
+			glRotated(ang0.y, 1, 0, 0);
+			glRotated(ang0.z, 0, 0, 1);
+			if (!isAttachMass)
+			{
+				glRotated(cang.x / 16, 1.0, 0.0, 0.0);
+				glRotated(cang.y / 16, 0.0, 1.0, 0.0);
+				glRotated(cang.z / 16, 0.0, 0.0, 1.0);
+			}
+		}
 		glCallList(glList);
 		glEnable(GL_LIGHTING);
 		glPopMatrix();
@@ -111,5 +145,6 @@ bool vmarker::define(VEC3D p)
 	glEnd();
 
 	glEndList();
+	display = true;
 	return true;
 }

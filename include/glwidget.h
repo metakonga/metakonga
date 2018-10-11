@@ -54,12 +54,13 @@ public:
 	void makeLine();
 	void makeCylinder(cylinder* cy);
 	void makeParticle(double* pos, unsigned int n);
-	void makeMarker(QString n, VEC3D p, bool mcf = true);
+	vmarker* makeMarker(QString n, VEC3D p, bool mcf = true);
 	vpolygon* makePolygonObject(QString _nm, import_shape_type t, QString file);
 //	bool change(QString& fp, tChangeType ct, tFileType ft);
 	void makeMassCoordinate(QString& _name);
 	void drawReferenceCoordinate();
 	void drawGroundCoordinate(GLenum eMode);
+	void setStartingData(QMap<QString, v3epd_type> d);
 
 	int xRotation() const { return xRot; }
 	int yRotation() const { return yRot; }
@@ -78,6 +79,7 @@ public:
 	void openMbd(QString& fl);
 	void openResults(QStringList& fl);
 	void ChangeDisplayOption(int oid);
+	vobject* Object(QString n);
 	QMap<QString, vobject*>& Objects() { return v_objs; }
 	vparticles* vParticles() { return vp; }
 	vobject* getVObjectFromName(QString name);
@@ -181,7 +183,7 @@ private:
 
 signals:
 	void mySignal();
-	void propertySignal(QString, vobject::viewGeometryObjectType);
+	void propertySignal(QString, context_object_type);
 };
 
 

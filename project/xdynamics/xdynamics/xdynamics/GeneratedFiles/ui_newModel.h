@@ -13,6 +13,7 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QButtonGroup>
+#include <QtWidgets/QCheckBox>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QDialog>
 #include <QtWidgets/QGroupBox>
@@ -41,6 +42,7 @@ public:
     QLineEdit *LE_Name;
     QComboBox *CB_Unit;
     QComboBox *CB_GravityDirection;
+    QCheckBox *CBH_SingleFloating;
     QLabel *LOpenModel;
     QPushButton *PB_Browse;
 
@@ -49,18 +51,18 @@ public:
         if (DLG_NewModel->objectName().isEmpty())
             DLG_NewModel->setObjectName(QStringLiteral("DLG_NewModel"));
         DLG_NewModel->setWindowModality(Qt::ApplicationModal);
-        DLG_NewModel->resize(440, 178);
+        DLG_NewModel->resize(440, 200);
         QSizePolicy sizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         sizePolicy.setHorizontalStretch(0);
         sizePolicy.setVerticalStretch(0);
         sizePolicy.setHeightForWidth(DLG_NewModel->sizePolicy().hasHeightForWidth());
         DLG_NewModel->setSizePolicy(sizePolicy);
         DLG_NewModel->setMinimumSize(QSize(440, 178));
-        DLG_NewModel->setMaximumSize(QSize(440, 178));
+        DLG_NewModel->setMaximumSize(QSize(440, 200));
         DLG_NewModel->setModal(true);
         GBNewModel = new QGroupBox(DLG_NewModel);
         GBNewModel->setObjectName(QStringLiteral("GBNewModel"));
-        GBNewModel->setGeometry(QRect(10, 10, 421, 131));
+        GBNewModel->setGeometry(QRect(10, 10, 421, 151));
         QFont font;
         font.setBold(false);
         font.setWeight(50);
@@ -125,12 +127,15 @@ public:
 
         horizontalLayout->addLayout(Layout_2);
 
+        CBH_SingleFloating = new QCheckBox(GBNewModel);
+        CBH_SingleFloating->setObjectName(QStringLiteral("CBH_SingleFloating"));
+        CBH_SingleFloating->setGeometry(QRect(10, 123, 211, 19));
         LOpenModel = new QLabel(DLG_NewModel);
         LOpenModel->setObjectName(QStringLiteral("LOpenModel"));
-        LOpenModel->setGeometry(QRect(20, 150, 81, 16));
+        LOpenModel->setGeometry(QRect(20, 170, 81, 16));
         PB_Browse = new QPushButton(DLG_NewModel);
         PB_Browse->setObjectName(QStringLiteral("PB_Browse"));
-        PB_Browse->setGeometry(QRect(340, 147, 75, 23));
+        PB_Browse->setGeometry(QRect(340, 167, 75, 23));
         PB_Browse->setStyleSheet(QStringLiteral("border-bottom-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 rgba(255, 0, 0, 255), stop:0.339795 rgba(255, 0, 0, 255), stop:0.339799 rgba(255, 255, 255, 255), stop:0.662444 rgba(255, 255, 255, 255), stop:0.662469 rgba(0, 0, 255, 255), stop:1 rgba(0, 0, 255, 255));"));
         PB_Browse->setFlat(false);
         QWidget::setTabOrder(LE_Name, CB_Unit);
@@ -163,6 +168,7 @@ public:
         CB_GravityDirection->setItemText(4, QApplication::translate("DLG_NewModel", "-Y", nullptr));
         CB_GravityDirection->setItemText(5, QApplication::translate("DLG_NewModel", "-Z", nullptr));
 
+        CBH_SingleFloating->setText(QApplication::translate("DLG_NewModel", "Single floating point type for DEM", nullptr));
         LOpenModel->setText(QApplication::translate("DLG_NewModel", "Open Model", nullptr));
         PB_Browse->setText(QApplication::translate("DLG_NewModel", "Browse", nullptr));
     } // retranslateUi

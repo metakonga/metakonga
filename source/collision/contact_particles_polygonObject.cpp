@@ -9,6 +9,8 @@ contact_particles_polygonObject::contact_particles_polygonObject(
 	, p(NULL)
 	, po(NULL)
 {
+	contact::iobj = o1;
+	contact::jobj = o2;
 	po = dynamic_cast<polygonObject*>((o1->ObjectType() == POLYGON_SHAPE ? o1 : o2));
 	p = o1->ObjectType() != POLYGON_SHAPE ? o1 : o2;
 // 	hpi = new host_polygon_info[po->numIndex()];

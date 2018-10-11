@@ -58,7 +58,7 @@ void vparticles::draw(GLenum eModem, int wHeight, int protype, double z)
 	{
 		unsigned int idx = vcontroller::getFrame();
 		buffer = model::rs->getPartPosition(idx);
-		color_buffer = model::rs->getPartColor(idx);
+		//color_buffer = model::rs->getPartColor(idx);
 	}
 	else
 	{
@@ -66,7 +66,7 @@ void vparticles::draw(GLenum eModem, int wHeight, int protype, double z)
 		if (idx)
 		{
 			buffer = model::rs->getPartPosition(idx);
-			color_buffer = model::rs->getPartColor(idx);
+			//color_buffer = model::rs->getPartColor(idx);
 		}
 		else
 		{
@@ -124,7 +124,6 @@ void vparticles::_drawPoints()
 			glColorPointer(4, GL_DOUBLE, 0, 0);
 			glEnableClientState(GL_COLOR_ARRAY);
 			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLdouble)*np * 4, color_buffer);
-			
 		}
 
 		glDrawArrays(GL_POINTS, 0, np);
@@ -178,6 +177,12 @@ bool vparticles::define()
 		program.compileProgram(vertexShader, spherePixelShader);
 
 	return true;
+}
+
+void vparticles::setParticlePosition(double* p, unsigned int n)
+{
+	if (pos && p)
+		memcpy(pos, p, sizeof(double) * n * 4);
 }
 
 void vparticles::resizeMemory(double* p, unsigned int n)

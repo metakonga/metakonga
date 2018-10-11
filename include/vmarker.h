@@ -17,14 +17,16 @@ public:
 
 	//void setMarkerScale
 	bool define(VEC3D p);
+	void setAttchedMass(bool b) { isAttachMass = b; }
+	void setAttachObject(QString o) { attachObject = o; }
 	void setMarkerScaleFlag(bool b) { markerScaleFlag = b; }
 	static void setMarkerScale(float sc) { scale = sc; }
 	//bool makeCubeGeometry(QTextStream& in);
 	//bool makeCubeGeometry(QString& _name, geometry_use _tr, material_type _tm, VEC3F& _mp, VEC3F& _sz);
 
 private:
-//	void setIndexList();
-//	void setNormalList();
+	bool isAttachMass;
+	QString attachObject;
 	bool markerScaleFlag;
 	static float scale;
 	unsigned int glList;

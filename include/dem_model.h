@@ -26,6 +26,8 @@ public:
 	particleManager* CreateParticleManager();
 	void Save(QTextStream& qts);
 	void Open(QTextStream& qts);
+
+	
 	//void setParticleSystem(particleManager* _ps) { ps = _ps; }
 // 	void setDatabase(database* _db) { db = _db; }
 // 	void setSolveDevice(tSolveDevice tsd) { tdevice = tsd; }

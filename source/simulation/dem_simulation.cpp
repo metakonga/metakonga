@@ -1,5 +1,5 @@
 #include "dem_simulation.h"
-//#include "modelManager.h"
+#include <QDebug>
 #include "velocity_verlet.h"
 #include "neighborhood_cell.h"
 #include "contact_particles_polygonObjects.h"
@@ -107,7 +107,7 @@ void dem_simulation::allocationMemory()
 	//np = _np;
 	mass = new double[np];
 	inertia = new double[np];
-	pos = new double[(np + nPolySphere) * 4];
+	pos = new double[np * 4];
 	vel = new double[np * 3];
 	acc = new double[np * 3];
 	avel = new double[np * 3];
@@ -118,7 +118,7 @@ void dem_simulation::allocationMemory()
 	{
 		checkCudaErrors(cudaMalloc((void**)&dmass, sizeof(double) * np));
 		checkCudaErrors(cudaMalloc((void**)&diner, sizeof(double) * np));
-		checkCudaErrors(cudaMalloc((void**)&dpos, sizeof(double) * (np + nPolySphere) * 4));
+		checkCudaErrors(cudaMalloc((void**)&dpos, sizeof(double) * np * 4));
 		checkCudaErrors(cudaMalloc((void**)&dvel, sizeof(double) * np * 3));
 		checkCudaErrors(cudaMalloc((void**)&dacc, sizeof(double) * np * 3));
 		checkCudaErrors(cudaMalloc((void**)&davel, sizeof(double) * np * 3));
@@ -135,17 +135,21 @@ bool dem_simulation::initialize(contactManager* _cm)
 	particleManager* pm = md->ParticleManager();
 	np = pm->Np();
 	cm = _cm;
-
-	nPolySphere = cm->setupParticlesPolygonObjectsContact();
-	maxRadius = cm->ContactParticlesPolygonObjects()->MaxRadiusOfPolySphere();
+	if (cm)
+	{
+		nPolySphere = cm->setupParticlesPolygonObjectsContact();
+		if (nPolySphere)
+			maxRadius = cm->ContactParticlesPolygonObjects()->MaxRadiusOfPolySphere();
+	}
+	
 	allocationMemory();
 
 	memcpy(pos, pm->Position(), sizeof(double) * np * 4);
-	if(nPolySphere)
-		memcpy(
-		pos + np * 4, 
-		cm->ContactParticlesPolygonObjects()->HostSphereData(), 
-		sizeof(double) * nPolySphere * 4);
+// 	if(nPolySphere)
+// 		memcpy(
+// 		pos + np * 4, 
+// 		cm->ContactParticlesPolygonObjects()->HostSphereData(), 
+// 		sizeof(double) * nPolySphere * 4);
 	memset(vel, 0, sizeof(double) * np * 3);
 	memset(acc, 0, sizeof(double) * np * 3);
 	memset(avel, 0, sizeof(double) * np * 3);
@@ -178,7 +182,7 @@ bool dem_simulation::initialize(contactManager* _cm)
 		if (r > maxRadius)
 			maxRadius = r;
 	}
-	
+//	vel[0] = 1.0;
 	switch (md->SortType())
 	{
 	case grid_base::NEIGHBORHOOD: dtor = new neighborhood_cell; break;
@@ -197,7 +201,7 @@ bool dem_simulation::initialize(contactManager* _cm)
 
 	if (simulation::isGpu())
 	{
-		checkCudaErrors(cudaMemcpy(dpos, pos, sizeof(double) * (np + nPolySphere) * 4, cudaMemcpyHostToDevice));
+		checkCudaErrors(cudaMemcpy(dpos, pos, sizeof(double) * np * 4, cudaMemcpyHostToDevice));
 		checkCudaErrors(cudaMemcpy(dvel, vel, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
 		checkCudaErrors(cudaMemcpy(dacc, acc, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
 		checkCudaErrors(cudaMemcpy(davel, avel, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
@@ -208,10 +212,12 @@ bool dem_simulation::initialize(contactManager* _cm)
 		checkCudaErrors(cudaMemcpy(diner, inertia, sizeof(double) * np, cudaMemcpyHostToDevice));
 		if (cm)
 		{
+			if (cm->ContactParticles())
+				cm->ContactParticles()->cudaMemoryAlloc();
+			if (cm->ContactParticlesPolygonObjects())
+				cm->ContactParticlesPolygonObjects()->cudaMemoryAlloc();
 			foreach(contact* c, cm->Contacts())
-			{
-				c->cudaMemoryAlloc();
-			}
+				c->cudaMemoryAlloc();		
 		}		
 		device_parameters dp;
 		dp.np = np;
@@ -248,16 +254,20 @@ bool dem_simulation::initialize(contactManager* _cm)
 	return true;
 }
 
-bool dem_simulation::oneStepAnalysis()
+bool dem_simulation::oneStepAnalysis(double ct, unsigned int cstep)
 {
 	if (itor->integrationType() == dem_integrator::VELOCITY_VERLET)
 		itor->updatePosition(dpos, dvel, dacc, np);
-	dtor->detection(dpos, np + nPolySphere);
+	dtor->detection(dpos, (cm ? cm->SphereData() : NULL),  np, nPolySphere);
 	//applyMassForce();
-	cm->runCollision(
-		dpos, dvel, davel, 
-		dmass, dforce, dmoment, 
-		dtor->sortedID(), dtor->cellStart(), dtor->cellEnd(), np);
+	if (cm)
+	{
+		cm->runCollision(
+			dpos, dvel, davel,
+			dmass, dforce, dmoment,
+			dtor->sortedID(), dtor->cellStart(), dtor->cellEnd(), np);
+	}
+	
 	if (itor->integrationType() != dem_integrator::VELOCITY_VERLET)
 		itor->updatePosition(dpos, dvel, dacc, np);
 	itor->updateVelocity(dvel, dacc, davel, daacc, dforce, dmoment, dmass, diner, np);
@@ -276,21 +286,48 @@ QString dem_simulation::saveResult(double *vp, double* vv, double ct, unsigned i
 	if (simulation::isGpu())
 	{
 		checkCudaErrors(cudaMemcpy(vp, dpos, sizeof(double) * np * 4, cudaMemcpyDeviceToHost));
-		checkCudaErrors(cudaMemcpy(vv, dvel, sizeof(double) * np * 3, cudaMemcpyDeviceToHost));
+	//	checkCudaErrors(cudaMemcpy(vv, dvel, sizeof(double) * np * 3, cudaMemcpyDeviceToHost));
 	}
 	else
 	{
 		memcpy(vp, pos, sizeof(double) * 4 * np);
-		memcpy(vv, vel, sizeof(double) * 3 * np);
+	//	memcpy(vv, vel, sizeof(double) * 3 * np);
 	}
+	//qDebug() << vp[0] << " " << vp[1] << " " << vp[2] << endl;
 	qf.write((char*)&ct, sizeof(double));
 	qf.write((char*)&np, sizeof(unsigned int));
-	qf.write((char*)vp, sizeof(VEC3D) * np);
-	qf.write((char*)vv, sizeof(VEC3D) * np);
+	qf.write((char*)vp, sizeof(double) * np * 4);
+//	qf.write((char*)vv, sizeof(VEC3D) * np);
 // 	qf.write((char*)pr, sizeof(double) * np);
 // 	qf.write((char*)fs, sizeof(bool) * np);
 	qf.close();
 	return part_name;
+}
+
+void dem_simulation::saveFinalResult(QFile& qf)
+{
+	int flag = 1;
+	qf.write((char*)&flag, sizeof(int));
+	if (simulation::isGpu())
+	{
+		checkCudaErrors(cudaMemcpy(pos, dpos, sizeof(double) * np * 4, cudaMemcpyDeviceToHost));
+		checkCudaErrors(cudaMemcpy(vel, dvel, sizeof(double) * np * 3, cudaMemcpyDeviceToHost));
+		checkCudaErrors(cudaMemcpy(avel, davel, sizeof(double) * np * 3, cudaMemcpyDeviceToHost));
+	}
+	qf.write((char*)pos, sizeof(double) * np * 4);
+	qf.write((char*)vel, sizeof(double) * np * 3);
+	qf.write((char*)avel, sizeof(double) * np * 3);
+}
+
+void dem_simulation::setStartingData(startingModel* stm)
+{
+	stm->copyDEMData(np, pos, vel, avel);
+	if (simulation::isGpu())
+	{
+		checkCudaErrors(cudaMemcpy(dpos, pos, sizeof(double) * np * 4, cudaMemcpyHostToDevice));
+		checkCudaErrors(cudaMemcpy(dvel, vel, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
+		checkCudaErrors(cudaMemcpy(davel, avel, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
+	}
 }
 
 // #include "dem_simulation.h"

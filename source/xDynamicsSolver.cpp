@@ -1,6 +1,8 @@
 #include "xDynamicsSolver.h"
 #include "modelManager.h"
-#include "errors.h"
+#include "messageBox.h"
+//#include "errors.h"
+#include "startingModel.h"
 #include <QTime>
 #include <QDebug>
 
@@ -26,20 +28,23 @@ xDynamicsSolver::~xDynamicsSolver()
 	if (mbd) delete mbd; mbd = NULL;
 }
 
-bool xDynamicsSolver::initialize()
-{
-	
+bool xDynamicsSolver::initialize(startingModel* stm)
+{	
 	nstep = static_cast<unsigned int>((simulation::et / simulation::dt) + 1);
 	npart = static_cast<unsigned int>((nstep / simulation::st) + 1);
 	if (dem)
 	{
 		unsigned int np = mg->DEMModel()->ParticleManager()->Np();
 		dem->initialize(mg->ContactManager());
+		if (stm)
+			dem->setStartingData(stm);
+		double m_size = model::rs->RequriedMemory(np, npart, DEM) / 1000000.0;
+		sendProgress(-1, "Memory size of the result storage is " + QString("%1").arg(m_size) + "(MB)");
 		model::rs->setResultMemoryDEM(npart, np);
 	}
 	if (mbd)
 	{
-		mbd->initialize();
+		mbd->initialize(stm);
 	}
 	
 	savePart(0, 0);
@@ -59,15 +64,34 @@ bool xDynamicsSolver::savePart(double ct, unsigned int pt)
 	{
 		model::rs->insertTimeData(ct);
 		double *v_pos = model::rs->getPartPosition(pt);
-		double *v_vel = model::rs->getPartVelocity(pt);
-		QString part_name = dem->saveResult(v_pos, v_vel, ct, pt);
+		//double *v_vel = model::rs->getPartVelocity(pt);
+		QString part_name = dem->saveResult(v_pos, NULL, ct, pt);
 		model::rs->insertPartName(part_name);
-		model::rs->definePartDatasDEM(false, pt);
+		//model::rs->definePartDatasDEM(false, pt);
 	}
 	if (mbd)
 	{
 		mbd->saveResult(ct);
 	}
+	return true;
+}
+
+bool xDynamicsSolver::saveFinalResult(double ct)
+{
+	QString file = model::path + "/" + model::name + "_final.bfr";
+	QFile qf(file);
+	qf.open(QIODevice::WriteOnly);
+	qf.write((char*)&ct, sizeof(double));
+	if (dem)
+	{
+		dem->saveFinalResult(qf);
+	}
+	if (mbd)
+	{
+		mbd->saveFinalResult(qf);
+	}
+	qf.close();
+		//dem->saveFinalResult(file);
 	return true;
 }
 
@@ -111,7 +135,7 @@ void xDynamicsSolver::run()
 	tme.start();
 	QTime startingTime = tme.currentTime();
 	QDate startingDate = QDate::currentDate();
-	bool mbd_state = true;
+	int mbd_state = 0;
 	while (cstep < nstep)
 	{
 		QMutexLocker locker(&m_mutex);
@@ -120,19 +144,26 @@ void xDynamicsSolver::run()
 		cstep++;
 		eachStep++;
 		ct += simulation::dt;
-#ifdef _DEBUG
-		qDebug() << ct;
-#endif
+//#ifdef _DEBUG
+		//qDebug() << ct;
+//#endif
 		simulation::setCurrentTime(ct);
+		
 		if (dem) 
-			dem->oneStepAnalysis();
+			dem->oneStepAnalysis(ct, cstep);
 		if (mbd)
 		{
 			mbd_state = mbd->oneStepAnalysis(ct, cstep);
-			if (!mbd_state)
+			//qDebug() << "mbd_state : " << mbd_state;
+			if (mbd_state == -1)
 			{
-				errors::Error(mbd->MbdModel()->modelName());
-				break;
+				//errors::Error(mbd->MbdModel()->modelName());
+				//break;
+			}
+			else if (mbd_state == 1)
+			{
+				if (mg->ContactManager())
+					mg->ContactManager()->update();// ContactParticlesPolygonObjects()->updatePolygonObjectData();
 			}
 		}
 			
@@ -162,6 +193,7 @@ void xDynamicsSolver::run()
 		}
 	}
 	model::rs->exportEachResult2TXT(model::path);
+	saveFinalResult(ct);
 	sendProgress(0, "__line__");
 	QTime endingTime = tme.currentTime();
 	QDate endingDate = QDate::currentDate();

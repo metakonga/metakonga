@@ -14,18 +14,25 @@ public:
 
 	QString name;
 	int method;
-
+	bool ignore_condition;
 	QString firstObj;
 	QString secondObj;
 
 	double restitution;
 	double stiffnessRatio;
 	double friction;
+	double cohesion;
+
+	double ignore_time;
 
 	void setObjectLists(QStringList& list);
+	void setComboBoxString(QString& f, QString& s);
+	void setContactParameters(double r, double s, double f);
+	void setIgnoreCondition(bool b, double t);
 
 	private slots:
 	void changeComboBox(int);
+	void checkBoxSlot();
 	void click_ok();
 	void click_cancle();
 };

@@ -102,7 +102,11 @@ void database::contextMenu(const QPoint& pos)
  			GLWidget::GLObject()->actionDelete(item->text(0));
  			parent->removeChild(item);
 			delete item;
-		}			
+		}	
+		else if (txt == "Property")
+		{
+			
+		}
 	}
 	menu.clear();
 //	qDeleteAll(menu);

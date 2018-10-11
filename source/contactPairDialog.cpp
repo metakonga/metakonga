@@ -14,9 +14,13 @@ contactPairDialog::contactPairDialog(QWidget* parent)
 	LE_Restitution->setText(QString("%1").arg(restitution));
 	LE_StiffnessRatio->setText(QString("%1").arg(stiffnessRatio));
 	LE_Friction->setText(QString("%1").arg(friction));
+	LE_IgnoreTime->setText("0");
+	LE_Cohesion->setText("0");
+	CHB_IgnoreCondition->setChecked(false);
 
 	connect(CB_FirstObject, SIGNAL(currentIndexChanged(int)), this, SLOT(changeComboBox(int)));
 	connect(CB_SecondObject, SIGNAL(currentIndexChanged(int)), this, SLOT(changeComboBox(int)));
+	connect(CHB_IgnoreCondition, SIGNAL(clicked()), this, SLOT(checkBoxSlot()));
 	connect(PB_Ok, SIGNAL(clicked()), this, SLOT(click_ok()));
 	connect(PB_Cancle, SIGNAL(clicked()), this, SLOT(click_cancle()));
 }
@@ -38,6 +42,14 @@ void contactPairDialog::changeComboBox(int idx)
 	}
 }
 
+void contactPairDialog::checkBoxSlot()
+{
+	if (CHB_IgnoreCondition->isChecked())
+		LE_IgnoreTime->setEnabled(true);
+	else
+		LE_IgnoreTime->setEnabled(false);
+}
+
 void contactPairDialog::click_ok()
 {
 	method = TB_METHOD->currentIndex();
@@ -47,6 +59,9 @@ void contactPairDialog::click_ok()
 	restitution = LE_Restitution->text().toDouble();
 	stiffnessRatio = LE_StiffnessRatio->text().toDouble();
 	friction = LE_Friction->text().toDouble();
+	cohesion = LE_Cohesion->text().toDouble();
+	ignore_condition = CHB_IgnoreCondition->isChecked();
+	ignore_time = LE_IgnoreTime->text().toDouble();
 	this->close();
 	this->setResult(QDialog::Accepted);
 }
@@ -61,6 +76,32 @@ void contactPairDialog::setObjectLists(QStringList& list)
 {
 	CB_FirstObject->addItems(list);
 	CB_SecondObject->addItems(list);
+}
+
+void contactPairDialog::setComboBoxString(QString& f, QString& s)
+{
+	CB_FirstObject->setCurrentText(f);
+	CB_SecondObject->setCurrentText(s);
+	CB_FirstObject->setEnabled(false);
+	CB_SecondObject->setEnabled(false);
+}
+
+void contactPairDialog::setContactParameters(double r, double s, double f)
+{
+	restitution = r;
+	stiffnessRatio = s;
+	friction = f;
+	LE_Restitution->setText(QString("%1").arg(r));
+	LE_StiffnessRatio->setText(QString("%1").arg(s));
+	LE_Friction->setText(QString("%1").arg(f));
+}
+
+void contactPairDialog::setIgnoreCondition(bool b, double t)
+{
+	ignore_condition = b;
+	ignore_time = t;
+	LE_IgnoreTime->setText(QString("%1").arg(ignore_time));
+	CHB_IgnoreCondition->setChecked(ignore_condition);
 }
 
 // #include "ccDialog.h"

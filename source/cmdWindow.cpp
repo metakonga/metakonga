@@ -26,6 +26,7 @@ void cmdWindow::write(tWriting tw, QString c)
 	case CMD_INFO: t = ""; break;
 	case CMD_DEBUG: t = "* "; break;
 	case CMD_ERROR: t = "? "; break;
+	case CMD_QUESTION: t = "!"; break;
 	}
 	c.prepend(t);
 	//QString cc = cmd->toPlainText();
