@@ -15,9 +15,13 @@ public:
 	//cube(std::map<QString, QObject*> *_objs);
 	~bodyInfoDialog();
 
-	pointMass* setBodyInfomation(object* pm);
+	void setBodyInfomation(
+		int mt, double x, double y, double z, double _mass, double _vol, 
+		double _ixx, double _iyy, double _izz, 
+		double _ixy, double _iyz, double _izx);
 	int mt;
 	/*double y, d, p;*/
+	double density, youngs, poisson, shear;
 	double mass;
 	double volume;
 	double x, y, z;

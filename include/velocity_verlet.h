@@ -18,6 +18,13 @@ public:
 		, double *domega, double* dalpha
 		, double *dforce, double* dmoment
 		, double *dmass, double* dinertia, unsigned int np);
+
+	virtual void updatePosition(float* dpos, float* dvel, float* dacc, unsigned int np);
+	virtual void updateVelocity(
+		float *dvel, float* dacc
+		, float *domega, float* dalpha
+		, float *dforce, float* dmoment
+		, float *dmass, float* dinertia, unsigned int np);
 };
 
 #endif

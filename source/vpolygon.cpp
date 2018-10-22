@@ -20,6 +20,7 @@ vpolygon::vpolygon()
 	, texture(NULL)
 	, nvertex(0)
 	, ntriangle(0)
+	, nvtriangle(0)
 	, m_index_vbo(0)
 	, m_vertex_vbo(0)
 	, m_normal_vbo(0)
@@ -41,6 +42,7 @@ vpolygon::vpolygon(QString& _name)
 	, texture(NULL)
 	, nvertex(0)
 	, ntriangle(0)
+	, nvtriangle(0)
 	, m_index_vbo(0)
 	, m_vertex_vbo(0)
 	, m_normal_vbo(0)
@@ -186,6 +188,7 @@ void vpolygon::_loadMS3DASCII(QString f)
 
 void vpolygon::_loadSTLASCII(QString f)
 {
+	file_path = f;
 	QFile qf(f);
 	qf.open(QIODevice::ReadOnly);
 	QTextStream qts(&qf);
@@ -201,6 +204,7 @@ void vpolygon::_loadSTLASCII(QString f)
 			ntri++;
 	}
  	vertexList = new double[ntri * 9];
+//	vertexList = new float[ntri * 9];
 // 	normalList = new double[ntri * 3];
 	vertice = new float[ntri * 9];
 	normals = new float[ntri * 9];
@@ -210,9 +214,11 @@ void vpolygon::_loadSTLASCII(QString f)
 	qf.reset();
 	qts >> ch >> ch >> ch;
 	VEC3D p, q, r, c;
-	double vol = 0.0;
+	double _vol = 0.0;
 	double min_radius = 10000.0;
 	double max_radius = 0.0;
+	VEC3D *spos = new VEC3D[ntri];
+	ixx = iyy = izz = ixy = ixz = iyz = 0.0;
 	for (unsigned int i = 0; i < ntri; i++)
 	{
 		qts >> ch >> ch >> nx >> ny >> nz;
@@ -250,14 +256,20 @@ void vpolygon::_loadSTLASCII(QString f)
 		vertice[i * 9 + 7] = (float)vertexList[i * 9 + 7];
 		vertice[i * 9 + 8] = (float)vertexList[i * 9 + 8];
 		qts >> ch >> ch;
-		//vol += numeric::signed_volume_of_triangle(p, q, r);
-		VEC3D spos = numeric::utility::calculate_center_of_triangle(p, q, r);
-		c += spos;
-		double r = (spos - p).length();
-		if (max_radius < r)
-			max_radius = r;
-		if (min_radius > r)
-			min_radius = r;
+		_vol += numeric::utility::signed_volume_of_triangle(p, q, r);
+		spos[i] = numeric::utility::calculate_center_of_triangle(p, q, r);
+		c += spos[i];
+// 		ixx += spos.y * spos.y + spos.z * spos.z;
+// 		iyy += spos.x * spos.x + spos.z * spos.z;
+// 		izz += spos.x * spos.x + spos.y * spos.y;
+// 		ixy -= spos.x * spos.y;
+// 		ixz -= spos.x * spos.z;
+// 		iyz -= spos.y * spos.z;
+		double _r = (spos[i] - p).length();
+		if (max_radius < _r)
+			max_radius = _r;
+		if (min_radius > _r)
+			min_radius = _r;
 	}
 #ifdef _DEBUG
 	qDebug() << "Maximum radius of " << name() << " is " << max_radius;
@@ -277,9 +289,19 @@ void vpolygon::_loadSTLASCII(QString f)
 		vertice[s + 6] -= pos0.x;
 		vertice[s + 7] -= pos0.y;
 		vertice[s + 8] -= pos0.z;
+		VEC3D cm = spos[i] - pos0;
+		ixx += cm.y * cm.y + cm.z * cm.z;
+		iyy += cm.x * cm.x + cm.z * cm.z;
+		izz += cm.x * cm.x + cm.y * cm.y;
+		ixy -= cm.x * cm.y;
+		ixz -= cm.x * cm.z;
+		iyz -= cm.y * cm.z;
 	}
 	qf.close();
-	splitTriangle(0.015);
+	vol = _vol;
+	delete[] spos;
+	nvtriangle = ntriangle;
+	//splitTriangle(0.001);
 }
 
 QList<triangle_info> vpolygon::_splitTriangle(triangle_info& ti, double to)
@@ -423,12 +445,12 @@ void vpolygon::splitTriangle(double to)
 			temp_tri.push_back(tinfo);
 		}
 	}
-	delete[] vertice;
-	delete[] normals;
+	//delete[] vertice;
+	//delete[] normals;
 	delete[] vertexList;
 	ntriangle = temp_tri.size();
-	vertice = new float[ntriangle * 9];
-	normals = new float[ntriangle * 9];
+	//vertice = new float[ntriangle * 9];
+	//normals = new float[ntriangle * 9];
 	vertexList = new double[ntriangle * 9];
 	int cnt = 0;
 	foreach(triangle_info t, temp_tri)
@@ -444,31 +466,32 @@ void vpolygon::splitTriangle(double to)
 		vertexList[s + 7] = t.r.y;
 		vertexList[s + 8] = t.r.z;
 
-		vertice[s + 0] = (float)t.p.x - pos0.x;
-		vertice[s + 1] = (float)t.p.y - pos0.y;
-		vertice[s + 2] = (float)t.p.z - pos0.z;
-		vertice[s + 3] = (float)t.q.x - pos0.x;
-		vertice[s + 4] = (float)t.q.y - pos0.y;
-		vertice[s + 5] = (float)t.q.z - pos0.z;
-		vertice[s + 6] = (float)t.r.x - pos0.x;
-		vertice[s + 7] = (float)t.r.y - pos0.y;
-		vertice[s + 8] = (float)t.r.z - pos0.z;
+// 		vertice[s + 0] = (float)t.p.x - pos0.x;
+// 		vertice[s + 1] = (float)t.p.y - pos0.y;
+// 		vertice[s + 2] = (float)t.p.z - pos0.z;
+// 		vertice[s + 3] = (float)t.q.x - pos0.x;
+// 		vertice[s + 4] = (float)t.q.y - pos0.y;
+// 		vertice[s + 5] = (float)t.q.z - pos0.z;
+// 		vertice[s + 6] = (float)t.r.x - pos0.x;
+// 		vertice[s + 7] = (float)t.r.y - pos0.y;
+// 		vertice[s + 8] = (float)t.r.z - pos0.z;
 
-		normals[s + 0] = t.n.x;
-		normals[s + 1] = t.n.y;
-		normals[s + 2] = t.n.z;
-		normals[s + 3] = t.n.x;
-		normals[s + 4] = t.n.y;
-		normals[s + 5] = t.n.z;
-		normals[s + 6] = t.n.x;
-		normals[s + 7] = t.n.y;
-		normals[s + 8] = t.n.z;
+// 		normals[s + 0] = t.n.x;
+// 		normals[s + 1] = t.n.y;
+// 		normals[s + 2] = t.n.z;
+// 		normals[s + 3] = t.n.x;
+// 		normals[s + 4] = t.n.y;
+// 		normals[s + 5] = t.n.z;
+// 		normals[s + 6] = t.n.x;
+// 		normals[s + 7] = t.n.y;
+// 		normals[s + 8] = t.n.z;
 		cnt++;
 	}
 }
 
 bool vpolygon::define(import_shape_type t, QString file)
 {
+	ist = t;
 	switch (t)
 	{
 	case MILKSHAPE_3D_ASCII: _loadMS3DASCII(file); break;
@@ -525,13 +548,13 @@ bool vpolygon::define(import_shape_type t, QString file)
 	{
 		glGenBuffers(1, &m_vertex_vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, m_vertex_vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * ntriangle * 9, (float*)vertice, GL_DYNAMIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * nvtriangle * 9, (float*)vertice, GL_DYNAMIC_DRAW);
 	}
 	if (!m_normal_vbo)
 	{
 		glGenBuffers(1, &m_normal_vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, m_normal_vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * ntriangle * 9, (float*)normals, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * nvtriangle * 9, (float*)normals, GL_STATIC_DRAW);
 		//glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(VEC3F)*nvertex, &(normals[0].x));
 		//glBufferSubData(GL_ARRAY_BUFFER, sizeof(VEC3F)*nvt, sizeof(VEC3F) * nid, &(normals[0].x));
 	}
@@ -562,7 +585,7 @@ void vpolygon::_drawPolygons()
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_vertex_vbo);
 		glVertexPointer(3, GL_FLOAT, 0, 0);
 		glEnableClientState(GL_VERTEX_ARRAY);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)*ntriangle * 9, vertice);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)*nvtriangle * 9, vertice);
 // 		if (m_index_vbo)
 // 		{
 // 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_index_vbo);
@@ -579,11 +602,11 @@ void vpolygon::_drawPolygons()
 			glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_normal_vbo);
 			glNormalPointer(GL_FLOAT, 0, 0);
 			glEnableClientState(GL_NORMAL_ARRAY);
-			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)*ntriangle * 9, normals);
+			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)*nvtriangle * 9, normals);
 		}
 
 		//glDrawElements(GL_TRIANGLES, nindex * 3, GL_UNSIGNED_INT, 0);
-		glDrawArrays(GL_TRIANGLES, 0, ntriangle * 3);
+		glDrawArrays(GL_TRIANGLES, 0, nvtriangle * 3);
 		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
 		//glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER, 0);
 		if(m_vertex_vbo)

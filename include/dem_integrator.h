@@ -20,6 +20,13 @@ public:
 		, double *dforce, double* dmoment
 		, double *dmass, double* dinertia, unsigned int np) = 0;
 
+	virtual void updatePosition(float* dpos, float* dvel, float* dacc, unsigned int np) = 0;
+	virtual void updateVelocity(
+		float *dvel, float* dacc
+		, float *domega, float* dalpha
+		, float *dforce, float* dmoment
+		, float *dmass, float* dinertia, unsigned int np) = 0;
+
 protected:
 	Type type;
 };

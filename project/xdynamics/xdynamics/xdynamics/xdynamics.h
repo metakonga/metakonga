@@ -74,7 +74,7 @@ public:
 	//void 
 	void recieveProgress(int, QString, QString = "");
 	void excuteMessageBox();
-	void propertySlot(QString, context_object_type);
+	void contextSlot(QString, context_menu);
 	//void messageSlot(QString);
 	void editingCommandLine();
 	void write_command_line_passed_data();

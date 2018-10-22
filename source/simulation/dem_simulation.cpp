@@ -22,6 +22,15 @@ dem_simulation::dem_simulation()
 	, moment(NULL), dmoment(NULL)
 	, mass(NULL), dmass(NULL)
 	, inertia(NULL), diner(NULL)
+	, pos_f(NULL), dpos_f(NULL)
+	, vel_f(NULL), dvel_f(NULL)
+	, acc_f(NULL), dacc_f(NULL)
+	, avel_f(NULL), davel_f(NULL)
+	, aacc_f(NULL), daacc_f(NULL)
+	, force_f(NULL), dforce_f(NULL)
+	, moment_f(NULL), dmoment_f(NULL)
+	, mass_f(NULL), dmass_f(NULL)
+	, inertia_f(NULL), diner_f(NULL)
 {
 
 }
@@ -43,6 +52,15 @@ dem_simulation::dem_simulation(dem_model *_md)
 	, moment(NULL), dmoment(NULL)
 	, mass(NULL), dmass(NULL)
 	, inertia(NULL), diner(NULL)
+	, pos_f(NULL), dpos_f(NULL)
+	, vel_f(NULL), dvel_f(NULL)
+	, acc_f(NULL), dacc_f(NULL)
+	, avel_f(NULL), davel_f(NULL)
+	, aacc_f(NULL), daacc_f(NULL)
+	, force_f(NULL), dforce_f(NULL)
+	, moment_f(NULL), dmoment_f(NULL)
+	, mass_f(NULL), dmass_f(NULL)
+	, inertia_f(NULL), diner_f(NULL)
 {
 
 }
@@ -99,32 +117,84 @@ void dem_simulation::clearMemory()
 		if (dforce) checkCudaErrors(cudaFree(dforce)); dforce = NULL;
 		if (dmoment) checkCudaErrors(cudaFree(dmoment)); dmoment = NULL;
 	}	
+	if (mass_f) delete[] mass_f; mass_f = NULL;
+	if (inertia_f) delete[] inertia_f; inertia_f = NULL;
+	if (pos_f) delete[] pos_f; pos_f = NULL;
+	if (vel_f) delete[] vel_f; vel_f = NULL;
+	if (acc_f) delete[] acc_f; acc_f = NULL;
+	if (avel_f) delete[] avel_f; avel_f = NULL;
+	if (aacc_f) delete[] aacc_f; aacc_f = NULL;
+	if (force_f) delete[] force_f; force_f = NULL;
+	if (moment_f) delete[] moment_f; moment_f = NULL;
+	if (simulation::isGpu())
+	{
+		if (dmass_f) checkCudaErrors(cudaFree(dmass_f)); dmass_f = NULL;
+		if (diner_f) checkCudaErrors(cudaFree(diner_f)); diner_f = NULL;
+		if (dpos_f) checkCudaErrors(cudaFree(dpos_f)); dpos_f = NULL;
+		if (dvel_f) checkCudaErrors(cudaFree(dvel_f)); dvel_f = NULL;
+		if (dacc_f) checkCudaErrors(cudaFree(dacc_f)); dacc_f = NULL;
+		if (davel_f) checkCudaErrors(cudaFree(davel_f)); davel_f = NULL;
+		if (daacc_f) checkCudaErrors(cudaFree(daacc_f)); daacc_f = NULL;
+		if (dforce_f) checkCudaErrors(cudaFree(dforce_f)); dforce_f = NULL;
+		if (dmoment_f) checkCudaErrors(cudaFree(dmoment_f)); dmoment_f = NULL;
+	}
 }
 
 void dem_simulation::allocationMemory()
 {
 	clearMemory();
 	//np = _np;
-	mass = new double[np];
-	inertia = new double[np];
-	pos = new double[np * 4];
-	vel = new double[np * 3];
-	acc = new double[np * 3];
-	avel = new double[np * 3];
-	aacc = new double[np * 3];
-	force = new double[np * 3];
-	moment = new double[np * 3];
+	if (model::isSinglePrecision)
+	{
+		mass_f = new float[np];
+		inertia_f = new float[np];
+		pos_f = new float[np * 4];
+		vel_f = new float[np * 3];
+		acc_f = new float[np * 3];
+		avel_f = new float[np * 3];
+		aacc_f = new float[np * 3];
+		force_f = new float[np * 3];
+		moment_f = new float[np * 3];
+	}
+	else
+	{
+		mass = new double[np];
+		inertia = new double[np];
+		pos = new double[np * 4];
+		vel = new double[np * 3];
+		acc = new double[np * 3];
+		avel = new double[np * 3];
+		aacc = new double[np * 3];
+		force = new double[np * 3];
+		moment = new double[np * 3];
+	}
+	
 	if (simulation::isGpu())
 	{
-		checkCudaErrors(cudaMalloc((void**)&dmass, sizeof(double) * np));
-		checkCudaErrors(cudaMalloc((void**)&diner, sizeof(double) * np));
-		checkCudaErrors(cudaMalloc((void**)&dpos, sizeof(double) * np * 4));
-		checkCudaErrors(cudaMalloc((void**)&dvel, sizeof(double) * np * 3));
-		checkCudaErrors(cudaMalloc((void**)&dacc, sizeof(double) * np * 3));
-		checkCudaErrors(cudaMalloc((void**)&davel, sizeof(double) * np * 3));
-		checkCudaErrors(cudaMalloc((void**)&daacc, sizeof(double) * np * 3));
-		checkCudaErrors(cudaMalloc((void**)&dforce, sizeof(double) * np * 3));
-		checkCudaErrors(cudaMalloc((void**)&dmoment, sizeof(double) * np * 3));
+		if (model::isSinglePrecision)
+		{
+			checkCudaErrors(cudaMalloc((void**)&dmass_f, sizeof(float) * np));
+			checkCudaErrors(cudaMalloc((void**)&diner_f, sizeof(float) * np));
+			checkCudaErrors(cudaMalloc((void**)&dpos_f, sizeof(float) * np * 4));
+			checkCudaErrors(cudaMalloc((void**)&dvel_f, sizeof(float) * np * 3));
+			checkCudaErrors(cudaMalloc((void**)&dacc_f, sizeof(float) * np * 3));
+			checkCudaErrors(cudaMalloc((void**)&davel_f, sizeof(float) * np * 3));
+			checkCudaErrors(cudaMalloc((void**)&daacc_f, sizeof(float) * np * 3));
+			checkCudaErrors(cudaMalloc((void**)&dforce_f, sizeof(float) * np * 3));
+			checkCudaErrors(cudaMalloc((void**)&dmoment_f, sizeof(float) * np * 3));
+		}
+		else
+		{
+			checkCudaErrors(cudaMalloc((void**)&dmass, sizeof(double) * np));
+			checkCudaErrors(cudaMalloc((void**)&diner, sizeof(double) * np));
+			checkCudaErrors(cudaMalloc((void**)&dpos, sizeof(double) * np * 4));
+			checkCudaErrors(cudaMalloc((void**)&dvel, sizeof(double) * np * 3));
+			checkCudaErrors(cudaMalloc((void**)&dacc, sizeof(double) * np * 3));
+			checkCudaErrors(cudaMalloc((void**)&davel, sizeof(double) * np * 3));
+			checkCudaErrors(cudaMalloc((void**)&daacc, sizeof(double) * np * 3));
+			checkCudaErrors(cudaMalloc((void**)&dforce, sizeof(double) * np * 3));
+			checkCudaErrors(cudaMalloc((void**)&dmoment, sizeof(double) * np * 3));
+		}
 	}
 }
 
@@ -145,11 +215,6 @@ bool dem_simulation::initialize(contactManager* _cm)
 	allocationMemory();
 
 	memcpy(pos, pm->Position(), sizeof(double) * np * 4);
-// 	if(nPolySphere)
-// 		memcpy(
-// 		pos + np * 4, 
-// 		cm->ContactParticlesPolygonObjects()->HostSphereData(), 
-// 		sizeof(double) * nPolySphere * 4);
 	memset(vel, 0, sizeof(double) * np * 3);
 	memset(acc, 0, sizeof(double) * np * 3);
 	memset(avel, 0, sizeof(double) * np * 3);
@@ -157,19 +222,6 @@ bool dem_simulation::initialize(contactManager* _cm)
 	memset(force, 0, sizeof(double) * np * 3);
 	memset(moment, 0, sizeof(double) * np * 3);
 
-//	nPolySphere = 0;
-// 	foreach(object* obj, modelManager::MM()->GeometryObject()->Objects())
-// 	{
-// 		if (obj->ObjectType() == POLYGON_SHAPE)
-// 		{
-// 			polygonObject* pobj = dynamic_cast<polygonObject*>(obj);
-// 			unsigned int ntri = pobj->NumTriangle();
-// 			memcpy(pos + (np + nPolySphere) * 4, pobj->hostSphereSet(), sizeof(double) * ntri * 4);
-// 			nPolySphere += ntri;
-// 		}
-// 	}
-	
-	//VEC3D minWorld;
 	for (unsigned int i = 0; i < np; i++)
 	{
 		double r = pos[i * 4 + 3];
@@ -182,7 +234,7 @@ bool dem_simulation::initialize(contactManager* _cm)
 		if (r > maxRadius)
 			maxRadius = r;
 	}
-//	vel[0] = 1.0;
+
 	switch (md->SortType())
 	{
 	case grid_base::NEIGHBORHOOD: dtor = new neighborhood_cell; break;
@@ -254,12 +306,131 @@ bool dem_simulation::initialize(contactManager* _cm)
 	return true;
 }
 
+bool dem_simulation::initialize_f(contactManager* _cm)
+{
+	float maxRadius = 0;
+	particleManager* pm = md->ParticleManager();
+	np = pm->Np();
+	cm = _cm;
+	if (cm)
+	{
+		nPolySphere = cm->setupParticlesPolygonObjectsContact();
+		if (nPolySphere)
+			maxRadius = cm->ContactParticlesPolygonObjects()->MaxRadiusOfPolySphere_f();
+	}
+
+	allocationMemory();
+
+	memcpy(pos_f, pm->Position_f(), sizeof(float) * np * 4);
+	memset(vel_f, 0, sizeof(float) * np * 3);
+	memset(acc_f, 0, sizeof(float) * np * 3);
+	memset(avel_f, 0, sizeof(float) * np * 3);
+	memset(aacc_f, 0, sizeof(float) * np * 3);
+	memset(force_f, 0, sizeof(float) * np * 3);
+	memset(moment_f, 0, sizeof(float) * np * 3);
+
+	//	nPolySphere = 0;
+	// 	foreach(object* obj, modelManager::MM()->GeometryObject()->Objects())
+	// 	{
+	// 		if (obj->ObjectType() == POLYGON_SHAPE)
+	// 		{
+	// 			polygonObject* pobj = dynamic_cast<polygonObject*>(obj);
+	// 			unsigned int ntri = pobj->NumTriangle();
+	// 			memcpy(pos + (np + nPolySphere) * 4, pobj->hostSphereSet(), sizeof(double) * ntri * 4);
+	// 			nPolySphere += ntri;
+	// 		}
+	// 	}
+
+	//VEC3D minWorld;
+	for (unsigned int i = 0; i < np; i++)
+	{
+		float r = pos_f[i * 4 + 3];
+		//vel[i * 3 + 0] = 0.1;
+		mass_f[i] = static_cast<float>(pm->Object()->Density() * (4.0 / 3.0) * M_PI * pow(r, 3.0));
+		inertia_f[i] = (2.0f / 5.0f) * mass_f[i] * pow(r, 2.0f);
+		force_f[i * 3 + 0] = mass_f[i] * static_cast<float>(model::gravity.x);
+		force_f[i * 3 + 1] = mass_f[i] * static_cast<float>(model::gravity.y);
+		force_f[i * 3 + 2] = mass_f[i] * static_cast<float>(model::gravity.z);
+		if (r > maxRadius)
+			maxRadius = r;
+	}
+	//	vel[0] = 1.0;
+	switch (md->SortType())
+	{
+	case grid_base::NEIGHBORHOOD: dtor = new neighborhood_cell; break;
+	}
+	if (dtor)
+	{
+		dtor->setWorldOrigin(VEC3D(-1.0, -1.0, -1.0));
+		dtor->setGridSize(VEC3UI(128, 128, 128));
+		dtor->setCellSize(maxRadius * 2.0f);
+		dtor->initialize(np + nPolySphere);
+	}
+	switch (md->IntegrationType())
+	{
+	case dem_integrator::VELOCITY_VERLET: itor = new velocity_verlet; break;
+	}
+
+	if (simulation::isGpu())
+	{
+		checkCudaErrors(cudaMemcpy(dpos_f, pos_f, sizeof(float) * np * 4, cudaMemcpyHostToDevice));
+		checkCudaErrors(cudaMemcpy(dvel_f, vel_f, sizeof(float) * np * 3, cudaMemcpyHostToDevice));
+		checkCudaErrors(cudaMemcpy(dacc_f, acc_f, sizeof(float) * np * 3, cudaMemcpyHostToDevice));
+		checkCudaErrors(cudaMemcpy(davel_f, avel_f, sizeof(float) * np * 3, cudaMemcpyHostToDevice));
+		checkCudaErrors(cudaMemcpy(daacc_f, aacc_f, sizeof(float) * np * 3, cudaMemcpyHostToDevice));
+		checkCudaErrors(cudaMemcpy(dforce_f, force_f, sizeof(float) * np * 3, cudaMemcpyHostToDevice));
+		checkCudaErrors(cudaMemcpy(dmoment_f, moment_f, sizeof(float) * np * 3, cudaMemcpyHostToDevice));
+		checkCudaErrors(cudaMemcpy(dmass_f, mass_f, sizeof(float) * np, cudaMemcpyHostToDevice));
+		checkCudaErrors(cudaMemcpy(diner_f, inertia_f, sizeof(float) * np, cudaMemcpyHostToDevice));
+		if (cm)
+		{
+			if (cm->ContactParticles())
+				cm->ContactParticles()->cudaMemoryAlloc_f();
+			if (cm->ContactParticlesPolygonObjects())
+				cm->ContactParticlesPolygonObjects()->cudaMemoryAlloc_f();
+			foreach(contact* c, cm->Contacts())
+				c->cudaMemoryAlloc_f();
+		}
+		device_parameters_f dp;
+		dp.np = np;
+		dp.nsphere = 0;
+		dp.ncell = dtor->nCell();
+		dp.grid_size.x = grid_base::gs.x;
+		dp.grid_size.y = grid_base::gs.y;
+		dp.grid_size.z = grid_base::gs.z;
+		dp.dt = static_cast<float>(simulation::dt);
+		dp.half2dt = static_cast<float>(0.5 * dp.dt * dp.dt);
+		dp.cell_size = static_cast<float>(grid_base::cs);
+		dp.cohesion = 0.0;
+		dp.gravity.x = static_cast<float>(model::gravity.x);
+		dp.gravity.y = static_cast<float>(model::gravity.y);
+		dp.gravity.z = static_cast<float>(model::gravity.z);
+		dp.world_origin.x = static_cast<float>(grid_base::wo.x);
+		dp.world_origin.y = static_cast<float>(grid_base::wo.y);
+		dp.world_origin.z = static_cast<float>(grid_base::wo.z);
+		setSymbolicParameter_f(&dp);
+	}
+	else
+	{
+		dpos_f = pos_f;
+		dvel_f = vel_f;
+		dacc_f = acc_f;
+		davel_f = avel_f;
+		daacc_f = aacc_f;
+		dforce_f = force_f;
+		dmoment_f = moment_f;
+		dmass_f = mass_f;
+		diner_f = inertia_f;
+	}
+
+	return true;
+}
+
 bool dem_simulation::oneStepAnalysis(double ct, unsigned int cstep)
 {
 	if (itor->integrationType() == dem_integrator::VELOCITY_VERLET)
 		itor->updatePosition(dpos, dvel, dacc, np);
 	dtor->detection(dpos, (cm ? cm->SphereData() : NULL),  np, nPolySphere);
-	//applyMassForce();
 	if (cm)
 	{
 		cm->runCollision(
@@ -270,7 +441,28 @@ bool dem_simulation::oneStepAnalysis(double ct, unsigned int cstep)
 	
 	if (itor->integrationType() != dem_integrator::VELOCITY_VERLET)
 		itor->updatePosition(dpos, dvel, dacc, np);
+	
 	itor->updateVelocity(dvel, dacc, davel, daacc, dforce, dmoment, dmass, diner, np);
+	return true;
+}
+
+bool dem_simulation::oneStepAnalysis_f(double ct, unsigned int cstep)
+{
+	if (itor->integrationType() == dem_integrator::VELOCITY_VERLET)
+		itor->updatePosition(dpos_f, dvel_f, dacc_f, np);
+	dtor->detection_f(dpos_f, (cm ? cm->SphereData_f() : NULL), np, nPolySphere);
+	//applyMassForce();
+	if (cm)
+	{
+		cm->runCollision(
+			dpos_f, dvel_f, davel_f,
+			dmass_f, dforce_f, dmoment_f,
+			dtor->sortedID(), dtor->cellStart(), dtor->cellEnd(), np);
+	}
+
+	if (itor->integrationType() != dem_integrator::VELOCITY_VERLET)
+		itor->updatePosition(dpos_f, dvel_f, dacc_f, np);
+	itor->updateVelocity(dvel_f, dacc_f, davel_f, daacc_f, dforce_f, dmoment_f, dmass_f, diner_f, np);
 	return true;
 }
 
@@ -301,12 +493,44 @@ QString dem_simulation::saveResult(double *vp, double* vv, double ct, unsigned i
 // 	qf.write((char*)pr, sizeof(double) * np);
 // 	qf.write((char*)fs, sizeof(bool) * np);
 	qf.close();
-	return part_name;
+	return fname;
+}
+
+QString dem_simulation::saveResult_f(float *vp, float* vv, double ct, unsigned int pt)
+{
+	char pname[256] = { 0, };
+	QString fname = model::path;// +model::name;
+	QString part_name;
+	part_name.sprintf("part%04d", pt);
+	fname.sprintf("%s/part%04d.bin", fname.toUtf8().data(), pt);
+	QFile qf(fname);
+	qf.open(QIODevice::WriteOnly);
+	if (simulation::isGpu())
+	{
+		checkCudaErrors(cudaMemcpy(vp, dpos_f, sizeof(float) * np * 4, cudaMemcpyDeviceToHost));
+		//	checkCudaErrors(cudaMemcpy(vv, dvel, sizeof(double) * np * 3, cudaMemcpyDeviceToHost));
+	}
+	else
+	{
+		memcpy(vp, pos_f, sizeof(float) * 4 * np);
+		//	memcpy(vv, vel, sizeof(double) * 3 * np);
+	}
+	//qDebug() << vp[0] << " " << vp[1] << " " << vp[2] << endl;
+	qf.write((char*)&ct, sizeof(double));
+	qf.write((char*)&np, sizeof(unsigned int));
+	qf.write((char*)vp, sizeof(float) * np * 4);
+	//	qf.write((char*)vv, sizeof(VEC3D) * np);
+	// 	qf.write((char*)pr, sizeof(double) * np);
+	// 	qf.write((char*)fs, sizeof(bool) * np);
+	qf.close();
+	return fname;
 }
 
 void dem_simulation::saveFinalResult(QFile& qf)
 {
 	int flag = 1;
+	int precision = 2;
+	qf.write((char*)&precision, sizeof(int));
 	qf.write((char*)&flag, sizeof(int));
 	if (simulation::isGpu())
 	{
@@ -319,6 +543,23 @@ void dem_simulation::saveFinalResult(QFile& qf)
 	qf.write((char*)avel, sizeof(double) * np * 3);
 }
 
+void dem_simulation::saveFinalResult_f(QFile& qf)
+{
+	int flag = 1;
+	int precision = 1;
+	qf.write((char*)&precision, sizeof(int));
+	qf.write((char*)&flag, sizeof(int));
+	if (simulation::isGpu())
+	{
+		checkCudaErrors(cudaMemcpy(pos_f, dpos_f, sizeof(float) * np * 4, cudaMemcpyDeviceToHost));
+		checkCudaErrors(cudaMemcpy(vel_f, dvel_f, sizeof(float) * np * 3, cudaMemcpyDeviceToHost));
+		checkCudaErrors(cudaMemcpy(avel_f, davel_f, sizeof(float) * np * 3, cudaMemcpyDeviceToHost));
+	}
+	qf.write((char*)pos_f, sizeof(float) * np * 4);
+	qf.write((char*)vel_f, sizeof(float) * np * 3);
+	qf.write((char*)avel_f, sizeof(float) * np * 3);
+}
+
 void dem_simulation::setStartingData(startingModel* stm)
 {
 	stm->copyDEMData(np, pos, vel, avel);
@@ -329,379 +570,3 @@ void dem_simulation::setStartingData(startingModel* stm)
 		checkCudaErrors(cudaMemcpy(davel, avel, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
 	}
 }
-
-// #include "dem_simulation.h"
-// #include "collision.h"
-// #include "polygonObject.h"
-// #include "object.h"
-// #include <iomanip>
-// #include "mphysics_cuda_dec.cuh"
-// #include <QFile>
-// #include <QDebug>
-// #include <QTime>
-// #include <QTextStream>
-// 
-// dem_simulation::dem_simulation()
-// 	:simulation()
-// 	, itor(NULL), gb(NULL), paras(NULL)
-// 	, d_pos(NULL), d_vel(NULL), d_acc(NULL)
-// 	, d_omega(NULL), d_alpha(NULL), d_fr(NULL)
-// 	, d_mm(NULL), d_ms(NULL), d_iner(NULL)
-// 	, d_riv(NULL)
-// {
-// 
-// }
-// 
-// dem_simulation::dem_simulation(modeler *_md)
-// 	:simulation()
-// 	, itor(NULL), gb(NULL), paras(NULL)
-// 	, d_pos(NULL), d_vel(NULL), d_acc(NULL)
-// 	, d_omega(NULL), d_alpha(NULL), d_fr(NULL)
-// 	, d_mm(NULL), d_ms(NULL), d_iner(NULL)
-// 	, d_riv(NULL)
-// {
-// 	
-// }
-// 
-// dem_simulation::~dem_simulation()
-// {
-// 	clear();
-// }
-// 
-// void dem_simulation::clear()
-// {
-// 	if (itor) delete itor; itor = NULL;
-// 	if (gb) delete gb; gb = NULL;
-// 	if (paras) delete paras; paras = NULL;
-// 
-// 	if (d_pos) checkCudaErrors(cudaFree(d_pos)); d_pos = NULL;
-// 	if (d_vel) checkCudaErrors(cudaFree(d_vel)); d_vel = NULL;
-// 	if (d_acc) checkCudaErrors(cudaFree(d_acc)); d_acc = NULL;
-// 	if (d_omega) checkCudaErrors(cudaFree(d_omega)); d_omega = NULL;
-// 	if (d_alpha) checkCudaErrors(cudaFree(d_alpha)); d_alpha = NULL;
-// 	if (d_fr) checkCudaErrors(cudaFree(d_fr)); d_fr = NULL;
-// 	if (d_mm) checkCudaErrors(cudaFree(d_mm)); d_mm = NULL;
-// 	if (d_ms) checkCudaErrors(cudaFree(d_ms)); d_ms = NULL;
-// 	//if (d_rad) checkCudaErrors(cudaFree(d_rad));
-// 	if (d_iner) checkCudaErrors(cudaFree(d_iner)); d_iner = NULL;
-// 	if (d_riv) checkCudaErrors(cudaFree(d_riv)); d_riv = NULL;
-// }
-// 
-// bool dem_simulation::initialize(bool isCpu)
-// {
-// 	clear();
-// 	_isCpu = isCpu;
-// 	_isWait = false;
-// 	_isWaiting = false;
-// 	_abort = false;
-// 	_interrupt = false;
-// 	//pBar = new QProgressBar;
-// 	//durationTime = new QLineEdit;
-// 	//durationTime->setFrame(false);
-// 	nstep = static_cast<unsigned int>((et / dt) + 1);
-// 	//QProgressBar *pBar;
-// 	gb = new neighborhood_cell("detector", md);
-// 	gb->setWorldOrigin(VEC3D(-1.0, -1.0, -1.0));
-// 	gb->setGridSize(VEC3UI(128, 128, 128));
-// 	gb->setCellSize(md->particleSystem()->maxRadius() * 2.0);
-// 
-// 	qDebug() << "- Allocation of contact detection module ------------------ DONE";
-// 	itor = new velocity_verlet(md);
-// 	qDebug() << "- Allocation of integration module ------------------------ DONE";
-// 
-// 	unsigned int s_np = 0;
-// 	if (md->numPoly()){
-// 		s_np = md->numPolygonSphere();
-// 	}
-// 	np = md->numParticle();
-// 	m_pos = new VEC4D[np];
-// 	m_vel = new VEC3D[np];
-// 	m_force = new VEC3D[np];
-// 	if (isCpu){
-// 		gb->allocMemory(np);
-// 		memcpy(m_pos, md->particleSystem()->position(), sizeof(double) * 4 * np);
-// 		memcpy(m_vel, md->particleSystem()->velocity(), sizeof(double) * 3 * np);
-// 	}
-// 	else{
-// 		gb->cuAllocMemory(np);
-// 		//md->particleSystem()->cuAllocMemory();
-// 		cudaAllocMemory(np);
-// 		foreach(object* value, md->objects())
-// 		{
-// 			if (value->rolltype() != ROLL_PARTICLE)
-// 			{
-// 				value->cuAllocData(md->numParticle());
-// 			}
-// 		}
-// 		foreach(collision* value, md->collisions())
-// 		{
-// 			value->allocDeviceMemory();
-// 		}
-// 		//device_parameters paras;
-// 		paras = new device_parameters;
-// 		if (md->particleSystem()->generationMethod()){
-// 			paras->np = md->particleSystem()->numParticlePerStack();
-// 		}
-// 		else{
-// 			paras->np = md->numParticle();
-// 		}
-// 		//paras->np = ->particleSystem()->numParticlePerStack();// md->numParticle();
-// 		paras->nsphere = s_np;
-// 		paras->dt = dt;
-// 		paras->cohesion = 0.0;// 1.0E+6;
-// 		paras->half2dt = 0.5 * dt * dt;
-// 		paras->gravity = make_double3(md->gravity().x, md->gravity().y, md->gravity().z);
-// 		paras->cell_size = grid_base::cs;
-// 		paras->ncell = gb->nCell();
-// 		paras->grid_size = make_uint3(grid_base::gs.x, grid_base::gs.y, grid_base::gs.z);
-// 		paras->world_origin = make_double3(grid_base::wo.x, grid_base::wo.y, grid_base::wo.z);
-// 		setSymbolicParameter(paras);
-// 	}
-// 	//gb->reorderElements(isCpu);
-// 	foreach(collision* value, md->collisions())
-// 	{
-// 		if (value->getCollisionPairType() == PARTICLES_POLYGONOBJECT){
-// 			value->setGridBase(gb);
-// 		}
-// 	}
-// 
-// 	//md->particleSystem()->velocity()[0].x = 0.1f;
-// 	
-// 	return true;
-// }
-// 
-// bool dem_simulation::saveResult(double ct, unsigned int p)
-// {
-// 	char partName[256] = { 0, };
-// 	//double radius = 0.0;
-// 	sprintf_s(partName, sizeof(char) * 256, "%s/part%04d.bin", md->modelPath().toStdString().c_str(), p);
-// 	//std::fstream of;
-// 	QFile of(partName);
-// 	//unsigned int np = md->numParticle();
-// 	//of.open(partName, std::ios::out, std::ios::binary);
-// 	of.open(QIODevice::WriteOnly);
-// 	of.write((char*)&np, sizeof(unsigned int));
-// 	of.write((char*)&ct, sizeof(double));
-// 	of.write((char*)m_pos, sizeof(VEC4D) * np);
-// 	of.write((char*)m_vel, sizeof(VEC3D) * np);
-// 	of.write((char*)m_force, sizeof(VEC3D) * np);
-// 	of.close();
-// 	return true;
-// }
-// 
-// bool dem_simulation::savePartResult(double ct, unsigned int p)
-// {
-// 	char partName[256] = { 0, };
-// 	//double radius = 0.0;
-// 	sprintf_s(partName, sizeof(char) * 256, "%s/part%04d.bin", md->modelPath().toStdString().c_str(), p);
-// 	//std::fstream of;
-// 	QFile of(partName);
-// //	unsigned int np = md->numParticle();
-// 	//unsigned int snp = md->particleSystem()->numStackParticle();
-// 	if (!_isCpu)
-// 	{
-// 		checkCudaErrors(cudaMemcpy(m_pos, d_pos, sizeof(double)*np * 4, cudaMemcpyDeviceToHost));
-// 		checkCudaErrors(cudaMemcpy(m_vel, d_vel, sizeof(double)*np * 3, cudaMemcpyDeviceToHost));
-// 		checkCudaErrors(cudaMemcpy(m_force, d_acc, sizeof(double)*np * 3, cudaMemcpyDeviceToHost));
-// 	}	
-// 	of.open(QIODevice::WriteOnly);
-// 	of.write((char*)&np, sizeof(unsigned int));
-// 	//of.write((char*)&snp, sizeof(unsigned int));
-// 	of.write((char*)&ct, sizeof(double));
-// 	of.write((char*)m_pos, sizeof(VEC4D) * np);
-// 	of.write((char*)m_vel, sizeof(VEC3D) * np);
-// 	of.write((char*)m_force, sizeof(VEC3D) * np);
-// 	of.close();
-// 	return true;
-// }
-// 
-// void dem_simulation::cudaUpdatePosition()
-// {
-// 	itor->cuUpdatePosition(d_pos, d_vel, d_acc, np);
-// }
-// 
-// void dem_simulation::cudaDetection()
-// {
-// 	gb->cuDetection(d_pos);
-// }
-// 
-// void dem_simulation::cudaUpdateVelocity()
-// {
-// 	itor->cuUpdateVelocity(d_vel, d_acc, d_omega, d_alpha, d_fr, d_mm, d_ms, d_iner, np);
-// }
-// 
-// void dem_simulation::collision_dem(double dt)
-// {
-// //	md->particleSystem()->particleCollision(dt);
-// 
-// // 	std::map<std::string, collision*>::iterator c;
-// // 	for (c = md->collision_map().begin(); c != md->collision_map().end(); c++){
-// // 		c->second->collid(dt);
-// // 	}
-// 	foreach(collision* value, md->collisions())
-// 	{
-// 		value->collid(dt);
-// 	} 
-// }
-// 
-// void dem_simulation::cuCollision_dem()
-// {
-// 	//md->particleSystem()->cuParticleCollision();
-// 	foreach(collision* value, md->collisions())
-// 	{
-// 		value->cuCollid(d_pos, d_vel, d_omega, d_ms, d_fr, d_mm, np);
-// 	}
-// 
-// }
-// 
-// void dem_simulation::cudaAllocMemory(unsigned int np)
-// {
-// 	checkCudaErrors(cudaMalloc((void**)&d_pos, sizeof(double)*np * 4));
-// 	checkCudaErrors(cudaMemcpy(d_pos, md->particleSystem()->position(), sizeof(double) * np * 4, cudaMemcpyHostToDevice));
-// 	checkCudaErrors(cudaMalloc((void**)&d_vel, sizeof(double)*np * 3));
-// 	//vel[0].z = 0.1f;
-// 	checkCudaErrors(cudaMemcpy(d_vel, md->particleSystem()->velocity(), sizeof(double) * np * 3, cudaMemcpyHostToDevice));
-// 	checkCudaErrors(cudaMalloc((void**)&d_acc, sizeof(double)*np * 3));
-// 	checkCudaErrors(cudaMemcpy(d_acc, md->particleSystem()->acceleration(), sizeof(double) * np * 3, cudaMemcpyHostToDevice));
-// 	checkCudaErrors(cudaMalloc((void**)&d_omega, sizeof(double)*np * 3));
-// 	checkCudaErrors(cudaMemset(d_omega, 0, sizeof(double) * np * 3));
-// //	checkCudaErrors(cudaMemcpy(d_omega, omega, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
-// 	checkCudaErrors(cudaMalloc((void**)&d_alpha, sizeof(double)*np * 3));
-// 	checkCudaErrors(cudaMemset(d_alpha, 0, sizeof(double) * np * 3));
-// 	//checkCudaErrors(cudaMemcpy(d_alpha, alpha, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
-// 	checkCudaErrors(cudaMalloc((void**)&d_fr, sizeof(double)*np * 3));
-// 	checkCudaErrors(cudaMemcpy(d_fr, md->particleSystem()->force() , sizeof(double) * np * 3, cudaMemcpyHostToDevice));
-// 	checkCudaErrors(cudaMalloc((void**)&d_mm, sizeof(double)*np * 3));
-// 	checkCudaErrors(cudaMemset(d_mm, 0, sizeof(double) * np * 3));
-// 	//checkCudaErrors(cudaMemcpy(d_mm, mm, sizeof(double) * np * 3, cudaMemcpyHostToDevice));
-// 	checkCudaErrors(cudaMalloc((void**)&d_ms, sizeof(double)*np));
-// 	checkCudaErrors(cudaMemcpy(d_ms, md->particleSystem()->mass(), sizeof(double) * np, cudaMemcpyHostToDevice));
-// 	//checkCudaErrors(cudaMalloc((void**)&d_rad, sizeof(double)*np));
-// 	//checkCudaErrors(cudaMemcpy(d_rad, rad, sizeof(double) * np, cudaMemcpyHostToDevice));
-// 	checkCudaErrors(cudaMalloc((void**)&d_iner, sizeof(double)*np));
-// 	checkCudaErrors(cudaMemcpy(d_iner, md->particleSystem()->inertia(), sizeof(double) * np, cudaMemcpyHostToDevice));
-// }
-// 
-// bool dem_simulation::cpuRun()
-// {
-// 	unsigned int part = 0;
-// 	unsigned int cStep = 0;
-// 	unsigned int eachStep = 0;
-// 	
-// 	double ct = dt * cStep;
-// 	qDebug() << "-------------------------------------------------------------" << endl
-// 			 << "| Num. Part | Sim. Time | I. Part | I. Total | Elapsed Time |" << endl
-// 			 << "-------------------------------------------------------------";
-// 	QTextStream::AlignRight;
-// 	//QTextStream::setRealNumberPrecision(6);
-// 	QTextStream os(stdout);
-// 	os.setRealNumberPrecision(6);
-// 	if (saveResult(ct, part)){
-// 		os << "| " << qSetFieldWidth(9) << part << qSetFieldWidth(12) << ct << qSetFieldWidth(10) << eachStep << qSetFieldWidth(11) << cStep << qSetFieldWidth(15) << "0"  << qSetFieldWidth(0) << " |" << endl;
-// 		//std::cout << "| " << std::setw(9) << part << std::setw(12) << ct << std::setw(10) << eachStep << std::setw(11) << cStep << std::setw(15) << 0 << std::endl;
-// 	}
-// 	QTime tme;
-// 	tme.start();
-// 	cStep++;	
-// // 	std::fstream fs;
-// // 	fs.open("C:/C++/presult.txt", std::ios::out);
-// 	//md->particleSystem()->velocity()[0].x = 1.0f; //initial particles velocity setting 
-// 	while (cStep < nstep)
-// 	{
-// 		std::cout << cStep << std::endl;
-// 		if (cStep == 31617)
-// 			bool p = true;
-// 		if (!(cStep % 2000))
-// 			md->particleSystem()->appendCluster();
-// 
-// 		if (_abort){
-// 			_interrupt = true;
-// 			return false;
-// 		}
-// 		if (_isWait){
-// 			_isWaiting = true;
-// 			continue;
-// 		}
-// 		//mutex.lock();
-// 		ct = dt * cStep;
-// 		
-// 		md->particleSystem()->clusterUpdatePosition(dt);
-// 		//itor->updatePosition(dt);
-// // 		for (unsigned int i = 0; i < 8; i++)
-// // 			ppf << ct << " " << md->particleSystem()->position()[i].x << " " << md->particleSystem()->position()[i].y << " " << md->particleSystem()->position()[i].z;
-// 		gb->detection();
-// 		collision_dem(dt);
-// // 		for (unsigned int i = 0; i < 8; i++)
-// // 			ppf << md->particleSystem()->force()[i].x << " " << md->particleSystem()->force()[i].y << " " << md->particleSystem()->force()[i].z;
-// // 		ppf << endl;
-// 		md->particleSystem()->clusterUpdateVelocity(dt);
-// 		//itor->updateVelocity(dt);
-// 		//md->updateObject(dt);
-// 		if (!((cStep) % step)){
-// 			//mutex.lock();
-// 			part++;
-// 			//pBar->setValue(part);
-// 			emit sendProgress(part);
-// 			if (saveResult(ct, part)){
-// 				os << "| " << qSetFieldWidth(9) << part << qSetFieldWidth(12) << ct << qSetFieldWidth(10) << eachStep << qSetFieldWidth(11) << cStep << qSetFieldWidth(15) << tme.elapsed() * 0.001 << qSetFieldWidth(0) << " |" << endl;
-// 			}
-// 			eachStep = 0;
-// 			
-// 		}
-// 		cStep++;
-// 		eachStep++;
-// 	}
-// 	emit finished();
-// 	return true;
-// }
-// 
-// bool dem_simulation::gpuRun()
-// {
-// 	unsigned int part = 0;
-// 	unsigned int cStep = 0;
-// 	unsigned int eachStep = 0;
-// 	ct = dt * cStep;
-// 	qDebug() << "-------------------------------------------------------------" << endl
-// 			 << "| Num. Part | Sim. Time | I. Part | I. Total | Elapsed Time |" << endl
-// 			 << "-------------------------------------------------------------";
-// 	QTextStream::AlignRight;
-// 	QTextStream os(stdout);
-// 	os.setRealNumberPrecision(6);
-// 	if (savePartResult(ct, part)){
-// 		os << "| " << qSetFieldWidth(9) << part << qSetFieldWidth(12) << ct << qSetFieldWidth(10) << eachStep << qSetFieldWidth(11) << cStep << qSetFieldWidth(15) << "0" << qSetFieldWidth(0) << " |" << endl;
-// 	}
-// 	QTime tme;
-// 	tme.start();
-// 	cStep++;
-// 	while (cStep < nstep)
-// 	{
-// 		if (_isWait)
-// 			continue;
-// 		if (_abort){
-// 			emit finished();
-// 			return false;
-// 		}
-// 		ct = dt * cStep;
-// // 		if (md->particleSystem()->updateStackParticle(ct)){
-// // 			paras->np += md->particleSystem()->numParticlePerStack();// ->numParticle();
-// // 			//gb->cuResizeMemory(paras.np);
-// // 			setSymbolicParameter(paras);
-// // 		}
-// 		itor->updatePosition(d_pos, d_vel, d_acc, np);
-//  		gb->cuDetection(d_pos);
-//  		cuCollision_dem();
-// 		itor->updateVelocity(d_vel, d_acc, d_omega, d_alpha, d_fr, d_mm, d_ms, d_iner, np);
-// 		if (!((cStep) % step)){
-// 			part++;
-// 			emit sendProgress(part);
-// 			if (savePartResult(ct, part)){
-// 				os << "| " << qSetFieldWidth(9) << part << qSetFieldWidth(12) << ct << qSetFieldWidth(10) << eachStep << qSetFieldWidth(11) << cStep << qSetFieldWidth(15) << tme.elapsed() * 0.001 << qSetFieldWidth(0) << " |" << endl;
-// 			}
-// 			eachStep = 0;
-// 		}
-// 		cStep++;
-// 		eachStep++;
-// 	}
-// 	emit finished();
-// 	return true;
-// }

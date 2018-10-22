@@ -65,3 +65,19 @@ void velocity_verlet::updateVelocity(
 		}
 	}
 }
+
+void velocity_verlet::updatePosition(float *dpos, float* dvel, float* dacc, unsigned int np)
+{
+	if (simulation::isGpu())
+		vv_update_position(dpos, dvel, dacc, np);
+}
+
+void velocity_verlet::updateVelocity(
+	float *dvel, float* dacc
+	, float *domega, float* dalpha
+	, float *dforce, float* dmoment
+	, float *dmass, float* dinertia, unsigned int np)
+{
+	if (simulation::isGpu())
+		vv_update_velocity(dvel, dacc, domega, dalpha, dforce, dmoment, dmass, dinertia, np);
+}

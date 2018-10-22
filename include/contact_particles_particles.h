@@ -19,6 +19,7 @@ public:
 		VEC3D& iv, VEC3D& jv, 
 		VEC3D& io, VEC3D& jo, 
 		VEC3D& F, VEC3D& M);
+	
 	virtual void cuda_collision(
 		double *pos, double *vel,
 		double *omega, double *mass,
@@ -27,7 +28,16 @@ public:
 		unsigned int *cell_start,
 		unsigned int *cell_end,
 		unsigned int np);
+	virtual void cuda_collision(
+		float *pos, float *vel,
+		float *omega, float *mass,
+		float *force, float *moment,
+		unsigned int *sorted_id,
+		unsigned int *cell_start,
+		unsigned int *cell_end,
+		unsigned int np);
 	virtual void cudaMemoryAlloc();
+	virtual void cudaMemoryAlloc_f();
 
 private:
 	object* obj1;

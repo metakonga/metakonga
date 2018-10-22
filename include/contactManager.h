@@ -30,16 +30,26 @@ public:
 // 		double rest, double ratio, double fric);
 	unsigned int setupParticlesPolygonObjectsContact();
 	double* SphereData();
+	float* SphereData_f();
 	void insertContact(contact* c);
 	contact* Contact(QString n);// { return cots[n]; }
 	QMap<QString, QString>& Logs() { return logs; }
 	QMap<QString, contact*>& Contacts() { return cots; }
 	contact_particles_particles* ContactParticles() { return cpp; }
 	contact_particles_polygonObjects* ContactParticlesPolygonObjects() { return cppoly; }
+
 	bool runCollision(
 		double *pos, double *vel,
 		double *omega, double *mass,
 		double *force, double *moment,
+		unsigned int *sorted_id,
+		unsigned int *cell_start,
+		unsigned int *cell_end,
+		unsigned int np);
+	bool runCollision(
+		float *pos, float *vel,
+		float *omega, float *mass,
+		float *force, float *moment,
 		unsigned int *sorted_id,
 		unsigned int *cell_start,
 		unsigned int *cell_end,
@@ -52,6 +62,14 @@ private:
 		double *pos, double *vel,
 		double *omega, double *mass,
 		double *force, double *moment,
+		unsigned int *sorted_id,
+		unsigned int *cell_start,
+		unsigned int *cell_end,
+		unsigned int np);
+	void deviceCollision(
+		float *pos, float *vel,
+		float *omega, float *mass,
+		float *force, float *moment,
 		unsigned int *sorted_id,
 		unsigned int *cell_start,
 		unsigned int *cell_end,

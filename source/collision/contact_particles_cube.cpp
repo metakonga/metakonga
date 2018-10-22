@@ -42,6 +42,15 @@ void contact_particles_cube::cuda_collision(
 	cu_cube_contact_force(1, dpi, pos, vel, omega, force, moment, mass, np, dcp);
 }
 
+void contact_particles_cube::cuda_collision(
+	float *pos, float *vel, float *omega,
+	float *mass, float *force, float *moment,
+	unsigned int *sorted_id, unsigned int *cell_start,
+	unsigned int *cell_end, unsigned int np)
+{
+	cu_cube_contact_force(1, dpi_f, pos, vel, omega, force, moment, mass, np, dcp_f);
+}
+
 void contact_particles_cube::cudaMemoryAlloc()
 {
 	contact::cudaMemoryAlloc();
@@ -67,6 +76,33 @@ void contact_particles_cube::cudaMemoryAlloc()
 	checkCudaErrors(cudaMemcpy(dpi, _dpi, sizeof(device_plane_info) * 6, cudaMemcpyHostToDevice));
 	delete [] _dpi;
 }
+
+void contact_particles_cube::cudaMemoryAlloc_f()
+{
+	contact::cudaMemoryAlloc_f();
+	device_plane_info_f *_dpi = new device_plane_info_f[6];
+	plane* pl = cu->Planes();
+	for (unsigned i = 0; i < 6; i++)
+	{
+		plane pe = pl[i];
+		_dpi[i].l1 = pe.L1();
+		_dpi[i].l2 = pe.L2();
+		_dpi[i].xw = make_float3(pe.XW().x, pe.XW().y, pe.XW().z);
+		_dpi[i].uw = make_float3(pe.UW().x, pe.UW().y, pe.UW().z);
+		_dpi[i].u1 = make_float3(pe.U1().x, pe.U1().y, pe.U1().z);
+		_dpi[i].u2 = make_float3(pe.U2().x, pe.U2().y, pe.U2().z);
+		_dpi[i].pa = make_float3(pe.PA().x, pe.PA().y, pe.PA().z);
+		_dpi[i].pb = make_float3(pe.PB().x, pe.PB().y, pe.PB().z);
+		_dpi[i].w2 = make_float3(pe.W2().x, pe.W2().y, pe.W2().z);
+		_dpi[i].w3 = make_float3(pe.W3().x, pe.W3().y, pe.W3().z);
+		_dpi[i].w4 = make_float3(pe.W4().x, pe.W4().y, pe.W4().z);
+	}
+
+	checkCudaErrors(cudaMalloc((void**)&dpi_f, sizeof(device_plane_info_f) * 6));
+	checkCudaErrors(cudaMemcpy(dpi_f, _dpi, sizeof(device_plane_info_f) * 6, cudaMemcpyHostToDevice));
+	delete[] _dpi;
+}
+
 // 
 // bool contact_particles_cube::hostCollision(
 // 	double *m_pos, double *m_vel, double *m_omega,

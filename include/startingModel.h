@@ -29,6 +29,10 @@ private:
 	double* dem_vel;
 	double* dem_avel;
 
+	float* dem_pos_f;
+	float* dem_vel_f;
+	float* dem_avel_f;
+
 	QMap<QString, resultStorage::pointMassResultData> mbd_bodies;
 
 };

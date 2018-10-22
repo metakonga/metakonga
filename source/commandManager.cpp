@@ -1,5 +1,6 @@
 #include "commandManager.h"
 #include "modelManager.h"
+#include "glwidget.h"
 #include <QTextStream>
 
 contact* cont = NULL;
@@ -148,6 +149,12 @@ int commandManager::QnA(QString& q)
 		if (sz > 1) return step0(2, sList.at(cidx));
 		else return 2;
 	}
+	else if (sList.at(cidx) == "refinement")
+	{
+		cidx++;
+		if (sz > 1) return step0(3, sList.at(cidx));
+		else return 3;
+	}
 	//else if (sList.at(cidx) == "")
 // 	if (cstep != 1) return -2;
 // 	// step 2
@@ -190,6 +197,19 @@ QString commandManager::AnQ(int c)
 	default:  q = "Incorrect code.\n"; break;
 	}
 	return q;
+}
+
+QString commandManager::AnQ(QString c, QString v)
+{
+	QString ret;
+	//QString log;
+	if (c == "Input the refinement size.")
+	{
+		vobject* obj = GLWidget::GLObject()->selectedObjectWithCast();
+		ret = modelManager::MM()->GeometryObject()->polyRefinement(obj->name(), v.toDouble());
+	}
+	//logs.push_back(log);
+	return ret;
 }
 
 QString commandManager::getPassedCommand()

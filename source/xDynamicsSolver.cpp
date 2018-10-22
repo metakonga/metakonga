@@ -35,12 +35,16 @@ bool xDynamicsSolver::initialize(startingModel* stm)
 	if (dem)
 	{
 		unsigned int np = mg->DEMModel()->ParticleManager()->Np();
-		dem->initialize(mg->ContactManager());
+		if (model::isSinglePrecision)
+			dem->initialize_f(mg->ContactManager());
+		else
+			dem->initialize(mg->ContactManager());
 		if (stm)
 			dem->setStartingData(stm);
+			
+		model::rs->setResultMemoryDEM(model::isSinglePrecision, npart, np);
 		double m_size = model::rs->RequriedMemory(np, npart, DEM) / 1000000.0;
 		sendProgress(-1, "Memory size of the result storage is " + QString("%1").arg(m_size) + "(MB)");
-		model::rs->setResultMemoryDEM(npart, np);
 	}
 	if (mbd)
 	{
@@ -63,9 +67,18 @@ bool xDynamicsSolver::savePart(double ct, unsigned int pt)
 	if (dem)
 	{
 		model::rs->insertTimeData(ct);
-		double *v_pos = model::rs->getPartPosition(pt);
-		//double *v_vel = model::rs->getPartVelocity(pt);
-		QString part_name = dem->saveResult(v_pos, NULL, ct, pt);
+		QString part_name;
+		if (model::isSinglePrecision)
+		{
+			float* v_pos = model::rs->getPartPosition_f(pt);
+			part_name = dem->saveResult_f(v_pos, NULL, ct, pt);
+		}
+		else
+		{
+			double *v_pos = model::rs->getPartPosition(pt);
+			//double *v_vel = model::rs->getPartVelocity(pt);
+			part_name = dem->saveResult(v_pos, NULL, ct, pt);
+		}
 		model::rs->insertPartName(part_name);
 		//model::rs->definePartDatasDEM(false, pt);
 	}
@@ -84,7 +97,9 @@ bool xDynamicsSolver::saveFinalResult(double ct)
 	qf.write((char*)&ct, sizeof(double));
 	if (dem)
 	{
-		dem->saveFinalResult(qf);
+		model::isSinglePrecision ?
+			dem->saveFinalResult_f(qf) :
+			dem->saveFinalResult(qf);
 	}
 	if (mbd)
 	{
@@ -144,13 +159,20 @@ void xDynamicsSolver::run()
 		cstep++;
 		eachStep++;
 		ct += simulation::dt;
+		qDebug() << ct;
 //#ifdef _DEBUG
 		//qDebug() << ct;
 //#endif
 		simulation::setCurrentTime(ct);
 		
-		if (dem) 
-			dem->oneStepAnalysis(ct, cstep);
+		if (dem)
+		{
+			model::isSinglePrecision ?
+				dem->oneStepAnalysis_f(ct, cstep) :
+				dem->oneStepAnalysis(ct, cstep);
+			//qDebug() << "dem done";
+		}
+			
 		if (mbd)
 		{
 			mbd_state = mbd->oneStepAnalysis(ct, cstep);

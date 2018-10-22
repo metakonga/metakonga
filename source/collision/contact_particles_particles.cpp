@@ -36,6 +36,11 @@ void contact_particles_particles::cudaMemoryAlloc()
 	contact::cudaMemoryAlloc();
 }
 
+void contact_particles_particles::cudaMemoryAlloc_f()
+{
+	contact::cudaMemoryAlloc_f();
+}
+
 // bool contact_particles_particles::collision(double dt)
 // {
 // 	switch (f_type)
@@ -128,6 +133,15 @@ void contact_particles_particles::cuda_collision(
 	unsigned int *cell_end, unsigned int np)
 {
 	cu_calculate_p2p(1, pos, vel, omega, force, moment, mass, sorted_id, cell_start, cell_end, dcp, np);
+}
+
+void contact_particles_particles::cuda_collision(
+	float *pos, float *vel, float *omega,
+	float *mass, float *force, float *moment,
+	unsigned int *sorted_id, unsigned int *cell_start,
+	unsigned int *cell_end, unsigned int np)
+{
+	cu_calculate_p2p(1, pos, vel, omega, force, moment, mass, sorted_id, cell_start, cell_end, dcp_f, np);
 }
 
 // bool collision_particles_particles::collid(double dt)

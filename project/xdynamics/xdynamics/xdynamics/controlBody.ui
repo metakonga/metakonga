@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DLG_ControlBody</class>
+ <widget class="QDialog" name="DLG_ControlBody">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>217</width>
+    <height>118</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QToolButton" name="TB_UPArrow">
+   <property name="geometry">
+    <rect>
+     <x>39</x>
+     <y>10</y>
+     <width>31</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>Resources/ic_upArrow.png</normaloff>Resources/ic_upArrow.png</iconset>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="TB_LEFTArrow">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>40</y>
+     <width>31</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>Resources/ic_leftArrow.png</normaloff>Resources/ic_leftArrow.png</iconset>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="TB_RIGHTArrow">
+   <property name="geometry">
+    <rect>
+     <x>69</x>
+     <y>40</y>
+     <width>31</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>Resources/ic_rightArrow.png</normaloff>Resources/ic_rightArrow.png</iconset>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="TB_BOTTOMArrow">
+   <property name="geometry">
+    <rect>
+     <x>39</x>
+     <y>69</y>
+     <width>31</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>Resources/ic_bottomArrow.png</normaloff>Resources/ic_bottomArrow.png</iconset>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="LE_TransValue">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>40</y>
+     <width>30</width>
+     <height>30</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="TB_XRotation">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>70</y>
+     <width>30</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>Resources/ic_xRotArrow.png</normaloff>Resources/ic_xRotArrow.png</iconset>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="TB_YRotation">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>20</y>
+     <width>30</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>Resources/ic_yRotArrow.png</normaloff>Resources/ic_yRotArrow.png</iconset>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="TB_ZRotation">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>70</y>
+     <width>30</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+   <property name="icon">
+    <iconset>
+     <normaloff>Resources/ic_zRotArrow.png</normaloff>Resources/ic_zRotArrow.png</iconset>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="LE_AngleValue">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>20</y>
+     <width>30</width>
+     <height>30</height>
+    </rect>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

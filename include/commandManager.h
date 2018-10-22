@@ -12,6 +12,7 @@ public:
 
 	int QnA(QString& q);
 	QString AnQ(int c);
+	QString AnQ(QString c, QString v);
 	bool IsFinished() { is_finished; }
 	QString getPassedCommand();
 private:

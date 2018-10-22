@@ -87,6 +87,9 @@
     <Filter Include="Source Files\widget">
       <UniqueIdentifier>{82792275-e262-435d-84c2-72b01e195dd1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\single_precision">
+      <UniqueIdentifier>{efaed619-87a9-465d-ab54-84090fa60a39}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -461,6 +464,15 @@
     <ClCompile Include="..\..\..\..\source\startingModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\source\controlBodyDialog.cpp">
+      <Filter>Source Files\dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_controlBodyDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_controlBodyDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="xdynamics.h">
@@ -570,6 +582,12 @@
     </CustomBuild>
     <CustomBuild Include="..\..\..\..\include\lineEditWidget.h">
       <Filter>Header Files\widget</Filter>
+    </CustomBuild>
+    <CustomBuild Include="controlBody.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\controlBodyDialog.h">
+      <Filter>Header Files\dialog</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
@@ -842,6 +860,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\startingModel.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_controlBody.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

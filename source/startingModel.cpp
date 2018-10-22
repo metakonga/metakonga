@@ -32,19 +32,37 @@ void startingModel::copyDEMData(unsigned int np, double* p, double* v, double* a
 void startingModel::setDEMData(unsigned int np, QFile& qf)
 {
 	int flag = 0;
+	int precision = 0;
+	qf.read((char*)&precision, sizeof(int));
 	qf.read((char*)&flag, sizeof(int));
 	if (flag == 1)
 	{
-		if (!dem_pos)
-			dem_pos = new double[np * 4];
-		if (!dem_vel)
-			dem_vel = new double[np * 3];
-		if (!dem_avel)
-			dem_avel = new double[np * 3];
+		if (precision == 1)
+		{
+			if (!dem_pos_f)
+				dem_pos_f = new float[np * 4];
+			if (!dem_vel_f)
+				dem_vel_f = new float[np * 3];
+ 			if (!dem_avel_f)
+ 				dem_avel_f = new float[np * 3];
 
-		qf.read((char*)dem_pos, sizeof(double) * np * 4);
-		qf.read((char*)dem_vel, sizeof(double) * np * 3);
-		qf.read((char*)dem_avel, sizeof(double) * np * 3);
+			qf.read((char*)dem_pos_f, sizeof(float) * np * 4);
+			qf.read((char*)dem_vel_f, sizeof(float) * np * 3);
+			qf.read((char*)dem_avel_f, sizeof(float) * np * 3);
+		}
+		else
+		{
+			if (!dem_pos)
+				dem_pos = new double[np * 4];
+			if (!dem_vel)
+				dem_vel = new double[np * 3];
+			if (!dem_avel)
+				dem_avel = new double[np * 3];
+
+			qf.read((char*)dem_pos, sizeof(double) * np * 4);
+			qf.read((char*)dem_vel, sizeof(double) * np * 3);
+			qf.read((char*)dem_avel, sizeof(double) * np * 3);
+		}		
 	}
 }
 

@@ -28,7 +28,7 @@ QColor("blue") };
 class vobject
 {
 public:
-	enum Type { V_OBJECT = 0, V_CUBE, V_CYLINDER, V_PLANE, V_POLYGON, V_MARKER };
+	enum Type { V_OBJECT = 0, V_MARKER, V_CUBE, V_CYLINDER, V_PLANE, V_POLYGON };
 	vobject();
 	vobject(Type tp, QString _name);
 	virtual ~vobject();
@@ -40,10 +40,14 @@ public:
 	void setCurrentAngle(VEC3D ca) { cang = ca; }
 	void animationFrame(VEC3D& p, EPD& ep);
 	void setResultData(unsigned int n);
+	void setMaterialType(material_type mt) { m_type = mt; }
 	void insertResultData(unsigned int i, VEC3D& p, EPD& r);
 	VEC3D InitialPosition() { return pos0; }
+	material_type MaterialType() { return m_type; }
 	int ID() { return id; }
 	QString& name() { return nm; }
+	QString FilePath() { return file_path; }
+	import_shape_type ImportType() { return ist; }
 	void setName(QString n) { nm = n; }
 	void setDisplay(bool _dis) { display = _dis; }
 	QColor color() { return clr; }
@@ -54,13 +58,21 @@ public:
 	context_object_type ViewGeometryObjectType() { return vot; }
 	virtual void draw(GLenum eMode) = 0;
 
+	double vol;
+	double mass;
+	double ixx, iyy, izz;
+	double ixy, ixz, iyz;
+
 protected:
 	int id;
 	Type type;
 	bool isSelected;
 	geometry_type g_type;
+	material_type m_type;
 	context_object_type vot;
+	import_shape_type ist;
 	QString nm;			// object name
+	QString file_path;
 	GLuint coord;
 	GLenum drawingMode;
 	bool display;

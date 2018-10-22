@@ -61,6 +61,11 @@ namespace algebra
 			return *((&a00) + id);
 		}
 
+		void setDiagonal(T v)
+		{
+			a00 = v; a11 = v; a22 = v; a33 = v; 
+		}
+
 		matrix4x4& operator=(matrix4x4 const& m)
 		{
 			a00=m.a00; a01=m.a01; a02=m.a02; a03=m.a03;
@@ -87,6 +92,14 @@ namespace algebra
 				a20+m.a20, a21+m.a21, a22+m.a22, a23+m.a23,
 				a30+m.a30, a31+m.a31, a32+m.a32, a33+m.a33
 				);
+		}
+
+		void operator+=(matrix4x4 const& m)
+		{
+			a00 += m.a00; a01 += m.a01; a02 += m.a02; a03 += m.a03;
+			a10 += m.a10; a11 += m.a11; a12 += m.a12; a13 += m.a13;
+			a20 += m.a20; a21 += m.a21; a22 += m.a22; a23 += m.a23;
+			a30 += m.a30; a31 += m.a31; a32 += m.a32; a33 += m.a33;
 		}
 
 		matrix4x4 operator-(matrix4x4 const& m)

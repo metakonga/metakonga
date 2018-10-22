@@ -176,14 +176,13 @@ void GLWidget::ShowContextMenu(const QPoint& pos)
 			//if (id < 1000){
 			vobject* vobj = static_cast<vobject*>(v_wobjs[id]);
 			name = vobj->name();
-			//}
-			// 			else{
-			// 				vpolygon* vpobj = (vpolygon*)(v_wobjs[id]);
-			// 				name = vpobj->name();
-			// 			}
 			QMenu *subMenu = new QMenu(name);
 			subMenu->addAction("Delete");
 			subMenu->addAction("Property");
+			if (vobj->ViewObjectType() == vobject::V_POLYGON)
+			{
+				subMenu->addAction("Refinement");
+			}
 			myMenu.addMenu(subMenu);
 			menus.push_back(subMenu);
 		}
@@ -219,7 +218,11 @@ void GLWidget::ShowContextMenu(const QPoint& pos)
 				modelManager::MM()->ActionDelete(pmenuTitle);
 			}
 			else if (txt == "Property"){
-				emit propertySignal(pmenuTitle, selectedObject->ViewGeometryObjectType());
+				emit contextSignal(pmenuTitle, CONTEXT_PROPERTY);
+			}
+			else if (txt == "Refinement")
+			{
+				emit contextSignal(pmenuTitle, CONTEXT_REFINEMENT);
 			}
 		}
 	}
@@ -366,6 +369,14 @@ vpolygon* GLWidget::getVPolyObjectFromName(QString name)
 QString GLWidget::selectedObjectName()
 {
 	return selectedObject ? selectedObject->name() : "";
+}
+
+vobject* GLWidget::selectedObjectWithCast()
+{
+	if (!selectedObject)
+		return NULL;
+	
+	return selectedObject;
 }
 
 GLuint GLWidget::makePolygonObject(double* points, double* normals, int* indice, int size)
@@ -541,7 +552,13 @@ void GLWidget::paintGL()
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	if (vp)
-		vp->draw(GL_RENDER, wHeight, protype, abs(trans_z));
+	{
+		model::isSinglePrecision ? 
+			vp->draw_f(GL_RENDER, wHeight, protype, abs(trans_z)) :
+			vp->draw(GL_RENDER, wHeight, protype, abs(trans_z));
+		
+	}
+		
 
 	if (vcontroller::Play()){
 		vcontroller::update_frame();
@@ -887,6 +904,20 @@ void GLWidget::makeParticle(double* pos, unsigned int n)
 	else
 	{
 		vp->resizeMemory(pos, n);
+	}
+}
+
+void GLWidget::makeParticle_f(float* pos, unsigned int n)
+{
+	if (!vp)
+	{
+		vp = new vparticles;
+	}
+	if (vp->define_f(pos, n))
+		isSetParticle = true;
+	else
+	{
+		vp->resizeMemory_f(pos, n);
 	}
 }
 

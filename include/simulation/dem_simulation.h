@@ -15,9 +15,13 @@ public:
 	virtual ~dem_simulation();
 
 	bool initialize(contactManager* _cm);
+	bool initialize_f(contactManager* _cm);
 	bool oneStepAnalysis(double ct, unsigned int cstep);
+	bool oneStepAnalysis_f(double ct, unsigned int cstep);
 	QString saveResult(double *vp, double* vv, double ct, unsigned int pt);
+	QString saveResult_f(float *vp, float* vv, double ct, unsigned int pt);
 	void saveFinalResult(QFile& qf);
+	void saveFinalResult_f(QFile& qf);
 	void setStartingData(startingModel* stm);
 
 private:
@@ -51,6 +55,26 @@ private:
 	double *daacc;
 	double *dforce;
 	double *dmoment;
+
+	float *mass_f;
+	float *inertia_f;
+	float *pos_f;
+	float *vel_f;
+	float *acc_f;
+	float *avel_f;
+	float *aacc_f;
+	float *force_f;
+	float *moment_f;
+
+	float *dmass_f;
+	float *diner_f;
+	float *dpos_f;
+	float *dvel_f;
+	float *dacc_f;
+	float *davel_f;
+	float *daacc_f;
+	float *dforce_f;
+	float *dmoment_f;
 // 	virtual bool initialize(bool isCpu);
 // 	bool saveResult(double ct, unsigned int p);
 // 	bool savePartResult(double ct, unsigned int p);

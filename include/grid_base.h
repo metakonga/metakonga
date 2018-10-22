@@ -16,9 +16,12 @@ public:
 	//virtual void detection(VEC4D_PTR pos) = 0;
 	void initialize(unsigned int np);
 	virtual void detection(double *pos = NULL, double* spos = NULL, unsigned int np = 0, unsigned int snp = 0) = 0;
+	virtual void detection_f(float *pos = NULL, float* spos = NULL, unsigned int np = 0, unsigned int snp = 0) = 0;
 
 	void setWorldOrigin(VEC3D _wo) { wo = _wo; }
-	void setCellSize(float _cs) { cs = _cs; }
+	//void setWorldOrigin(VEC3D _wo) { wo = _wo; }
+	void setCellSize(double _cs) { cs = _cs; }
+	//void setCellSize(float _cs) { cs = _cs; }
 	void setGridSize(VEC3UI _gs) { gs = _gs; }
 	unsigned int nCell() { return ng; }
 	void allocMemory(unsigned int n);

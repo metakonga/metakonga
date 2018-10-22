@@ -33,6 +33,7 @@ public:
 	object* FirstObject() const { return iobj; }
 	object* SecondObject() const { return jobj; }
 	void setContactParameters(double r, double rt, double f, double c);
+	double Cohesion() const { return cohesion; }
 	double Restitution() const { return restitution; }
 	double Friction() const { return friction; }
 	double StiffnessRatio() const { return stiffnessRatio; }
@@ -63,7 +64,16 @@ public:
 		unsigned int *cell_start,
 		unsigned int *cell_end,
 		unsigned int np);
+	virtual void cuda_collision(
+		float *pos, float *vel,
+		float *omega, float *mass,
+		float *force, float *moment,
+		unsigned int *sorted_id,
+		unsigned int *cell_start,
+		unsigned int *cell_end,
+		unsigned int np);
 	virtual void cudaMemoryAlloc();
+	virtual void cudaMemoryAlloc_f();
 	static unsigned int count;
 
 protected:
@@ -80,6 +90,7 @@ protected:
 	material_property_pair* mpp;
 	//contact_parameter cp;
 	device_contact_property* dcp;
+	device_contact_property_f* dcp_f;
 	object* iobj;
 	object* jobj;
 

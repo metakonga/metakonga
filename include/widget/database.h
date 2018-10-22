@@ -28,7 +28,7 @@ public:
 	void contextMenu(const QPoint&);
 
 signals:
-	void propertySignal(QString, context_object_type);
+	void contextSignal(QString, context_menu);
 // 	void actProperty();
 // 	void actDelete();
 

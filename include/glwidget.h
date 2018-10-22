@@ -54,6 +54,7 @@ public:
 	void makeLine();
 	void makeCylinder(cylinder* cy);
 	void makeParticle(double* pos, unsigned int n);
+	void makeParticle_f(float* pos, unsigned int n);
 	vmarker* makeMarker(QString n, VEC3D p, bool mcf = true);
 	vpolygon* makePolygonObject(QString _nm, import_shape_type t, QString file);
 //	bool change(QString& fp, tChangeType ct, tFileType ft);
@@ -85,6 +86,7 @@ public:
 	vobject* getVObjectFromName(QString name);
 	vpolygon* getVPolyObjectFromName(QString name);
 	QString selectedObjectName();// { return selectedObject->name(); }
+	vobject* selectedObjectWithCast();
 	projectionType changeProjectionViewMode() { protype = protype == ORTHO_PROJECTION ? PERSPECTIVE_PROJECTION : ORTHO_PROJECTION; return protype; }
 //	bool changePaletteMode() { sketch.isSketching = sketch.isSketching ? false : true; return sketch.isSketching; }
 	void glObjectClear();
@@ -183,7 +185,8 @@ private:
 
 signals:
 	void mySignal();
-	void propertySignal(QString, context_object_type);
+	//void propertySignal(QString, context_object_type);
+	void contextSignal(QString, context_menu);
 };
 
 

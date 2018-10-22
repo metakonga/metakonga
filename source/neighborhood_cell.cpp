@@ -2,6 +2,7 @@
 #include "simulation.h"
 #include "thrust/sort.h"
 #include "mphysics_cuda_dec.cuh"
+#include <QDebug>
 
 neighborhood_cell::neighborhood_cell()
 	: grid_base(NEIGHBORHOOD)
@@ -77,17 +78,40 @@ void neighborhood_cell::_detection(VEC4D_PTR pos, VEC4D_PTR spos, unsigned int n
 	}
 }
 
+void neighborhood_cell::_detection_f(VEC4F_PTR pos, VEC4F_PTR spos, unsigned int np, unsigned int snp)
+{
+	
+}
+
 void neighborhood_cell::detection(double *pos, double* spos, unsigned int np, unsigned int snp)
 {
 	if (simulation::isGpu())
 	{
 		cu_calculateHashAndIndex(d_cell_id, d_body_id, pos, np);
-		if(snp && spos)
+	//	qDebug() << "detection0 done";
+		if (snp && spos)
+		{
+			cu_calculateHashAndIndexForPolygonSphere(d_cell_id, d_body_id, np, snp, spos);
+		//	qDebug() << "detection1 done";
+		}
+		cu_reorderDataAndFindCellStart(d_cell_id, d_body_id, d_cell_start, d_cell_end, d_sorted_id, np + snp,/* md->numPolygonSphere(),*/ ng);
+		//qDebug() << "detection2 done";
+	}
+	else
+		_detection((VEC4D_PTR)pos, (VEC4D_PTR)spos, np, snp);
+}
+
+void neighborhood_cell::detection_f(float *pos /*= NULL*/, float* spos /*= NULL*/, unsigned int np /*= 0*/, unsigned int snp /*= 0*/)
+{
+	if (simulation::isGpu())
+	{
+		cu_calculateHashAndIndex(d_cell_id, d_body_id, pos, np);
+		if (snp && spos)
 			cu_calculateHashAndIndexForPolygonSphere(d_cell_id, d_body_id, np, snp, spos);
 		cu_reorderDataAndFindCellStart(d_cell_id, d_body_id, d_cell_start, d_cell_end, d_sorted_id, np + snp,/* md->numPolygonSphere(),*/ ng);
 	}
 	else
-		_detection((VEC4D_PTR)pos, (VEC4D_PTR)spos, np, snp);
+		_detection_f((VEC4F_PTR)pos, (VEC4F_PTR)spos, np, snp);
 }
 
 void neighborhood_cell::reorderElements(bool isCpu)

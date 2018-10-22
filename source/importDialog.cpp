@@ -35,7 +35,7 @@ void importDialog::click_browser()
 {
 	QString dir = model::path;
 	QString fileName = QFileDialog::getOpenFileName(
-		this, tr("Import"), dir, "MilkShape 3D ASCII (*.txt);;All files (*.*)");
+		this, tr("Import"), dir, "STL files (*.stl);;MilkShape 3D ASCII (*.txt);;All files (*.*)");
 	LE_FilePath->setText(fileName);
 }
 

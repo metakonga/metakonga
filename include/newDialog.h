@@ -14,6 +14,7 @@ public:
 	~newDialog();
 
 	bool isBrowser;
+	bool isSinglePrecision;
 
 	QString name;
 	QString path;

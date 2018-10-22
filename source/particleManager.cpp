@@ -1,10 +1,12 @@
 #include "particleManager.h"
+#include "model.h"
 #include "glwidget.h"
 
 unsigned int particleManager::count = 0;
 
 particleManager::particleManager()
 	: pos(NULL)
+	, pos_f(NULL)
 	, np(0)
 {
 	obj = new object("particles", PARTICLES, PARTICLE);
@@ -14,6 +16,7 @@ particleManager::~particleManager()
 {
 	if (obj) delete obj; obj = NULL;
 	if (pos) delete[] pos; pos = NULL;
+	if (pos_f) delete[] pos_f; pos_f = NULL;
 // 	if (mass) delete[] mass; mass = NULL;
 // 	if (iner) delete[] iner; iner = NULL;
 }
@@ -104,7 +107,10 @@ VEC4D* particleManager::CreateCubeParticle(
 	obj->setMaterial(type, youngs, density, poisson, shear);
 	np += nx * ny * nz;
 	pinfo.np = np - pinfo.sid;
-	pos = resizeMemory(pos, pnp, np);
+	if (model::isSinglePrecision)
+		pos_f = resizeMemory(pos_f, pnp, np);
+	else
+		pos = resizeMemory(pos, pnp, np);
 	//mass = resizeMemory(mass, pnp, np);
 	double r = 0.0;
 	if (min_radius == min_radius)
@@ -123,7 +129,10 @@ VEC4D* particleManager::CreateCubeParticle(
 					ly + y * gab + frand() * ran,
 					lz + z * gab + frand() * ran,
 					r);
-				pos[pinfo.sid + cnt] = p;
+				if (model::isSinglePrecision)
+					pos_f[pinfo.sid + cnt] = p.To<float>();
+				else
+					pos[pinfo.sid + cnt] = p;
 				cnt++;
 			}
 		}
@@ -132,7 +141,10 @@ VEC4D* particleManager::CreateCubeParticle(
 // 	pos[0].z = 0.0;
 // 	pos[1].x = 0.01;
 // 	pos[1].z = 0.0;
-	GLWidget::GLObject()->makeParticle((double*)pos, np);
+	if (model::isSinglePrecision)
+		GLWidget::GLObject()->makeParticle_f((float*)pos_f, np);
+	else
+		GLWidget::GLObject()->makeParticle((double*)pos, np);
 
 	QString log;
 	QTextStream qts(&log);
@@ -174,7 +186,8 @@ VEC4D* particleManager::CreatePlaneParticle(
 	np += nx * nz;
 	pinfo.np = np - pinfo.sid;
 	obj->setMaterial(type, youngs, density, poisson, shear);
-	pos = resizeMemory(pos, pnp, np);
+	if (model::isSinglePrecision)
+		pos_f = resizeMemory(pos_f, pnp, np);
 
 	double r = 0.0;
 	if (min_radius == min_radius)
@@ -194,12 +207,17 @@ VEC4D* particleManager::CreatePlaneParticle(
 				z * gab + frand() * ran
 				);
 			VEC3D p3 = VEC3D(lx, ly, lz) + local2global_eulerAngle(VEC3D(tv * dx, tv * dy, tv * dz), p);
-			pos[cnt] = VEC4D(p3.x, p3.y, p3.z, r);
+			if (model::isSinglePrecision)
+				pos_f[cnt] = VEC4F((float)p3.x, (float)p3.y, (float)p3.z, (float)r);
+			else
+				pos[cnt] = VEC4D(p3.x, p3.y, p3.z, r);
 			cnt++;
 		}
 	}
-
-	GLWidget::GLObject()->makeParticle((double*)pos, np);
+	if (model::isSinglePrecision)
+		GLWidget::GLObject()->makeParticle_f((float*)pos_f, np);
+	else
+		GLWidget::GLObject()->makeParticle((double*)pos, np);
 	QString log;
 	QTextStream qts(&log);
 	qts << "CREATE_SHAPE " << "plane" << endl

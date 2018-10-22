@@ -223,8 +223,8 @@ void xdynamics::createAnimationOperations()
 	HSlider->setFixedWidth(100);
 	connect(HSlider, SIGNAL(valueChanged(int)), this, SLOT(ani_scrollbar()));
 	connect(gl, SIGNAL(mySignal()), SLOT(mySlot()));
-	connect(gl, SIGNAL(propertySignal(QString, context_object_type)), this, SLOT(propertySlot(QString, context_object_type)));
-	connect(db, SIGNAL(propertySignal(QString, context_object_type)), this, SLOT(propertySlot(QString, context_object_type)));
+	connect(gl, SIGNAL(contextSignal(QString, context_menu)), this, SLOT(contextSlot(QString, context_menu)));
+	connect(db, SIGNAL(contextSignal(QString, context_menu)), this, SLOT(contextSlot(QString, context_menu)));
 	myAnimationBar->addWidget(HSlider);
 
 	LEframe = new QLineEdit(this);
@@ -265,6 +265,7 @@ void xdynamics::newproj()
 		_isOnMainActions = true;
 		model::name = nd.name;
 		model::path = nd.path + (nd.isBrowser ? "" : nd.name + "/");
+		model::isSinglePrecision = nd.isSinglePrecision;
 		mg = new modelManager;
 		db = new database(this, mg);
 		addDockWidget(Qt::RightDockWidgetArea, db);
@@ -341,35 +342,39 @@ void xdynamics::openproj()
 					gl->setStartingData(mg->MBDModel()->setStartingData(st_model));
 				}
 			}				
-		}			
-	}
-	else
-	{
-		dem_model* dem = mg->DEMModel();
-		if (!dem)
+		}	
+		if (ext == "rfl")
 		{
-			messageBox::run("No DEM model.");
-			return;
-		}
-		if (!(dem->ParticleManager()))
-		{
-			messageBox::run("No particle manager.");
-			return;
-		}
-			
-		unsigned int _np = mg->DEMModel()->ParticleManager()->Np();
-		model::rs->setResultMemoryDEM(sz, _np);
-		unsigned int pt = 0;
-		foreach(QString f, file_path)
-		{
-			QString ext = getFileExtend(f);
-			if (ext == "bin")
-			{
-				model::rs->setPartDataFromBinary(pt, f);
-				pt++;
-			}
+			model::rs->openResultList(file);
 		}
 	}
+// 	else
+// 	{
+// 		dem_model* dem = mg->DEMModel();
+// 		if (!dem)
+// 		{
+// 			messageBox::run("No DEM model.");
+// 			return;
+// 		}
+// 		if (!(dem->ParticleManager()))
+// 		{
+// 			messageBox::run("No particle manager.");
+// 			return;
+// 		}
+// 			
+// 		unsigned int _np = mg->DEMModel()->ParticleManager()->Np();
+// 		model::rs->setResultMemoryDEM(model::isSinglePrecision, sz, _np);
+// 		unsigned int pt = 0;
+// 		foreach(QString f, file_path)
+// 		{
+// 			QString ext = getFileExtend(f);
+// 			if (ext == "bin")
+// 			{
+// 				model::rs->setPartDataFromBinary(pt, f);
+// 				pt++;
+// 			}
+// 		}
+// 	}
 }
 
 void xdynamics::setAnimationAction(bool b)
@@ -683,15 +688,16 @@ void xdynamics::SHAPE_Import()
 			else if (fmt == ".txt")
 				ist = MILKSHAPE_3D_ASCII;
 			vpolygon * vp = gl->makePolygonObject(_nm, ist, id.file_path);
-			if (!mg->GeometryObject(model::name))
-				mg->CreateModel(model::name, modelManager::OBJECTS, true);
-			polygonObject* po =
-				mg->GeometryObject()->makePolygonObject
-				(_nm, BOUNDAR_WALL, id.file_path, ist, vp->InitialPosition(), vp->NumTriangles(), vp->VertexList(), vp->IndexList()
-				,(material_type)id.type, id.youngs, id.poisson, id.density, id.shear);
-			cmd->printLine();
-			cmd->write(CMD_INFO, mg->GeometryObject()->Logs()[po->Name()]);
-			cmd->printLine();
+			vp->setMaterialType((material_type)id.type);
+// 			if (!mg->GeometryObject(model::name))
+// 				mg->CreateModel(model::name, modelManager::OBJECTS, true);
+// 			polygonObject* po =
+// 				mg->GeometryObject()->makePolygonObject
+// 				(_nm, BOUNDAR_WALL, id.file_path, ist, vp->InitialPosition(), vp->NumTriangles(), vp->VertexList(), vp->IndexList()
+// 				,(material_type)id.type, id.youngs, id.poisson, id.density, id.shear);
+// 			cmd->printLine();
+// 			cmd->write(CMD_INFO, mg->GeometryObject()->Logs()[po->Name()]);
+// 			cmd->printLine();
 		}
 	}	
 }
@@ -765,7 +771,7 @@ void xdynamics::makeParticle()
 	int ret = pd.exec();
 	if (ret)
 	{
-		VEC4D* pos;
+		//VEC4D* pos;
 		if (!mg->DEMModel())
 			mg->CreateModel(model::name, modelManager::DEM, true);
 		if (!mg->DEMModel()->ParticleManager())
@@ -773,14 +779,14 @@ void xdynamics::makeParticle()
 		particleManager *pm = mg->DEMModel()->ParticleManager();
 		switch (pd.method)
 		{
-		case 0: pos = pm->CreateCubeParticle
+		case 0: pm->CreateCubeParticle
 			(pd.name, (material_type)pd.type, pd.ncubex, pd.ncubey, pd.ncubez, 
 			 pd.loc[0], pd.loc[1], pd.loc[2], 
 			 pd.spacing, pd.min_radius, pd.max_radius,
 			 pd.youngs, pd.density, pd.poisson, pd.shear
 			 );
 			break;
-		case 1: pos = pm->CreatePlaneParticle
+		case 1: pm->CreatePlaneParticle
 			(pd.name, (material_type)pd.type, pd.nplanex, pd.nplanez,
 			 pd.loc[0], pd.loc[1], pd.loc[2],
 			 pd.dir[0], pd.dir[1], pd.dir[2],
@@ -805,36 +811,46 @@ void xdynamics::makeMass()
 		messageBox::run("No selected geometry.");
 		return;
 	}
-
-	pointMass* pm = bid.setBodyInfomation(mg->GeometryObject()->Object(gl->selectedObjectName()));
+	vobject* vobj = gl->selectedObjectWithCast();
+	VEC3D p = vobj->InitialPosition();
+	bid.setBodyInfomation(
+		vobj->MaterialType(), p.x, p.y, p.z, vobj->mass, vobj->vol,
+		vobj->ixx, vobj->iyy, vobj->izz, vobj->ixy, vobj->ixz, vobj->iyz);
+	//pointMass* pm = bid.setBodyInfomation(mg->GeometryObject()->Object(gl->selectedObjectName()));
 	int ret = bid.exec();
 	if (ret)
 	{
 		if (!mg->MBDModel())
 			mg->CreateModel(model::name, modelManager::MBD, true);
-		vobject *vo = gl->Objects()[pm->Name()];
-		pm->setViewObject(vo);
-		pm->setPosition(VEC3D(bid.x, bid.y, bid.z));
-		pm->setDiagonalInertia(bid.ixx, bid.iyy, bid.izz);
-		pm->setSymetryInertia(bid.ixy, bid.iyz, bid.izx);
-		cmaterialType cmt = getMaterialConstant(bid.mt);
-		pm->setMaterial((material_type)bid.mt, cmt.youngs, cmt.density, cmt.poisson);
-		pm->updateView(pm->Position(), ep2e(pm->getEP()));
-		//vo->setInitialPosition(pm->Position());
-		mg->MBDModel()->insertPointMass(pm);
-		//mg->MBDModel()->pointMasses()[pm->Name()] = pm;
+		if (vobj->ViewObjectType() > 1)
+		{
+			if (!mg->GeometryObject(model::name))
+				mg->CreateModel(model::name, modelManager::OBJECTS, true);
+			pointMass* pm = NULL;
+			vpolygon* vp = NULL;
+			switch (vobj->ViewObjectType())
+			{
+			case vobject::V_POLYGON:
+				vp = dynamic_cast<vpolygon*>(vobj);
+				pm = mg->GeometryObject()->makePolygonObject(
+					vp->name(), BOUNDAR_WALL, vp->FilePath(), vp->ImportType(),
+					vp->InitialPosition(), vp->NumTriangles(), vp->VertexList(), vp->IndexList()
+					, (material_type)bid.mt, bid.youngs, bid.poisson, bid.density, bid.shear);
+				break;
+			}
+			if (pm)
+			{
+				pm->setViewObject(vobj);
+				pm->setPosition(VEC3D(bid.x, bid.y, bid.z));
+				pm->setDiagonalInertia(bid.ixx, bid.iyy, bid.izz);
+				pm->setSymetryInertia(bid.ixy, bid.iyz, bid.izx);
+				cmaterialType cmt = getMaterialConstant(bid.mt);
+				pm->setMaterial((material_type)bid.mt, cmt.youngs, cmt.density, cmt.poisson);
+				mg->MBDModel()->insertPointMass(pm);
+				pm->updateView(pm->Position(), ep2e(pm->getEP()));
+			}
+		}			
 	}
-// 	massDialog msd;
-// 	mass* ms = msd.callDialog(md);
-// 	if (ms)
-// 	{
-// 		if (ms->getBaseGeometryType() == POLYGON)
-// 			ms->setPolyGeometryObject(gl->getVPolyObjectFromName(ms->name()));
-// 		else
-// 			ms->setGeometryObject(gl->getVObjectFromName(ms->name()));
-// 	}
-		//ms->setgl->getVObjectFromName(ms->name());
-		//gl->makeMassCoordinate(ms->name());
 }
 
 void xdynamics::makeContactPair()
@@ -948,13 +964,13 @@ void xdynamics::excuteMessageBox()
 	//messageBox::run()
 }
 
-void xdynamics::propertySlot(QString nm, context_object_type vot)
+void xdynamics::contextSlot(QString nm, context_menu vot)
 {
-	if (!mg->MBDModel())
-	{
-		messageBox::run("Multi-body dynamics model is not created.\nMulti-body dynamics model is automatically created by defining the point mass element.");
-		return;
-	}
+// 	if (!mg->MBDModel())
+// 	{
+// 		messageBox::run("Multi-body dynamics model is not created.\nMulti-body dynamics model is automatically created by defining the point mass element.");
+// 		return;
+// 	}
 	pointMass* pm = NULL;
 	contact* c = NULL;
 	bodyInfoDialog bid;
@@ -962,34 +978,36 @@ void xdynamics::propertySlot(QString nm, context_object_type vot)
 	int ret = 0;
 	switch (vot)
 	{
-	case GEOMETRY_OBJECT:
-		pm = mg->MBDModel()->PointMass(nm);
-		if (!pm)
-		{
-			messageBox::run(nm + " is not defined as the point mass.");
-			return;
-		}
-		pm = bid.setBodyInfomation(pm);
-		ret = bid.exec();
-		if (ret)
-		{
-			pm->setPosition(VEC3D(bid.x, bid.y, bid.z));
-			pm->setDiagonalInertia(bid.ixx, bid.iyy, bid.izz);
-			pm->setSymetryInertia(bid.ixy, bid.iyz, bid.izx);
-			cmaterialType cmt = getMaterialConstant(bid.mt);
-			pm->setMaterial((material_type)bid.mt, cmt.youngs, cmt.density, cmt.poisson);
-			gl->Objects()[pm->Name()]->setInitialPosition(pm->Position());
-		}
+	case CONTEXT_PROPERTY:
+// 		pm = mg->MBDModel()->PointMass(nm);
+// 		if (!pm)
+// 		{
+// 			messageBox::run(nm + " is not defined as the point mass.");
+// 			return;
+// 		}
+// 		pm = bid.setBodyInfomation(pm);
+// 		ret = bid.exec();
+// 		if (ret)
+// 		{
+// 			pm->setPosition(VEC3D(bid.x, bid.y, bid.z));
+// 			pm->setDiagonalInertia(bid.ixx, bid.iyy, bid.izz);
+// 			pm->setSymetryInertia(bid.ixy, bid.iyz, bid.izx);
+// 			cmaterialType cmt = getMaterialConstant(bid.mt);
+// 			pm->setMaterial((material_type)bid.mt, cmt.youngs, cmt.density, cmt.poisson);
+// 			gl->Objects()[pm->Name()]->setInitialPosition(pm->Position());
+// 		}
 		/*mass*/
 		break;
-	case CONSTRAINT_OBJECT:
+	case CONTEXT_REFINEMENT:
+		comm->setWindowTitle("Input the refinement size.");
+		//comm->setEditFocus(true);
 		break;
-	case CONTACT_OBJECT:
-		cpd = new contactPairDialog(this);
-		c = mg->ContactManager()->Contacts()[nm];
-		cpd->setComboBoxString(c->FirstObject()->Name(), c->SecondObject()->Name());
-		//cpd->setIgnoreCondition(c->IsEnabled(), )
-		break;
+// 	case CONTACT_OBJECT:
+// 		cpd = new contactPairDialog(this);
+// 		c = mg->ContactManager()->Contacts()[nm];
+// 		cpd->setComboBoxString(c->FirstObject()->Name(), c->SecondObject()->Name());
+// 		//cpd->setIgnoreCondition(c->IsEnabled(), )
+// 		break;
 	}
 		
 }
@@ -1007,6 +1025,12 @@ void xdynamics::editingCommandLine()
 	{
 		c = comMgr->AnQ(code);
 		cmd->write(CMD_INFO, c);
+	}
+	if (code < 0)
+	{
+		QString ret = comMgr->AnQ(comm->windowTitle(), c);
+		cmd->write(CMD_INFO, ret);
+		comm->setWindowTitle("Command window");
 	}
 	//comMgr->appendLog(c);
 	e->setText("");
@@ -1038,6 +1062,11 @@ void xdynamics::solve()
 	int ret = sd.exec();
 	if (ret <= 0)
 		return;
+	if (model::isSinglePrecision && sd.isCpu)
+	{
+		messageBox::run("Single precision does NOT provide the CPU processing.");
+		return;
+	}
 	simulation::dt = sd.time_step;
 	simulation::et = sd.sim_time;
 	simulation::st = sd.save_step;

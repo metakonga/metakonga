@@ -7,8 +7,12 @@ contact_particles_polygonObjects::contact_particles_polygonObjects()
 	: contact("particles_polygonObjects", DHS)
 	, hsphere(NULL)
 	, dsphere(NULL)
+	, hsphere_f(NULL)
+	, dsphere_f(NULL)
 	, hpi(NULL)
+	, hpi_f(NULL)
 	, dpi(NULL)
+	, dpi_f(NULL)
 	, hcp(NULL)
 	, nPobjs(NULL)
 	, pct(NULL)
@@ -23,6 +27,7 @@ contact_particles_polygonObjects::~contact_particles_polygonObjects()
 {
 	if (hsphere) delete[] hsphere; hsphere = NULL;
 	if (hpi) delete[] hpi; hpi = NULL;
+	if (hpi_f) delete[] hpi_f; hpi = NULL;
 	if (hcp) delete[] hcp; hcp = NULL;
 	if (pct) delete[] pct; pct = NULL;
 	checkCudaErrors(cudaFree(dsphere)); dsphere = NULL;
@@ -60,7 +65,7 @@ unsigned int contact_particles_polygonObjects::define(
 		unsigned int *iList = pobj->IndexList();
 		//unsigned int id = pobj->ID();
 		unsigned int a, b, c;
-		maxRadii = 0;
+		//maxRadii = 0;
 		cp.rest = cppo->Restitution();
 		cp.sratio = cppo->StiffnessRatio();
 		cp.fric = cppo->Friction();
@@ -90,6 +95,8 @@ unsigned int contact_particles_polygonObjects::define(
 			}
 			VEC3D ctri = numeric::utility::calculate_center_of_triangle(po.P, po.Q, po.R);
 			double rad = (ctri - po.P).length();
+			if (rad > maxRadii)
+				maxRadii = rad;
 			hsphere[i] = VEC4D(ctri.x, ctri.y, ctri.z, rad);
 			hpi[i] = po;
 		}
@@ -97,6 +104,83 @@ unsigned int contact_particles_polygonObjects::define(
 		idx++;
 	}
 	maxRadius = maxRadii;
+	return npolySphere;
+}
+
+unsigned int contact_particles_polygonObjects::define_f(
+	QMap<QString, contact_particles_polygonObject*>& cppos)
+{
+	foreach(contact_particles_polygonObject* cppo, cppos)
+	{
+		polygonObject* pobj = cppo->PolygonObject();
+		npolySphere += pobj->NumTriangle();
+	}
+	nPobjs = cppos.size();
+	hsphere_f = new VEC4F[npolySphere];
+	hpi_f = new host_polygon_info_f[npolySphere];
+	hcp = new contact_parameter[nPobjs];
+	mpp = new material_property_pair[nPobjs];
+	if (simulation::isCpu())
+		dsphere_f = (float*)hsphere_f;
+	if (!pct)
+		pct = new polygonContactType[nPobjs];
+
+	unsigned int bPolySphere = 0;
+	unsigned int ePolySphere = 0;
+	float maxRadii = 0.0f;
+	unsigned int idx = 0;
+	foreach(contact_particles_polygonObject* cppo, cppos)
+	{
+		contact_parameter cp = { 0, };
+		material_property_pair mp = { 0, };
+		polygonObject* pobj = cppo->PolygonObject();
+		double *vList = pobj->VertexList();
+		unsigned int *iList = pobj->IndexList();
+		//unsigned int id = pobj->ID();
+		unsigned int a, b, c;
+		//maxRadii = 0.f;
+		cp.rest = cppo->Restitution();
+		cp.sratio = cppo->StiffnessRatio();
+		cp.fric = cppo->Friction();
+		mp = *(cppo->MaterialPropertyPair());
+		hcp[idx] = cp;
+		mpp[idx] = mp;
+		pair_ip[idx] = pobj;
+		ePolySphere += pobj->NumTriangle();
+		for (unsigned int i = bPolySphere; i < ePolySphere; i++)
+		{
+			host_polygon_info_f po;
+			po.id = idx;
+			if (iList)
+			{
+				a = iList[i * 3 + 0];
+				b = iList[i * 3 + 1];
+				c = iList[i * 3 + 2];
+				po.P = VEC3F(vList[a * 3 + 0], vList[a * 3 + 1], vList[a * 3 + 2]);
+				po.Q = VEC3F(vList[b * 3 + 0], vList[b * 3 + 1], vList[b * 3 + 2]);
+				po.R = VEC3F(vList[c * 3 + 0], vList[c * 3 + 1], vList[c * 3 + 2]);
+			}
+			else
+			{
+				int s = i * 9;
+				VEC3D P = pobj->Position() + pobj->toGlobal(VEC3D(vList[s + 0], vList[s + 1], vList[s + 2]));
+				VEC3D Q = pobj->Position() + pobj->toGlobal(VEC3D(vList[s + 3], vList[s + 4], vList[s + 5]));
+				VEC3D R = pobj->Position() + pobj->toGlobal(VEC3D(vList[s + 6], vList[s + 7], vList[s + 8]));
+				po.P = P.To<float>();
+				po.Q = Q.To<float>();
+				po.R = R.To<float>();
+			}
+			VEC3F ctri = numeric::utility::calculate_center_of_triangle_f(po.P, po.Q, po.R);
+			float rad = (ctri - po.P).length();
+			if (rad > maxRadii)
+				maxRadii = rad;
+			hsphere_f[i] = VEC4F(ctri.x, ctri.y, ctri.z, rad);
+			hpi_f[i] = po;
+		}
+		bPolySphere += pobj->NumTriangle();
+		idx++;
+	}
+	maxRadius_f = maxRadii;
 	return npolySphere;
 }
 
@@ -201,6 +285,54 @@ void contact_particles_polygonObjects::updatePolygonObjectData()
 	}
 }
 
+void contact_particles_polygonObjects::updatePolygonObjectData_f()
+{
+	unsigned int bPolySphere = 0;
+	unsigned int ePolySphere = 0;
+	foreach(polygonObject* pobj, pair_ip)
+	{
+		double *vList = pobj->VertexList();
+		unsigned int *iList = pobj->IndexList();
+		ePolySphere += pobj->NumTriangle();
+		for (unsigned int i = bPolySphere; i < ePolySphere; i++)
+		{
+			host_polygon_info_f po;
+			unsigned int a, b, c;
+			po.id = hpi_f[i].id;
+			if (iList)
+			{
+				a = iList[i * 3 + 0];
+				b = iList[i * 3 + 1];
+				c = iList[i * 3 + 2];
+				po.P = VEC3F(vList[a * 3 + 0], vList[a * 3 + 1], vList[a * 3 + 2]);
+				po.Q = VEC3F(vList[b * 3 + 0], vList[b * 3 + 1], vList[b * 3 + 2]);
+				po.R = VEC3F(vList[c * 3 + 0], vList[c * 3 + 1], vList[c * 3 + 2]);
+			}
+			else
+			{
+				int s = i * 9;
+				VEC3D P = pobj->Position() + pobj->toGlobal(VEC3D(vList[s + 0], vList[s + 1], vList[s + 2]));
+				VEC3D Q = pobj->Position() + pobj->toGlobal(VEC3D(vList[s + 3], vList[s + 4], vList[s + 5]));
+				VEC3D R = pobj->Position() + pobj->toGlobal(VEC3D(vList[s + 6], vList[s + 7], vList[s + 8]));
+				po.P = P.To<float>();
+				po.Q = Q.To<float>();
+				po.R = R.To<float>();
+			}
+			VEC3F ctri = numeric::utility::calculate_center_of_triangle_f(po.P, po.Q, po.R);
+			hsphere_f[i].x = ctri.x;
+			hsphere_f[i].y = ctri.y;
+			hsphere_f[i].z = ctri.z;
+			hpi_f[i] = po;
+		}
+		bPolySphere += pobj->NumTriangle();
+	}
+	if (simulation::isGpu())
+	{
+		checkCudaErrors(cudaMemcpy(dsphere_f, hsphere_f, sizeof(float) * npolySphere * 4, cudaMemcpyHostToDevice));
+		checkCudaErrors(cudaMemcpy(dpi_f, hpi_f, sizeof(device_polygon_info_f) * npolySphere, cudaMemcpyHostToDevice));
+	}
+}
+
 // bool contact_particles_polygonObjects::collision(
 // 	double *dpos, double *dvel, double *domega, double *dmass, double *dforce, double *dmoment, unsigned int *sorted_id, unsigned int *cell_start, unsigned int *cell_end, unsigned int np)
 // {
@@ -230,7 +362,29 @@ void contact_particles_polygonObjects::cudaMemoryAlloc()
 	delete[] _hcp;
 }
 
-void contact_particles_polygonObjects::cuda_collision(double *pos, double *vel, double *omega, double *mass, double *force, double *moment, unsigned int *sorted_id, unsigned int *cell_start, unsigned int *cell_end, unsigned int np)
+void contact_particles_polygonObjects::cudaMemoryAlloc_f()
+{
+	device_contact_property_f *_hcp = new device_contact_property_f[nPobjs];
+	for (unsigned int i = 0; i < nPobjs; i++)
+	{
+		_hcp[i] = 
+		{ (float)mpp[i].Ei, (float)mpp[i].Ej, (float)mpp[i].pri, (float)mpp[i].prj, (float)mpp[i].Gi, (float)mpp[i].Gj,
+		(float)hcp[i].rest, (float)hcp[i].fric, 0.0f, 0.0f, (float)hcp[i].sratio };
+	}
+	checkCudaErrors(cudaMalloc((void**)&dsphere_f, sizeof(float) * npolySphere * 4));
+	checkCudaErrors(cudaMalloc((void**)&dpi_f, sizeof(device_polygon_info_f) * npolySphere));
+	checkCudaErrors(cudaMalloc((void**)&dcp_f, sizeof(device_contact_property_f) * nPobjs));
+	checkCudaErrors(cudaMemcpy(dsphere_f, hsphere_f, sizeof(float) * npolySphere * 4, cudaMemcpyHostToDevice));
+	checkCudaErrors(cudaMemcpy(dpi_f, hpi_f, sizeof(device_polygon_info_f) * npolySphere, cudaMemcpyHostToDevice));
+	checkCudaErrors(cudaMemcpy(dcp_f, _hcp, sizeof(device_contact_property_f) * nPobjs, cudaMemcpyHostToDevice));
+	delete[] _hcp;
+}
+
+void contact_particles_polygonObjects::cuda_collision(
+	double *pos, double *vel, double *omega, 
+	double *mass, double *force, double *moment, 
+	unsigned int *sorted_id, unsigned int *cell_start, 
+	unsigned int *cell_end, unsigned int np)
 {
 	device_polygon_mass_info* hpmi = new device_polygon_mass_info[nPobjs];
 	device_polygon_mass_info* dpmi = NULL;
@@ -267,6 +421,53 @@ void contact_particles_polygonObjects::cuda_collision(double *pos, double *vel, 
 		if (hpmi[id].force.z > 0.0)
 			bool gg = true;
 		p->setCollisionForce(VEC3D(hpmi[id].force.x, hpmi[id].force.y, hpmi[id].force.z));
+		//p->setCollisionMoment(VEC3D(hpmi[id].moment.x, hpmi[id].moment.y, hpmi[id].moment.z));
+	}
+	checkCudaErrors(cudaFree(dpmi));
+	delete[] hpmi;
+}
+
+void contact_particles_polygonObjects::cuda_collision(float *pos, float *vel, float *omega, float *mass, float *force, float *moment, unsigned int *sorted_id, unsigned int *cell_start, unsigned int *cell_end, unsigned int np)
+{
+	device_polygon_mass_info_f* hpmi = new device_polygon_mass_info_f[nPobjs];
+	device_polygon_mass_info_f* dpmi = NULL;
+	checkCudaErrors(cudaMalloc((void**)&dpmi, sizeof(device_polygon_mass_info_f) * nPobjs));
+	QMapIterator<unsigned int, polygonObject*> po(pair_ip);
+	while (po.hasNext())
+	{
+		po.next();
+		unsigned int id = po.key();
+		polygonObject* p = po.value();
+		VEC3F pos = p->Position().To<float>();
+		VEC3F vel = p->getVelocity().To<float>();
+		VEC3F omega = p->getAngularVelocity().To<float>();
+		EPF ep = p->getEP().To<float>();
+		hpmi[id] =
+		{
+			make_float3(pos.x, pos.y, pos.z),
+			make_float4(ep.e0, ep.e1, ep.e2, ep.e3),
+			make_float3(vel.x, vel.y, vel.z),
+			make_float3(omega.x, omega.y, omega.z),
+			make_float3(0.0, 0.0, 0.0),
+			make_float3(0.0, 0.0, 0.0)
+		};
+	}
+	checkCudaErrors(cudaMemcpy(dpmi, hpmi, sizeof(device_polygon_mass_info_f) * nPobjs, cudaMemcpyHostToDevice));
+	cu_particle_polygonObject_collision(1, dpi_f, dsphere_f, dpmi, pos, vel, omega, force, moment, mass, sorted_id, cell_start, cell_end, dcp_f, np);
+	checkCudaErrors(cudaMemcpy(hpmi, dpmi, sizeof(device_polygon_mass_info_f) * nPobjs, cudaMemcpyDeviceToHost));
+	po.toFront();
+	while (po.hasNext())
+	{
+		po.next();
+		unsigned int id = po.key();
+		polygonObject* p = po.value();
+		if (hpmi[id].force.z > 0.0)
+			bool gg = true;
+		p->setCollisionForce(
+			VEC3D(
+			(float)hpmi[id].force.x, 
+			(float)hpmi[id].force.y, 
+			(float)hpmi[id].force.z));
 		//p->setCollisionMoment(VEC3D(hpmi[id].moment.x, hpmi[id].moment.y, hpmi[id].moment.z));
 	}
 	checkCudaErrors(cudaFree(dpmi));

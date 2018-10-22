@@ -32,6 +32,7 @@ void newDialog::Click_ok()
 	//_path = ui->LEPath->text();
 	unit = (unit_type)CB_Unit->currentIndex();
 	dir_g = (gravity_direction)CB_GravityDirection->currentIndex();
+	isSinglePrecision = CBH_SingleFloating->isChecked();
 	//_path += "/";
 	this->close();
 	this->setResult(QDialog::Accepted);

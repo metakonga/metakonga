@@ -7,7 +7,7 @@
 #include "contact_particles_plane.h"
 #include "contact_particles_polygonObject.h"
 #include "contact_particles_polygonObjects.h"
-
+#include "model.h"
 #include "contact_plane_polygonObject.h"
 #include <QDebug>
 
@@ -109,26 +109,48 @@ bool contactManager::runCollision(
 			sorted_id, cell_start, cell_end, np
 			);
 	}
-// 	
-// 	foreach(contact *c, cots)
-// 	{
-// 		c->collision(
-// 			pos, vel, omega, 
-// 			mass, force, moment,
+	return true;
+}
+
+bool contactManager::runCollision(
+	float *pos, float *vel, float *omega, 
+	float *mass, float *force, float *moment, 
+	unsigned int *sorted_id, unsigned int *cell_start,
+	unsigned int *cell_end, unsigned int np)
+{
+	if (simulation::isCpu())
+	{
+// 		hostCollision
+// 			(
+// 			(VEC4D*)pos,
+// 			(VEC3D*)vel,
+// 			(VEC3D*)omega,
+// 			mass,
+// 			(VEC3D*)force,
+// 			(VEC3D*)moment,
 // 			sorted_id, cell_start, cell_end, np
 // 			);
-// 	}
-// 	if (cppoly)
-// 		cppoly->collision(
-// 		pos, vel, omega, mass, force, moment,
-// 		sorted_id, cell_start, cell_end, np);
+	}
+	else if (simulation::isGpu())
+	{
+		deviceCollision(
+			pos, vel, omega,
+			mass, force, moment,
+			sorted_id, cell_start, cell_end, np
+			);
+	}
 	return true;
 }
 
 void contactManager::update()
 {
 	if (cppoly)
-		cppoly->updatePolygonObjectData();
+	{
+		model::isSinglePrecision ?
+			cppoly->updatePolygonObjectData_f() :
+			cppoly->updatePolygonObjectData();
+	}
+		
 }
 
 void contactManager::deviceCollision(
@@ -158,6 +180,26 @@ void contactManager::deviceCollision(
 // 	{
 // 
 // 	}
+}
+// 
+void contactManager::deviceCollision(float *pos, float *vel, float *omega, float *mass, float *force, float *moment, unsigned int *sorted_id, unsigned int *cell_start, unsigned int *cell_end, unsigned int np)
+{
+	if (cpp)
+	{
+		cpp->cuda_collision(pos, vel, omega, mass, force, moment, sorted_id, cell_start, cell_end, np);
+	}
+	foreach(contact* c, cots)
+	{
+		if (c->IgnoreTime() && (simulation::ctime > c->IgnoreTime()))
+			continue;
+		if (c->IsEnabled())
+			c->cuda_collision(
+			pos, vel, omega, mass, force, moment, sorted_id, cell_start, cell_end, np);
+	}
+	if (cppoly)
+	{
+		cppoly->cuda_collision(pos, vel, omega, mass, force, moment, sorted_id, cell_start, cell_end, np);
+	}
 }
 
 void contactManager::hostCollision(
@@ -290,7 +332,10 @@ unsigned int contactManager::setupParticlesPolygonObjectsContact()
 	if (cppos.size() && !cppoly)
 	{
 		cppoly = new contact_particles_polygonObjects;
-		n = cppoly->define(cppos);
+		if (model::isSinglePrecision)
+			n = cppoly->define_f(cppos);
+		else
+			n = cppoly->define(cppos);
 	}	
 	return n;
 }
@@ -299,6 +344,13 @@ double* contactManager::SphereData()
 {
 	if (cppoly)
 		return cppoly->SphereData();
+	return NULL;
+}
+
+float* contactManager::SphereData_f()
+{
+	if (cppoly)
+		return cppoly->SphereData_f();
 	return NULL;
 }
 

@@ -24,9 +24,17 @@ public:
 		unsigned int *cell_start,
 		unsigned int *cell_end,
 		unsigned int np);
+	virtual void cuda_collision(
+		float *pos, float *vel,
+		float *omega, float *mass,
+		float *force, float *moment,
+		unsigned int *sorted_id,
+		unsigned int *cell_start,
+		unsigned int *cell_end,
+		unsigned int np);
 	virtual void collision(double r, double m, VEC3D& pos, VEC3D& vel, VEC3D& omega, VEC3D& F, VEC3D& M);	                     
 	virtual void cudaMemoryAlloc();
-
+	virtual void cudaMemoryAlloc_f();
 private:
 	double particle_plane_contact_detection(plane* _pe, VEC3D& u, VEC3D& xp, VEC3D& wp, double r);
 	friend class contact_particles_cube;
@@ -37,6 +45,7 @@ private:
 	object* p;
 	plane *pe;
 	device_plane_info *dpi;
+	device_plane_info_f *dpi_f;
 };
 
 #endif

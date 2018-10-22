@@ -22,8 +22,16 @@ public:
 		unsigned int *cell_start,
 		unsigned int *cell_end,
 		unsigned int np);
+	virtual void cuda_collision(
+		float *pos, float *vel,
+		float *omega, float *mass,
+		float *force, float *moment,
+		unsigned int *sorted_id,
+		unsigned int *cell_start,
+		unsigned int *cell_end,
+		unsigned int np);
 	virtual void cudaMemoryAlloc();
-
+	virtual void cudaMemoryAlloc_f();
 private:
 // 	bool hostCollision(
 // 		double *dpos /* = NULL */, double *dvel /* = NULL  */,
@@ -34,6 +42,7 @@ private:
 	object* p;
 	cube* cu;
 	device_plane_info *dpi;
+	device_plane_info_f *dpi_f;
 };
 
 #endif

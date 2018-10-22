@@ -6,6 +6,10 @@
 bodyInfoDialog::bodyInfoDialog(QWidget* parent)
 	: QDialog(parent)
 	, mt(0)
+	, density(0)
+	, youngs(0)
+	, poisson(0)
+	, shear(0)
 {
 	setupUi(this);
 	CB_Material_Type->addItems(getMaterialList());
@@ -31,24 +35,53 @@ bodyInfoDialog::~bodyInfoDialog()
 	//this->
 }
 
-pointMass* bodyInfoDialog::setBodyInfomation(object* o)
+// pointMass* bodyInfoDialog::setBodyInfomation(object* o)
+// {
+// 	pointMass* pm = dynamic_cast<pointMass*>(o);
+// 	mass = pm->Mass();
+// 	volume = pm->Volume();
+// 	material_type mt = pm->MaterialType();
+// 	VEC3D loc = pm->Position();
+// 	dx = pm->DiagonalInertia0().x;
+// 	dy = pm->DiagonalInertia0().y;
+// 	dz = pm->DiagonalInertia0().z;
+// 	sx = pm->SymetricInertia0().x;
+// 	sy = pm->SymetricInertia0().y;
+// 	sz = pm->SymetricInertia0().z;
+// 	x = loc.x; y = loc.y; z = loc.z;
+// 	ixx = mass * dx; iyy = mass * dy; izz = mass * dz;
+// 	ixy = mass * sx; iyz = mass * sy; izx = mass * sz;
+// 	CB_Material_Type->setCurrentIndex(int(mt));
+// 	LE_Position->setText(QString("%1, %2, %3").arg(loc.x).arg(loc.y).arg(loc.z));
+// 	LE_Mass->setText(QString("%1").arg(mass));
+// 	LE_Ixx->setText(QString("%1").arg(ixx));
+// 	LE_Iyy->setText(QString("%1").arg(iyy));
+// 	LE_Izz->setText(QString("%1").arg(izz));
+// 	LE_Ixy->setText(QString("%1").arg(ixy));
+// 	LE_Iyz->setText(QString("%1").arg(iyz));
+// 	LE_Izx->setText(QString("%1").arg(izx));
+// 	LE_Volume->setText(QString("%1").arg(volume));
+// 	return pm;
+// }
+
+void bodyInfoDialog::setBodyInfomation(
+	int mt, double x, double y, double z, 
+	double _mass, double _vol, 
+	double _ixx, double _iyy, double _izz, 
+	double _ixy, double _iyz, double _izx)
 {
-	pointMass* pm = dynamic_cast<pointMass*>(o);
-	mass = pm->Mass();
-	volume = pm->Volume();
-	material_type mt = pm->MaterialType();
-	VEC3D loc = pm->Position();
-	dx = pm->DiagonalInertia0().x;
-	dy = pm->DiagonalInertia0().y;
-	dz = pm->DiagonalInertia0().z;
-	sx = pm->SymetricInertia0().x;
-	sy = pm->SymetricInertia0().y;
-	sz = pm->SymetricInertia0().z;
-	x = loc.x; y = loc.y; z = loc.z;
+	mass = _mass;
+	volume = _vol;
+	dx = ixx;
+	dy = iyy;
+	dz = izz;
+	sx = ixy;
+	sy = iyz;
+	sz = izx;
 	ixx = mass * dx; iyy = mass * dy; izz = mass * dz;
 	ixy = mass * sx; iyz = mass * sy; izx = mass * sz;
 	CB_Material_Type->setCurrentIndex(int(mt));
-	LE_Position->setText(QString("%1, %2, %3").arg(loc.x).arg(loc.y).arg(loc.z));
+	LE_Position->setText(QString("%1 %2 %3").arg(x).arg(y).arg(z));
 	LE_Mass->setText(QString("%1").arg(mass));
 	LE_Ixx->setText(QString("%1").arg(ixx));
 	LE_Iyy->setText(QString("%1").arg(iyy));
@@ -57,7 +90,6 @@ pointMass* bodyInfoDialog::setBodyInfomation(object* o)
 	LE_Iyz->setText(QString("%1").arg(iyz));
 	LE_Izx->setText(QString("%1").arg(izx));
 	LE_Volume->setText(QString("%1").arg(volume));
-	return pm;
 }
 
 void bodyInfoDialog::changeMaterialInputType(int idx)
@@ -107,7 +139,10 @@ void bodyInfoDialog::Click_ok()
 	mt = CB_Material_Type->currentIndex();
 	cmt = getMaterialConstant(mt);
 //	material_type mt = (material_type)mt;
-
+	density = cmt.density;
+	youngs = cmt.youngs;
+	poisson = cmt.poisson;
+	shear = cmt.shear;
 	mass = LE_Mass->text().toDouble();
 	ixx = LE_Ixx->text().toDouble();
 	iyy = LE_Iyy->text().toDouble();

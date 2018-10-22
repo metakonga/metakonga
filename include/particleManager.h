@@ -36,6 +36,7 @@ public:
 	unsigned int Np() { return np; }
 	object* Object() { return obj; }
 	double* Position() { return (double*)pos; }
+	float* Position_f() { return (float*)pos_f; }
 
 	VEC4D* CreateCubeParticle(
 		QString n, material_type type, unsigned int nx, unsigned int ny, unsigned int nz,
@@ -60,6 +61,7 @@ private:
 	unsigned int np;
 	object *obj;
 	VEC4D *pos;
+	VEC4F *pos_f;
 
 	QMap<QString, particlesInfo> pinfos;
 	QMap<QString, QString> logs;

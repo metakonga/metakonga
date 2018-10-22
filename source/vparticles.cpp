@@ -21,10 +21,12 @@
 vparticles::vparticles()
 	: np(0)
 	, isSetColor(false)
-	, pos(NULL)
-	, vel(NULL)
-	, force(NULL)
-	, color(NULL)
+	, pos(NULL), pos_f(NULL)
+	, vel(NULL), vel_f(NULL)
+	, force(NULL), force_f(NULL)
+	, color(NULL), color_f(NULL)
+	, buffer(NULL), buffer_f(NULL)
+	, color_buffer(NULL), color_buffer_f(NULL)
 	, pscale(0)
 	, isDefine(false)
 {
@@ -39,6 +41,10 @@ vparticles::~vparticles()
 	if (color) delete[] color; color = NULL;
 	if (vel) delete[] vel; vel = NULL;
 	if (force) delete[] force; force = NULL;
+	if (pos_f) delete[] pos_f; pos_f = NULL;
+	if (color_f) delete[] color_f; color_f = NULL;
+	if (vel_f) delete[] vel_f; vel_f = NULL;
+	if (force_f) delete[] force_f; force_f = NULL;
 	if (m_posVBO){
 		glDeleteBuffers(1, &m_posVBO);
 		m_posVBO = 0;
@@ -109,6 +115,57 @@ void vparticles::draw(GLenum eModem, int wHeight, int protype, double z)
 	glEnable(GL_LIGHTING);
 }
 
+void vparticles::draw_f(GLenum eMode, int wHeight, int protype, float z)
+{
+	if (!isDefine)
+		return;
+	if (vcontroller::Play())
+	{
+		unsigned int idx = vcontroller::getFrame();
+		buffer_f = model::rs->getPartPosition_f(idx);
+		//color_buffer = model::rs->getPartColor(idx);
+	}
+	else
+	{
+		unsigned int idx = vcontroller::getFrame();
+		if (idx)
+		{
+			buffer_f = model::rs->getPartPosition_f(idx);
+			//color_buffer = model::rs->getPartColor(idx);
+		}
+		else
+		{
+			buffer_f = pos_f;
+			color_buffer_f = color_f;
+		}
+	}
+
+	glDisable(GL_LIGHTING);
+	glEnable(GL_POINT_SPRITE_ARB);
+	glTexEnvi(GL_POINT_SPRITE_ARB, GL_COORD_REPLACE_ARB, GL_TRUE);
+	glEnable(GL_VERTEX_PROGRAM_POINT_SIZE_NV);
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+
+	glUseProgram(program.Program());
+	float projFactor = 0.f;
+	if (!protype){
+		pscale = (wHeight) / (0.6 * z);// / tanf(90 * 0.5*M_PI / 180.0);
+		projFactor = 1.f;
+	}
+	else{
+		pscale = (wHeight) / tanf(60 * 0.48*M_PI / 180.0);
+	}
+	glUniform1f(glGetUniformLocation(program.Program(), "projFactor"), projFactor);
+	glUniform1f(glGetUniformLocation(program.Program(), "pointScale"), pscale);
+
+	_drawPoints_f();
+
+	glUseProgram(0);
+	glDisable(GL_POINT_SPRITE_ARB);
+	glEnable(GL_LIGHTING);
+}
+
 void vparticles::_drawPoints()
 {
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -134,6 +191,30 @@ void vparticles::_drawPoints()
 	}
 }
 
+void vparticles::_drawPoints_f()
+{
+	if (m_posVBO)
+	{
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_posVBO);
+		glVertexPointer(4, GL_FLOAT, 0, 0);
+		glEnableClientState(GL_VERTEX_ARRAY);
+		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)*np * 4, buffer_f);
+		if (m_colorVBO)
+		{
+			glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_colorVBO);
+			glColorPointer(4, GL_FLOAT, 0, 0);
+			glEnableClientState(GL_COLOR_ARRAY);
+			glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(GLfloat)*np * 4, color_buffer_f);
+		}
+
+		glDrawArrays(GL_POINTS, 0, np);
+
+		glBindBufferARB(GL_ARRAY_BUFFER_ARB, 0);
+		glDisableClientState(GL_VERTEX_ARRAY);
+		glDisableClientState(GL_COLOR_ARRAY);
+	}
+}
+
 bool vparticles::define()
 {
 	np = 0;// ps->numParticle();
@@ -141,6 +222,7 @@ bool vparticles::define()
 	if (!vel) vel = new double[np * 3];
 	if (!force) force = new double[np * 3];
 	if (!color) color = new double[np * 4];
+	
 	//ps->setPosition(pos);
 	for (unsigned int i = 0; i < np; i++){
 		color[i * 4 + 0] = 0.0f;
@@ -179,6 +261,65 @@ bool vparticles::define()
 	return true;
 }
 
+bool vparticles::define_f(float* p, unsigned int n)
+{
+	unsigned int pnp = np;
+	if (np && (np != n))
+		resizeMemory_f(p, n);
+	else
+	{
+		np = n;
+		if (!pos_f) pos_f = new float[np * 4];
+		if (!vel_f) vel_f = new float[np * 3];
+		if (!force_f) force_f = new float[np * 3];
+		if (!color_f) color_f = new float[np * 4];
+		memcpy(pos_f, p, sizeof(float) * np * 4);
+	}
+
+	if (np > pnp)
+	{
+		for (unsigned int i = pnp; i < np; i++)
+		{
+			color_f[i * 4 + 0] = 0.0f;
+			color_f[i * 4 + 1] = 0.0f;
+			color_f[i * 4 + 2] = 1.0f;
+			color_f[i * 4 + 3] = 1.0f;
+		}
+	}
+
+	if (!np){
+		msgBox("Particle generation is failed.", QMessageBox::Critical);
+		return false;
+	}
+	// 	if (!isglewinit)
+	// 		glewInit();
+
+	if (m_posVBO)
+	{
+		glDeleteBuffers(1, &m_posVBO);
+		m_posVBO = 0;
+	}
+	if (m_colorVBO)
+	{
+		glDeleteBuffers(1, &m_colorVBO);
+		m_colorVBO = 0;
+	}
+	if (program.Program())
+		program.deleteProgram();
+	unsigned int memSize = sizeof(float) * 4 * np;
+	buffer_f = pos_f;
+	color_buffer_f = color_f;
+	if (!m_posVBO)
+		m_posVBO = vglew::createVBO<float>(memSize, buffer_f);
+	if (!m_colorVBO)
+		m_colorVBO = vglew::createVBO<float>(memSize, color_buffer_f);
+
+	if (!program.Program())
+		program.compileProgram(vertexShader, spherePixelShader);
+	isDefine = true;
+	return true;
+}
+
 void vparticles::setParticlePosition(double* p, unsigned int n)
 {
 	if (pos && p)
@@ -200,6 +341,22 @@ void vparticles::resizeMemory(double* p, unsigned int n)
 	delete[] tv3;
 	np = new_np;
 	//define(p, n);
+}
+
+void vparticles::resizeMemory_f(float* p, unsigned int n)
+{
+	float* tv4 = new float[np * 4];
+	float* tv3 = new float[np * 3];
+	unsigned int new_np = n;// ps->numParticle();
+	memcpy(tv4, pos_f, sizeof(float) * np * 4);
+	delete[] pos_f;
+	pos_f = new float[new_np * 4]; memcpy(pos_f, p, sizeof(float) * new_np * 4);
+	memcpy(tv3, vel_f, sizeof(float) * np * 3); delete[] vel_f; vel_f = new float[new_np * 3]; memcpy(vel_f, tv3, sizeof(float) * np * 3);
+	memcpy(tv3, force_f, sizeof(float) * np * 3); delete[] force_f; force_f = new float[new_np * 3]; memcpy(force_f, tv3, sizeof(float) * np * 3);
+	memcpy(tv4, color_f, sizeof(float) * np * 4); delete[] color_f; color_f = new float[new_np * 4]; memcpy(color_f, tv4, sizeof(float) * np * 4);
+	delete[] tv4;
+	delete[] tv3;
+	np = new_np;
 }
 
 bool vparticles::define(double* p, unsigned int n)

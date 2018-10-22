@@ -27,7 +27,46 @@ VEC3D numeric::utility::calculate_center_of_triangle(VEC3D& P, VEC3D& Q, VEC3D& 
 	VEC3D M2 = (R + P) / 2;
 	VEC3D D1 = N.cross(V);
 	VEC3D D2 = N.cross(W);
-	double t = (D2.x*(M1.y - M2.y)) / (D1.x*D2.y - D1.y*D2.x) - (D2.y*(M1.x - M2.x)) / (D1.x*D2.y - D1.y*D2.x);
+	double t;// = (D2.x*(M1.y - M2.y)) / (D1.x*D2.y - D1.y*D2.x) - (D2.y*(M1.x - M2.x)) / (D1.x*D2.y - D1.y*D2.x);
+	if (abs(D1.x*D2.y - D1.y*D2.x) > 1E-13)
+	{
+		t = (D2.x*(M1.y - M2.y)) / (D1.x*D2.y - D1.y*D2.x) - (D2.y*(M1.x - M2.x)) / (D1.x*D2.y - D1.y*D2.x);
+	}
+	else if (abs(D1.x*D2.z - D1.z*D2.x) > 1E-13)
+	{
+		t = (D2.x*(M1.z - M2.z)) / (D1.x*D2.z - D1.z*D2.x) - (D2.z*(M1.x - M2.x)) / (D1.x*D2.z - D1.z*D2.x);
+	}
+	else if (abs(D1.y*D2.z - D1.z*D2.y) > 1E-13)
+	{
+		t = (D2.y*(M1.z - M2.z)) / (D1.y*D2.z - D1.z*D2.y) - (D2.z*(M1.y - M2.y)) / (D1.y*D2.z - D1.z*D2.y);
+	}
+	
+	return M1 + t * D1;
+}
+
+VEC3F numeric::utility::calculate_center_of_triangle_f(VEC3F& P, VEC3F& Q, VEC3F& R)
+{
+	VEC3F V = Q - P;
+	VEC3F W = R - P;
+	VEC3F N = V.cross(W);
+	N = N / N.length();
+	VEC3F M1 = (Q + P) / 2;
+	VEC3F M2 = (R + P) / 2;
+	VEC3F D1 = N.cross(V);
+	VEC3F D2 = N.cross(W);
+	float t;// = (D2.x*(M1.y - M2.y)) / (D1.x*D2.y - D1.y*D2.x) - (D2.y*(M1.x - M2.x)) / (D1.x*D2.y - D1.y*D2.x);
+	if (abs(D1.x*D2.y - D1.y*D2.x) > 1E-13)
+	{
+		t = (D2.x*(M1.y - M2.y)) / (D1.x*D2.y - D1.y*D2.x) - (D2.y*(M1.x - M2.x)) / (D1.x*D2.y - D1.y*D2.x);
+	}
+	else if (abs(D1.x*D2.z - D1.z*D2.x) > 1E-13)
+	{
+		t = (D2.x*(M1.z - M2.z)) / (D1.x*D2.z - D1.z*D2.x) - (D2.z*(M1.x - M2.x)) / (D1.x*D2.z - D1.z*D2.x);
+	}
+	else if (abs(D1.y*D2.z - D1.z*D2.y) > 1E-13)
+	{
+		t = (D2.y*(M1.z - M2.z)) / (D1.y*D2.z - D1.z*D2.y) - (D2.z*(M1.y - M2.y)) / (D1.y*D2.z - D1.z*D2.y);
+	}
 	return M1 + t * D1;
 }
 

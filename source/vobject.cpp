@@ -8,8 +8,13 @@ vobject::vobject()
 	, vot(VIEW_OBJECT)
 	, drawingMode(GL_LINE)
 	, type(V_OBJECT)
+	, m_type(NO_MATERIAL)
 	, display(false)
 	, isSelected(false)
+	, ixx(0), iyy(0), izz(0)
+	, ixy(0), ixz(0), iyz(0)
+	, mass(0)
+	, vol(0)
 {
 	count++;
 	id = count;
@@ -23,8 +28,13 @@ vobject::vobject(Type tp, QString _name)
 	, vot(VIEW_OBJECT)
 	, drawingMode(GL_LINE)
 	, type(tp)
+	, m_type(NO_MATERIAL)
 	, display(false)
 	, isSelected(false)
+	, ixx(0), iyy(0), izz(0)
+	, ixy(0), ixz(0), iyz(0)
+	, mass(0)
+	, vol(0)
 {
 	count++;
 	id = count;
