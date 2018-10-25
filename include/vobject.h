@@ -14,16 +14,11 @@
 #include <QDebug>
 #include <QMap>
 
-#include <QColor>
+
 
 #include "VController.h"
 #include "types.h"
 #include "algebraMath.h"
-
-static QColor colors[10] = { QColor("cyan"), QColor("magenta"), QColor("red"),
-QColor("darkRed"), QColor("darkCyan"), QColor("darkMagenta"),
-QColor("green"), QColor("darkGreen"), QColor("yellow"),
-QColor("blue") };
 
 class vobject
 {
@@ -51,6 +46,7 @@ public:
 	void setName(QString n) { nm = n; }
 	void setDisplay(bool _dis) { display = _dis; }
 	QColor color() { return clr; }
+	void setColor(color_type ct);
 	static void msgBox(QString ch, QMessageBox::Icon ic);
 	void copyCoordinate(GLuint _coord);
 	void setDrawingMode(GLenum dm) { drawingMode = dm; }

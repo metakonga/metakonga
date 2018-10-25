@@ -7,14 +7,19 @@ particleDialog::particleDialog(QWidget* parent)
 	, spacing(0.001)
 	, min_radius(0.01)
 	, max_radius(0.01)
+	, circle_diameter(0.01)
 	, ncubex(3)
 	, ncubey(3)
 	, ncubez(3)
 	, nplanex(3)
 	, nplanez(3)
+	, np(0)
+	, perNp(0)
+	, real_time(false)
 {
 	setupUi(this);
 	dir[0] = 0.0; dir[1] = 1.0; dir[2] = 0.0;
+	loc[0] = 0.0; loc[1] = 0.02; loc[2] = 0.0;
 	name = "Particle" + QString("%1").arg(particleManager::count);
 	setCubeData();
 	LE_Name->setText(name);
@@ -91,12 +96,22 @@ void particleDialog::setPlaneData()
 	LE_PLANE_LOC->setText("0.0 0.02 0.0");
 }
 
+void particleDialog::setCircleData()
+{
+	LE_NumParticle->setText(QString("%1").arg(1));
+	LE_CircleDiameter->setText(QString("%1").arg(circle_diameter));
+	LE_CircleLocation->setText(QString("%1 %2 %3").arg(loc[0]).arg(loc[1]).arg(loc[2]));
+	LE_CircleDirection->setText(QString("%1 %2 %3").arg(dir[0]).arg(dir[1]).arg(dir[2]));
+}
+
 void particleDialog::changeTab(int idx)
 {
 	if (idx == 0)
 		setCubeData();
 	else if (idx == 1)
 		setPlaneData();
+	else if (idx == 2)
+		setCircleData();
 }
 
 void particleDialog::click_ok()
@@ -127,6 +142,20 @@ void particleDialog::click_ok()
 		loc[1] = dl.at(1).toDouble();
 		loc[2] = dl.at(2).toDouble();
 	}
+	else if (method == 2)
+	{
+		circle_diameter = LE_CircleDiameter->text().toDouble();
+		
+		QStringList cl = LE_CircleDirection->text().split(" ");
+		dir[0] = cl.at(0).toDouble();
+		dir[1] = cl.at(1).toDouble();
+		dir[2] = cl.at(2).toDouble();
+		cl = LE_CircleLocation->text().split(" ");
+		loc[0] = cl.at(0).toDouble();
+		loc[1] = cl.at(1).toDouble();
+		loc[2] = cl.at(2).toDouble();
+		np = LE_NumParticle->text().toUInt();
+	}
 	spacing = LE_P_SPACING->text().toDouble();
 	min_radius = LE_MIN_RADIUS->text().toDouble();
 	max_radius = LE_MAX_RADIUS->text().toDouble();
@@ -136,7 +165,9 @@ void particleDialog::click_ok()
 	poisson = LE_PoissonRatio->text().toDouble();
 	density = LE_Density->text().toDouble();
 	shear = LE_ShearModulus->text().toDouble();
-
+	real_time = GB_RealTime->isChecked();
+	if (real_time)
+		perNp = LE_NumParclesPer->text().toUInt();
 	this->close();
 	this->setResult(QDialog::Accepted);
 }

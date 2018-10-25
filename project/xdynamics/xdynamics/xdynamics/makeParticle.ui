@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>389</width>
-    <height>485</height>
+    <height>542</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="T_Cube">
     <attribute name="title">
@@ -175,10 +175,74 @@
      </layout>
     </widget>
    </widget>
-   <widget class="QWidget" name="T_Sphere">
+   <widget class="QWidget" name="T_Circle">
     <attribute name="title">
-     <string>Sphere</string>
+     <string>Circle</string>
     </attribute>
+    <widget class="QWidget" name="">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>38</y>
+       <width>341</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_9">
+      <item>
+       <widget class="QLabel" name="L_CircleLocation">
+        <property name="text">
+         <string>Location</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="LE_CircleLocation"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="L_CircleDirection">
+        <property name="text">
+         <string>Direction</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="LE_CircleDirection"/>
+      </item>
+     </layout>
+    </widget>
+    <widget class="QWidget" name="">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>341</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_8">
+      <item>
+       <widget class="QLabel" name="L_CircleDiameter">
+        <property name="text">
+         <string>Diameter</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="LE_CircleDiameter"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="L_NumParticle">
+        <property name="text">
+         <string>Num. particles</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="LE_NumParticle"/>
+      </item>
+     </layout>
+    </widget>
    </widget>
   </widget>
   <widget class="QGroupBox" name="groupBox">
@@ -341,7 +405,7 @@
    <property name="geometry">
     <rect>
      <x>190</x>
-     <y>450</y>
+     <y>510</y>
      <width>191</width>
      <height>25</height>
     </rect>
@@ -397,6 +461,47 @@
       <height>20</height>
      </rect>
     </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="GB_RealTime">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>450</y>
+     <width>371</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Real time creating</string>
+   </property>
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>351</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_10">
+     <item>
+      <widget class="QLabel" name="L_NumParticlesPer">
+       <property name="text">
+        <string>The number of particles(per second)</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="LE_NumParclesPer"/>
+     </item>
+    </layout>
    </widget>
   </widget>
  </widget>

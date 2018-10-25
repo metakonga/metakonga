@@ -31,6 +31,7 @@ private:
 
 private:
 	unsigned int np;
+	unsigned int per_np;
 	unsigned int nPolySphere;
 	dem_model* md;
 	grid_base* dtor;

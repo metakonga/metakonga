@@ -205,6 +205,10 @@ bool dem_simulation::initialize(contactManager* _cm)
 	particleManager* pm = md->ParticleManager();
 	np = pm->Np();
 	cm = _cm;
+	if (pm->RealTimeCreating())
+		per_np = static_cast<unsigned int>((1.0 / pm->NumCreatingPerSecond()) / simulation::dt);
+	else
+		per_np = 0;
 	if (cm)
 	{
 		nPolySphere = cm->setupParticlesPolygonObjectsContact();
@@ -302,7 +306,8 @@ bool dem_simulation::initialize(contactManager* _cm)
 		dmass = mass;
 		diner = inertia;
 	}
-		
+	if (per_np)
+		np = 0;
 	return true;
 }
 
@@ -428,6 +433,9 @@ bool dem_simulation::initialize_f(contactManager* _cm)
 
 bool dem_simulation::oneStepAnalysis(double ct, unsigned int cstep)
 {
+	if (per_np && !((cstep-1) % per_np) && np < md->ParticleManager()->Np())
+		np++;
+
 	if (itor->integrationType() == dem_integrator::VELOCITY_VERLET)
 		itor->updatePosition(dpos, dvel, dacc, np);
 	dtor->detection(dpos, (cm ? cm->SphereData() : NULL),  np, nPolySphere);

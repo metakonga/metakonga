@@ -105,3 +105,13 @@ double numeric::utility::angle_coefficient(double d, double th)
 	return 0.0;
 }
 
+double numeric::utility::getMinValue(double v1, double v2, double v3)
+{
+	return v1 < v2 ? (v1 < v3 ? v1 : (v3 < v2 ? v3 : v2)) : (v2 < v3 ? v2 : v3);
+}
+
+double numeric::utility::getMaxValue(double v1, double v2, double v3)
+{
+	return v1 > v2 ? (v1 > v3 ? v1 : (v3 > v2 ? v3 : v2)) : (v2 > v3 ? v2 : v3);
+}
+

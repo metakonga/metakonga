@@ -2,6 +2,7 @@
 #include "numeric_utility.h"
 #include "shader.h"
 #include "model.h"
+#include "vcube.h"
 #include "vcontroller.h"
 #include <QTextStream>
 
@@ -64,7 +65,7 @@ vpolygon::~vpolygon()
 	if (normals) delete[] normals; normals = NULL;
 	if (colors) delete[] colors; colors = NULL;
 	if (texture) delete[] texture; texture = NULL;
-
+	if (select_cube) delete[] select_cube; select_cube = NULL;
 	if (m_vertex_vbo){
 		glDeleteBuffers(1, &m_vertex_vbo);
 		m_vertex_vbo = 0;
@@ -217,6 +218,8 @@ void vpolygon::_loadSTLASCII(QString f)
 	double _vol = 0.0;
 	double min_radius = 10000.0;
 	double max_radius = 0.0;
+	min_point = FLT_MAX;
+	max_point = FLT_MIN;
 	VEC3D *spos = new VEC3D[ntri];
 	ixx = iyy = izz = ixy = ixz = iyz = 0.0;
 	for (unsigned int i = 0; i < ntri; i++)
@@ -259,17 +262,18 @@ void vpolygon::_loadSTLASCII(QString f)
 		_vol += numeric::utility::signed_volume_of_triangle(p, q, r);
 		spos[i] = numeric::utility::calculate_center_of_triangle(p, q, r);
 		c += spos[i];
-// 		ixx += spos.y * spos.y + spos.z * spos.z;
-// 		iyy += spos.x * spos.x + spos.z * spos.z;
-// 		izz += spos.x * spos.x + spos.y * spos.y;
-// 		ixy -= spos.x * spos.y;
-// 		ixz -= spos.x * spos.z;
-// 		iyz -= spos.y * spos.z;
 		double _r = (spos[i] - p).length();
 		if (max_radius < _r)
 			max_radius = _r;
 		if (min_radius > _r)
 			min_radius = _r;
+		min_point.x = min(numeric::utility::getMinValue(p.x, q.x, r.x), min_point.x);
+		min_point.y = min(numeric::utility::getMinValue(p.y, q.y, r.y), min_point.y);
+		min_point.z = min(numeric::utility::getMinValue(p.z, q.z, r.z), min_point.z);
+		max_point.x = max(numeric::utility::getMaxValue(p.x, q.x, r.x), max_point.x);
+		max_point.y = max(numeric::utility::getMaxValue(p.y, q.y, r.y), max_point.y);
+		max_point.z = max(numeric::utility::getMaxValue(p.z, q.z, r.z), max_point.z);
+		
 	}
 #ifdef _DEBUG
 	qDebug() << "Maximum radius of " << name() << " is " << max_radius;
@@ -504,28 +508,12 @@ bool vpolygon::define(import_shape_type t, QString file)
 	ang[0] = 0;
 	ang[1] = 0;
 	ang[2] = 0;
-// 	if (!vertice)
-// 		vertice = new VEC3F[nvertex];
-// 	if (!colors)
-// 		colors = new VEC4F[nvertex];
-// 	if (!indice)
-// 		indice = new VEC3UI[nindex];
-// 	if (!normals)
-// 		normals = new VEC3F[nvertex];
 
-// 	for (unsigned int i = 0; i < nvertex; i++){
-// 		vertice[i] = VEC3F((float)vset[i].x, (float)vset[i].y, (float(vset[i].z)));
-// 		//colors[i] = VEC4F(clr.redF(), clr.greenF(), clr.blueF(), 1.0f);
-// 		normals[i] = VEC3F((float)nor[i].x, (float)nor[i].y, (float)nor[i].z);
-// 	}
-// 	for (unsigned int i = 0; i < nindex; i++){
-// 		VEC3UI idx = iset[i];
-// 		indice[i] = iset[i];
-// // 		VEC3F v0 = vertice[idx.y] - vertice[idx.x];
-// // 		VEC3F v1 = vertice[idx.z] - vertice[idx.x];
-// // 		VEC3F n = v0.cross(v1);
-// /*		normals[i] = n / n.length();*/
-// 	}
+	vcube *vc = new vcube(QString(""));
+	VEC3D sz = max_point - min_point;
+	vc->makeCubeGeometry(QString(""), NO_USE_TYPE, NO_MATERIAL, min_point.To<float>(), sz.To<float>());
+	vc->setColor(RED);
+	select_cube = vc;
 
 	if (m_vertex_vbo){
 		glDeleteBuffers(1, &m_vertex_vbo);
@@ -622,6 +610,10 @@ void vpolygon::draw(GLenum eMode)
 {
 	if (display)
 	{
+		if (isSelected)
+		{
+			select_cube->draw(GL_RENDER);
+		}
 		if (eMode == GL_SELECT)
 		{
 			glLoadName((GLuint)ID());
@@ -652,7 +644,8 @@ void vpolygon::draw(GLenum eMode)
 			glRotated(ang0.y, 1, 0, 0);
 			glRotated(ang0.z, 0, 0, 1);
 		}			
-		
+	
+
 		glColor3f(1.0f, 0.0f, 0.0f);
 		glPolygonMode(GL_FRONT_AND_BACK, drawingMode);
 		glUseProgram(program.Program());

@@ -1,6 +1,8 @@
 #include "particleManager.h"
 #include "model.h"
 #include "glwidget.h"
+#include <QRandomGenerator>
+#include <QList>
 
 unsigned int particleManager::count = 0;
 
@@ -8,6 +10,8 @@ particleManager::particleManager()
 	: pos(NULL)
 	, pos_f(NULL)
 	, np(0)
+	, per_np(0)
+	, is_realtime_creating(false)
 {
 	obj = new object("particles", PARTICLES, PARTICLE);
 }
@@ -81,6 +85,31 @@ void particleManager::Open(QTextStream& qts)
 				n, (material_type)type, nx, ny, lx, ly, lz,
 				dx, dy, dz, spacing, min_radius, max_radius,
 				youngs, density, poisson, shear);
+		}
+		else if (ch == "circle")
+		{
+			QString n;
+			int type;
+			int isr;
+			unsigned int nx, ny, _np, perNp;
+			double dia;
+			double lx, ly, lz;
+			double dx, dy, dz;
+			double spacing, min_radius, max_radius;
+			double youngs, density, poisson, shear;
+			qts >> ch >> n
+				>> ch >> type
+				>> ch >> dia
+				>> ch >> lx >> ly >> lz
+				>> ch >> dx >> dy >> dz
+				>> ch >> spacing
+				>> ch >> min_radius >> max_radius
+				>> ch >> isr >> _np >> perNp
+				>> ch >> youngs >> density >> poisson >> shear;
+			CreateCircleParticle(
+				n, (material_type)type, dia, _np, lx, ly, lz,
+				dx, dy, dz, spacing, min_radius, max_radius,
+				youngs, density, poisson, shear, isr, perNp);
 		}
 	}
 }
@@ -173,6 +202,7 @@ VEC4D* particleManager::CreatePlaneParticle(
 {
 	particlesInfo pinfo;
 	pinfo.sid = np;
+	//pinfo.szp = 0;
 	unsigned int pnp = np;
 	pinfo.youngs = youngs;
 	pinfo.density = density;
@@ -232,6 +262,160 @@ VEC4D* particleManager::CreatePlaneParticle(
 	pinfos[n] = pinfo;
 	logs[n] = log;
 	count++;
+	return pos;
+}
+
+VEC4D* particleManager::CreateCircleParticle(
+	QString n, material_type type, double cdia, unsigned int _np,
+	double lx, double ly, double lz,
+	double dx, double dy, double dz,
+	double spacing, double min_radius, double max_radius,
+	double youngs, double density, double poisson, double shear, bool isr /*= false*/, unsigned int perNp)
+{
+	particlesInfo pinfo;
+	//pinfo.szp = 0;
+	pinfo.sid = np;
+	unsigned int pnp = np;
+	pinfo.youngs = youngs;
+	pinfo.density = density;
+	pinfo.poisson = poisson;
+	pinfo.shear = shear;
+	pinfo.min_radius = min_radius;
+	pinfo.max_radius = max_radius;
+	pinfo.loc = VEC3D(lx, ly, lz);
+	pinfo.dim = VEC3D(0.0, 0.0, 0.0);
+	pinfo.dir = VEC3D(dx, dy, dz);
+	obj->setMaterial(type, youngs, density, poisson, shear);
+	double r = 0.0;
+	if (min_radius == min_radius)
+		r = min_radius;
+	QList<VEC3D> pList;
+	VEC3D pl;
+	QList<unsigned int> iList;
+	pList.push_back(pinfo.loc);
+	int i = 1;
+	unsigned int cnt = 0;
+	iList.push_back(cnt++);
+	
+	while (1)
+	{
+		double _r = i * (2.0 * r + spacing);
+		if (_r + r > 0.5 * cdia)
+			break;
+		double dth = (2 * r + spacing) / _r;
+		unsigned int _np = static_cast<unsigned int>((2.0 * M_PI) / dth);
+		dth = (2.0 * M_PI) / _np;
+		for (unsigned int j = 0; j < _np; j++)
+		{
+			pl = VEC3D(pinfo.loc.x + _r * cos(dth * j), pinfo.loc.y, pinfo.loc.z + _r * sin(dth * j));
+			pList.push_back(pl);
+			iList.push_back(cnt++);
+		}
+		i++;
+	}
+
+	//vec.resize(pList.size());
+	QRandomGenerator qran;
+	QList<unsigned int>::iterator iend = iList.end();
+	for (unsigned int i = 0; i < pList.size(); i++)
+	{
+		unsigned int ni = qran.bounded(pList.size() - 1);
+		QList<unsigned int>::iterator endIter = iList.begin() + i;
+		QList<unsigned int>::iterator isExist = qFind(iList.begin(), endIter, ni);
+		if (isExist != endIter)
+			continue;
+	//	unsigned int pi = iList.at(ni);
+		iList.replace(i, ni);
+		iList.replace(ni, i);
+	}
+	
+	//qran.bounded(pList.size());
+	//qran.fillRange(vec.data(), vec.size());
+	if (!isr) np += pList.size();
+	else np = _np;
+	pinfo.np = np - pinfo.sid;
+
+	if (model::isSinglePrecision)
+		pos_f = resizeMemory(pos_f, pnp, np);
+	else
+		pos = resizeMemory(pos, pnp, np);
+	
+	if (!isr)
+	{
+		unsigned int cnt = 0;
+		foreach(VEC3D p, pList)
+		{
+			pos[cnt] = VEC4D(p.x, p.y, p.z, r);
+			cnt++;
+		}
+		//np += cnt;
+		//pinfo.np = cnt;
+	}
+	else
+	{
+		unsigned cnt = 0;
+		unsigned int szp = pList.size();
+		//double tv = M_PI / 180.0;
+		bool breaker = false;
+		while (!breaker)
+		{
+			foreach(unsigned int i, iList)
+			{
+				VEC3D p = pList.at(i);
+				pos[pinfo.sid + cnt] = VEC4D(p.x, 2.0 * r * frand() + p.y, p.z, r);
+				cnt++;
+				if (cnt == _np)
+				{
+					breaker = true;
+					break;
+				}
+			}
+		}
+		per_np = perNp;
+		is_realtime_creating = true;
+		/*pinfo.dst = 1.0 / pnp;*/
+	}
+	if (model::isSinglePrecision)
+		GLWidget::GLObject()->makeParticle_f((float*)pos_f, np);
+	else
+		GLWidget::GLObject()->makeParticle((double*)pos, np);
+// 	for (unsigned int z = 0; z < nz; z++)
+// 	{
+// 		for (unsigned int x = 0; x < nx; x++)
+// 		{
+// 			VEC3D p = VEC3D
+// 				(
+// 				x * gab + frand() * ran,
+// 				0.0,
+// 				z * gab + frand() * ran
+// 				);
+// 			VEC3D p3 = VEC3D(lx, ly, lz) + local2global_eulerAngle(VEC3D(tv * dx, tv * dy, tv * dz), p);
+// 			if (model::isSinglePrecision)
+// 				pos_f[cnt] = VEC4F((float)p3.x, (float)p3.y, (float)p3.z, (float)r);
+// 			else
+// 				pos[cnt] = VEC4D(p3.x, p3.y, p3.z, r);
+// 			cnt++;
+// 		}
+// 	}
+// 	if (model::isSinglePrecision)
+// 		GLWidget::GLObject()->makeParticle_f((float*)pos_f, np);
+// 	else
+// 		GLWidget::GLObject()->makeParticle((double*)pos, np);
+	QString log;
+	QTextStream qts(&log);
+	qts << "CREATE_SHAPE " << "circle" << endl
+		<< "NAME " << n << endl
+		<< "MATERIAL_TYPE " << (int)type << endl
+		<< "DIAMETER " << cdia << endl
+		<< "STARTPOINT " << lx << " " << ly << " " << lz << endl
+		<< "DIRECTION " << dx << " " << dy << " " << dz << endl
+		<< "SPACE " << spacing << endl
+		<< "RADIUS " << min_radius << " " << max_radius << endl
+		<< "MAKING " << isr << " " << _np << " " << perNp << endl
+		<< "MATERIAL " << youngs << " " << density << " " << poisson << " " << shear << endl;
+ 	pinfos[n] = pinfo;
+ 	logs[n] = log;
+ 	count++;
 	return pos;
 }
 

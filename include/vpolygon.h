@@ -39,10 +39,8 @@ private:
 	void _drawPolygons();
 	void _loadMS3DASCII(QString f);
 	void _loadSTLASCII(QString f);
-	//QString nm;
-	//bool isSelected;
-	//static int pcnt;
-	//unsigned int id;
+	
+	//unsigned int glHList;
 
 	unsigned int nvertex;
 	unsigned int nvtriangle;
@@ -63,7 +61,9 @@ private:
 	unsigned int *indice;
 	float *colors;
 	VEC4F *spheres;
-
+	VEC3D min_point;
+	VEC3D max_point;
+	vobject* select_cube;
 // 	VEC3D* outPos;
 // 	EPD* outRot;
 

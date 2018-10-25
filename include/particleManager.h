@@ -34,6 +34,8 @@ public:
 	QMap<QString, QString>& Logs() { return logs; }
 	QMap<QString, particlesInfo>& ParticleInfomations() { return pinfos; }
 	unsigned int Np() { return np; }
+	unsigned int RealTimeCreating() { return is_realtime_creating; }
+	unsigned int NumCreatingPerSecond() { return per_np; }
 	object* Object() { return obj; }
 	double* Position() { return (double*)pos; }
 	float* Position_f() { return (float*)pos_f; }
@@ -52,12 +54,20 @@ public:
 		double spacing, double min_radius, double max_radius,
 		double youngs, double density, double poisson, double shear
 		);
+	VEC4D* CreateCircleParticle(
+		QString n, material_type type, double cdia, unsigned int _np, 
+		double lx, double ly, double lz, 
+		double dx, double dy, double dz,
+		double spacing, double min_radius, double max_radius,
+		double youngs, double density, double poisson, double shear, bool isr = false, unsigned int pnp = 0);
 	static unsigned int count;
 
 private:
 	double calcMass(double r);
 
 private:
+	bool is_realtime_creating;
+	unsigned int per_np;
 	unsigned int np;
 	object *obj;
 	VEC4D *pos;

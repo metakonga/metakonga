@@ -619,7 +619,7 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 	if (event->button() == Qt::LeftButton){
 		if (keyID[82])
 			onRotation = true;
-		else
+		else if (!keyID[84])
 			picking(lastPos.x(), lastPos.y());
 	}
 }

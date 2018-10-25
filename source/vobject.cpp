@@ -49,6 +49,11 @@ vobject::~vobject()
 	if (outRot) delete[] outRot; outRot = NULL;
 }
 
+void vobject::setColor(color_type ct)
+{
+	clr = colors[(int)ct];
+}
+
 void vobject::msgBox(QString ch, QMessageBox::Icon ic)
 {
 	QMessageBox msg;

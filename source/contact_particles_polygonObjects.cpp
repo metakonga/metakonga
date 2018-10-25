@@ -26,12 +26,16 @@ contact_particles_polygonObjects::contact_particles_polygonObjects()
 contact_particles_polygonObjects::~contact_particles_polygonObjects()
 {
 	if (hsphere) delete[] hsphere; hsphere = NULL;
+	if (hsphere_f) delete[] hsphere_f; hsphere_f = NULL;
 	if (hpi) delete[] hpi; hpi = NULL;
 	if (hpi_f) delete[] hpi_f; hpi = NULL;
 	if (hcp) delete[] hcp; hcp = NULL;
 	if (pct) delete[] pct; pct = NULL;
-	checkCudaErrors(cudaFree(dsphere)); dsphere = NULL;
-	checkCudaErrors(cudaFree(dpi)); dpi = NULL;
+	//qDeleteAll(pair_ip);
+	if(dsphere) checkCudaErrors(cudaFree(dsphere)); dsphere = NULL;
+	if(dsphere_f) checkCudaErrors(cudaFree(dsphere_f)); dsphere_f = NULL;
+	if(dpi) checkCudaErrors(cudaFree(dpi)); dpi = NULL;
+	if(dpi_f) checkCudaErrors(cudaFree(dpi_f)); dpi_f = NULL;
 }
 
 unsigned int contact_particles_polygonObjects::define(
@@ -47,10 +51,14 @@ unsigned int contact_particles_polygonObjects::define(
 	hpi = new host_polygon_info[npolySphere];
 	hcp = new contact_parameter[nPobjs];
 	mpp = new material_property_pair[nPobjs];
-	if (simulation::isCpu())
-		dsphere = (double*)hsphere;
+// 	if (simulation::isCpu())
+// 		dsphere = (double*)hsphere;
 	if (!pct)
+	{
 		pct = new polygonContactType[nPobjs];
+		memset(pct, 0, sizeof(polygonContactType) * nPobjs);
+	}
+		
 
 	unsigned int bPolySphere = 0;
 	unsigned int ePolySphere = 0;

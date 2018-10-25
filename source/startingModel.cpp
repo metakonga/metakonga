@@ -83,11 +83,6 @@ void startingModel::setMBDData(QFile& qf)
 			qf.read(name, sizeof(char)*szn);
 			qf.read((char*)&pmrd, sizeof(resultStorage::pointMassResultData));
 			mbd_bodies[name] = pmrd;
-			if (name != "h_body")
-			{
-				pmrd.pos.z += 0.01;
-			}
-			
 		}
 		unsigned int d = 0;
 		qf.read((char*)&d, sizeof(unsigned int));

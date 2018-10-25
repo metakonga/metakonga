@@ -17,6 +17,10 @@ public:
 
 	int type;
 	int method;
+	bool real_time;
+	unsigned int perNp;
+	unsigned int np;
+	double circle_diameter;
 	double spacing;
 	double min_radius;
 	double max_radius;
@@ -34,6 +38,7 @@ public:
 private:
 	void setCubeData();
 	void setPlaneData();
+	void setCircleData();
 
 private slots:
 	void changeComboBox(int);
