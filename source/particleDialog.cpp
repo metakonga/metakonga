@@ -18,6 +18,7 @@ particleDialog::particleDialog(QWidget* parent)
 	, real_time(false)
 {
 	setupUi(this);
+	LE_NUM_PARTICLE->setReadOnly(false);
 	dir[0] = 0.0; dir[1] = 1.0; dir[2] = 0.0;
 	loc[0] = 0.0; loc[1] = 0.02; loc[2] = 0.0;
 	name = "Particle" + QString("%1").arg(particleManager::count);
@@ -141,6 +142,7 @@ void particleDialog::click_ok()
 		loc[0] = dl.at(0).toDouble();
 		loc[1] = dl.at(1).toDouble();
 		loc[2] = dl.at(2).toDouble();
+		np = LE_NUM_PARTICLE->text().toUInt();
 	}
 	else if (method == 2)
 	{

@@ -68,7 +68,8 @@ void particleManager::Open(QTextStream& qts)
 		{
 			QString n;
 			int type;
-			unsigned int nx, ny;
+			int isr;
+			unsigned int nx, ny, _np, perNp;
 			double lx, ly, lz;
 			double dx, dy, dz;
 			double spacing, min_radius, max_radius;
@@ -80,11 +81,12 @@ void particleManager::Open(QTextStream& qts)
 				>> ch >> dx >> dy >> dz
 				>> ch >> spacing
 				>> ch >> min_radius >> max_radius
+				>> ch >> isr >> _np >> perNp
 				>> ch >> youngs >> density >> poisson >> shear;
 			CreatePlaneParticle(
-				n, (material_type)type, nx, ny, lx, ly, lz,
+				n, (material_type)type, nx, ny, _np, lx, ly, lz,
 				dx, dy, dz, spacing, min_radius, max_radius,
-				youngs, density, poisson, shear);
+				youngs, density, poisson, shear, isr, perNp);
 		}
 		else if (ch == "circle")
 		{
@@ -141,31 +143,61 @@ VEC4D* particleManager::CreateCubeParticle(
 	else
 		pos = resizeMemory(pos, pnp, np);
 	//mass = resizeMemory(mass, pnp, np);
-	double r = 0.0;
-	if (min_radius == min_radius)
-		r = min_radius;
-	double gab = 2.0 * r + spacing;
-	double ran = r * spacing * 100;
-	unsigned int cnt = 0;
-	for (unsigned int z = 0; z < nz; z++)
+// 	double r = 0.0;
+// 	double dr = 0.0;
+	if (min_radius == max_radius)
 	{
-		for (unsigned int y = 0; y < ny; y++)
+		double r = min_radius;
+		double gab = 2.0 * r + spacing;
+		double ran = r * spacing * 100;
+		unsigned int cnt = 0;
+		for (unsigned int z = 0; z < nz; z++)
 		{
-			for (unsigned int x = 0; x < nx; x++)
+			for (unsigned int y = 0; y < ny; y++)
 			{
-				VEC4D p = VEC4D
-					(lx + x * gab + frand() * ran,
-					ly + y * gab + frand() * ran,
-					lz + z * gab + frand() * ran,
-					r);
-				if (model::isSinglePrecision)
-					pos_f[pinfo.sid + cnt] = p.To<float>();
-				else
-					pos[pinfo.sid + cnt] = p;
-				cnt++;
+				for (unsigned int x = 0; x < nx; x++)
+				{
+					VEC4D p = VEC4D
+						(lx + x * gab + frand() * ran,
+						ly + y * gab + frand() * ran,
+						lz + z * gab + frand() * ran,
+						r);
+					if (model::isSinglePrecision)
+						pos_f[pinfo.sid + cnt] = p.To<float>();
+					else
+						pos[pinfo.sid + cnt] = p;
+					cnt++;
+				}
 			}
 		}
-	}
+	}		
+// 	else
+// 	{
+// 		double dr = max_radius - min_radius;
+// 		double mx = 2.0 * max_radius * lx;
+// 		double my = 2.0 * max_radius * ly;
+// 		double mz = 2.0 * max_radius * lz;
+// 		double x = lx, y = ly z = lz;
+// 		double crad = 0;
+// 		while (z + crad < mz)
+// 		{
+// 			while (y + crad < my)
+// 			{
+// 				while (x + crad < mx)
+// 				{
+// 					double prad = crad;
+// 					crad = min_radius + dr * frand();
+// 					VEC4D p = VEC4D
+// 						(
+// 						x + spacing + prad + crad,
+// 						y + spacing + 
+// 						)
+// 				}
+// 			}
+// 		}
+// 	}
+		
+	
 // 	pos[0].x = 0.0;
 // 	pos[0].z = 0.0;
 // 	pos[1].x = 0.01;
@@ -193,12 +225,11 @@ VEC4D* particleManager::CreateCubeParticle(
 }
 
 VEC4D* particleManager::CreatePlaneParticle(
-	QString n, material_type type, unsigned int nx, unsigned int nz,
+	QString n, material_type type, unsigned int nx, unsigned int nz, unsigned int _np,
 	double lx, double ly, double lz,
 	double dx, double dy, double dz,
 	double spacing, double min_radius, double max_radius,
-	double youngs, double density, double poisson, double shear
-	)
+	double youngs, double density, double poisson, double shear, bool isr, unsigned int perNp)
 {
 	particlesInfo pinfo;
 	pinfo.sid = np;
@@ -226,23 +257,76 @@ VEC4D* particleManager::CreatePlaneParticle(
 	double ran = r * 0.001;
 	unsigned int cnt = 0;
 	double tv = M_PI / 180.0;
-	for (unsigned int z = 0; z < nz; z++)
+	if (!isr)
 	{
-		for (unsigned int x = 0; x < nx; x++)
+		for (unsigned int z = 0; z < nz; z++)
 		{
-			VEC3D p = VEC3D
-				(
-				x * gab + frand() * ran,
-				0.0,
-				z * gab + frand() * ran
-				);
-			VEC3D p3 = VEC3D(lx, ly, lz) + local2global_eulerAngle(VEC3D(tv * dx, tv * dy, tv * dz), p);
-			if (model::isSinglePrecision)
-				pos_f[cnt] = VEC4F((float)p3.x, (float)p3.y, (float)p3.z, (float)r);
-			else
-				pos[cnt] = VEC4D(p3.x, p3.y, p3.z, r);
-			cnt++;
+			for (unsigned int x = 0; x < nx; x++)
+			{
+				VEC3D p = VEC3D
+					(
+					x * gab + frand() * ran,
+					0.0,
+					z * gab + frand() * ran
+					);
+				VEC3D p3 = VEC3D(lx, ly, lz) + local2global_eulerAngle(VEC3D(tv * dx, tv * dy, tv * dz), p);
+				if (model::isSinglePrecision)
+					pos_f[cnt] = VEC4F((float)p3.x, (float)p3.y, (float)p3.z, (float)r);
+				else
+					pos[cnt] = VEC4D(p3.x, p3.y, p3.z, r);
+				cnt++;
+			}
 		}
+	}
+	else
+	{
+		//double dr = max_radius - min_radius;
+		// 		double mx = 2.0 * max_radius * lx;
+		// 		double my = 2.0 * max_radius * ly;
+		// 		double mz = 2.0 * max_radius * lz;
+		// 		double x = lx, y = ly z = lz;
+		// 		double crad = 0;
+		// 		while (z + crad < mz)
+		// 		{
+		// 			while (y + crad < my)
+		// 			{
+		QList<VEC4D> pList;
+		
+		int i = 1;
+		double dr = max_radius - min_radius;
+		double x = lx, z = lz;
+		double mx = 2.0 * max_radius * nx;
+		double mz = 2.0 * max_radius * nz;
+		double crad = min_radius + dr * frand();
+		double prad = 0;
+		pList.push_back(VEC4D(lx, ly, lz, crad));
+		while (z + crad < mz)
+		{
+			while (x + crad < mx)
+			{
+				prad = crad;
+				crad = min_radius + dr * frand();
+				x += prad + spacing + crad;
+				VEC4D pp = VEC4D(x, ly, z, crad);
+				pList.push_back(pp);
+			}
+			z += max_radius + spacing;
+		}
+// 		{
+// 			double _r = i * (2.0 * r + spacing);
+// 			if (_r + r > 0.5 * cdia)
+// 				break;
+// 			double dth = (2 * r + spacing) / _r;
+// 			unsigned int _np = static_cast<unsigned int>((2.0 * M_PI) / dth);
+// 			dth = (2.0 * M_PI) / _np;
+// 			for (unsigned int j = 0; j < _np; j++)
+// 			{
+// 				pl = VEC3D(pinfo.loc.x + _r * cos(dth * j), pinfo.loc.y, pinfo.loc.z + _r * sin(dth * j));
+// 				pList.push_back(pl);
+// 				iList.push_back(cnt++);
+// 			}
+// 			i++;
+// 		}
 	}
 	if (model::isSinglePrecision)
 		GLWidget::GLObject()->makeParticle_f((float*)pos_f, np);
@@ -258,6 +342,7 @@ VEC4D* particleManager::CreatePlaneParticle(
 		<< "DIRECTION " << dx << " " << dy << " " << dz << endl
 		<< "SPACE " << spacing << endl
 		<< "RADIUS " << min_radius << " " << max_radius << endl
+		<< "MAKING " << isr << " " << _np << " " << perNp << endl
 		<< "MATERIAL " << youngs << " " << density << " " << poisson << " " << shear << endl;
 	pinfos[n] = pinfo;
 	logs[n] = log;
@@ -304,7 +389,7 @@ VEC4D* particleManager::CreateCircleParticle(
 			break;
 		double dth = (2 * r + spacing) / _r;
 		unsigned int _np = static_cast<unsigned int>((2.0 * M_PI) / dth);
-		dth = (2.0 * M_PI) / _np;
+		dth = ((2.0 * M_PI) / _np);
 		for (unsigned int j = 0; j < _np; j++)
 		{
 			pl = VEC3D(pinfo.loc.x + _r * cos(dth * j), pinfo.loc.y, pinfo.loc.z + _r * sin(dth * j));
@@ -313,8 +398,6 @@ VEC4D* particleManager::CreateCircleParticle(
 		}
 		i++;
 	}
-
-	//vec.resize(pList.size());
 	QRandomGenerator qran;
 	QList<unsigned int>::iterator iend = iList.end();
 	for (unsigned int i = 0; i < pList.size(); i++)
@@ -324,13 +407,9 @@ VEC4D* particleManager::CreateCircleParticle(
 		QList<unsigned int>::iterator isExist = qFind(iList.begin(), endIter, ni);
 		if (isExist != endIter)
 			continue;
-	//	unsigned int pi = iList.at(ni);
 		iList.replace(i, ni);
 		iList.replace(ni, i);
 	}
-	
-	//qran.bounded(pList.size());
-	//qran.fillRange(vec.data(), vec.size());
 	if (!isr) np += pList.size();
 	else np = _np;
 	pinfo.np = np - pinfo.sid;
@@ -348,21 +427,21 @@ VEC4D* particleManager::CreateCircleParticle(
 			pos[cnt] = VEC4D(p.x, p.y, p.z, r);
 			cnt++;
 		}
-		//np += cnt;
-		//pinfo.np = cnt;
 	}
 	else
 	{
 		unsigned cnt = 0;
 		unsigned int szp = pList.size();
-		//double tv = M_PI / 180.0;
 		bool breaker = false;
+		unsigned int k = 0;
 		while (!breaker)
 		{
 			foreach(unsigned int i, iList)
 			{
 				VEC3D p = pList.at(i);
-				pos[pinfo.sid + cnt] = VEC4D(p.x, 2.0 * r * frand() + p.y, p.z, r);
+				double dc = (VEC3D(p.x, p.y, p.z) - VEC3D(lx, ly, lz)).length();
+				double th = r / dc;
+				pos[pinfo.sid + cnt] = VEC4D(p.x + dc * cos(th * k) , p.y, p.z + dc * sin(th * k), r);
 				cnt++;
 				if (cnt == _np)
 				{
@@ -370,37 +449,16 @@ VEC4D* particleManager::CreateCircleParticle(
 					break;
 				}
 			}
+			k++;
 		}
 		per_np = perNp;
 		is_realtime_creating = true;
-		/*pinfo.dst = 1.0 / pnp;*/
 	}
 	if (model::isSinglePrecision)
 		GLWidget::GLObject()->makeParticle_f((float*)pos_f, np);
 	else
 		GLWidget::GLObject()->makeParticle((double*)pos, np);
-// 	for (unsigned int z = 0; z < nz; z++)
-// 	{
-// 		for (unsigned int x = 0; x < nx; x++)
-// 		{
-// 			VEC3D p = VEC3D
-// 				(
-// 				x * gab + frand() * ran,
-// 				0.0,
-// 				z * gab + frand() * ran
-// 				);
-// 			VEC3D p3 = VEC3D(lx, ly, lz) + local2global_eulerAngle(VEC3D(tv * dx, tv * dy, tv * dz), p);
-// 			if (model::isSinglePrecision)
-// 				pos_f[cnt] = VEC4F((float)p3.x, (float)p3.y, (float)p3.z, (float)r);
-// 			else
-// 				pos[cnt] = VEC4D(p3.x, p3.y, p3.z, r);
-// 			cnt++;
-// 		}
-// 	}
-// 	if (model::isSinglePrecision)
-// 		GLWidget::GLObject()->makeParticle_f((float*)pos_f, np);
-// 	else
-// 		GLWidget::GLObject()->makeParticle((double*)pos, np);
+
 	QString log;
 	QTextStream qts(&log);
 	qts << "CREATE_SHAPE " << "circle" << endl

@@ -48,12 +48,11 @@ public:
 		);
 
 	VEC4D* CreatePlaneParticle(
-		QString n, material_type type, unsigned int nx, unsigned int ny,
+		QString n, material_type type, unsigned int nx, unsigned int ny, unsigned int _np,
 		double lx, double ly, double lz,
 		double dx, double dy, double dz,
 		double spacing, double min_radius, double max_radius,
-		double youngs, double density, double poisson, double shear
-		);
+		double youngs, double density, double poisson, double shear, bool isr = false, unsigned int pnp = 0);
 	VEC4D* CreateCircleParticle(
 		QString n, material_type type, double cdia, unsigned int _np, 
 		double lx, double ly, double lz, 

@@ -783,16 +783,14 @@ void xdynamics::makeParticle()
 			(pd.name, (material_type)pd.type, pd.ncubex, pd.ncubey, pd.ncubez, 
 			 pd.loc[0], pd.loc[1], pd.loc[2], 
 			 pd.spacing, pd.min_radius, pd.max_radius,
-			 pd.youngs, pd.density, pd.poisson, pd.shear
-			 );
+			 pd.youngs, pd.density, pd.poisson, pd.shear);
 			break;
 		case 1: pm->CreatePlaneParticle
-			(pd.name, (material_type)pd.type, pd.nplanex, pd.nplanez,
+			(pd.name, (material_type)pd.type, pd.nplanex, pd.nplanez, pd.np,
 			 pd.loc[0], pd.loc[1], pd.loc[2],
 			 pd.dir[0], pd.dir[1], pd.dir[2],
 			 pd.spacing, pd.min_radius, pd.max_radius,
-			 pd.youngs, pd.density, pd.poisson, pd.shear
-			 );
+			 pd.youngs, pd.density, pd.poisson, pd.shear, pd.real_time, pd.perNp);
 			break;
 		case 2: pm->CreateCircleParticle(
 			pd.name, (material_type)pd.type, pd.circle_diameter, pd.np,
