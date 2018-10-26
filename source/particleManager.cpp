@@ -244,14 +244,17 @@ VEC4D* particleManager::CreatePlaneParticle(
 	pinfo.loc = VEC3D(lx, ly, lz);
 	pinfo.dim = VEC3D(nx, 0.0, nz);
 	pinfo.dir = VEC3D(dx, dy, dz);
-	np += nx * nz;
+	//np += nx * nz;
+	np += _np;
 	pinfo.np = np - pinfo.sid;
 	obj->setMaterial(type, youngs, density, poisson, shear);
 	if (model::isSinglePrecision)
 		pos_f = resizeMemory(pos_f, pnp, np);
+	else
+		pos = resizeMemory(pos, pnp, np);
 
 	double r = 0.0;
-	if (min_radius == min_radius)
+	if (min_radius == max_radius)
 		r = min_radius;
 	double gab = 2.0 * r + spacing;
 	double ran = r * 0.001;
@@ -280,16 +283,6 @@ VEC4D* particleManager::CreatePlaneParticle(
 	}
 	else
 	{
-		//double dr = max_radius - min_radius;
-		// 		double mx = 2.0 * max_radius * lx;
-		// 		double my = 2.0 * max_radius * ly;
-		// 		double mz = 2.0 * max_radius * lz;
-		// 		double x = lx, y = ly z = lz;
-		// 		double crad = 0;
-		// 		while (z + crad < mz)
-		// 		{
-		// 			while (y + crad < my)
-		// 			{
 		QList<VEC4D> pList;
 		
 		int i = 1;
@@ -311,6 +304,22 @@ VEC4D* particleManager::CreatePlaneParticle(
 				pList.push_back(pp);
 			}
 			z += max_radius + spacing;
+		}
+		unsigned int cnt = 0;
+		bool breaker = false;
+		while (!breaker)
+		{
+			foreach(VEC4D p, pList)
+			{
+				double _gab = p.w * 0.001 * frand();
+				pos[pinfo.sid + cnt] = VEC4D(p.x + _gab, p.y, p.z + _gab, p.w);
+				cnt++;
+				if (cnt == _np)
+				{
+					breaker = true;
+					break;
+				}
+			}
 		}
 // 		{
 // 			double _r = i * (2.0 * r + spacing);
@@ -439,9 +448,10 @@ VEC4D* particleManager::CreateCircleParticle(
 			foreach(unsigned int i, iList)
 			{
 				VEC3D p = pList.at(i);
-				double dc = (VEC3D(p.x, p.y, p.z) - VEC3D(lx, ly, lz)).length();
-				double th = r / dc;
-				pos[pinfo.sid + cnt] = VEC4D(p.x + dc * cos(th * k) , p.y, p.z + dc * sin(th * k), r);
+ 				double dc = (VEC3D(p.x, p.y, p.z) - VEC3D(lx, ly, lz)).length();
+ 				double th = 0.5 * k * r / dc;
+				VEC3D new_p = rotation_y(p, th);
+				pos[pinfo.sid + cnt] = VEC4D(new_p.x, new_p.y, new_p.z, r);
 				cnt++;
 				if (cnt == _np)
 				{
