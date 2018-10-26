@@ -790,14 +790,14 @@ void xdynamics::makeParticle()
 			 pd.loc[0], pd.loc[1], pd.loc[2],
 			 pd.dir[0], pd.dir[1], pd.dir[2],
 			 pd.spacing, pd.min_radius, pd.max_radius,
-			 pd.youngs, pd.density, pd.poisson, pd.shear, pd.real_time, pd.perNp);
+			 pd.youngs, pd.density, pd.poisson, pd.shear, pd.real_time, pd.perNp, pd.one_by_one);
 			break;
 		case 2: pm->CreateCircleParticle(
 			pd.name, (material_type)pd.type, pd.circle_diameter, pd.np,
 			pd.loc[0], pd.loc[1], pd.loc[2],
 			pd.dir[0], pd.dir[1], pd.dir[2],
 			pd.spacing, pd.min_radius, pd.max_radius,
-			pd.youngs, pd.density, pd.poisson, pd.shear, pd.real_time, pd.perNp);
+			pd.youngs, pd.density, pd.poisson, pd.shear, pd.real_time, pd.perNp, pd.one_by_one);
 			break;
 		}
 		cmd->printLine();

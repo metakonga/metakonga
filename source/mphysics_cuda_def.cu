@@ -36,7 +36,8 @@ void vv_update_position(double *pos, double *vel, double *acc, unsigned int np)
 	vv_update_position_kernel <<< numBlocks, numThreads >>>(
 		(double4 *)pos,
 		(double3 *)vel,
-		(double3 *)acc);
+		(double3 *)acc,
+		np);
 }
 
 void vv_update_velocity(double *vel, double *acc, double *omega, double *alpha, double *force, double *moment, double* mass, double* iner, unsigned int np)
@@ -50,7 +51,8 @@ void vv_update_velocity(double *vel, double *acc, double *omega, double *alpha, 
 		(double3 *)force,
 		(double3 *)moment,
 		mass,
-		iner);
+		iner,
+		np);
 }
 
 void cu_calculateHashAndIndex(
@@ -120,7 +122,7 @@ void cu_calculate_p2p(
 			(double3 *)omega, (double3 *)force, 
 			(double3 *)moment, mass,
 			sorted_index, cstart,
-			cend, cp);
+			cend, cp, np);
 		break;
 	case 1:
 		calculate_p2p_kernel<1> << < numBlocks, numThreads >> >(
@@ -128,7 +130,7 @@ void cu_calculate_p2p(
 			(double3 *)omega, (double3 *)force, 
 			(double3 *)moment, mass,
 			sorted_index, cstart,
-			cend, cp);
+			cend, cp, np);
 		break;
 	}
 }
@@ -144,11 +146,11 @@ void cu_plane_contact_force(
 	{
 	case 0: plane_contact_force_kernel<0> << < numBlocks, numThreads >> >(
 		plan, (double4 *)pos, (double3 *)vel, (double3 *)omega,
-		(double3 *)force, (double3 *)moment, cp, mass);
+		(double3 *)force, (double3 *)moment, cp, mass, np);
 		break;
 	case 1: plane_contact_force_kernel<1> << < numBlocks, numThreads >> >(
 		plan, (double4 *)pos, (double3 *)vel, (double3 *)omega,
-		(double3 *)force, (double3 *)moment, cp, mass);
+		(double3 *)force, (double3 *)moment, cp, mass, np);
 		break;
 	}
 }
@@ -166,11 +168,11 @@ void cu_cube_contact_force(
 		{
 		case 0: plane_contact_force_kernel<0> << < numBlocks, numThreads >> >(
 			plan + i, (double4 *)pos, (double3 *)vel, (double3 *)omega,
-			(double3 *)force, (double3 *)moment, cp, mass);
+			(double3 *)force, (double3 *)moment, cp, mass, np);
 			break;
 		case 1: plane_contact_force_kernel<1> << < numBlocks, numThreads >> >(
 			plan + i, (double4 *)pos, (double3 *)vel, (double3 *)omega,
-			(double3 *)force, (double3 *)moment, cp, mass);
+			(double3 *)force, (double3 *)moment, cp, mass, np);
 			break;
 		}
 	}
@@ -188,11 +190,11 @@ void cu_cylinder_hertzian_contact_force(
 	{
 	case 0: cylinder_hertzian_contact_force_kernel<0> << < numBlocks, numThreads >> >(
 		cyl, (double4 *)pos, (double3 *)vel, (double3 *)omega,
-		(double3 *)force, (double3 *)moment, cp, mass, mpos, mf, mm);
+		(double3 *)force, (double3 *)moment, cp, mass, mpos, mf, mm, np);
 		break;
 	case 1: cylinder_hertzian_contact_force_kernel<1> << < numBlocks, numThreads >> >(
 		cyl, (double4 *)pos, (double3 *)vel, (double3 *)omega,
-		(double3 *)force, (double3 *)moment, cp, mass, mpos, mf, mm);
+		(double3 *)force, (double3 *)moment, cp, mass, mpos, mf, mm, np);
 		break;
 	}
 	
@@ -213,7 +215,7 @@ void cu_particle_polygonObject_collision(
 		dpi, (double4 *)dsph, dpmi, 
 		(double4 *)pos, (double3 *)vel, (double3 *)omega, 
 		(double3 *)force, (double3 *)moment, mass, 
-		sorted_index, cstart, cend, cp);
+		sorted_index, cstart, cend, cp, np);
 		break;
 	}
 }
@@ -254,7 +256,7 @@ void vv_update_position(float *pos, float *vel, float *acc, unsigned int np)
 	vv_update_position_kernel << < numBlocks, numThreads >> >(
 		(float4 *)pos,
 		(float3 *)vel,
-		(float3 *)acc);
+		(float3 *)acc, np);
 }
 
 void vv_update_velocity(float *vel, float *acc, float *omega, float *alpha, float *force, float *moment, float* mass, float* iner, unsigned int np)
@@ -268,7 +270,7 @@ void vv_update_velocity(float *vel, float *acc, float *omega, float *alpha, floa
 		(float3 *)force,
 		(float3 *)moment,
 		mass,
-		iner);
+		iner, np);
 }
 
 void cu_calculateHashAndIndex(
@@ -338,7 +340,7 @@ void cu_calculate_p2p(
 			(float3 *)omega, (float3 *)force,
 			(float3 *)moment, mass,
 			sorted_index, cstart,
-			cend, cp);
+			cend, cp, np);
 		break;
 	case 1:
 		calculate_p2p_kernel<1> << < numBlocks, numThreads >> >(
@@ -346,7 +348,7 @@ void cu_calculate_p2p(
 			(float3 *)omega, (float3 *)force,
 			(float3 *)moment, mass,
 			sorted_index, cstart,
-			cend, cp);
+			cend, cp, np);
 		break;
 	}
 }
@@ -362,11 +364,11 @@ void cu_plane_contact_force(
 	{
 	case 0: plane_contact_force_kernel<0> << < numBlocks, numThreads >> >(
 		plan, (float4 *)pos, (float3 *)vel, (float3 *)omega,
-		(float3 *)force, (float3 *)moment, cp, mass);
+		(float3 *)force, (float3 *)moment, cp, mass, np);
 		break;
 	case 1: plane_contact_force_kernel<1> << < numBlocks, numThreads >> >(
 		plan, (float4 *)pos, (float3 *)vel, (float3 *)omega,
-		(float3 *)force, (float3 *)moment, cp, mass);
+		(float3 *)force, (float3 *)moment, cp, mass, np);
 		break;
 	}
 }
@@ -384,11 +386,11 @@ void cu_cube_contact_force(
 		{
 		case 0: plane_contact_force_kernel<0> << < numBlocks, numThreads >> >(
 			plan + i, (float4 *)pos, (float3 *)vel, (float3 *)omega,
-			(float3 *)force, (float3 *)moment, cp, mass);
+			(float3 *)force, (float3 *)moment, cp, mass, np);
 			break;
 		case 1: plane_contact_force_kernel<1> << < numBlocks, numThreads >> >(
 			plan + i, (float4 *)pos, (float3 *)vel, (float3 *)omega,
-			(float3 *)force, (float3 *)moment, cp, mass);
+			(float3 *)force, (float3 *)moment, cp, mass, np);
 			break;
 		}
 	}
@@ -406,11 +408,11 @@ void cu_cylinder_hertzian_contact_force(
 	{
 	case 0: cylinder_hertzian_contact_force_kernel<0> << < numBlocks, numThreads >> >(
 		cyl, (float4 *)pos, (float3 *)vel, (float3 *)omega,
-		(float3 *)force, (float3 *)moment, cp, mass, mpos, mf, mm);
+		(float3 *)force, (float3 *)moment, cp, mass, mpos, mf, mm, np);
 		break;
 	case 1: cylinder_hertzian_contact_force_kernel<1> << < numBlocks, numThreads >> >(
 		cyl, (float4 *)pos, (float3 *)vel, (float3 *)omega,
-		(float3 *)force, (float3 *)moment, cp, mass, mpos, mf, mm);
+		(float3 *)force, (float3 *)moment, cp, mass, mpos, mf, mm, np);
 		break;
 	}
 
@@ -431,7 +433,7 @@ void cu_particle_polygonObject_collision(
 			dpi, (float4 *)dsph, dpmi,
 			(float4 *)pos, (float3 *)vel, (float3 *)omega,
 			(float3 *)force, (float3 *)moment, mass,
-			sorted_index, cstart, cend, cp);
+			sorted_index, cstart, cend, cp, np);
 		break;
 	}
 }

@@ -35,7 +35,10 @@ public:
 	QMap<QString, particlesInfo>& ParticleInfomations() { return pinfos; }
 	unsigned int Np() { return np; }
 	unsigned int RealTimeCreating() { return is_realtime_creating; }
+	bool OneByOneCreating() { return one_by_one; }
 	unsigned int NumCreatingPerSecond() { return per_np; }
+	double TimeCreatingPerGroup() { return per_time; }
+	unsigned int NextCreatingPerGroup();
 	object* Object() { return obj; }
 	double* Position() { return (double*)pos; }
 	float* Position_f() { return (float*)pos_f; }
@@ -52,13 +55,13 @@ public:
 		double lx, double ly, double lz,
 		double dx, double dy, double dz,
 		double spacing, double min_radius, double max_radius,
-		double youngs, double density, double poisson, double shear, bool isr = false, unsigned int pnp = 0);
+		double youngs, double density, double poisson, double shear, bool isr = false, unsigned int pnp = 0, double pnt = 0.0, bool obo = false);
 	VEC4D* CreateCircleParticle(
 		QString n, material_type type, double cdia, unsigned int _np, 
 		double lx, double ly, double lz, 
 		double dx, double dy, double dz,
 		double spacing, double min_radius, double max_radius,
-		double youngs, double density, double poisson, double shear, bool isr = false, unsigned int pnp = 0);
+		double youngs, double density, double poisson, double shear, bool isr = false, unsigned int pnp = 0, double pnt = 0.0, bool obo = false);
 	static unsigned int count;
 
 private:
@@ -66,13 +69,17 @@ private:
 
 private:
 	bool is_realtime_creating;
+	bool one_by_one;
 	unsigned int per_np;
 	unsigned int np;
+	double per_time;
 	object *obj;
 	VEC4D *pos;
 	VEC4F *pos_f;
 
 	QMap<QString, particlesInfo> pinfos;
+	QList<unsigned int> np_group;
+	QList<unsigned int>::iterator np_group_iterator;
 	QMap<QString, QString> logs;
 };
 

@@ -18,8 +18,10 @@ public:
 	int type;
 	int method;
 	bool real_time;
+	bool one_by_one;
 	unsigned int perNp;
 	unsigned int np;
+	double perTime;
 	double circle_diameter;
 	double spacing;
 	double min_radius;
@@ -46,6 +48,7 @@ private slots:
 	void click_ok();
 	void click_cancle();
 	void update_tnp();
+	void click_radio_button();
 };
 
 #endif

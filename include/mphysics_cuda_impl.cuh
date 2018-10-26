@@ -80,10 +80,10 @@ int3 calcGridPos(double3 p)
 	return gridPos;
 }
 
-__global__ void vv_update_position_kernel(double4* pos, double3* vel, double3* acc)
+__global__ void vv_update_position_kernel(double4* pos, double3* vel, double3* acc, unsigned int np)
 {
 	unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
-	if (id >= cte.np)
+	if (id >= np)
 		return;
 
 	double3 _p = cte.dt * vel[id] + cte.half2dt * acc[id];
@@ -101,10 +101,11 @@ __global__ void vv_update_velocity_kernel(
 	double3* force,
 	double3* moment,
 	double* mass,
-	double* iner)
+	double* iner,
+	unsigned int np)
 {
 	unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
-	if (id >= cte.np)
+	if (id >= np)
 		return;
 	double3 v = vel[id];
 	double3 L = acc[id];
@@ -400,11 +401,11 @@ __global__ void calculate_p2p_kernel(
 	double3* omega,	double3* force, 
 	double3* moment, double* mass,
 	unsigned int* sorted_index, unsigned int* cstart,
-	unsigned int* cend, device_contact_property* cp)
+	unsigned int* cend, device_contact_property* cp, unsigned int np)
 {
 	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
-	if (id >= cte.np)
+	if (id >= np)
 		return;
 
 	double4 ipos = pos[id];
@@ -436,7 +437,7 @@ __global__ void calculate_p2p_kernel(
 					end_index = cend[grid_hash];
 					for (unsigned int j = start_index; j < end_index; j++){
 						unsigned int k = sorted_index[j];
-						if (id == k || k >= cte.np)
+						if (id == k || k >= np)
 							continue;
 						jpos = pos[k]; jvel = vel[k]; jomega = omega[k];
 						jr = jpos.w; jm = mass[k];
@@ -568,11 +569,11 @@ __global__ void plane_contact_force_kernel(
 	device_plane_info *plane,
 	double4* pos, double3* vel, double3* omega, 
 	double3* force, double3* moment,
-	device_contact_property *cp, double* mass)
+	device_contact_property *cp, double* mass, unsigned int np)
 {
 	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
-	if (id >= cte.np)
+	if (id >= np)
 		return;
 	double m = mass[id];
 	double4 ipos = pos[id];
@@ -716,11 +717,11 @@ __global__ void cylinder_hertzian_contact_force_kernel(
 	device_cylinder_info *cy,
 	double4* pos, double3* vel, double3* omega, 
 	double3* force, double3* moment, device_contact_property *cp,
-	double* mass, double3* mpos, double3* mf, double3* mm)
+	double* mass, double3* mpos, double3* mf, double3* mm, unsigned int np)
 {
 	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
-	if (id >= cte.np)
+	if (id >= np)
 		return;
 
 	*mf = make_double3(0.0, 0.0, 0.0);
@@ -919,11 +920,11 @@ __global__ void particle_polygonObject_collision_kernel(
 	device_polygon_info* dpi, double4* dsph, device_polygon_mass_info* dpmi,
 	double4 *pos, double3 *vel, double3 *omega, double3 *force, double3 *moment,
 	double* mass, unsigned int* sorted_index, unsigned int* cstart, unsigned int* cend, 
-	device_contact_property *cp)
+	device_contact_property *cp, unsigned int _np)
 {
 	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
-
-	if (id >= cte.np)
+	unsigned int np = _np;
+	if (id >= np)
 		return;
 
 	double cdist = 0.0;
@@ -953,9 +954,9 @@ __global__ void particle_polygonObject_collision_kernel(
 					end_index = cend[grid_hash];
 					for (unsigned int j = start_index; j < end_index; j++){
 						unsigned int k = sorted_index[j];
-						if (k >= cte.np)
+						if (k >= np)
 						{
-							k -= cte.np;
+							k -= np;
 							double3 distVec;
 							double dist;
 							unsigned int pidx = dpi[k].id;
@@ -1018,10 +1019,10 @@ int3 calcGridPos(float3 p)
 	return gridPos;
 }
 
-__global__ void vv_update_position_kernel(float4* pos, float3* vel, float3* acc)
+__global__ void vv_update_position_kernel(float4* pos, float3* vel, float3* acc, unsigned int np)
 {
 	unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
-	if (id >= cte_f.np)
+	if (id >= np)
 		return;
 
 	float3 _p = cte_f.dt * vel[id] + cte_f.half2dt * acc[id];
@@ -1039,10 +1040,11 @@ __global__ void vv_update_velocity_kernel(
 	float3* force,
 	float3* moment,
 	float* mass,
-	float* iner)
+	float* iner,
+	unsigned int np)
 {
 	unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
-	if (id >= cte_f.np)
+	if (id >= np)
 		return;
 	float3 v = vel[id];
 	float3 L = acc[id];
@@ -1264,11 +1266,11 @@ __global__ void calculate_p2p_kernel(
 	float3* omega, float3* force,
 	float3* moment, float* mass,
 	unsigned int* sorted_index, unsigned int* cstart,
-	unsigned int* cend, device_contact_property_f* cp)
+	unsigned int* cend, device_contact_property_f* cp, unsigned int np)
 {
 	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
-	if (id >= cte_f.np)
+	if (id >= np)
 		return;
 
 	float4 ipos = pos[id];
@@ -1300,7 +1302,7 @@ __global__ void calculate_p2p_kernel(
 					end_index = cend[grid_hash];
 					for (unsigned int j = start_index; j < end_index; j++){
 						unsigned int k = sorted_index[j];
-						if (id == k || k >= cte_f.np)
+						if (id == k || k >= np)
 							continue;
 						jpos = pos[k]; jvel = vel[k]; jomega = omega[k];
 						jr = jpos.w; jm = mass[k];
@@ -1432,11 +1434,11 @@ __global__ void plane_contact_force_kernel(
 	device_plane_info_f *plane,
 	float4* pos, float3* vel, float3* omega,
 	float3* force, float3* moment,
-	device_contact_property_f *cp, float* mass)
+	device_contact_property_f *cp, float* mass, unsigned int np)
 {
 	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
-	if (id >= cte_f.np)
+	if (id >= np)
 		return;
 	float m = mass[id];
 	float4 ipos = pos[id];
@@ -1580,11 +1582,11 @@ __global__ void cylinder_hertzian_contact_force_kernel(
 	device_cylinder_info_f *cy,
 	float4* pos, float3* vel, float3* omega,
 	float3* force, float3* moment, device_contact_property_f *cp,
-	float* mass, float3* mpos, float3* mf, float3* mm)
+	float* mass, float3* mpos, float3* mf, float3* mm, unsigned int np)
 {
 	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
 
-	if (id >= cte_f.np)
+	if (id >= np)
 		return;
 
 	*mf = make_float3(0.0f, 0.0f, 0.0f);
@@ -1722,11 +1724,11 @@ __global__ void particle_polygonObject_collision_kernel(
 	device_polygon_info_f* dpi, float4* dsph, device_polygon_mass_info_f* dpmi,
 	float4 *pos, float3 *vel, float3 *omega, float3 *force, float3 *moment,
 	float* mass, unsigned int* sorted_index, unsigned int* cstart, unsigned int* cend,
-	device_contact_property_f *cp)
+	device_contact_property_f *cp, unsigned int _np)
 {
 	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
-
-	if (id >= cte_f.np)
+	unsigned int np = _np;
+	if (id >= np)
 		return;
 
 	float cdist = 0.0f;
@@ -1756,9 +1758,9 @@ __global__ void particle_polygonObject_collision_kernel(
 					end_index = cend[grid_hash];
 					for (unsigned int j = start_index; j < end_index; j++){
 						unsigned int k = sorted_index[j];
-						if (k >= cte_f.np)
+						if (k >= np)
 						{
-							k -= cte_f.np;
+							k -= np;
 							float3 distVec;
 							float dist;
 							unsigned int pidx = dpi[k].id;

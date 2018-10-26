@@ -169,7 +169,15 @@ void particleDialog::click_ok()
 	shear = LE_ShearModulus->text().toDouble();
 	real_time = GB_RealTime->isChecked();
 	if (real_time)
-		perNp = LE_NumParclesPer->text().toUInt();
+	{
+		one_by_one = RB_OneByOne->isChecked();
+		if (one_by_one)
+			perNp = LE_NumParclesPer->text().toUInt();
+		else
+			perTime = LE_NumParclesPer->text().toDouble();
+		
+	}
+		
 	this->close();
 	this->setResult(QDialog::Accepted);
 }
@@ -195,6 +203,14 @@ void particleDialog::update_tnp()
 		LE_NUM_PARTICLE->setText(QString("%1").arg(np));
 	}
 	LE_NUM_PARTICLE->setText(QString("%1").arg(np));
+}
+
+void particleDialog::click_radio_button()
+{
+	if (RB_OneByOne->isChecked())
+		LE_NumParclesPer->setText("The number of particles(per second)");
+	else
+		LE_NumParclesPer->setText("The creating time of(per group)");
 }
 
 // #include "particleDialog.h"
