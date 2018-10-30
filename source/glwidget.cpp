@@ -166,17 +166,17 @@ void GLWidget::ShowContextMenu(const QPoint& pos)
 	QList<QMenu*> menus;
 	//selectedObject = NULL;
 	//vobject* vobj = NULL;
-	if (selectedIndice.size())
+	if (selectedObjects.size())
 	{
 		QString name;
-		for (unsigned int i = 0; i < selectedIndice.size(); i++)
+		foreach(vobject* vobj, selectedObjects)
 		{
-
-			unsigned int id = selectedIndice.at(i);
+			//unsigned int id = selectedIndice.at(i);
 			//if (id < 1000){
-			vobject* vobj = static_cast<vobject*>(v_wobjs[id]);
+			//vobject* vobj = static_cast<vobject*>(v_wobjs[id]);
 			name = vobj->name();
 			QMenu *subMenu = new QMenu(name);
+			subMenu->addAction("Select");
 			subMenu->addAction("Delete");
 			subMenu->addAction("Property");
 			if (vobj->ViewObjectType() == vobject::V_POLYGON)
@@ -186,6 +186,24 @@ void GLWidget::ShowContextMenu(const QPoint& pos)
 			myMenu.addMenu(subMenu);
 			menus.push_back(subMenu);
 		}
+// 		for (unsigned int i = 0; i < selectedIndice.size(); i++)
+// 		{
+// 
+// 			unsigned int id = selectedIndice.at(i);
+// 			//if (id < 1000){
+// 			vobject* vobj = static_cast<vobject*>(v_wobjs[id]);
+// 			name = vobj->name();
+// 			QMenu *subMenu = new QMenu(name);
+// 			subMenu->addAction("Select");
+// 			subMenu->addAction("Delete");
+// 			subMenu->addAction("Property");
+// 			if (vobj->ViewObjectType() == vobject::V_POLYGON)
+// 			{
+// 				subMenu->addAction("Refinement");
+// 			}
+// 			myMenu.addMenu(subMenu);
+// 			menus.push_back(subMenu);
+// 		}
 		myMenu.addSeparator();
 		myMenu.addAction("Wireframe");
 		myMenu.addAction("Solid");
@@ -217,11 +235,16 @@ void GLWidget::ShowContextMenu(const QPoint& pos)
 				actionDelete(pmenuTitle);
 				modelManager::MM()->ActionDelete(pmenuTitle);
 			}
+			else if (txt == "Select")
+			{
+				setSelectMarking(pmenuTitle);
+			}
 			else if (txt == "Property"){
 				emit contextSignal(pmenuTitle, CONTEXT_PROPERTY);
 			}
 			else if (txt == "Refinement")
 			{
+				setSelectMarking(pmenuTitle);
 				emit contextSignal(pmenuTitle, CONTEXT_REFINEMENT);
 			}
 		}
@@ -421,29 +444,45 @@ void GLWidget::drawObject(GLenum eMode)
 	glDisable(GL_BLEND);
 }
 
+vobject* GLWidget::setSelectMarking(QString sn)
+{
+	//unsigned int id = selectedIndice.at(0);
+	vobject* obj = selectedObjects[sn];// static_cast<vobject*>(v_wobjs[id]);
+	obj->setSelected(true);
+	selectedObject = obj;
+
+#ifdef _DEBUG
+	qDebug() << obj->name() << " is selected.";
+#endif
+	return obj;
+}
+
 void GLWidget::processHits(unsigned int uHits, unsigned int *pBuffer)
 {
 	unsigned int i, j;
 	unsigned int uiName, *ptr;
 	ptr = pBuffer;
 	selectedObject = NULL;
-	foreach(int v, selectedIndice)
-		static_cast<vobject*>(v_wobjs[v])->setSelected(false);
-	if (selectedIndice.size())
-		selectedIndice.clear();
+	foreach(vobject* vobj, selectedObjects)
+		vobj->setSelected(false);
+// 	foreach(int v, selectedIndice)
+// 		static_cast<vobject*>(v_wobjs[v])->setSelected(false);
+	if (selectedObjects.size())
+		selectedObjects.clear();
 	for (i = 0; i < uHits; i++){
 		uiName = *ptr;
 		ptr += 3;
-		selectedIndice.push_back(*ptr);// selectedIndice[i] = *ptr;
-		unsigned int id = *ptr;
-		vobject* obj = static_cast<vobject*>(v_wobjs[id]);
-		obj->setSelected(true);
-		selectedObject = obj;
-#ifdef _DEBUG
-		qDebug() << obj->name() << " is selected.";
-#endif
+		int idx = *ptr;
+		vobject* _vobj = static_cast<vobject*>(v_wobjs[idx]);
+		selectedObjects[_vobj->name()] = _vobj;
+		//selectedIndice.push_back(*ptr);// selectedIndice[i] = *ptr;
+
 		//static_cast<vobject*>(v_wobjs[id])->setSelected(true);
 		ptr++;
+	}
+	if (selectedObjects.size() == 1)
+	{
+		setSelectMarking(selectedObjects.firstKey());
 	}
 }
 

@@ -174,7 +174,9 @@ void contactManager::deviceCollision(
 	}
 	if (cppoly)
 	{
+		//qDebug() << "pass_cuda_collision_cppoly0";
 		cppoly->cuda_collision(pos, vel, omega, mass, force, moment, sorted_id, cell_start, cell_end, np);
+		//qDebug() << "pass_cuda_collision_cppoly1";
 	}
 // 	foreach(polygonObject* pobj, pair_ip)
 // 	{
@@ -199,6 +201,7 @@ void contactManager::deviceCollision(float *pos, float *vel, float *omega, float
 	if (cppoly)
 	{
 		cppoly->cuda_collision(pos, vel, omega, mass, force, moment, sorted_id, cell_start, cell_end, np);
+		
 	}
 }
 

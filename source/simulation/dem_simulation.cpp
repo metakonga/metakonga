@@ -205,7 +205,7 @@ bool dem_simulation::initialize(contactManager* _cm)
 	particleManager* pm = md->ParticleManager();
 	np = pm->Np();
 	cm = _cm;
-	if (pm->RealTimeCreating())
+	if (pm->RealTimeCreating() && !pm->ChangedParticleModel())
 	{
 		if (pm->OneByOneCreating())
 			per_np = static_cast<unsigned int>((1.0 / pm->NumCreatingPerSecond()) / simulation::dt);
@@ -445,6 +445,7 @@ bool dem_simulation::oneStepAnalysis(double ct, unsigned int cstep)
 	if (per_np && !((cstep-1) % per_np) && np < md->ParticleManager()->Np())
 		md->ParticleManager()->OneByOneCreating() ? np++ : np += md->ParticleManager()->NextCreatingPerGroup();
 
+	//qDebug() << np;
 	if (itor->integrationType() == dem_integrator::VELOCITY_VERLET)
 		itor->updatePosition(dpos, dvel, dacc, np);
 	dtor->detection(dpos, (cm ? cm->SphereData() : NULL),  np, nPolySphere);

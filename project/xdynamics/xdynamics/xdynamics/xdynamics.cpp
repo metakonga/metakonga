@@ -126,6 +126,11 @@ void xdynamics::createToolOperations()
 	connect(a, SIGNAL(triggered()), this, SLOT(makeParticle()));
 	myModelingActions.insert(MAKE_PARTICLE, a);
 
+	a = new QAction(QIcon(":/Resources/icChangeParticle.png"), tr("&Change particles"), this);
+	a->setStatusTip(tr("Change particles"));
+	connect(a, SIGNAL(triggered()), this, SLOT(changeParticles()));
+	myModelingActions.insert(CHANGE_PARTICLES, a);
+
 	a = new QAction(QIcon(":/Resources/mass.png"), tr("&Create mass"), this);
 	a->setStatusTip(tr("Create mass"));
 	connect(a, SIGNAL(triggered()), this, SLOT(makeMass()));
@@ -845,6 +850,7 @@ void xdynamics::makeMass()
 			}
 			if (pm)
 			{
+				pm->setMass(bid.mass);
 				pm->setViewObject(vobj);
 				pm->setPosition(VEC3D(bid.x, bid.y, bid.z));
 				pm->setDiagonalInertia(bid.ixx, bid.iyy, bid.izz);
@@ -1114,6 +1120,37 @@ void xdynamics::changePaletteMode()
 // 		paletteAct->setIcon(QIcon(":/Resources/noSketch.png"));
 // 	else
 // 		paletteAct->setIcon(QIcon(":/Resources/sketch.png"));
+}
+
+void xdynamics::changeParticles()
+{
+	QString file = QFileDialog::getOpenFileName(
+		this, tr("open"), model::path,
+		tr("Part Result file (*.bfr)"));
+	if (!file.isEmpty())
+	{
+		QString rst;
+		if (mg->DEMModel())
+		{
+			if (mg->DEMModel()->ParticleManager())
+			{
+				particleManager* pm = mg->DEMModel()->ParticleManager();
+				rst = pm->setParticleDataFromPart(file);
+				vparticles* vp = gl->vParticles();
+				if (vp)
+					vp->setParticlePosition(pm->Position(), pm->Np());
+			}
+			else
+			{
+				rst = "No exist the particle mananger.";
+			}
+		}
+		else
+		{
+			rst = "No exist the dem model.";
+		}
+		cmd->write(CMD_INFO, rst);
+	}
 }
 
 void xdynamics::changeProjectionViewMode()

@@ -1,5 +1,5 @@
 #include "bodyInfoDialog.h"
-#include "msgBox.h"
+#include "messageBox.h"
 #include <QtWidgets>
 #include "pointMass.h"
 
@@ -72,23 +72,24 @@ void bodyInfoDialog::setBodyInfomation(
 {
 	mass = _mass;
 	volume = _vol;
-	dx = ixx;
-	dy = iyy;
-	dz = izz;
-	sx = ixy;
-	sy = iyz;
-	sz = izx;
-	ixx = mass * dx; iyy = mass * dy; izz = mass * dz;
-	ixy = mass * sx; iyz = mass * sy; izx = mass * sz;
+	dx = _ixx;
+	dy = _iyy;
+	dz = _izz;
+	sx = _ixy;
+	sy = _iyz;
+	sz = _izx;
+	ixx = _mass * dx; iyy = _mass * dy; izz = _mass * dz;
+	ixy = _mass * sx; iyz = _mass * sy; izx = _mass * sz;
 	CB_Material_Type->setCurrentIndex(int(mt));
+	changeMaterialType(int(mt));
 	LE_Position->setText(QString("%1 %2 %3").arg(x).arg(y).arg(z));
 	LE_Mass->setText(QString("%1").arg(mass));
-	LE_Ixx->setText(QString("%1").arg(ixx));
-	LE_Iyy->setText(QString("%1").arg(iyy));
-	LE_Izz->setText(QString("%1").arg(izz));
-	LE_Ixy->setText(QString("%1").arg(ixy));
-	LE_Iyz->setText(QString("%1").arg(iyz));
-	LE_Izx->setText(QString("%1").arg(izx));
+	LE_Ixx->setText(QString("%1").arg(dx));
+	LE_Iyy->setText(QString("%1").arg(dy));
+	LE_Izz->setText(QString("%1").arg(dz));
+	LE_Ixy->setText(QString("%1").arg(sx));
+	LE_Iyz->setText(QString("%1").arg(sy));
+	LE_Izx->setText(QString("%1").arg(sz));
 	LE_Volume->setText(QString("%1").arg(volume));
 }
 
@@ -135,6 +136,13 @@ void bodyInfoDialog::changeMaterialType(int)
 
 void bodyInfoDialog::Click_ok()
 {
+	QStringList loc = LE_Position->text().split(" ");
+	if (loc.size() != 3)
+	{
+		LE_Position->setStyleSheet("QLineEdit { background-color: yellow }");
+		messageBox::run("Wrong data.");
+		return;
+	}
 	cmaterialType cmt;
 	mt = CB_Material_Type->currentIndex();
 	cmt = getMaterialConstant(mt);
@@ -150,7 +158,6 @@ void bodyInfoDialog::Click_ok()
 	ixy = LE_Ixy->text().toDouble();
 	iyz = LE_Iyz->text().toDouble();
 	izx = LE_Izx->text().toDouble();
-	QStringList loc = LE_Position->text().split(",");
 	x = loc.at(0).toDouble();
 	y = loc.at(1).toDouble();
 	z = loc.at(2).toDouble();

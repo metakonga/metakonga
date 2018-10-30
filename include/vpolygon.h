@@ -63,7 +63,6 @@ private:
 	VEC4F *spheres;
 	VEC3D min_point;
 	VEC3D max_point;
-	vobject* select_cube;
 // 	VEC3D* outPos;
 // 	EPD* outRot;
 

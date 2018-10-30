@@ -13,6 +13,7 @@ particleManager::particleManager()
 	, per_np(0)
 	, per_time(0)
 	, is_realtime_creating(false)
+	, is_changed_particle(false)
 	, one_by_one(false)
 {
 	obj = new object("particles", PARTICLES, PARTICLE);
@@ -127,6 +128,31 @@ unsigned int particleManager::NextCreatingPerGroup()
 	unsigned int pn = *np_group_iterator;
 	np_group_iterator++;
 	return pn;
+}
+
+QString particleManager::setParticleDataFromPart(QString& f)
+{
+	QFile qf(f);
+	QString ret;
+	qf.open(QIODevice::ReadOnly);
+	double ct = 0.0;
+	int precision = 0;
+	int flag = 0;
+	qf.read((char*)&ct, sizeof(double));
+ 	qf.read((char*)&precision, sizeof(int));
+ 	qf.read((char*)&flag, sizeof(int));
+	if (np)
+	{
+		qf.read((char*)pos, sizeof(double) * np * 4);
+		ret = QString("The position of particles is changed.(Time : %1, Np : %2)").arg(ct).arg(np);
+		is_changed_particle = true;
+	}
+	else
+	{
+		//ret = QString("The number of particles is not matched.(Original : %1, New : %2)").arg(np).arg(np);
+	}
+	qf.close();
+	return ret;
 }
 
 VEC4D* particleManager::CreateCubeParticle(

@@ -107,18 +107,19 @@ __global__ void vv_update_velocity_kernel(
 	unsigned int id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
 	if (id >= np)
 		return;
-	double3 v = vel[id];
-	double3 L = acc[id];
-	double3 av = omega[id];
-	double3 aa = alpha[id];
 	double m = mass[id];
-	double in = iner[id];
-	v += 0.5 * cte.dt * L;
-	av += 0.5 * cte.dt * aa;
-	L = (1.0 / m) * force[id];
-	aa = (1.0 / in) * moment[id];
-	v += 0.5 * cte.dt * L;
-	av += 0.5 * cte.dt * aa;
+	double3 v = vel[id];
+	//double3 L = acc[id];
+	double3 av = omega[id];
+	//double3 aa = alpha[id];
+	double3 a = (1.0 / m) * force[id];
+	double3 in = (1.0 / iner[id]) * moment[id];
+	v += 0.5 * cte.dt * (acc[id] + a);
+	av += 0.5 * cte.dt * (alpha[id] + in);// aa;
+	//L = (1.0 / m) * force[id];
+	//aa = (1.0 / in) * moment[id];
+	//v += 0.5 * cte.dt * L;
+	//av += 0.5 * cte.dt * aa;
 	// 	if(id == 0){
 	// 		printf("Velocity --- > id = %d -> [%f.6, %f.6, %f.6]\n", id, v.x, v.y, v.z);
 	// 	}
@@ -126,8 +127,8 @@ __global__ void vv_update_velocity_kernel(
 	moment[id] = make_double3(0.0, 0.0, 0.0);
 	vel[id] = v;
 	omega[id] = av;
-	acc[id] = L;
-	alpha[id] = aa;
+	acc[id] = a;
+	alpha[id] = in;
 }
 
 
@@ -920,11 +921,11 @@ __global__ void particle_polygonObject_collision_kernel(
 	device_polygon_info* dpi, double4* dsph, device_polygon_mass_info* dpmi,
 	double4 *pos, double3 *vel, double3 *omega, double3 *force, double3 *moment,
 	double* mass, unsigned int* sorted_index, unsigned int* cstart, unsigned int* cend, 
-	device_contact_property *cp, unsigned int _np)
+	device_contact_property *cp, unsigned int np)
 {
 	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
-	unsigned int np = _np;
-	if (id >= np)
+	//unsigned int np = _np;
+	if (id >= cte.np)
 		return;
 
 	double cdist = 0.0;
@@ -954,9 +955,10 @@ __global__ void particle_polygonObject_collision_kernel(
 					end_index = cend[grid_hash];
 					for (unsigned int j = start_index; j < end_index; j++){
 						unsigned int k = sorted_index[j];
-						if (k >= np)
+						if (k >= cte.np)
 						{
-							k -= np;
+							k -= cte.np;
+							//printf("%d", k);
 							double3 distVec;
 							double dist;
 							unsigned int pidx = dpi[k].id;

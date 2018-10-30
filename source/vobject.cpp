@@ -5,6 +5,7 @@ int vobject::count = -1;
 vobject::vobject()
 	: outPos(NULL)
 	, outRot(NULL)
+	, select_cube(NULL)
 	, vot(VIEW_OBJECT)
 	, drawingMode(GL_LINE)
 	, type(V_OBJECT)
@@ -25,6 +26,7 @@ vobject::vobject(Type tp, QString _name)
 	: nm(_name)
 	, outPos(NULL)
 	, outRot(NULL)
+	, select_cube(NULL)
 	, vot(VIEW_OBJECT)
 	, drawingMode(GL_LINE)
 	, type(tp)
@@ -79,6 +81,14 @@ void vobject::insertResultData(unsigned int i, VEC3D& p, EPD& r)
 void vobject::copyCoordinate(GLuint _coord)
 {
 	coord = _coord;
+}
+
+void vobject::updateView(VEC3D& _pos, VEC3D& _ang)
+{
+	pos0 = _pos;
+	ang0 = _ang;
+	if (select_cube)
+		select_cube->updateView(_pos, _ang);
 }
 
 void vobject::animationFrame(VEC3D& p, EPD& ep)

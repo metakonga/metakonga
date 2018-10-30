@@ -23,7 +23,7 @@ class xdynamics : public QMainWindow
 
 public:
 	enum { NEW = 0, OPEN, SAVE };
-	enum { MAKE_CUBE=0, MAKE_RECT, MAKE_LINE, MAKE_POLY, MAKE_CYLINDER, MAKE_PARTICLE, MAKE_MASS, MAKE_COLLISION, RUN_ANALYSIS, CHANGE_PROJECTION_VIEW, PRE_DEFINE_MBD };
+	enum { MAKE_CUBE=0, MAKE_RECT, MAKE_LINE, MAKE_POLY, MAKE_CYLINDER, MAKE_PARTICLE, CHANGE_PARTICLES, MAKE_MASS, MAKE_COLLISION, RUN_ANALYSIS, CHANGE_PROJECTION_VIEW, PRE_DEFINE_MBD };
 	enum { ANIMATION_GO_BEGIN = 0, ANIMATION_PREVIOUS_2X, ANIMATION_PREVIOUS_1X, ANIMATION_PLAY_BACK, ANIMATION_INIT, ANIMATION_PLAY, ANIMATION_PAUSE, ANIMATION_FORWARD_2X, ANIMATION_FORWARD_1X, ANIMATION_GO_END };
 	
 	xdynamics(int argc, char** argv, QWidget *parent = 0);
@@ -68,6 +68,7 @@ public:
 	void makeContactPair();
 	void preDefinedMBD();
 	void changePaletteMode();
+	void changeParticles();
 	void changeProjectionViewMode();
 	void solve();
 	void exitThread();

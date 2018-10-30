@@ -35,6 +35,8 @@ public:
 	QMap<QString, particlesInfo>& ParticleInfomations() { return pinfos; }
 	unsigned int Np() { return np; }
 	unsigned int RealTimeCreating() { return is_realtime_creating; }
+	void setRealTimeCreating(bool b) { is_realtime_creating = b; }
+	bool ChangedParticleModel() { return is_changed_particle; }
 	bool OneByOneCreating() { return one_by_one; }
 	unsigned int NumCreatingPerSecond() { return per_np; }
 	double TimeCreatingPerGroup() { return per_time; }
@@ -42,6 +44,7 @@ public:
 	object* Object() { return obj; }
 	double* Position() { return (double*)pos; }
 	float* Position_f() { return (float*)pos_f; }
+	QString setParticleDataFromPart(QString& f);
 
 	VEC4D* CreateCubeParticle(
 		QString n, material_type type, unsigned int nx, unsigned int ny, unsigned int nz,
@@ -69,6 +72,7 @@ private:
 
 private:
 	bool is_realtime_creating;
+	bool is_changed_particle;
 	bool one_by_one;
 	unsigned int per_np;
 	unsigned int np;

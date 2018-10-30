@@ -107,6 +107,7 @@ signals:
 protected:
 	void processHits(unsigned int uHits, unsigned int *pBuffer);
 	void drawObject(GLenum eMode);
+	vobject* setSelectMarking(QString sn);
 	void initializeGL();
 	void paintGL();
 	void resizeGL(int width, int height);
@@ -160,7 +161,7 @@ private:
 	bool LBOTTON;
 	QPoint lastPos;
 	int aFrame;
-	QList<unsigned int> selectedIndice;
+	QMap<QString, vobject*> selectedObjects;
 	bool isAnimation;
 
 	float times[1000];

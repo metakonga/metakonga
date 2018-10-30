@@ -34,6 +34,10 @@ bool xDynamicsSolver::initialize(startingModel* stm)
 	npart = static_cast<unsigned int>((nstep / simulation::st) + 1);
 	if (dem)
 	{
+		particleManager* pm = mg->DEMModel()->ParticleManager();
+		if (stm && pm->RealTimeCreating())
+			pm->setRealTimeCreating(false);
+
 		unsigned int np = mg->DEMModel()->ParticleManager()->Np();
 		if (model::isSinglePrecision)
 			dem->initialize_f(mg->ContactManager());
@@ -101,10 +105,10 @@ bool xDynamicsSolver::saveFinalResult(double ct)
 			dem->saveFinalResult_f(qf) :
 			dem->saveFinalResult(qf);
 	}
-	if (mbd)
-	{
-		mbd->saveFinalResult(qf);
-	}
+// 	if (mbd)
+// 	{
+// 		mbd->saveFinalResult(qf);
+// 	}
 	qf.close();
 		//dem->saveFinalResult(file);
 	return true;

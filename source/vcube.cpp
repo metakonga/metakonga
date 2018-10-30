@@ -76,14 +76,22 @@ bool vcube::makeCubeGeometry(QTextStream& in)
 
 bool vcube::makeCubeGeometry(QString& _name, geometry_use _tr, material_type _tm, VEC3F& _mp, VEC3F& _sz)
 {
-	vertice[0] = _mp.x;		   vertice[1] = _mp.y;		   vertice[2] = _mp.z;
-	vertice[3] = _mp.x;		   vertice[4] = _mp.y + _sz.y; vertice[5] = _mp.z;
-	vertice[6] = _mp.x;		   vertice[7] = _mp.y;		   vertice[8] = _mp.z + _sz.z;
-	vertice[9] = _mp.x;		   vertice[10] = _mp.y + _sz.y; vertice[11] = _mp.z + _sz.z;
-	vertice[12] = _mp.x + _sz.x; vertice[13] = _mp.y;		   vertice[14] = _mp.z + _sz.z;
-	vertice[15] = _mp.x + _sz.x; vertice[16] = _mp.y + _sz.y; vertice[17] = _mp.z + _sz.z;
-	vertice[18] = _mp.x + _sz.x; vertice[19] = _mp.y;		   vertice[20] = _mp.z;
-	vertice[21] = _mp.x + _sz.x; vertice[22] = _mp.y + _sz.y; vertice[23] = _mp.z;
+	vertice[0] = -0.5 * _sz.x; vertice[1] = -0.5 * _sz.y;	vertice[2] = -0.5 * _sz.z;
+	vertice[3] = -0.5 * _sz.x; vertice[4] = 0.5 * _sz.y;	vertice[5] = -0.5 * _sz.z;
+	vertice[6] = -0.5 * _sz.x; vertice[7] = -0.5 * _sz.y;	vertice[8] = 0.5 * _sz.z;
+	vertice[9] = -0.5 * _sz.x; vertice[10] = 0.5 * _sz.y;	vertice[11] = 0.5 * _sz.z;
+	vertice[12] = 0.5 * _sz.x; vertice[13] = -0.5 * _sz.y;	vertice[14] = 0.5 * _sz.z;
+	vertice[15] = 0.5 * _sz.x; vertice[16] = 0.5 * _sz.y;	vertice[17] = 0.5 * _sz.z;
+	vertice[18] = 0.5 * _sz.x; vertice[19] = -0.5 * _sz.y;	vertice[20] = -0.5 * _sz.z;
+	vertice[21] = 0.5 * _sz.x; vertice[22] = 0.5 * _sz.y;	vertice[23] = -0.5 * _sz.z;
+// 	vertice[0] = _mp.x;		   vertice[1] = _mp.y;		   vertice[2] = _mp.z;
+// 	vertice[3] = _mp.x;		   vertice[4] = _mp.y + _sz.y; vertice[5] = _mp.z;
+// 	vertice[6] = _mp.x;		   vertice[7] = _mp.y;		   vertice[8] = _mp.z + _sz.z;
+// 	vertice[9] = _mp.x;		   vertice[10] = _mp.y + _sz.y; vertice[11] = _mp.z + _sz.z;
+// 	vertice[12] = _mp.x + _sz.x; vertice[13] = _mp.y;		   vertice[14] = _mp.z + _sz.z;
+// 	vertice[15] = _mp.x + _sz.x; vertice[16] = _mp.y + _sz.y; vertice[17] = _mp.z + _sz.z;
+// 	vertice[18] = _mp.x + _sz.x; vertice[19] = _mp.y;		   vertice[20] = _mp.z;
+// 	vertice[21] = _mp.x + _sz.x; vertice[22] = _mp.y + _sz.y; vertice[23] = _mp.z;
 	pos0.x = _mp.x + _sz.x * 0.5f;
 	pos0.y = _mp.y + _sz.y * 0.5f;
 	pos0.z = _mp.z + _sz.z * 0.5f;
@@ -107,6 +115,10 @@ void vcube::draw(GLenum eMode)
 		
 		/*glLineStipple(5, 0x5555);*/
 		//glEnable(GL_LINE_STIPPLE);
+		glTranslatef(pos0.x, pos0.y, pos0.z);
+		glRotated(ang0.x, 0, 0, 1);
+		glRotated(ang0.y, 1, 0, 0);
+		glRotated(ang0.z, 0, 0, 1);
 		glColor3f(clr.redF(), clr.greenF(), clr.blueF());
 		glCallList(glList);
 		if (isSelected)

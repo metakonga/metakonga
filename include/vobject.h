@@ -54,6 +54,8 @@ public:
 	context_object_type ViewGeometryObjectType() { return vot; }
 	virtual void draw(GLenum eMode) = 0;
 
+	void updateView(VEC3D& _pos, VEC3D& _ang);
+
 	double vol;
 	double mass;
 	double ixx, iyy, izz;
@@ -63,6 +65,7 @@ protected:
 	int id;
 	Type type;
 	bool isSelected;
+	vobject* select_cube;
 	geometry_type g_type;
 	material_type m_type;
 	context_object_type vot;

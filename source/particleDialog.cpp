@@ -138,7 +138,7 @@ void particleDialog::click_ok()
 		dir[0] = dl.at(0).toDouble(); 
 		dir[1] = dl.at(1).toDouble(); 
 		dir[2] = dl.at(2).toDouble();
-		dl = LE_CUBE_LOC->text().split(" ");
+		dl = LE_PLANE_LOC->text().split(" ");
 		loc[0] = dl.at(0).toDouble();
 		loc[1] = dl.at(1).toDouble();
 		loc[2] = dl.at(2).toDouble();
