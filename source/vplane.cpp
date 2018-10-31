@@ -55,10 +55,45 @@ bool vplane::makePlaneGeometry(QTextStream& in)
 
 bool vplane::makePlaneGeometry(VEC3D& pa, VEC3D& pb, VEC3D& pc, VEC3D& pd)
 {
-	p0[0] = (float)pa.x; p0[1] = (float)pa.y; p0[2] = (float)pa.z;
-	p1[0] = (float)pb.x; p1[1] = (float)pb.y; p1[2] = (float)pb.z;
-	p2[0] = (float)pc.x; p2[1] = (float)pc.y; p2[2] = (float)pc.z;
-	p3[0] = (float)pd.x; p3[1] = (float)pd.y; p3[2] = (float)pd.z;
+	float l1 = 0.0f;
+	float l2 = 0.0f;
+	l1 = (float)(pb - pa).length();
+	l2 = (float)(pc - pb).length();
+// 	p0[0] = -0.5f * l1; p0[1] = 0.0f; p0[2] = -0.5f * l2;
+// 	p1[0] = -0.5f * l1; p1[1] = 0.0f; p1[2] =  0.5f * l2;
+// 	p2[0] =  0.5f * l1; p2[1] = 0.0f; p2[2] =  0.5f * l2;
+// 	p3[0] =  0.5f * l1; p3[1] = 0.0f; p3[2] = -0.5f * l2;
+// 	pos0 = 
+	pos0 = 0.5 * (pc + pa);
+	MAT33D eang = eulerAngle(0, 0, 0);
+	VEC3D lpa = global2local_eulerAngle(eang, (pa - pos0));
+	VEC3D lpb = global2local_eulerAngle(eang, (pb - pos0));
+	VEC3D lpc = global2local_eulerAngle(eang, (pc - pos0));
+	VEC3D lpd = global2local_eulerAngle(eang, (pd - pos0));
+	p0[0] = (float)lpa.x; p0[1] = (float)lpa.y; p0[2] = (float)lpa.z;
+	p1[0] = (float)lpb.x; p1[1] = (float)lpb.y; p1[2] = (float)lpb.z;
+	p2[0] = (float)lpc.x; p2[1] = (float)lpc.y; p2[2] = (float)lpc.z;
+	p3[0] = (float)lpd.x; p3[1] = (float)lpd.y; p3[2] = (float)lpd.z;
+	ixx += lpa.y * lpa.y + lpa.z * lpa.z;
+	iyy += lpa.x * lpa.x + lpa.z * lpa.z;
+	izz += lpa.x * lpa.x + lpa.y * lpa.y;
+
+	ixx += lpb.y * lpb.y + lpb.z * lpb.z;
+	iyy += lpb.x * lpb.x + lpb.z * lpb.z;
+	izz += lpb.x * lpb.x + lpb.y * lpb.y;
+
+	ixx += lpc.y * lpc.y + lpc.z * lpc.z;
+	iyy += lpc.x * lpc.x + lpc.z * lpc.z;
+	izz += lpc.x * lpc.x + lpc.y * lpc.y;
+
+	ixx += lpd.y * lpd.y + lpd.z * lpd.z;
+	iyy += lpd.x * lpd.x + lpd.z * lpd.z;
+	izz += lpd.x * lpd.x + lpd.y * lpd.y;
+	ixx /= 12.0;
+	iyy /= 12.0;
+	izz /= 12.0;
+	//ixx = (1.0 / 12.0) * ()
+	vol = l1 * l2;
 // 	p0[0] = xw.x; p0[1] = xw.y; p0[2] = xw.z;
 // 	p1[0] = pa.x + p0[0]; p1[1] = pa.y + p0[1]; p1[2] = pa.z + p0[2];
 // 	p3[0] = pb.x + p0[0]; p3[1] = pb.y + p0[1]; p3[2] = pb.z + p0[2];
@@ -80,6 +115,10 @@ void vplane::draw(GLenum eMode)
 		glColor3f(clr.redF(), clr.greenF(), clr.blueF());
 		if (eMode == GL_SELECT)
 			glLoadName((GLuint)ID());
+		glTranslated(pos0.x, pos0.y, pos0.z);
+		glRotated(ang0.x, 0, 0, 1);
+		glRotated(ang0.y, 1, 0, 0);
+		glRotated(ang0.z, 0, 0, 1);
 		glCallList(glList);
 		if (isSelected)
 		{

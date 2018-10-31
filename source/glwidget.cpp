@@ -59,6 +59,7 @@ GLWidget::GLWidget(int argc, char** argv, QWidget *parent)
 	, ground_marker(NULL)
 	, selectedObject(NULL)
 	, zRotationFlag(false)
+	, isPressRightMouseButton(false)
 	//, Doc(_Doc)
 {
 	//eye[0] = 0; eye[1] = 0; eye[2] = 2;
@@ -462,9 +463,13 @@ void GLWidget::processHits(unsigned int uHits, unsigned int *pBuffer)
 	unsigned int i, j;
 	unsigned int uiName, *ptr;
 	ptr = pBuffer;
-	selectedObject = NULL;
-	foreach(vobject* vobj, selectedObjects)
-		vobj->setSelected(false);
+	if (!isPressRightMouseButton)
+	{
+		selectedObject = NULL;
+		foreach(vobject* vobj, selectedObjects)
+			vobj->setSelected(false);
+	}
+		
 // 	foreach(int v, selectedIndice)
 // 		static_cast<vobject*>(v_wobjs[v])->setSelected(false);
 	if (selectedObjects.size())
@@ -651,11 +656,13 @@ void GLWidget::mousePressEvent(QMouseEvent *event)
 	lastPos = event->pos();
 	if (event->button() == Qt::RightButton){
 		picking(lastPos.x(), lastPos.y());
+		isPressRightMouseButton = true;
 	}
 	if (event->button() == Qt::MiddleButton){
 		onZoom = true;
 	}
 	if (event->button() == Qt::LeftButton){
+		isPressRightMouseButton = false;
 		if (keyID[82])
 			onRotation = true;
 		else if (!keyID[84])
@@ -707,6 +714,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent *event)
 
 void GLWidget::picking(int x, int y)
 {
+	
 	unsigned int aSelectBuffer[SELECT_BUF_SIZE];
 	unsigned int uiHits;
 	int aViewport[4];

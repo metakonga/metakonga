@@ -426,8 +426,8 @@ void contact_particles_polygonObjects::cuda_collision(
 		po.next();
 		unsigned int id = po.key();
 		polygonObject* p = po.value();
-		if (hpmi[id].force.z > 0.0)
-			bool gg = true;
+// 		if (hpmi[id].force.z > 0.0)
+// 			bool gg = true;
 		p->setCollisionForce(VEC3D(hpmi[id].force.x, hpmi[id].force.y, hpmi[id].force.z));
 		//p->setCollisionMoment(VEC3D(hpmi[id].moment.x, hpmi[id].moment.y, hpmi[id].moment.z));
 	}

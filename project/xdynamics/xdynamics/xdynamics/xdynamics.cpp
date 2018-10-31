@@ -838,6 +838,7 @@ void xdynamics::makeMass()
 				mg->CreateModel(model::name, modelManager::OBJECTS, true);
 			pointMass* pm = NULL;
 			vpolygon* vp = NULL;
+			//vplane* vpl = NULL;
 			switch (vobj->ViewObjectType())
 			{
 			case vobject::V_POLYGON:
@@ -847,6 +848,18 @@ void xdynamics::makeMass()
 					vp->InitialPosition(), vp->NumTriangles(), vp->VertexList(), vp->IndexList()
 					, (material_type)bid.mt, bid.youngs, bid.poisson, bid.density, bid.shear);
 				break;
+			case vobject::V_PLANE:
+				pm = dynamic_cast<pointMass*>(mg->GeometryObject()->Object(vobj->name()));
+// 				pm->setMass(bid.mass);
+// 				pm->setViewObject(vobj);
+// 				pm->setPosition(VEC3D(bid.x, bid.y, bid.z));
+// 				pm->setDiagonalInertia(bid.ixx, bid.iyy, bid.izz);
+// 				pm->setSymetryInertia(bid.ixy, bid.iyz, bid.izx);
+// 				cmaterialType cmt = getMaterialConstant(bid.mt);
+// 				pm->setMaterial((material_type)bid.mt, cmt.youngs, cmt.density, cmt.poisson);
+// 				mg->MBDModel()->insertPointMass(pm);
+// 				pm->updateView(pm->Position(), ep2e(pm->getEP()));
+ 				break;
 			}
 			if (pm)
 			{

@@ -129,6 +129,7 @@ private:
 	
 	//GLuint makePolygonObject(float* points, float* normals, int* indice, int size);
 	void normalizeAngle(int *angle);
+	bool isPressRightMouseButton;
 	int viewOption;
 	bool isRtOpenFile;
 	bool isSetParticle;
