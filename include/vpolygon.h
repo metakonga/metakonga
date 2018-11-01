@@ -20,7 +20,7 @@ public:
 
 	virtual void draw(GLenum eMode);
 	
-	bool define(import_shape_type t, QString file);
+	bool define(import_shape_type t, QString file, double x, double y, double z);
 	bool makePolygonGeometry(VEC3F& P, VEC3F& Q, VEC3F& R);
 	void setResultData(unsigned int nout);
 	void insertResultData(unsigned int i, VEC3D& p, EPD& r);
@@ -38,7 +38,7 @@ public:
 private:
 	void _drawPolygons();
 	void _loadMS3DASCII(QString f);
-	void _loadSTLASCII(QString f);
+	void _loadSTLASCII(QString f, double x, double y, double z);
 	
 	//unsigned int glHList;
 

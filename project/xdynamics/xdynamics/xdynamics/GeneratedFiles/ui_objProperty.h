@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'objProperty.ui'
 **
-** Created by: Qt User Interface Compiler version 5.10.0
+** Created by: Qt User Interface Compiler version 5.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -68,7 +68,7 @@ public:
 
     void retranslateUi(QDialog *ObjProperty)
     {
-        ObjProperty->setWindowTitle(QApplication::translate("ObjProperty", "Properies", nullptr));
+        ObjProperty->setWindowTitle(QApplication::translate("ObjProperty", "Properies", Q_NULLPTR));
     } // retranslateUi
 
 };

@@ -13,6 +13,7 @@ public:
 
 	QString file_path;
 	int type;
+	double com[3];
 	double youngs;
 	double poisson;
 	double density;

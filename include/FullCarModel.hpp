@@ -20,7 +20,7 @@ public:
 	{
 		model::setGravity(9.80665, MINUS_Z);
 		//--------------------------------------------------------------------
-		VEC3D ppap(0, 0, -0.46953447);
+		VEC3D ppap(0, 0, 0);
 		//VEC3D ppap(0, 0, -0.5);
 		//VEC3D ppap(0, 0, 0);
 
@@ -589,36 +589,36 @@ public:
 			CarBody, RR_SUS_UPPER_location, 20000, 2000);
 
 		// set velocity
-		VEC3D InitVel;
-		InitVel = { 10, 0, 0 };
-		CarBody->setVelocity(InitVel);
-		LF_Steer_Bar->setVelocity(InitVel);
-		RF_Steer_Bar->setVelocity(InitVel);
-		LR_Steer_Bar->setVelocity(InitVel);
-		RR_Steer_Bar->setVelocity(InitVel);
-		LF_wheel->setVelocity(InitVel);
-		LF_SDW->setVelocity(InitVel);
-		LF_SUW->setVelocity(InitVel);
-		LF_SWN->setVelocity(InitVel);
-		RF_wheel->setVelocity(InitVel);
-		RF_SDW->setVelocity(InitVel);
-		RF_SUW->setVelocity(InitVel);
-		RF_SWN->setVelocity(InitVel);
-		LR_wheel->setVelocity(InitVel);
-		LR_SDW->setVelocity(InitVel);
-		LR_SUW->setVelocity(InitVel);
-		LR_SWN->setVelocity(InitVel);
-		RR_wheel->setVelocity(InitVel);
-		RR_SDW->setVelocity(InitVel);
-		RR_SUW->setVelocity(InitVel);
-		RR_SWN->setVelocity(InitVel);
+// 		VEC3D InitVel;
+// 		InitVel = { 10, 0, 0 };
+// 		CarBody->setVelocity(InitVel);
+// 		LF_Steer_Bar->setVelocity(InitVel);
+// 		RF_Steer_Bar->setVelocity(InitVel);
+// 		LR_Steer_Bar->setVelocity(InitVel);
+// 		RR_Steer_Bar->setVelocity(InitVel);
+// 		LF_wheel->setVelocity(InitVel);
+// 		LF_SDW->setVelocity(InitVel);
+// 		LF_SUW->setVelocity(InitVel);
+// 		LF_SWN->setVelocity(InitVel);
+// 		RF_wheel->setVelocity(InitVel);
+// 		RF_SDW->setVelocity(InitVel);
+// 		RF_SUW->setVelocity(InitVel);
+// 		RF_SWN->setVelocity(InitVel);
+// 		LR_wheel->setVelocity(InitVel);
+// 		LR_SDW->setVelocity(InitVel);
+// 		LR_SUW->setVelocity(InitVel);
+// 		LR_SWN->setVelocity(InitVel);
+// 		RR_wheel->setVelocity(InitVel);
+// 		RR_SDW->setVelocity(InitVel);
+// 		RR_SUW->setVelocity(InitVel);
+// 		RR_SWN->setVelocity(InitVel);
 		//spi = ground->toLocal(G_CarBody_Fix_location - ground->Position());
 		//spj = CarBody->toLocal(G_CarBody_Fix_location - CarBody_position);
 
-		//kinematicConstraint* G_Car_FIX = createKinematicConstraint(
-		//"Car_Ground_Fix", kinematicConstraint::FIXED,
-		//ground, spi, VEC3D(1, 0, 0), VEC3D(0, 1, 0),
-		//CarBody, spj, VEC3D(0, 1, 0), VEC3D(-1, 0, 0));
+		kinematicConstraint* G_Car_FIX = createKinematicConstraint(
+		"Car_Ground_Fix", kinematicConstraint::FIXED,
+		ground, spi, VEC3D(1, 0, 0), VEC3D(0, 1, 0),
+		CarBody, spj, VEC3D(0, 1, 0), VEC3D(-1, 0, 0));
 		//-----------------------------------------------------------------------------
 		/*spi = ground->toLocal(LF_N_W_REV_location - ground->Position());
 		spj = LF_wheel->toLocal(LF_N_W_REV_location - LF_wheel_position);

@@ -692,7 +692,7 @@ void xdynamics::SHAPE_Import()
 				ist = STL_ASCII;
 			else if (fmt == ".txt")
 				ist = MILKSHAPE_3D_ASCII;
-			vpolygon * vp = gl->makePolygonObject(_nm, ist, id.file_path);
+			vpolygon * vp = gl->makePolygonObject(_nm, ist, id.file_path, id.com[0], id.com[1], id.com[2]);
 			vp->setMaterialType((material_type)id.type);
 // 			if (!mg->GeometryObject(model::name))
 // 				mg->CreateModel(model::name, modelManager::OBJECTS, true);

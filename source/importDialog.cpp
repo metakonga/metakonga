@@ -20,6 +20,7 @@ importDialog::importDialog(QWidget* parent)
 	LE_PoissonRatio->setReadOnly(true);
 	LE_Density->setReadOnly(true);
 	LE_ShearModulus->setReadOnly(true);
+	LE_CenterOfMass->setText("0 0 0");
 	connect(PB_FileBrowser, SIGNAL(clicked()), this, SLOT(click_browser()));
 	connect(PB_Ok, SIGNAL(clicked()), this, SLOT(Click_ok()));
 	connect(PB_Cancle, SIGNAL(clicked()), this, SLOT(Click_cancel()));
@@ -71,6 +72,10 @@ void importDialog::Click_ok()
 	poisson = LE_PoissonRatio->text().toDouble();
 	density = LE_Density->text().toDouble();
 	shear = LE_ShearModulus->text().toDouble();
+	QStringList sl = LE_CenterOfMass->text().split(" ");
+	com[0] = sl.at(0).toDouble();
+	com[1] = sl.at(1).toDouble();
+	com[2] = sl.at(2).toDouble();
 
 	this->close();
 	this->setResult(QDialog::Accepted);

@@ -56,7 +56,7 @@ public:
 	void makeParticle(double* pos, unsigned int n);
 	void makeParticle_f(float* pos, unsigned int n);
 	vmarker* makeMarker(QString n, VEC3D p, bool mcf = true);
-	vpolygon* makePolygonObject(QString _nm, import_shape_type t, QString file);
+	vpolygon* makePolygonObject(QString _nm, import_shape_type t, QString file, double x, double y, double z);
 //	bool change(QString& fp, tChangeType ct, tFileType ft);
 	void makeMassCoordinate(QString& _name);
 	void drawReferenceCoordinate();

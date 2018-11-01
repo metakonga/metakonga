@@ -473,6 +473,9 @@
     <ClCompile Include="GeneratedFiles\Release\moc_controlBodyDialog.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\source\utility\parabola_predictor.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="xdynamics.h">
@@ -863,6 +866,9 @@
     </ClInclude>
     <ClInclude Include="GeneratedFiles\ui_controlBody.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\utility\parabola_predictor.h">
+      <Filter>Header Files\mbd</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

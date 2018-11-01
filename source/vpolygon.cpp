@@ -187,7 +187,7 @@ void vpolygon::_loadMS3DASCII(QString f)
 	qf.close();
 }
 
-void vpolygon::_loadSTLASCII(QString f)
+void vpolygon::_loadSTLASCII(QString f, double lx, double ly, double lz)
 {
 	file_path = f;
 	QFile qf(f);
@@ -209,7 +209,7 @@ void vpolygon::_loadSTLASCII(QString f)
 // 	normalList = new double[ntri * 3];
 	vertice = new float[ntri * 9];
 	normals = new float[ntri * 9];
-	
+	pos0 = VEC3D(lx, ly, lz);
 	double x, y, z;
 	float nx, ny, nz;
 	qf.reset();
@@ -222,6 +222,7 @@ void vpolygon::_loadSTLASCII(QString f)
 	max_point = FLT_MIN;
 	VEC3D *spos = new VEC3D[ntri];
 	ixx = iyy = izz = ixy = ixz = iyz = 0.0;
+	//unsigned int nc = 0;
 	for (unsigned int i = 0; i < ntri; i++)
 	{
 		qts >> ch >> ch >> nx >> ny >> nz;
@@ -261,7 +262,8 @@ void vpolygon::_loadSTLASCII(QString f)
 		qts >> ch >> ch;
 		_vol += numeric::utility::signed_volume_of_triangle(p, q, r);
 		spos[i] = numeric::utility::calculate_center_of_triangle(p, q, r);
-		c += spos[i];
+		//c += p + q + r;// spos[i];
+		//nc += 3;
 		double _r = (spos[i] - p).length();
 		if (max_radius < _r)
 			max_radius = _r;
@@ -279,7 +281,7 @@ void vpolygon::_loadSTLASCII(QString f)
 	qDebug() << "Maximum radius of " << name() << " is " << max_radius;
 	qDebug() << "Minimum radius of " << name() << " is " << min_radius;
 #endif
-	pos0 = c / ntri;
+	//pos0 = c / nc;
 	ntriangle = ntri;
 	for (unsigned int i = 0; i < ntri; i++)
 	{
@@ -493,13 +495,13 @@ void vpolygon::splitTriangle(double to)
 	}
 }
 
-bool vpolygon::define(import_shape_type t, QString file)
+bool vpolygon::define(import_shape_type t, QString file, double x, double y, double z)
 {
 	ist = t;
 	switch (t)
 	{
 	case MILKSHAPE_3D_ASCII: _loadMS3DASCII(file); break;
-	case STL_ASCII: _loadSTLASCII(file); break;
+	case STL_ASCII: _loadSTLASCII(file, x, y, z); break;
 	}
 	//GLenum check = glewInit();
 	origin[0] = 0;// org.x;

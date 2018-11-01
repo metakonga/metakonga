@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'solve.ui'
 **
-** Created by: Qt User Interface Compiler version 5.10.0
+** Created by: Qt User Interface Compiler version 5.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -126,14 +126,14 @@ public:
 
     void retranslateUi(QDialog *DLG_SOLVE)
     {
-        DLG_SOLVE->setWindowTitle(QApplication::translate("DLG_SOLVE", "Simulation", nullptr));
-        L_TimeStep->setText(QApplication::translate("DLG_SOLVE", "Time step", nullptr));
-        L_SaveStep->setText(QApplication::translate("DLG_SOLVE", "Save step", nullptr));
-        L_SimulationTime->setText(QApplication::translate("DLG_SOLVE", "Simulation time", nullptr));
-        PB_Ok->setText(QApplication::translate("DLG_SOLVE", "Ok", nullptr));
-        PB_Cancle->setText(QApplication::translate("DLG_SOLVE", "Cancle", nullptr));
-        RB_CPU->setText(QApplication::translate("DLG_SOLVE", "CPU Process", nullptr));
-        RB_GPU->setText(QApplication::translate("DLG_SOLVE", "GPU Process", nullptr));
+        DLG_SOLVE->setWindowTitle(QApplication::translate("DLG_SOLVE", "Simulation", Q_NULLPTR));
+        L_TimeStep->setText(QApplication::translate("DLG_SOLVE", "Time step", Q_NULLPTR));
+        L_SaveStep->setText(QApplication::translate("DLG_SOLVE", "Save step", Q_NULLPTR));
+        L_SimulationTime->setText(QApplication::translate("DLG_SOLVE", "Simulation time", Q_NULLPTR));
+        PB_Ok->setText(QApplication::translate("DLG_SOLVE", "Ok", Q_NULLPTR));
+        PB_Cancle->setText(QApplication::translate("DLG_SOLVE", "Cancle", Q_NULLPTR));
+        RB_CPU->setText(QApplication::translate("DLG_SOLVE", "CPU Process", Q_NULLPTR));
+        RB_GPU->setText(QApplication::translate("DLG_SOLVE", "GPU Process", Q_NULLPTR));
     } // retranslateUi
 
 };

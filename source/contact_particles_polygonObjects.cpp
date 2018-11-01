@@ -82,6 +82,7 @@ unsigned int contact_particles_polygonObjects::define(
 		mpp[idx] = mp;
 		pair_ip[idx] = pobj;
 		ePolySphere += pobj->NumTriangle();
+		unsigned int vi = 0;
 		for (unsigned int i = bPolySphere; i < ePolySphere; i++)
 		{
 			host_polygon_info po;
@@ -97,9 +98,9 @@ unsigned int contact_particles_polygonObjects::define(
 			}
 			else
 			{
-				po.P = pobj->Position() + pobj->toGlobal(VEC3D(vList[i * 9 + 0], vList[i * 9 + 1], vList[i * 9 + 2]));
-				po.Q = pobj->Position() + pobj->toGlobal(VEC3D(vList[i * 9 + 3], vList[i * 9 + 4], vList[i * 9 + 5]));
-				po.R = pobj->Position() + pobj->toGlobal(VEC3D(vList[i * 9 + 6], vList[i * 9 + 7], vList[i * 9 + 8]));
+				po.P = pobj->Position() + pobj->toGlobal(VEC3D(vList[vi * 9 + 0], vList[vi * 9 + 1], vList[vi * 9 + 2]));
+				po.Q = pobj->Position() + pobj->toGlobal(VEC3D(vList[vi * 9 + 3], vList[vi * 9 + 4], vList[vi * 9 + 5]));
+				po.R = pobj->Position() + pobj->toGlobal(VEC3D(vList[vi * 9 + 6], vList[vi * 9 + 7], vList[vi * 9 + 8]));
 			}
 			VEC3D ctri = numeric::utility::calculate_center_of_triangle(po.P, po.Q, po.R);
 			double rad = (ctri - po.P).length();
@@ -107,6 +108,7 @@ unsigned int contact_particles_polygonObjects::define(
 				maxRadii = rad;
 			hsphere[i] = VEC4D(ctri.x, ctri.y, ctri.z, rad);
 			hpi[i] = po;
+			vi++;
 		}
 		bPolySphere += pobj->NumTriangle();
 		idx++;
@@ -257,6 +259,7 @@ void contact_particles_polygonObjects::updatePolygonObjectData()
 		double *vList = pobj->VertexList();
 		unsigned int *iList = pobj->IndexList();
 		ePolySphere += pobj->NumTriangle();
+		unsigned int vi = 0;
 		for (unsigned int i = bPolySphere; i < ePolySphere; i++)
 		{
 			host_polygon_info po;
@@ -273,7 +276,7 @@ void contact_particles_polygonObjects::updatePolygonObjectData()
 			}
 			else
 			{
-				int s = i * 9;
+				int s = vi * 9;
 				po.P = pobj->Position() + pobj->toGlobal(VEC3D(vList[s + 0], vList[s + 1], vList[s + 2]));
 				po.Q = pobj->Position() + pobj->toGlobal(VEC3D(vList[s + 3], vList[s + 4], vList[s + 5]));
 				po.R = pobj->Position() + pobj->toGlobal(VEC3D(vList[s + 6], vList[s + 7], vList[s + 8]));
@@ -283,6 +286,7 @@ void contact_particles_polygonObjects::updatePolygonObjectData()
 			hsphere[i].y = ctri.y;
 			hsphere[i].z = ctri.z;
 			hpi[i] = po;
+			vi++;
 		}
 		bPolySphere += pobj->NumTriangle();
 	}

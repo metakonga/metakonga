@@ -1,14 +1,14 @@
 #include "utility/parabola_predictor.h"
 
 utility::parabola_predictor::parabola_predictor()
-	: data3(0)
+	: data3(NULL)
 {
 
 }
 
 utility::parabola_predictor::~parabola_predictor()
 {
-	if(data3) delete data3; data3 = 0;
+	if(data3) delete data3; data3 = NULL;
 }
 
 void utility::parabola_predictor::init(double* _data, int _dataSize)
@@ -18,7 +18,7 @@ void utility::parabola_predictor::init(double* _data, int _dataSize)
 	data3 = new vector<double>(dataSize*3);
 }
 
-bool utility::parabola_predictor::apply(int it)
+bool utility::parabola_predictor::apply(unsigned int it)
 {
 	int insertID = (it - 1) % 3;
 	for(int i(0); i < dataSize; i++) (*data3)(insertID * dataSize + i) = *(data + i);
@@ -27,9 +27,9 @@ bool utility::parabola_predictor::apply(int it)
 	xp = vector3<double>((it - 3) * dt, (it - 2) * dt, (it - 1) * dt);
 	switch(insertID)
 	{
-	case 2: idx = vector3<int>(0, 1, 2); break;
-	case 0: idx = vector3<int>(1, 2, 0); break;
-	case 1: idx = vector3<int>(2, 0, 1); break;
+	case 2: idx = VEC3I(0, 1, 2); break;
+	case 0: idx = VEC3I(1, 2, 0); break;
+	case 1: idx = VEC3I(2, 0, 1); break;
 	}
 	A.set(xp.x * xp.x, xp.x, 1
 		, xp.y * xp.y, xp.y, 1

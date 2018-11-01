@@ -1,7 +1,7 @@
 #include "particleManager.h"
 #include "model.h"
 #include "glwidget.h"
-#include <QRandomGenerator>
+//#include <QRandomGenerator>
 #include <QList>
 
 unsigned int particleManager::count = 0;
@@ -464,18 +464,18 @@ VEC4D* particleManager::CreateCircleParticle(
 		}
 		i++;
 	}
-	QRandomGenerator qran;
-	QList<unsigned int>::iterator iend = iList.end();
-	for (unsigned int i = 0; i < pList.size(); i++)
-	{
-		unsigned int ni = qran.bounded(pList.size() - 1);
-		QList<unsigned int>::iterator endIter = iList.begin() + i;
-		QList<unsigned int>::iterator isExist = qFind(iList.begin(), endIter, ni);
-		if (isExist != endIter)
-			continue;
-		iList.replace(i, ni);
-		iList.replace(ni, i);
-	}
+// 	QRandomGenerator qran;
+// 	QList<unsigned int>::iterator iend = iList.end();
+// 	for (unsigned int i = 0; i < pList.size(); i++)
+// 	{
+// 		unsigned int ni = qran.bounded(pList.size() - 1);
+// 		QList<unsigned int>::iterator endIter = iList.begin() + i;
+// 		QList<unsigned int>::iterator isExist = qFind(iList.begin(), endIter, ni);
+// 		if (isExist != endIter)
+// 			continue;
+// 		iList.replace(i, ni);
+// 		iList.replace(ni, i);
+// 	}
 	if (!isr) np += pList.size();
 	else np = _np;
 	pinfo.np = np - pinfo.sid;

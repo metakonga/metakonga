@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'bodyinfo.ui'
 **
-** Created by: Qt User Interface Compiler version 5.10.0
+** Created by: Qt User Interface Compiler version 5.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -180,8 +180,6 @@ public:
         horizontalLayout_2->addLayout(verticalLayout_4);
 
         CB_Material_Input_Type = new QComboBox(DLG_BODYINFO);
-        CB_Material_Input_Type->addItem(QString());
-        CB_Material_Input_Type->addItem(QString());
         CB_Material_Input_Type->setObjectName(QStringLiteral("CB_Material_Input_Type"));
         CB_Material_Input_Type->setGeometry(QRect(170, 10, 171, 22));
         CB_Material_Type = new QComboBox(DLG_BODYINFO);
@@ -272,24 +270,26 @@ public:
 
     void retranslateUi(QDialog *DLG_BODYINFO)
     {
-        DLG_BODYINFO->setWindowTitle(QApplication::translate("DLG_BODYINFO", "Dialog", nullptr));
-        GB_Property->setTitle(QApplication::translate("DLG_BODYINFO", "Property", nullptr));
-        L_Mass->setText(QApplication::translate("DLG_BODYINFO", "Mass", nullptr));
-        L_Ixx->setText(QApplication::translate("DLG_BODYINFO", "Ixx", nullptr));
-        L_Iyy->setText(QApplication::translate("DLG_BODYINFO", "Iyy", nullptr));
-        L_Izz->setText(QApplication::translate("DLG_BODYINFO", "Izz", nullptr));
-        L_Ixy->setText(QApplication::translate("DLG_BODYINFO", "Ixy", nullptr));
-        L_Iyz->setText(QApplication::translate("DLG_BODYINFO", "Iyz", nullptr));
-        L_Izx->setText(QApplication::translate("DLG_BODYINFO", "Izx", nullptr));
-        CB_Material_Input_Type->setItemText(0, QApplication::translate("DLG_BODYINFO", "Library", nullptr));
-        CB_Material_Input_Type->setItemText(1, QApplication::translate("DLG_BODYINFO", "User input", nullptr));
-
-        PB_Ok->setText(QApplication::translate("DLG_BODYINFO", "Ok", nullptr));
-        PB_Cancle->setText(QApplication::translate("DLG_BODYINFO", "Cancle", nullptr));
-        L_Material_Input_Type->setText(QApplication::translate("DLG_BODYINFO", "Material Input Type", nullptr));
-        L_Material_Type->setText(QApplication::translate("DLG_BODYINFO", "Material Type", nullptr));
-        L_Position->setText(QApplication::translate("DLG_BODYINFO", "Position", nullptr));
-        L_Volume->setText(QApplication::translate("DLG_BODYINFO", "Volume", nullptr));
+        DLG_BODYINFO->setWindowTitle(QApplication::translate("DLG_BODYINFO", "Dialog", Q_NULLPTR));
+        GB_Property->setTitle(QApplication::translate("DLG_BODYINFO", "Property", Q_NULLPTR));
+        L_Mass->setText(QApplication::translate("DLG_BODYINFO", "Mass", Q_NULLPTR));
+        L_Ixx->setText(QApplication::translate("DLG_BODYINFO", "Ixx", Q_NULLPTR));
+        L_Iyy->setText(QApplication::translate("DLG_BODYINFO", "Iyy", Q_NULLPTR));
+        L_Izz->setText(QApplication::translate("DLG_BODYINFO", "Izz", Q_NULLPTR));
+        L_Ixy->setText(QApplication::translate("DLG_BODYINFO", "Ixy", Q_NULLPTR));
+        L_Iyz->setText(QApplication::translate("DLG_BODYINFO", "Iyz", Q_NULLPTR));
+        L_Izx->setText(QApplication::translate("DLG_BODYINFO", "Izx", Q_NULLPTR));
+        CB_Material_Input_Type->clear();
+        CB_Material_Input_Type->insertItems(0, QStringList()
+         << QApplication::translate("DLG_BODYINFO", "Library", Q_NULLPTR)
+         << QApplication::translate("DLG_BODYINFO", "User input", Q_NULLPTR)
+        );
+        PB_Ok->setText(QApplication::translate("DLG_BODYINFO", "Ok", Q_NULLPTR));
+        PB_Cancle->setText(QApplication::translate("DLG_BODYINFO", "Cancle", Q_NULLPTR));
+        L_Material_Input_Type->setText(QApplication::translate("DLG_BODYINFO", "Material Input Type", Q_NULLPTR));
+        L_Material_Type->setText(QApplication::translate("DLG_BODYINFO", "Material Type", Q_NULLPTR));
+        L_Position->setText(QApplication::translate("DLG_BODYINFO", "Position", Q_NULLPTR));
+        L_Volume->setText(QApplication::translate("DLG_BODYINFO", "Volume", Q_NULLPTR));
     } // retranslateUi
 
 };

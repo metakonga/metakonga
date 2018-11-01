@@ -86,9 +86,9 @@ void vobject::copyCoordinate(GLuint _coord)
 void vobject::updateView(VEC3D& _pos, VEC3D& _ang)
 {
 	pos0 = _pos;
-	ang0 = _ang;
+	//ang0 = _ang;
 	if (select_cube)
-		select_cube->updateView(_pos, _ang);
+		select_cube->updateView(_pos, ang0);
 }
 
 void vobject::animationFrame(VEC3D& p, EPD& ep)

@@ -1,7 +1,7 @@
 #ifndef PARABOLA_PREDICTOR_H
 #define PARABOLA_PREDICTOR_H
 
-#include "algebra.h"
+#include "algebraMath.h"
 //#include <fstream>
 
 namespace utility
@@ -13,20 +13,20 @@ namespace utility
 		~parabola_predictor();
 
 	public:
-		bool apply(int it);
+		bool apply(unsigned int it);
 
 		double& getTimeStep() { return dt; }
 
 		void init(double* _data, int _dataSize);
 
 	private:
-		vector3i idx;
-		vector3d xp;
-		vector3d yp;
-		vector3d coeff;
-		matrix3x3<double> A;
+		VEC3I idx;
+		VEC3D xp;
+		VEC3D yp;
+		VEC3D coeff;
+		MAT33D A;
 
-		algebra::vector<double>* data3;
+		VECD* data3;
 
 		int dataSize;
 
