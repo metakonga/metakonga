@@ -27,8 +27,8 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">UNICODE;_UNICODE;WIN32;WIN64;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ADD_;HAVE_LAPACK_CONFIG_H;LAPACK_COMPLEX_STRUCTURE;_USE_MATH_DEFINES;UNICODE;WIN32;WIN64;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(QTDIR510_64)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR510_64)\include\QtCore;$(QTDIR510_64)\include\QtGui;$(QTDIR510_64)\include\QtANGLE;$(QTDIR510_64)\include\QtOpenGL;$(QTDIR510_64)\include\QtWidgets;C:\metakonga\include\xcar;$(LAPACK_64)\inc;$(NVCUDASAMPLES7_5_ROOT)\common\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
       <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MultiThreadedDLL</RuntimeLibrary>
       <TreatWChar_tAsBuiltInType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</TreatWChar_tAsBuiltInType>
@@ -36,17 +36,17 @@
     <Link>
       <SubSystem Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Windows</SubSystem>
       <OutputFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR510_64)\lib;$(XDYNAMICS)\lib;$(LAPACK_64)\lib;$(CUDA_PATH_V7_5)\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</GenerateDebugInformation>
-      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5OpenGL.lib;opengl32.lib;glu32.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">liblapacke.lib;freeglut.lib;glew64.lib;cudart.lib;qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5OpenGL.lib;opengl32.lib;glu32.lib;Qt5Widgets.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <QtMoc>
       <InputFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(FullPath)</InputFile>
       <OutputFile Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</OutputFile>
       <DynamicSource Condition="'$(Configuration)|$(Platform)'=='Release|x64'">output</DynamicSource>
       <ExecutionDescription Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc'ing %(Identity)...</ExecutionDescription>
-      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName)\.;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets</IncludePath>
-      <Define Condition="'$(Configuration)|$(Platform)'=='Release|x64'">UNICODE;_UNICODE;WIN32;WIN64;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB</Define>
+      <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles;.;$(QTDIR510_64)\include;.\GeneratedFiles\$(ConfigurationName)\.;$(QTDIR510_64)\include\QtCore;$(QTDIR510_64)\include\QtGui;$(QTDIR510_64)\include\QtANGLE;$(QTDIR510_64)\include\QtOpenGL;$(QTDIR510_64)\include\QtWidgets;C:\metakonga\include\xcar;$(LAPACK_64)\inc;$(NVCUDASAMPLES7_5_ROOT)\common\inc</IncludePath>
+      <Define Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ADD_;HAVE_LAPACK_CONFIG_H;LAPACK_COMPLEX_STRUCTURE;_USE_MATH_DEFINES;UNICODE;WIN32;WIN64;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_DLL</Define>
       <QTDIR Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)</QTDIR>
     </QtMoc>
     <QtUic>
@@ -62,10 +62,10 @@
     <QtMsBuild>$(MSBuildProjectDirectory)\QtMsBuild</QtMsBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>..\..\..\bin\debug\x64\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>..\..\..\bin\release\x64\</OutDir>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
     <Message Importance="High" Text="QtMsBuild: could not locate qt.targets, qt.props; project may not build correctly." />
@@ -86,8 +86,8 @@
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PreprocessorDefinitions>UNICODE;_UNICODE;WIN32;WIN64;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;C:\metakonga\include\xcar;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>ADD_;HAVE_LAPACK_CONFIG_H;LAPACK_COMPLEX_STRUCTURE;_USE_MATH_DEFINES;UNICODE;WIN32;WIN64;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\GeneratedFiles;.;$(QTDIR510_64)\include;.\GeneratedFiles\$(ConfigurationName);$(QTDIR510_64)\include\QtCore;$(QTDIR510_64)\include\QtGui;$(QTDIR510_64)\include\QtANGLE;$(QTDIR510_64)\include\QtOpenGL;$(QTDIR510_64)\include\QtWidgets;C:\metakonga\include\xcar;$(LAPACK_64)\inc;$(NVCUDASAMPLES7_5_ROOT)\common\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -96,15 +96,15 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(QTDIR510_64)\lib;$(XDYNAMICS)\lib;$(LAPACK_64)\lib;$(CUDA_PATH_V7_5)\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5OpenGLd.lib;opengl32.lib;glu32.lib;Qt5Widgetsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>liblapacke.lib;cudart.lib;freeglut.lib;glew64.lib;qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5OpenGLd.lib;opengl32.lib;glu32.lib;Qt5Widgetsd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <QtMoc>
       <OutputFile>.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</OutputFile>
       <ExecutionDescription>Moc'ing %(Identity)...</ExecutionDescription>
-      <IncludePath>.\GeneratedFiles;.;$(QTDIR)\include;.\GeneratedFiles\$(ConfigurationName)\.;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtANGLE;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;C:\metakonga\include\xcar</IncludePath>
-      <Define>UNICODE;_UNICODE;WIN32;WIN64;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB</Define>
+      <IncludePath>.\GeneratedFiles;.;$(QTDIR510_64)\include;.\GeneratedFiles\$(ConfigurationName)\.;$(QTDIR510_64)\include\QtCore;$(QTDIR510_64)\include\QtGui;$(QTDIR510_64)\include\QtANGLE;$(QTDIR510_64)\include\QtOpenGL;$(QTDIR510_64)\include\QtWidgets;C:\metakonga\include\xcar;$(LAPACK_64)\inc;$(NVCUDASAMPLES7_5_ROOT)\common\inc</IncludePath>
+      <Define>ADD_;HAVE_LAPACK_CONFIG_H;LAPACK_COMPLEX_STRUCTURE;_USE_MATH_DEFINES;UNICODE;WIN32;WIN64;QT_CORE_LIB;QT_GUI_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_DLL</Define>
     </QtMoc>
     <QtUic>
       <ExecutionDescription>Uic'ing %(Identity)...</ExecutionDescription>
@@ -114,9 +114,63 @@
       <ExecutionDescription>Rcc'ing %(Identity)...</ExecutionDescription>
       <OutputFile>.\GeneratedFiles\qrc_%(Filename).cpp</OutputFile>
     </QtRcc>
+    <CudaCompile>
+      <CodeGeneration>compute_20,sm_20;compute_35,sm_35;compute_52,sm_52</CodeGeneration>
+    </CudaCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\share\src\errors.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\artificialCoordinate.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\axialRotationForce.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\colors.cpp" />
     <ClCompile Include="..\..\..\source\xcar\ComponentTree.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\contact.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\contactConstant.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\contactManager.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\contact_particles_cube.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\contact_particles_particles.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\contact_particles_plane.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\contact_particles_polygonObject.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\contact_particles_polygonObjects.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\cube.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\dem_integrator.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\dem_model.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\drivingConstraint.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\fixedConstraint.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\forceElement.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\geometryObjects.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\glwidget.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\grid_base.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\kinematicConstraint.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\mbd_model.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\messageBox.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\model.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\modelManager.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\multibodyDynamics.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\neighborhood_cell.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\numeric_utility.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\object.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\parabola_predictor.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\particleManager.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\plane.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\pointMass.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\polygonObject.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\resultStorage.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\revoluteConstratin.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\rigidBody.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\shader.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\simulation.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\sphericalConstraint.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\springDamperModel.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\translationalConstraint.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\universalConstraint.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\vcontroller.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\vcube.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\vmarker.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\vobject.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\vparticles.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\vplane.cpp" />
+    <ClCompile Include="..\..\..\source\xcar\vpolygon.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="xdynamics_car.cpp" />
   </ItemGroup>
@@ -131,7 +185,81 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="..\..\..\include\xcar\ComponentTree.h" />
+    <ClInclude Include="..\..\..\include\xcar\algebraMath.h" />
+    <ClInclude Include="..\..\..\include\xcar\artificialCoordinate.h" />
+    <ClInclude Include="..\..\..\include\xcar\axialRotationForce.h" />
+    <ClInclude Include="..\..\..\include\xcar\axialTranslationForce.h" />
+    <ClInclude Include="..\..\..\include\xcar\cableConstraint.h" />
+    <ClInclude Include="..\..\..\include\xcar\colors.h" />
+    <QtMoc Include="..\..\..\include\xcar\contactConstant.h" />
+    <ClInclude Include="..\..\..\include\xcar\contact.h" />
+    <ClInclude Include="..\..\..\include\xcar\contactManager.h" />
+    <ClInclude Include="..\..\..\include\xcar\contact_particles_cube.h" />
+    <ClInclude Include="..\..\..\include\xcar\contact_particles_particles.h" />
+    <ClInclude Include="..\..\..\include\xcar\contact_particles_plane.h" />
+    <ClInclude Include="..\..\..\include\xcar\contact_particles_polygonObject.h" />
+    <ClInclude Include="..\..\..\include\xcar\contact_particles_polygonObjects.h" />
+    <ClInclude Include="..\..\..\include\xcar\cube.h" />
+    <ClInclude Include="..\..\..\include\xcar\dem_integrator.h" />
+    <ClInclude Include="..\..\..\include\xcar\dem_model.h" />
+    <ClInclude Include="..\..\..\include\xcar\drivingConstraint.h" />
+    <ClInclude Include="..\..\..\include\xcar\errors.h" />
+    <ClInclude Include="..\..\..\include\xcar\fixedConstraint.h" />
+    <ClInclude Include="..\..\..\include\xcar\forceElement.h" />
+    <ClInclude Include="..\..\..\include\xcar\full_car_model.hpp" />
+    <ClInclude Include="..\..\..\include\xcar\gearConstraint.h" />
+    <QtMoc Include="..\..\..\include\xcar\glwidget.h" />
+    <ClInclude Include="..\..\..\include\xcar\geometryObjects.h" />
+    <ClInclude Include="..\..\..\include\xcar\grid_base.h" />
+    <ClInclude Include="..\..\..\include\xcar\kinematicConstraint.h" />
+    <ClInclude Include="..\..\..\include\xcar\matrix.hpp" />
+    <ClInclude Include="..\..\..\include\xcar\matrix3x3.hpp" />
+    <ClInclude Include="..\..\..\include\xcar\matrix3x4.hpp" />
+    <ClInclude Include="..\..\..\include\xcar\matrix4x3.hpp" />
+    <ClInclude Include="..\..\..\include\xcar\matrix4x4.hpp" />
+    <ClInclude Include="..\..\..\include\xcar\mbd_model.h" />
+    <ClInclude Include="..\..\..\include\xcar\messageBox.h" />
+    <ClInclude Include="..\..\..\include\xcar\model.h" />
+    <ClInclude Include="..\..\..\include\xcar\modelManager.h" />
+    <ClInclude Include="..\..\..\include\xcar\mphysics_cuda_dec.cuh" />
+    <ClInclude Include="..\..\..\include\xcar\mphysics_cuda_impl.cuh" />
+    <ClInclude Include="..\..\..\include\xcar\multibodyDynamics.h" />
+    <ClInclude Include="..\..\..\include\xcar\neighborhood_cell.h" />
+    <ClInclude Include="..\..\..\include\xcar\numeric_utility.h" />
+    <ClInclude Include="..\..\..\include\xcar\object.h" />
+    <ClInclude Include="..\..\..\include\xcar\Objects.h" />
+    <ClInclude Include="..\..\..\include\xcar\parabola_predictor.h" />
+    <ClInclude Include="..\..\..\include\xcar\particleManager.h" />
+    <ClInclude Include="..\..\..\include\xcar\plane.h" />
+    <ClInclude Include="..\..\..\include\xcar\pointMass.h" />
+    <ClInclude Include="..\..\..\include\xcar\polygonObject.h" />
+    <ClInclude Include="..\..\..\include\xcar\resultStorage.h" />
+    <ClInclude Include="..\..\..\include\xcar\revoluteConstraint.h" />
+    <ClInclude Include="..\..\..\include\xcar\rigidBody.h" />
+    <ClInclude Include="..\..\..\include\xcar\shader.h" />
+    <ClInclude Include="..\..\..\include\xcar\simulation.h" />
+    <ClInclude Include="..\..\..\include\xcar\sparse_matrix.hpp" />
+    <ClInclude Include="..\..\..\include\xcar\sphericalConstraint.h" />
+    <ClInclude Include="..\..\..\include\xcar\springDamperModel.h" />
+    <ClInclude Include="..\..\..\include\xcar\translationalConstraint.h" />
+    <ClInclude Include="..\..\..\include\xcar\universalConstraint.h" />
+    <ClInclude Include="..\..\..\include\xcar\vcontroller.h" />
+    <ClInclude Include="..\..\..\include\xcar\vcube.h" />
+    <ClInclude Include="..\..\..\include\xcar\vector.hpp" />
+    <ClInclude Include="..\..\..\include\xcar\vector2.hpp" />
+    <ClInclude Include="..\..\..\include\xcar\vector3.hpp" />
+    <ClInclude Include="..\..\..\include\xcar\vector4.hpp" />
+    <ClInclude Include="..\..\..\include\xcar\vectorTypes.h" />
+    <ClInclude Include="..\..\..\include\xcar\vglew.h" />
+    <ClInclude Include="..\..\..\include\xcar\vmarker.h" />
+    <ClInclude Include="..\..\..\include\xcar\vobject.h" />
+    <ClInclude Include="..\..\..\include\xcar\vparticles.h" />
+    <ClInclude Include="..\..\..\include\xcar\vplane.h" />
+    <ClInclude Include="..\..\..\include\xcar\vpolygon.h" />
     <ClInclude Include="GeneratedFiles\ui_xdynamics_car.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="..\..\..\source\xcar\mphysics_cuda_def.cu" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

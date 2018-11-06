@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'makeParticle.ui'
 **
-** Created by: Qt User Interface Compiler version 5.7.1
+** Created by: Qt User Interface Compiler version 5.10.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -492,41 +492,41 @@ public:
 
     void retranslateUi(QDialog *DLG_MakeParticle)
     {
-        DLG_MakeParticle->setWindowTitle(QApplication::translate("DLG_MakeParticle", "Make particles", Q_NULLPTR));
-        L_CUBE_NX->setText(QApplication::translate("DLG_MakeParticle", "Nx", Q_NULLPTR));
-        L_CUBE_NY->setText(QApplication::translate("DLG_MakeParticle", "Ny", Q_NULLPTR));
-        L_CUBE_NZ->setText(QApplication::translate("DLG_MakeParticle", "Nz", Q_NULLPTR));
-        L_CUBE_LOC->setText(QApplication::translate("DLG_MakeParticle", "Start loc.", Q_NULLPTR));
-        TB_Method->setTabText(TB_Method->indexOf(T_Cube), QApplication::translate("DLG_MakeParticle", "Cube", Q_NULLPTR));
-        L_PLANE_LOC->setText(QApplication::translate("DLG_MakeParticle", "Start loc.", Q_NULLPTR));
-        L_PLANE_NX->setText(QApplication::translate("DLG_MakeParticle", "Nx", Q_NULLPTR));
-        L_PLANE_NZ->setText(QApplication::translate("DLG_MakeParticle", "Nz", Q_NULLPTR));
-        L_PLANE_DIR->setText(QApplication::translate("DLG_MakeParticle", "Dir.", Q_NULLPTR));
-        TB_Method->setTabText(TB_Method->indexOf(T_Plane), QApplication::translate("DLG_MakeParticle", "Plane", Q_NULLPTR));
-        L_CircleLocation->setText(QApplication::translate("DLG_MakeParticle", "Location", Q_NULLPTR));
-        L_CircleDirection->setText(QApplication::translate("DLG_MakeParticle", "Direction", Q_NULLPTR));
-        L_CircleDiameter->setText(QApplication::translate("DLG_MakeParticle", "Diameter", Q_NULLPTR));
-        L_NumParticle->setText(QApplication::translate("DLG_MakeParticle", "Num. particles", Q_NULLPTR));
-        TB_Method->setTabText(TB_Method->indexOf(T_Circle), QApplication::translate("DLG_MakeParticle", "Circle", Q_NULLPTR));
-        groupBox->setTitle(QApplication::translate("DLG_MakeParticle", "Particle property", Q_NULLPTR));
-        L_MIN_RADIUS->setText(QApplication::translate("DLG_MakeParticle", "Min. radius", Q_NULLPTR));
-        L_MAX_RADIUS->setText(QApplication::translate("DLG_MakeParticle", "Max. radius", Q_NULLPTR));
-        L_P_SPACING->setText(QApplication::translate("DLG_MakeParticle", "Particle spacing", Q_NULLPTR));
-        L_NUM_PARTICLE->setText(QApplication::translate("DLG_MakeParticle", "Num. particle", Q_NULLPTR));
-        GB_MaterialProperty->setTitle(QApplication::translate("DLG_MakeParticle", "Material property", Q_NULLPTR));
-        L_Type->setText(QApplication::translate("DLG_MakeParticle", "Type", Q_NULLPTR));
-        L_YoungsModulus->setText(QApplication::translate("DLG_MakeParticle", "Youngs modulus", Q_NULLPTR));
-        L_Density->setText(QApplication::translate("DLG_MakeParticle", "Density", Q_NULLPTR));
-        L_PoissonRatio->setText(QApplication::translate("DLG_MakeParticle", "Poisson ratio", Q_NULLPTR));
-        L_ShearModulus->setText(QApplication::translate("DLG_MakeParticle", "Shear modulus", Q_NULLPTR));
-        PB_Ok->setText(QApplication::translate("DLG_MakeParticle", "Ok", Q_NULLPTR));
-        PB_Cancle->setText(QApplication::translate("DLG_MakeParticle", "Cancle", Q_NULLPTR));
-        GB_BASIC->setTitle(QApplication::translate("DLG_MakeParticle", "GroupBox", Q_NULLPTR));
-        L_Name->setText(QApplication::translate("DLG_MakeParticle", "Name", Q_NULLPTR));
-        GB_RealTime->setTitle(QApplication::translate("DLG_MakeParticle", "Real time creating", Q_NULLPTR));
-        L_NumParticlesPer->setText(QApplication::translate("DLG_MakeParticle", "The number of particles(per second)", Q_NULLPTR));
-        RB_OneByOne->setText(QApplication::translate("DLG_MakeParticle", "One by one drop", Q_NULLPTR));
-        RB_OneByGroup->setText(QApplication::translate("DLG_MakeParticle", "One by group drop", Q_NULLPTR));
+        DLG_MakeParticle->setWindowTitle(QApplication::translate("DLG_MakeParticle", "Make particles", nullptr));
+        L_CUBE_NX->setText(QApplication::translate("DLG_MakeParticle", "Nx", nullptr));
+        L_CUBE_NY->setText(QApplication::translate("DLG_MakeParticle", "Ny", nullptr));
+        L_CUBE_NZ->setText(QApplication::translate("DLG_MakeParticle", "Nz", nullptr));
+        L_CUBE_LOC->setText(QApplication::translate("DLG_MakeParticle", "Start loc.", nullptr));
+        TB_Method->setTabText(TB_Method->indexOf(T_Cube), QApplication::translate("DLG_MakeParticle", "Cube", nullptr));
+        L_PLANE_LOC->setText(QApplication::translate("DLG_MakeParticle", "Start loc.", nullptr));
+        L_PLANE_NX->setText(QApplication::translate("DLG_MakeParticle", "Nx", nullptr));
+        L_PLANE_NZ->setText(QApplication::translate("DLG_MakeParticle", "Nz", nullptr));
+        L_PLANE_DIR->setText(QApplication::translate("DLG_MakeParticle", "Dir.", nullptr));
+        TB_Method->setTabText(TB_Method->indexOf(T_Plane), QApplication::translate("DLG_MakeParticle", "Plane", nullptr));
+        L_CircleLocation->setText(QApplication::translate("DLG_MakeParticle", "Location", nullptr));
+        L_CircleDirection->setText(QApplication::translate("DLG_MakeParticle", "Direction", nullptr));
+        L_CircleDiameter->setText(QApplication::translate("DLG_MakeParticle", "Diameter", nullptr));
+        L_NumParticle->setText(QApplication::translate("DLG_MakeParticle", "Num. particles", nullptr));
+        TB_Method->setTabText(TB_Method->indexOf(T_Circle), QApplication::translate("DLG_MakeParticle", "Circle", nullptr));
+        groupBox->setTitle(QApplication::translate("DLG_MakeParticle", "Particle property", nullptr));
+        L_MIN_RADIUS->setText(QApplication::translate("DLG_MakeParticle", "Min. radius", nullptr));
+        L_MAX_RADIUS->setText(QApplication::translate("DLG_MakeParticle", "Max. radius", nullptr));
+        L_P_SPACING->setText(QApplication::translate("DLG_MakeParticle", "Particle spacing", nullptr));
+        L_NUM_PARTICLE->setText(QApplication::translate("DLG_MakeParticle", "Num. particle", nullptr));
+        GB_MaterialProperty->setTitle(QApplication::translate("DLG_MakeParticle", "Material property", nullptr));
+        L_Type->setText(QApplication::translate("DLG_MakeParticle", "Type", nullptr));
+        L_YoungsModulus->setText(QApplication::translate("DLG_MakeParticle", "Youngs modulus", nullptr));
+        L_Density->setText(QApplication::translate("DLG_MakeParticle", "Density", nullptr));
+        L_PoissonRatio->setText(QApplication::translate("DLG_MakeParticle", "Poisson ratio", nullptr));
+        L_ShearModulus->setText(QApplication::translate("DLG_MakeParticle", "Shear modulus", nullptr));
+        PB_Ok->setText(QApplication::translate("DLG_MakeParticle", "Ok", nullptr));
+        PB_Cancle->setText(QApplication::translate("DLG_MakeParticle", "Cancle", nullptr));
+        GB_BASIC->setTitle(QApplication::translate("DLG_MakeParticle", "GroupBox", nullptr));
+        L_Name->setText(QApplication::translate("DLG_MakeParticle", "Name", nullptr));
+        GB_RealTime->setTitle(QApplication::translate("DLG_MakeParticle", "Real time creating", nullptr));
+        L_NumParticlesPer->setText(QApplication::translate("DLG_MakeParticle", "The number of particles(per second)", nullptr));
+        RB_OneByOne->setText(QApplication::translate("DLG_MakeParticle", "One by one drop", nullptr));
+        RB_OneByGroup->setText(QApplication::translate("DLG_MakeParticle", "One by group drop", nullptr));
     } // retranslateUi
 
 };

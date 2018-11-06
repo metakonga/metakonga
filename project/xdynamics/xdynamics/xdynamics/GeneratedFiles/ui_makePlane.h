@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'makePlane.ui'
 **
-** Created by: Qt User Interface Compiler version 5.7.1
+** Created by: Qt User Interface Compiler version 5.10.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -218,21 +218,21 @@ public:
 
     void retranslateUi(QDialog *DLG_MAKEPLANE)
     {
-        DLG_MAKEPLANE->setWindowTitle(QApplication::translate("DLG_MAKEPLANE", "Make plane object", Q_NULLPTR));
-        PB_Ok->setText(QApplication::translate("DLG_MAKEPLANE", "Ok", Q_NULLPTR));
-        PB_Cancle->setText(QApplication::translate("DLG_MAKEPLANE", "Cancle", Q_NULLPTR));
-        GB_Information->setTitle(QApplication::translate("DLG_MAKEPLANE", "Information", Q_NULLPTR));
-        L_Name->setText(QApplication::translate("DLG_MAKEPLANE", "Name", Q_NULLPTR));
-        L_Point_a->setText(QApplication::translate("DLG_MAKEPLANE", "Point a", Q_NULLPTR));
-        L_Point_b->setText(QApplication::translate("DLG_MAKEPLANE", "Point b", Q_NULLPTR));
-        L_Point_c->setText(QApplication::translate("DLG_MAKEPLANE", "Point c", Q_NULLPTR));
-        L_Point_d->setText(QApplication::translate("DLG_MAKEPLANE", "Point d", Q_NULLPTR));
-        GB_MaterialProperty->setTitle(QApplication::translate("DLG_MAKEPLANE", "Material property", Q_NULLPTR));
-        L_Type->setText(QApplication::translate("DLG_MAKEPLANE", "Type", Q_NULLPTR));
-        L_YoungsModulus->setText(QApplication::translate("DLG_MAKEPLANE", "Youngs modulus", Q_NULLPTR));
-        L_Density->setText(QApplication::translate("DLG_MAKEPLANE", "Density", Q_NULLPTR));
-        L_PoissonRatio->setText(QApplication::translate("DLG_MAKEPLANE", "Poisson ratio", Q_NULLPTR));
-        L_ShearModulus->setText(QApplication::translate("DLG_MAKEPLANE", "Shear modulus", Q_NULLPTR));
+        DLG_MAKEPLANE->setWindowTitle(QApplication::translate("DLG_MAKEPLANE", "Make plane object", nullptr));
+        PB_Ok->setText(QApplication::translate("DLG_MAKEPLANE", "Ok", nullptr));
+        PB_Cancle->setText(QApplication::translate("DLG_MAKEPLANE", "Cancle", nullptr));
+        GB_Information->setTitle(QApplication::translate("DLG_MAKEPLANE", "Information", nullptr));
+        L_Name->setText(QApplication::translate("DLG_MAKEPLANE", "Name", nullptr));
+        L_Point_a->setText(QApplication::translate("DLG_MAKEPLANE", "Point a", nullptr));
+        L_Point_b->setText(QApplication::translate("DLG_MAKEPLANE", "Point b", nullptr));
+        L_Point_c->setText(QApplication::translate("DLG_MAKEPLANE", "Point c", nullptr));
+        L_Point_d->setText(QApplication::translate("DLG_MAKEPLANE", "Point d", nullptr));
+        GB_MaterialProperty->setTitle(QApplication::translate("DLG_MAKEPLANE", "Material property", nullptr));
+        L_Type->setText(QApplication::translate("DLG_MAKEPLANE", "Type", nullptr));
+        L_YoungsModulus->setText(QApplication::translate("DLG_MAKEPLANE", "Youngs modulus", nullptr));
+        L_Density->setText(QApplication::translate("DLG_MAKEPLANE", "Density", nullptr));
+        L_PoissonRatio->setText(QApplication::translate("DLG_MAKEPLANE", "Poisson ratio", nullptr));
+        L_ShearModulus->setText(QApplication::translate("DLG_MAKEPLANE", "Shear modulus", nullptr));
     } // retranslateUi
 
 };

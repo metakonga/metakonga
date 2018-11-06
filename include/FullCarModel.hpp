@@ -20,7 +20,7 @@ public:
 	{
 		model::setGravity(9.80665, MINUS_Z);
 		//--------------------------------------------------------------------
-		VEC3D ppap(0, 0, 0);
+		VEC3D ppap(0, 0, -0.46953447);
 		//VEC3D ppap(0, 0, -0.5);
 		//VEC3D ppap(0, 0, 0);
 
@@ -31,7 +31,7 @@ public:
 		CarBody_position = CarBody_position - ppap;
 
 		///// Left-front suspension data
-		////--------------------------------------------------------------------
+		////--------------------------------------------------------------------r
 		VEC3D LF_wheel_position(-0.98833311, -0.67800231, -0.16953447);//
 		//VEC3D LF_wheel_position(0.0,0.0, 0.30);
 		////-----------------------------------------------------------------
@@ -147,34 +147,34 @@ public:
 		VEC3D LR_Steer_Bar_position(0.588287987, -0.401067701, -0.147345361);//
 		VEC3D RR_Steer_Bar_position(0.588865418, 0.389442659, -0.148057525);//
 
-		VEC3D LF_Nuckle_Steer_Bar_SPH_location(-1.076679343, -0.566562414, -0.14704955);//
-		VEC3D LF_CarBody_Steer_Bar_SPH_location(-1.088333343, -0.224229414, -0.139534634);//
+		VEC3D LF_Nuckle_Steer_Bar_UNI_location(-1.076679343, -0.566562414, -0.14704955);//
+		VEC3D LF_Reckbar_SPH_location(-1.088333343, -0.224229414, -0.139534634);//
 
-		VEC3D RF_Nuckle_Steer_Bar_SPH_location(-1.076679343, 0.578103586, -0.147404955);//
-		VEC3D RF_CarBody_Steer_Bar_SPH_location(-1.088333343, 0.235770586, -0.139534634);//
+		VEC3D RF_Nuckle_Steer_Bar_UNI_location(-1.076679343, 0.578103586, -0.147404955);//
+		VEC3D RF_Reckbar_SPH_location(-1.088333343, 0.235770586, -0.139534634);//
 
-		VEC3D LR_Nuckle_Steer_Bar_SPH_location(0.593320657, -0.566562414, -0.147404955);//
-		VEC3D LR_CarBody_Steer_Bar_SPH_location(0.581666657, -0.224229414, -0.139534634);//
+		VEC3D LR_Nuckle_Steer_Bar_UNI_location(0.593320657, -0.566562414, -0.147404955);//
+		VEC3D LR_Reckbar_SPH_location(0.581666657, -0.224229414, -0.139534634);//
 
-		VEC3D RR_Nuckle_Steer_Bar_SPH_location(0.593320657, 0.578103586, -0.147404955);//
-		VEC3D RR_CarBody_Steer_Bar_SPH_location(0.581666657, 0.235770586, -0.139534634);//
+		VEC3D RR_Nuckle_Steer_Bar_UNI_location(0.593320657, 0.578103586, -0.147404955);//
+		VEC3D RR_Reckbar_SPH_location(0.581666657, 0.235770586, -0.139534634);//
 
 		LF_Steer_Bar_position = LF_Steer_Bar_position - ppap;
 		RF_Steer_Bar_position = RF_Steer_Bar_position - ppap;
 		LR_Steer_Bar_position = LR_Steer_Bar_position - ppap;
 		RR_Steer_Bar_position = RR_Steer_Bar_position - ppap;
 
-		LF_Nuckle_Steer_Bar_SPH_location = LF_Nuckle_Steer_Bar_SPH_location - ppap;
-		LF_CarBody_Steer_Bar_SPH_location = LF_CarBody_Steer_Bar_SPH_location - ppap;
+		LF_Nuckle_Steer_Bar_UNI_location = LF_Nuckle_Steer_Bar_UNI_location - ppap;
+		LF_Reckbar_SPH_location = LF_Reckbar_SPH_location - ppap;
 
-		RF_Nuckle_Steer_Bar_SPH_location = RF_Nuckle_Steer_Bar_SPH_location - ppap;
-		RF_CarBody_Steer_Bar_SPH_location = RF_CarBody_Steer_Bar_SPH_location - ppap;
+		RF_Nuckle_Steer_Bar_UNI_location = RF_Nuckle_Steer_Bar_UNI_location - ppap;
+		RF_Reckbar_SPH_location = LF_Reckbar_SPH_location - ppap;
 
-		LR_Nuckle_Steer_Bar_SPH_location = LR_Nuckle_Steer_Bar_SPH_location - ppap;
-		LR_CarBody_Steer_Bar_SPH_location = LR_CarBody_Steer_Bar_SPH_location - ppap;
+		LR_Nuckle_Steer_Bar_UNI_location = LR_Nuckle_Steer_Bar_UNI_location - ppap;
+		LR_Reckbar_SPH_location = LR_Reckbar_SPH_location - ppap;
 
-		RR_Nuckle_Steer_Bar_SPH_location = RR_Nuckle_Steer_Bar_SPH_location - ppap;
-		RR_CarBody_Steer_Bar_SPH_location = RR_CarBody_Steer_Bar_SPH_location - ppap;
+		RR_Nuckle_Steer_Bar_UNI_location = RR_Nuckle_Steer_Bar_UNI_location - ppap;
+		RR_Reckbar_SPH_location = RR_Reckbar_SPH_location - ppap;
 
 		//CarBody
 		pointMass* CarBody = createPointMass("CarBody", 500,
@@ -182,7 +182,27 @@ public:
 			VEC3D(0.0, 0.0, 0.0),
 			CarBody_position);//246326396293451,552,869,1141
 
-		//	//CarBody fixed Joint
+
+		//reck bar
+
+		VEC3D F_reckbar_position(-1.088333343, 0.00577058640000001, 0.3299998362);//
+		VEC3D R_reckbar_position(0.5816666565, 0.00577058640000001, 0.3299998362);//
+
+		VEC3D F_reckbar_Translate_location(-1.088333343, 0.00577058640000001, 0.3299998362);//
+		VEC3D R_reckbar_Translate_location(0.5816666565, 0.00577058640000001, 0.3299998362);//
+
+		pointMass* F_Reckbar = createPointMass(
+			"F_Reckbar", 0.00001,
+			VEC3D(0.00411025038844665, 0.00411025038844665, 0.00411025038844665),
+			VEC3D(0.0, 0.0, 0.0),
+			F_reckbar_position);//
+
+		pointMass* R_Reckbar = createPointMass(
+			"R_Reckbar", 0.00001,
+			VEC3D(0.00411025038844665, 0.00411025038844665, 0.00411025038844665),
+			VEC3D(0.0, 0.0, 0.0),
+			R_reckbar_position);//
+
 
 		//Steer Bar
 		pointMass* LF_Steer_Bar = createPointMass(
@@ -514,83 +534,99 @@ public:
 
 
 		//Steer Bar constraint
-		spi = CarBody->toLocal(LF_CarBody_Steer_Bar_SPH_location - CarBody_position);
-		spj = LF_Steer_Bar->toLocal(LF_CarBody_Steer_Bar_SPH_location - LF_Steer_Bar_position);
-		kinematicConstraint* LF_CarBody_Steer_Bar_SPH = createKinematicConstraint(
-			"LF_CarBody_Steer_Bar_SPH", kinematicConstraint::SPHERICAL,
-			CarBody, spi, VEC3D(1, 0, 0), VEC3D(0, 1, 0),
+		spi = F_Reckbar->toLocal(LF_Reckbar_SPH_location - F_reckbar_position);
+		spj = LF_Steer_Bar->toLocal(LF_Reckbar_SPH_location - LF_Steer_Bar_position);
+		kinematicConstraint* LF_Reckbar_SPH = createKinematicConstraint(
+			"LF_Reckbar_SPH", kinematicConstraint::SPHERICAL,
+			F_Reckbar, spi, VEC3D(1, 0, 0), VEC3D(0, 1, 0),
 			LF_Steer_Bar, spj, VEC3D(-1, 0, 0), VEC3D(0, 1, 0));
 
-		spi = LF_SWN->toLocal(LF_Nuckle_Steer_Bar_SPH_location - LF_SWN_position);
-		spj = LF_Steer_Bar->toLocal(LF_Nuckle_Steer_Bar_SPH_location - LF_Steer_Bar_position);
+		spi = LF_SWN->toLocal(LF_Nuckle_Steer_Bar_UNI_location - LF_SWN_position);
+		spj = LF_Steer_Bar->toLocal(LF_Nuckle_Steer_Bar_UNI_location - LF_Steer_Bar_position);
 		kinematicConstraint* LF_Nuckle_Steer_Bar_SPH = createKinematicConstraint(
-			"LF_Nuckle_Steer_Bar_SPH", kinematicConstraint::SPHERICAL,
-			LF_SWN, spi, VEC3D(1, 0, 0), VEC3D(0, 1, 0),
+			"LF_Nuckle_Steer_Bar_SPH", kinematicConstraint::UNIVERSAL,
+			LF_SWN, spi, VEC3D(0, 1, 0), VEC3D(0, 0, 1),
 			LF_Steer_Bar, spj, VEC3D(-1, 0, 0), VEC3D(0, 1, 0));
 
-		spi = CarBody->toLocal(RF_CarBody_Steer_Bar_SPH_location - CarBody_position);
-		spj = RF_Steer_Bar->toLocal(RF_CarBody_Steer_Bar_SPH_location - RF_Steer_Bar_position);
-		kinematicConstraint* RF_CarBody_Steer_Bar_SPH = createKinematicConstraint(
-			"RF_CarBody_Steer_Bar_SPH", kinematicConstraint::SPHERICAL,
-			CarBody, spi, VEC3D(1, 0, 0), VEC3D(0, 1, 0),
+		spi = F_Reckbar->toLocal(RF_Reckbar_SPH_location - F_reckbar_position);
+		spj = RF_Steer_Bar->toLocal(RF_Reckbar_SPH_location - RF_Steer_Bar_position);
+		kinematicConstraint* RF_Reckbar_SPH = createKinematicConstraint(
+			"RF_Reckbar_SPH", kinematicConstraint::SPHERICAL,
+			F_Reckbar, spi, VEC3D(1, 0, 0), VEC3D(0, 1, 0),
 			RF_Steer_Bar, spj, VEC3D(-1, 0, 0), VEC3D(0, 1, 0));
 
-		spi = RF_SWN->toLocal(RF_Nuckle_Steer_Bar_SPH_location - RF_SWN_position);
-		spj = RF_Steer_Bar->toLocal(RF_Nuckle_Steer_Bar_SPH_location - RF_Steer_Bar_position);
+		spi = RF_SWN->toLocal(RF_Nuckle_Steer_Bar_UNI_location - RF_SWN_position);
+		spj = RF_Steer_Bar->toLocal(RF_Nuckle_Steer_Bar_UNI_location - RF_Steer_Bar_position);
 		kinematicConstraint* RF_Nuckle_Steer_Bar_SPH = createKinematicConstraint(
-			"RF_Nuckle_Steer_Bar_SPH", kinematicConstraint::SPHERICAL,
-			RF_SWN, spi, VEC3D(1, 0, 0), VEC3D(0, 1, 0),
+			"RF_Nuckle_Steer_Bar_SPH", kinematicConstraint::UNIVERSAL,
+			RF_SWN, spi, VEC3D(0, 1, 0), VEC3D(0, 0, 1),
 			RF_Steer_Bar, spj, VEC3D(-1, 0, 0), VEC3D(0, 1, 0));
 
-		spi = CarBody->toLocal(LR_CarBody_Steer_Bar_SPH_location - CarBody_position);
-		spj = LR_Steer_Bar->toLocal(LR_CarBody_Steer_Bar_SPH_location - LR_Steer_Bar_position);
-		kinematicConstraint* LR_CarBody_Steer_Bar_SPH = createKinematicConstraint(
-			"LR_CarBody_Steer_Bar_SPH", kinematicConstraint::SPHERICAL,
-			CarBody, spi, VEC3D(1, 0, 0), VEC3D(0, 1, 0),
+		spi = R_Reckbar->toLocal(LR_Reckbar_SPH_location - R_reckbar_position);
+		spj = LR_Steer_Bar->toLocal(LR_Reckbar_SPH_location - LR_Steer_Bar_position);
+		kinematicConstraint* LR_Reckbar_SPH = createKinematicConstraint(
+			"LR_Reckbar_SPH", kinematicConstraint::SPHERICAL,
+			R_Reckbar, spi, VEC3D(1, 0, 0), VEC3D(0, 1, 0),
 			LR_Steer_Bar, spj, VEC3D(-1, 0, 0), VEC3D(0, 1, 0));
 
-		spi = LR_SWN->toLocal(LR_Nuckle_Steer_Bar_SPH_location - LR_SWN_position);
-		spj = LR_Steer_Bar->toLocal(LR_Nuckle_Steer_Bar_SPH_location - LR_Steer_Bar_position);
+		spi = LR_SWN->toLocal(LR_Nuckle_Steer_Bar_UNI_location - LR_SWN_position);
+		spj = LR_Steer_Bar->toLocal(LR_Nuckle_Steer_Bar_UNI_location - LR_Steer_Bar_position);
 		kinematicConstraint* LR_Nuckle_Steer_Bar_SPH = createKinematicConstraint(
-			"LR_Nuckle_Steer_Bar_SPH", kinematicConstraint::SPHERICAL,
-			LR_SWN, spi, VEC3D(1, 0, 0), VEC3D(0, 1, 0),
+			"LR_Nuckle_Steer_Bar_SPH", kinematicConstraint::UNIVERSAL,
+			LR_SWN, spi, VEC3D(0, 1, 0), VEC3D(0, 0, 1),
 			LR_Steer_Bar, spj, VEC3D(-1, 0, 0), VEC3D(0, 1, 0));
 
 
-		spi = CarBody->toLocal(RR_CarBody_Steer_Bar_SPH_location - CarBody_position);
-		spj = RR_Steer_Bar->toLocal(RR_CarBody_Steer_Bar_SPH_location - RR_Steer_Bar_position);
-		kinematicConstraint* RR_CarBody_Steer_Bar_SPH = createKinematicConstraint(
+		spi = R_Reckbar->toLocal(RR_Reckbar_SPH_location - R_reckbar_position);
+		spj = RR_Steer_Bar->toLocal(RR_Reckbar_SPH_location - RR_Steer_Bar_position);
+		kinematicConstraint* RR_reckbar_Steer_Bar_SPH = createKinematicConstraint(
 			"RR_CarBody_Steer_Bar_SPH", kinematicConstraint::SPHERICAL,
-			CarBody, spi, VEC3D(1, 0, 0), VEC3D(0, 1, 0),
+			R_Reckbar, spi, VEC3D(1, 0, 0), VEC3D(0, 1, 0),
 			RR_Steer_Bar, spj, VEC3D(-1, 0, 0), VEC3D(0, 1, 0));
 
-		spi = RR_SWN->toLocal(RR_Nuckle_Steer_Bar_SPH_location - RR_SWN_position);
-		spj = RR_Steer_Bar->toLocal(RR_Nuckle_Steer_Bar_SPH_location - RR_Steer_Bar_position);
+		spi = RR_SWN->toLocal(RR_Nuckle_Steer_Bar_UNI_location - RR_SWN_position);
+		spj = RR_Steer_Bar->toLocal(RR_Nuckle_Steer_Bar_UNI_location - RR_Steer_Bar_position);
 		kinematicConstraint* RR_Nuckle_Steer_Bar_SPH = createKinematicConstraint(
-			"RR_Nuckle_Steer_Bar_SPH", kinematicConstraint::SPHERICAL,
-			RR_SWN, spi, VEC3D(1, 0, 0), VEC3D(0, 1, 0),
+			"RR_Nuckle_Steer_Bar_SPH", kinematicConstraint::UNIVERSAL,
+			RR_SWN, spi, VEC3D(0, 1, 0), VEC3D(0, 0, 1),
 			RR_Steer_Bar, spj, VEC3D(-1, 0, 0), VEC3D(0, 1, 0));
 
-		//ground Carbody fix joint
+
 		springDamperModel* LF_SUS = createSpringDamperElement(
 			"LF_Suspension", LF_SWN, LF_SUS_LOWER_location,
-			CarBody, LF_SUS_UPPER_location, 20000, 2000);
+			CarBody, LF_SUS_UPPER_location, 120000, 12000);
 
 		springDamperModel* RF_SUS = createSpringDamperElement(
 			"RF_Suspension", RF_SWN, RF_SUS_LOWER_location,
-			CarBody, RF_SUS_UPPER_location, 20000, 2000);
+			CarBody, RF_SUS_UPPER_location, 120000, 12000);
 
 		springDamperModel* LR_SUS = createSpringDamperElement(
 			"LR_Suspension", LR_SWN, LR_SUS_LOWER_location,
-			CarBody, LR_SUS_UPPER_location, 20000, 2000);
+			CarBody, LR_SUS_UPPER_location, 120000, 12000);
 
 		springDamperModel* RR_SUS = createSpringDamperElement(
 			"RR_Suspension", RR_SWN, RR_SUS_LOWER_location,
-			CarBody, RR_SUS_UPPER_location, 20000, 2000);
+			CarBody, RR_SUS_UPPER_location, 120000, 12000);
+
+		// CarBody- reck bar trans
+		spi = CarBody->toLocal(F_reckbar_Translate_location - CarBody_position);
+		spj = F_Reckbar->toLocal(F_reckbar_Translate_location - F_reckbar_position);
+		kinematicConstraint*  F_reckbar_Translate = createKinematicConstraint(
+			"F_reckbar_Translate", kinematicConstraint::TRANSLATIONAL,
+			CarBody, spi, VEC3D(1, 0, 0), VEC3D(0, 0, 1),
+			F_Reckbar, spj, VEC3D(0, 0, 1), VEC3D(-1, 0, 0));
+
+		spi = CarBody->toLocal(R_reckbar_Translate_location - CarBody_position);
+		spj = R_Reckbar->toLocal(R_reckbar_Translate_location - R_reckbar_position);
+		kinematicConstraint*  R_reckbar_Translate = createKinematicConstraint(
+			"R_reckbar_Translate", kinematicConstraint::TRANSLATIONAL,
+			CarBody, spi, VEC3D(1, 0, 0), VEC3D(0, 0, 1),
+			R_Reckbar, spj, VEC3D(0, 0, 1), VEC3D(-1, 0, 0));
+
 
 		// set velocity
 // 		VEC3D InitVel;
-// 		InitVel = { 10, 0, 0 };
+// 		InitVel = { -10, 0, 0 };
 // 		CarBody->setVelocity(InitVel);
 // 		LF_Steer_Bar->setVelocity(InitVel);
 // 		RF_Steer_Bar->setVelocity(InitVel);
@@ -612,6 +648,8 @@ public:
 // 		RR_SDW->setVelocity(InitVel);
 // 		RR_SUW->setVelocity(InitVel);
 // 		RR_SWN->setVelocity(InitVel);
+// 		F_Reckbar->setVelocity(InitVel);
+// 		R_Reckbar->setVelocity(InitVel);
 		//spi = ground->toLocal(G_CarBody_Fix_location - ground->Position());
 		//spj = CarBody->toLocal(G_CarBody_Fix_location - CarBody_position);
 
@@ -654,13 +692,13 @@ public:
 
 		//-----------------------------------------------------------------------------
 // 		contactPair* LF_cp = createContactPair("LF_cp", LF_wheel, ground);
-// 		LF_cp->setContactParameters(176400, 30000, 73600, 8094, 1, 0.8);
+// 		LF_cp->setContactParameters(176400, 30000, 73600, 8094, 0.25, 0.2);
 // 		contactPair* RF_cp = createContactPair("RF_cp", RF_wheel, ground);
-// 		RF_cp->setContactParameters(176400, 30000, 73600, 8094, 1, 0.8);
+// 		RF_cp->setContactParameters(176400, 30000, 73600, 8094, 0.25, 0.2);
 // 		contactPair* LR_cp = createContactPair("LR_cp", LR_wheel, ground);
-// 		LR_cp->setContactParameters(176400, 30000, 73600, 8094, 1, 0.8);
+// 		LR_cp->setContactParameters(176400, 30000, 73600, 8094, 0.25, 0.2);
 // 		contactPair* RR_cp = createContactPair("RR_cp", RR_wheel, ground);
-// 		RR_cp->setContactParameters(176400, 30000, 73600, 8094, 1, 0.8);
+// 		RR_cp->setContactParameters(176400, 30000, 73600, 8094, 0.25, 0.2);
 		return true;
 
 	}

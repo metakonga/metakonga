@@ -30,6 +30,7 @@ public:
 // 		double rest, double ratio, double fric);
 	unsigned int setupParticlesPolygonObjectsContact();
 	double* SphereData();
+	double* HostSphereData();
 	float* SphereData_f();
 	void insertContact(contact* c);
 	contact* Contact(QString n);// { return cots[n]; }

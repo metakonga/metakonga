@@ -78,11 +78,11 @@ void grid_base::clear()
 
 void grid_base::initialize(unsigned int np)
 {
+	allocMemory(np);
 	if (simulation::isGpu())
 		cuAllocMemory(np);
 	else
 	{
-		allocMemory(np);
 		d_cell_id = cell_id;
 		d_body_id = body_id;
 		d_sorted_id = sorted_id;

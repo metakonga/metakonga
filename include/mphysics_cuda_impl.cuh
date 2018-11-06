@@ -132,18 +132,26 @@ __global__ void vv_update_velocity_kernel(
 }
 
 
-__global__ void calculateHashAndIndex_kernel(unsigned int* hash, unsigned int* index, double4* pos, unsigned int np)
+__global__ void calculateHashAndIndex_kernel(
+	unsigned int* hash, unsigned int* index, unsigned int* re, 
+	double4* pos, double4* spos, unsigned int np, unsigned int snp)
 {
 	unsigned id = __umul24(blockIdx.x, blockDim.x) + threadIdx.x;
-	if (id >= (np)) return;
-	volatile double4 p = pos[id];
+	if (id >= (np + snp)) return;
+	unsigned int rid = re[id];
+	double4 p;
+	if (rid > np)
+		p = spos[rid];
+	else
+		p = pos[rid];
+	//volatile double4 p = pos[id];
 
 	int3 gridPos = calcGridPos(make_double3(p.x, p.y, p.z));
 	unsigned _hash = calcGridHash(gridPos);
 	/*if(_hash >= cte.ncell)
 	printf("Over limit - hash number : %d", _hash);*/
 	hash[id] = _hash;
-	index[id] = id;
+	index[id] = rid;
 }
 
 __global__ void calculateHashAndIndexForPolygonSphere_kernel(

@@ -350,6 +350,13 @@ double* contactManager::SphereData()
 	return NULL;
 }
 
+double* contactManager::HostSphereData()
+{
+	if (cppoly)
+		return (double*)cppoly->HostSphereData();
+	return NULL;
+}
+
 float* contactManager::SphereData_f()
 {
 	if (cppoly)

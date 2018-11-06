@@ -28,6 +28,39 @@
       <Extensions>moc;h;cpp</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="Header Files\view">
+      <UniqueIdentifier>{2febc80f-e044-492d-a06f-61f5ad40a75d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\view">
+      <UniqueIdentifier>{3d5726f7-bd6c-4ec0-880d-be2edb3676c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\algebra">
+      <UniqueIdentifier>{0a2d276f-8fc5-4687-89b3-369389b23b3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\object">
+      <UniqueIdentifier>{11732057-ee4e-4a25-aead-9c5f8ef5d162}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\object">
+      <UniqueIdentifier>{fd7f3ad1-ba25-43f7-8970-27bc46d4555d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\mbd">
+      <UniqueIdentifier>{dde6f6c6-5ea8-4ee8-9b3e-95c0b23a2059}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\mbd">
+      <UniqueIdentifier>{cf383d38-6fd3-442e-a48a-2b0109737dc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\cuda">
+      <UniqueIdentifier>{f09a15a6-249f-4558-b0e1-31ccc5fbf727}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\cuda">
+      <UniqueIdentifier>{aef4689c-be16-4c83-b9e3-d1b287be245b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\contact">
+      <UniqueIdentifier>{0400bf5d-dd24-477c-8520-3a9a8ba2367b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\contact">
+      <UniqueIdentifier>{166bd8e8-b4ac-485f-8536-808ba3352684}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -39,6 +72,159 @@
     <ClCompile Include="..\..\..\source\xcar\ComponentTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\glwidget.cpp">
+      <Filter>Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\vcontroller.cpp">
+      <Filter>Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\vcube.cpp">
+      <Filter>Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\vmarker.cpp">
+      <Filter>Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\vobject.cpp">
+      <Filter>Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\vparticles.cpp">
+      <Filter>Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\vplane.cpp">
+      <Filter>Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\vpolygon.cpp">
+      <Filter>Source Files\view</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\cube.cpp">
+      <Filter>Source Files\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\object.cpp">
+      <Filter>Source Files\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\plane.cpp">
+      <Filter>Source Files\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\polygonObject.cpp">
+      <Filter>Source Files\object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\axialRotationForce.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\drivingConstraint.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\fixedConstraint.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\forceElement.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\kinematicConstraint.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\mbd_model.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\multibodyDynamics.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\pointMass.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\revoluteConstratin.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\rigidBody.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\sphericalConstraint.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\springDamperModel.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\translationalConstraint.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\universalConstraint.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\artificialCoordinate.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\..\share\src\errors.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\resultStorage.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\messageBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\colors.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\simulation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\numeric_utility.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\contact.cpp">
+      <Filter>Source Files\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\contact_particles_cube.cpp">
+      <Filter>Source Files\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\contact_particles_particles.cpp">
+      <Filter>Source Files\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\contact_particles_plane.cpp">
+      <Filter>Source Files\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\contact_particles_polygonObject.cpp">
+      <Filter>Source Files\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\contact_particles_polygonObjects.cpp">
+      <Filter>Source Files\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\contactConstant.cpp">
+      <Filter>Source Files\contact</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\grid_base.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\neighborhood_cell.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\parabola_predictor.cpp">
+      <Filter>Source Files\mbd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\modelManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\geometryObjects.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\particleManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\dem_model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\dem_integrator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\contactManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\xcar\shader.cpp">
+      <Filter>Source Files\view</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="xdynamics_car.h">
@@ -46,6 +232,12 @@
     </QtMoc>
     <QtMoc Include="..\..\..\include\xcar\ComponentTree.h">
       <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="..\..\..\include\xcar\glwidget.h">
+      <Filter>Header Files\view</Filter>
+    </QtMoc>
+    <QtMoc Include="..\..\..\include\xcar\contactConstant.h">
+      <Filter>Header Files\contact</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
@@ -62,5 +254,217 @@
     <ClInclude Include="GeneratedFiles\ui_xdynamics_car.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\shader.h">
+      <Filter>Header Files\view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\vcontroller.h">
+      <Filter>Header Files\view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\vcube.h">
+      <Filter>Header Files\view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\vglew.h">
+      <Filter>Header Files\view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\vmarker.h">
+      <Filter>Header Files\view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\vobject.h">
+      <Filter>Header Files\view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\vparticles.h">
+      <Filter>Header Files\view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\vplane.h">
+      <Filter>Header Files\view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\vpolygon.h">
+      <Filter>Header Files\view</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\algebraMath.h">
+      <Filter>Header Files\algebra</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\matrix.hpp">
+      <Filter>Header Files\algebra</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\matrix3x3.hpp">
+      <Filter>Header Files\algebra</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\matrix3x4.hpp">
+      <Filter>Header Files\algebra</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\matrix4x3.hpp">
+      <Filter>Header Files\algebra</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\matrix4x4.hpp">
+      <Filter>Header Files\algebra</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\sparse_matrix.hpp">
+      <Filter>Header Files\algebra</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\vector.hpp">
+      <Filter>Header Files\algebra</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\vector2.hpp">
+      <Filter>Header Files\algebra</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\vector3.hpp">
+      <Filter>Header Files\algebra</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\vector4.hpp">
+      <Filter>Header Files\algebra</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\vectorTypes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\cube.h">
+      <Filter>Header Files\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\object.h">
+      <Filter>Header Files\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\plane.h">
+      <Filter>Header Files\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\polygonObject.h">
+      <Filter>Header Files\object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\fixedConstraint.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\forceElement.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\gearConstraint.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\kinematicConstraint.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\mbd_model.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\multibodyDynamics.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\pointMass.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\revoluteConstraint.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\rigidBody.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\sphericalConstraint.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\springDamperModel.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\translationalConstraint.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\universalConstraint.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\artificialCoordinate.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\axialRotationForce.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\axialTranslationForce.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\cableConstraint.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\drivingConstraint.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\errors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\messageBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\resultStorage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\colors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\mphysics_cuda_dec.cuh">
+      <Filter>Header Files\cuda</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\mphysics_cuda_impl.cuh">
+      <Filter>Header Files\cuda</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\simulation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\numeric_utility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\contact_particles_cube.h">
+      <Filter>Header Files\contact</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\contact_particles_particles.h">
+      <Filter>Header Files\contact</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\contact_particles_plane.h">
+      <Filter>Header Files\contact</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\contact_particles_polygonObject.h">
+      <Filter>Header Files\contact</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\contact_particles_polygonObjects.h">
+      <Filter>Header Files\contact</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\contact.h">
+      <Filter>Header Files\contact</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\grid_base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\neighborhood_cell.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\parabola_predictor.h">
+      <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\modelManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\geometryObjects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\particleManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\dem_model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\Objects.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\dem_integrator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\contactManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\xcar\full_car_model.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="..\..\..\source\xcar\mphysics_cuda_def.cu">
+      <Filter>Source Files\cuda</Filter>
+    </CudaCompile>
   </ItemGroup>
 </Project>

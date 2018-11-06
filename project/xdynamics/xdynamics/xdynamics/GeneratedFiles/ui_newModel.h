@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'newModel.ui'
 **
-** Created by: Qt User Interface Compiler version 5.7.1
+** Created by: Qt User Interface Compiler version 5.10.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -108,11 +108,18 @@ public:
         Layout_2->addWidget(LE_Name);
 
         CB_Unit = new QComboBox(layoutWidget);
+        CB_Unit->addItem(QString());
         CB_Unit->setObjectName(QStringLiteral("CB_Unit"));
 
         Layout_2->addWidget(CB_Unit);
 
         CB_GravityDirection = new QComboBox(layoutWidget);
+        CB_GravityDirection->addItem(QString());
+        CB_GravityDirection->addItem(QString());
+        CB_GravityDirection->addItem(QString());
+        CB_GravityDirection->addItem(QString());
+        CB_GravityDirection->addItem(QString());
+        CB_GravityDirection->addItem(QString());
         CB_GravityDirection->setObjectName(QStringLiteral("CB_GravityDirection"));
 
         Layout_2->addWidget(CB_GravityDirection);
@@ -146,28 +153,24 @@ public:
 
     void retranslateUi(QDialog *DLG_NewModel)
     {
-        DLG_NewModel->setWindowTitle(QApplication::translate("DLG_NewModel", "New Model", Q_NULLPTR));
-        GBNewModel->setTitle(QApplication::translate("DLG_NewModel", "New Model", Q_NULLPTR));
-        PB_Ok->setText(QApplication::translate("DLG_NewModel", "OK", Q_NULLPTR));
-        L_Name->setText(QApplication::translate("DLG_NewModel", "Name", Q_NULLPTR));
-        L_Unit->setText(QApplication::translate("DLG_NewModel", "Unit", Q_NULLPTR));
-        L_Gravity->setText(QApplication::translate("DLG_NewModel", "Gravity", Q_NULLPTR));
-        CB_Unit->clear();
-        CB_Unit->insertItems(0, QStringList()
-         << QApplication::translate("DLG_NewModel", "MKS(Meter/Kilogram/Newton/Second)", Q_NULLPTR)
-        );
-        CB_GravityDirection->clear();
-        CB_GravityDirection->insertItems(0, QStringList()
-         << QApplication::translate("DLG_NewModel", "+X", Q_NULLPTR)
-         << QApplication::translate("DLG_NewModel", "+Y", Q_NULLPTR)
-         << QApplication::translate("DLG_NewModel", "+Z", Q_NULLPTR)
-         << QApplication::translate("DLG_NewModel", "-X", Q_NULLPTR)
-         << QApplication::translate("DLG_NewModel", "-Y", Q_NULLPTR)
-         << QApplication::translate("DLG_NewModel", "-Z", Q_NULLPTR)
-        );
-        CBH_SingleFloating->setText(QApplication::translate("DLG_NewModel", "Single floating point type for DEM", Q_NULLPTR));
-        LOpenModel->setText(QApplication::translate("DLG_NewModel", "Open Model", Q_NULLPTR));
-        PB_Browse->setText(QApplication::translate("DLG_NewModel", "Browse", Q_NULLPTR));
+        DLG_NewModel->setWindowTitle(QApplication::translate("DLG_NewModel", "New Model", nullptr));
+        GBNewModel->setTitle(QApplication::translate("DLG_NewModel", "New Model", nullptr));
+        PB_Ok->setText(QApplication::translate("DLG_NewModel", "OK", nullptr));
+        L_Name->setText(QApplication::translate("DLG_NewModel", "Name", nullptr));
+        L_Unit->setText(QApplication::translate("DLG_NewModel", "Unit", nullptr));
+        L_Gravity->setText(QApplication::translate("DLG_NewModel", "Gravity", nullptr));
+        CB_Unit->setItemText(0, QApplication::translate("DLG_NewModel", "MKS(Meter/Kilogram/Newton/Second)", nullptr));
+
+        CB_GravityDirection->setItemText(0, QApplication::translate("DLG_NewModel", "+X", nullptr));
+        CB_GravityDirection->setItemText(1, QApplication::translate("DLG_NewModel", "+Y", nullptr));
+        CB_GravityDirection->setItemText(2, QApplication::translate("DLG_NewModel", "+Z", nullptr));
+        CB_GravityDirection->setItemText(3, QApplication::translate("DLG_NewModel", "-X", nullptr));
+        CB_GravityDirection->setItemText(4, QApplication::translate("DLG_NewModel", "-Y", nullptr));
+        CB_GravityDirection->setItemText(5, QApplication::translate("DLG_NewModel", "-Z", nullptr));
+
+        CBH_SingleFloating->setText(QApplication::translate("DLG_NewModel", "Single floating point type for DEM", nullptr));
+        LOpenModel->setText(QApplication::translate("DLG_NewModel", "Open Model", nullptr));
+        PB_Browse->setText(QApplication::translate("DLG_NewModel", "Browse", nullptr));
     } // retranslateUi
 
 };

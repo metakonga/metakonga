@@ -17,6 +17,7 @@ public:
 	double MaxRadiusOfPolySphere() { return maxRadius; }
 	float MaxRadiusOfPolySphere_f() { return maxRadius_f; }
 	double* SphereData() { return dsphere; }
+	VEC4D* HostSphereData() { return hsphere; }
 	float* SphereData_f() { return dsphere_f; }
 	unsigned int define(QMap<QString, contact_particles_polygonObject*>& cppos);
 	unsigned int define_f(QMap<QString, contact_particles_polygonObject*>& cppos);

@@ -6,13 +6,16 @@
 
 neighborhood_cell::neighborhood_cell()
 	: grid_base(NEIGHBORHOOD)
+	, rearranged_id(NULL)
+	, d_rearranged_id(NULL)
 {
 
 }
 
 neighborhood_cell::~neighborhood_cell()
 {
-
+	if (rearranged_id) delete[] rearranged_id; rearranged_id = NULL;
+	if (d_rearranged_id) checkCudaErrors(cudaFree(d_rearranged_id)); d_rearranged_id = NULL;
 }
 
 void neighborhood_cell::reorderDataAndFindCellStart(unsigned int id, unsigned int begin, unsigned int end)
@@ -87,13 +90,13 @@ void neighborhood_cell::detection(double *pos, double* spos, unsigned int np, un
 {
 	if (simulation::isGpu())
 	{
-		cu_calculateHashAndIndex(d_cell_id, d_body_id, pos, np);
+		cu_calculateHashAndIndex(d_cell_id, d_body_id, d_rearranged_id, pos, spos, np, snp);
 	//	qDebug() << "detection0 done";
-		if (snp && spos)
-		{
-			cu_calculateHashAndIndexForPolygonSphere(d_cell_id, d_body_id, np, snp, spos);
-		//	qDebug() << "detection1 done";
-		}
+// 		if (snp && spos)
+// 		{
+// 			cu_calculateHashAndIndexForPolygonSphere(d_cell_id, d_body_id, np, snp, spos);
+// 		//	qDebug() << "detection1 done";
+// 		}
 		cu_reorderDataAndFindCellStart(d_cell_id, d_body_id, d_cell_start, d_cell_end, d_sorted_id, np + snp,/* md->numPolygonSphere(),*/ ng);
 		//qDebug() << "detection2 done";
 	}
@@ -114,44 +117,33 @@ void neighborhood_cell::detection_f(float *pos /*= NULL*/, float* spos /*= NULL*
 		_detection_f((VEC4F_PTR)pos, (VEC4F_PTR)spos, np, snp);
 }
 
-void neighborhood_cell::reorderElements(bool isCpu)
+void neighborhood_cell::reorderElements(double *p, double *sp, unsigned int np, unsigned int snp)
 {
+	if (!rearranged_id)
+		rearranged_id = new unsigned int[np + snp];
+	VEC4D_PTR pos = (VEC4D_PTR)p;
+	VEC4D_PTR psph = (VEC4D_PTR)sp;
+	VEC3I cell3d;
+	for (unsigned int i = 0; i < np; i++){
+		cell3d = getCellNumber(pos[i].x, pos[i].y, pos[i].z);
+		cell_id[i] = getHash(cell3d);
+		rearranged_id[i] = i;
+	}
+	if (sp)
+	{
+		for (unsigned int i = 0; i < snp; i++){
+			cell3d = getCellNumber(psph[i].x, psph[i].y, psph[i].z);
+			cell_id[np + i] = getHash(cell3d);
+			rearranged_id[np + i] = np + i;
+		}
+	}
 	
-// 	VEC4D_PTR pos = md->particleSystem()->position();
-// 	VEC4D *psph = NULL;
-// 	unsigned int np = md->numParticle();
-// 	allocMemory(np + md->numPolygonSphere());
-// 	VEC3I cell3d;
-// 	//bool isExistPolygonObject = false;
-// 	for (unsigned int i = 0; i < np; i++){
-// 		cell3d = getCellNumber(pos[i].x, pos[i].y, pos[i].z);
-// 		cell_id[i] = getHash(cell3d);
-// 		body_id[i] = i;
-// 	}
-// 	unsigned int sid = np;
-// 	VEC4D *sphPos = NULL;
-// 	host_polygon_info *hpi = NULL;
-// 	unsigned int nsph = md->numPolygonSphere();
-// 	if (nsph){
-// 		sphPos = new VEC4D[nsph];
-// 		hpi = new host_polygon_info[nsph];
-// 	}
-// 	QList<polygonObject*> polys = md->polyObjects();
-// 	for (unsigned int j = 0; j < polys.size(); j++){
-// 	//for (QMap<QString, polygonObject>::iterator po = md->objPolygon().begin(); po != md->objPolygon().end(); po++){
-// 		psph = polys.at(j)->hostSphereSet();
-// 		host_polygon_info* _hpi = polys.at(j)->hostPolygonInfo();
-// 		for (unsigned int i = 0; i < polys.at(j)->numIndex(); i++){
-// 			cell3d = getCellNumber(psph[i].x, psph[i].y, psph[i].z);
-// 			cell_id[sid + i] = getHash(cell3d);
-// 			body_id[sid + i] = sid + i;
-// 			sphPos[sid + i - np] = psph[i];
-// 			hpi[sid + i - np] = _hpi[i];
-// 		}
-// 		sid += polys.at(j)->numIndex();
-// 	}
-// 
-// 	thrust::sort_by_key(cell_id, cell_id + nse/*md->numParticle()*/, body_id);
+	thrust::sort_by_key(cell_id, cell_id + np + snp, rearranged_id);
+	if (simulation::isGpu())
+	{
+		checkCudaErrors(cudaMalloc((void**)&d_rearranged_id, sizeof(unsigned int) * (np + snp)));
+		checkCudaErrors(cudaMemcpy(d_rearranged_id, rearranged_id, sizeof(unsigned int) * (np + snp), cudaMemcpyHostToDevice));
+	}
 // 	VEC4D *pPos = new VEC4D[md->numParticle()];
 // 	memcpy(pPos, pos, sizeof(VEC4D) * md->numParticle());
 // // 	VEC4D *sphPos = NULL;
