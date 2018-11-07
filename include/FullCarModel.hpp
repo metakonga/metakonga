@@ -20,14 +20,14 @@ public:
 	{
 		model::setGravity(9.80665, MINUS_Z);
 		//--------------------------------------------------------------------
-		VEC3D ppap(0, 0, -0.46953447);
+		VEC3D ppap(0, 0, 0.06);
 		//VEC3D ppap(0, 0, -0.5);
 		//VEC3D ppap(0, 0, 0);
 
 		//--------------------------------------------------------------------
 		//Car Body data
 		VEC3D CarBody_position(0, 0, 0);//
-		//	VEC3D G_CarBody_Fix_location(0, 0, 3);
+		VEC3D G_CarBody_Fix_location = CarBody_position - ppap;
 		CarBody_position = CarBody_position - ppap;
 
 		///// Left-front suspension data
@@ -656,13 +656,13 @@ public:
 // 		RR_SWN->setVelocity(InitVel);
 // 		F_Reckbar->setVelocity(InitVel);
 // 		R_Reckbar->setVelocity(InitVel);
-		//spi = ground->toLocal(G_CarBody_Fix_location - ground->Position());
-		//spj = CarBody->toLocal(G_CarBody_Fix_location - CarBody_position);
-
-		//kinematicConstraint* G_Car_FIX = createKinematicConstraint(
-		//"Car_Ground_Fix", kinematicConstraint::FIXED,
-		//ground, spi, VEC3D(1, 0, 0), VEC3D(0, 1, 0),
-		//CarBody, spj, VEC3D(0, 1, 0), VEC3D(-1, 0, 0));
+// 		spi = ground->toLocal(G_CarBody_Fix_location - ground->Position());
+// 		spj = CarBody->toLocal(G_CarBody_Fix_location - CarBody_position);
+// 
+// 		kinematicConstraint* G_Car_FIX = createKinematicConstraint(
+// 		"Car_Ground_Fix", kinematicConstraint::FIXED,
+// 		ground, spi, VEC3D(1, 0, 0), VEC3D(0, 1, 0),
+// 		CarBody, spj, VEC3D(0, 1, 0), VEC3D(-1, 0, 0));
 		//-----------------------------------------------------------------------------
 		/*spi = ground->toLocal(LF_N_W_REV_location - ground->Position());
 		spj = LF_wheel->toLocal(LF_N_W_REV_location - LF_wheel_position);

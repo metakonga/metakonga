@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'preDefinedMBD.ui'
 **
-** Created by: Qt User Interface Compiler version 5.10.0
+** Created by: Qt User Interface Compiler version 5.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -66,9 +66,9 @@ public:
 
     void retranslateUi(QDialog *DLG_PREDEFINEDMBD)
     {
-        DLG_PREDEFINEDMBD->setWindowTitle(QApplication::translate("DLG_PREDEFINEDMBD", "Dialog", nullptr));
-        PB_Ok->setText(QApplication::translate("DLG_PREDEFINEDMBD", "Ok", nullptr));
-        PB_Cancle->setText(QApplication::translate("DLG_PREDEFINEDMBD", "Cancle", nullptr));
+        DLG_PREDEFINEDMBD->setWindowTitle(QApplication::translate("DLG_PREDEFINEDMBD", "Dialog", Q_NULLPTR));
+        PB_Ok->setText(QApplication::translate("DLG_PREDEFINEDMBD", "Ok", Q_NULLPTR));
+        PB_Cancle->setText(QApplication::translate("DLG_PREDEFINEDMBD", "Cancle", Q_NULLPTR));
     } // retranslateUi
 
 };

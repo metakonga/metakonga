@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'makeCube.ui'
 **
-** Created by: Qt User Interface Compiler version 5.10.0
+** Created by: Qt User Interface Compiler version 5.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -189,19 +189,19 @@ public:
 
     void retranslateUi(QDialog *DLG_MAKECUBE)
     {
-        DLG_MAKECUBE->setWindowTitle(QApplication::translate("DLG_MAKECUBE", "Make cube object", nullptr));
-        GB_MaterialProperty->setTitle(QApplication::translate("DLG_MAKECUBE", "Material property", nullptr));
-        L_Type->setText(QApplication::translate("DLG_MAKECUBE", "Type", nullptr));
-        L_YoungsModulus->setText(QApplication::translate("DLG_MAKECUBE", "Youngs modulus", nullptr));
-        L_Density->setText(QApplication::translate("DLG_MAKECUBE", "Density", nullptr));
-        L_PoissonRatio->setText(QApplication::translate("DLG_MAKECUBE", "Poisson ratio", nullptr));
-        L_ShearModulus->setText(QApplication::translate("DLG_MAKECUBE", "Shear modulus", nullptr));
-        GB_Information->setTitle(QApplication::translate("DLG_MAKECUBE", "Information", nullptr));
-        L_Name->setText(QApplication::translate("DLG_MAKECUBE", "Name", nullptr));
-        L_StartPoint->setText(QApplication::translate("DLG_MAKECUBE", "Start point", nullptr));
-        L_EndPoint->setText(QApplication::translate("DLG_MAKECUBE", "End point", nullptr));
-        PB_Ok->setText(QApplication::translate("DLG_MAKECUBE", "Ok", nullptr));
-        PB_Cancle->setText(QApplication::translate("DLG_MAKECUBE", "Cancle", nullptr));
+        DLG_MAKECUBE->setWindowTitle(QApplication::translate("DLG_MAKECUBE", "Make cube object", Q_NULLPTR));
+        GB_MaterialProperty->setTitle(QApplication::translate("DLG_MAKECUBE", "Material property", Q_NULLPTR));
+        L_Type->setText(QApplication::translate("DLG_MAKECUBE", "Type", Q_NULLPTR));
+        L_YoungsModulus->setText(QApplication::translate("DLG_MAKECUBE", "Youngs modulus", Q_NULLPTR));
+        L_Density->setText(QApplication::translate("DLG_MAKECUBE", "Density", Q_NULLPTR));
+        L_PoissonRatio->setText(QApplication::translate("DLG_MAKECUBE", "Poisson ratio", Q_NULLPTR));
+        L_ShearModulus->setText(QApplication::translate("DLG_MAKECUBE", "Shear modulus", Q_NULLPTR));
+        GB_Information->setTitle(QApplication::translate("DLG_MAKECUBE", "Information", Q_NULLPTR));
+        L_Name->setText(QApplication::translate("DLG_MAKECUBE", "Name", Q_NULLPTR));
+        L_StartPoint->setText(QApplication::translate("DLG_MAKECUBE", "Start point", Q_NULLPTR));
+        L_EndPoint->setText(QApplication::translate("DLG_MAKECUBE", "End point", Q_NULLPTR));
+        PB_Ok->setText(QApplication::translate("DLG_MAKECUBE", "Ok", Q_NULLPTR));
+        PB_Cancle->setText(QApplication::translate("DLG_MAKECUBE", "Cancle", Q_NULLPTR));
     } // retranslateUi
 
 };

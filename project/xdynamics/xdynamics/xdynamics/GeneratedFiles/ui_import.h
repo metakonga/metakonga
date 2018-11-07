@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'import.ui'
 **
-** Created by: Qt User Interface Compiler version 5.10.0
+** Created by: Qt User Interface Compiler version 5.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -176,17 +176,17 @@ public:
 
     void retranslateUi(QDialog *DLG_IMPORT_SHAPE)
     {
-        DLG_IMPORT_SHAPE->setWindowTitle(QApplication::translate("DLG_IMPORT_SHAPE", "Import", nullptr));
-        GB_MaterialProperty->setTitle(QApplication::translate("DLG_IMPORT_SHAPE", "Material property", nullptr));
-        L_Type->setText(QApplication::translate("DLG_IMPORT_SHAPE", "Type", nullptr));
-        L_YoungsModulus->setText(QApplication::translate("DLG_IMPORT_SHAPE", "Youngs modulus", nullptr));
-        L_Density->setText(QApplication::translate("DLG_IMPORT_SHAPE", "Density", nullptr));
-        L_PoissonRatio->setText(QApplication::translate("DLG_IMPORT_SHAPE", "Poisson ratio", nullptr));
-        L_ShearModulus->setText(QApplication::translate("DLG_IMPORT_SHAPE", "Shear modulus", nullptr));
-        PB_Ok->setText(QApplication::translate("DLG_IMPORT_SHAPE", "Ok", nullptr));
-        PB_Cancle->setText(QApplication::translate("DLG_IMPORT_SHAPE", "Cancle", nullptr));
-        PB_FileBrowser->setText(QApplication::translate("DLG_IMPORT_SHAPE", "<<", nullptr));
-        L_CenterOfMass->setText(QApplication::translate("DLG_IMPORT_SHAPE", "Center of mass", nullptr));
+        DLG_IMPORT_SHAPE->setWindowTitle(QApplication::translate("DLG_IMPORT_SHAPE", "Import", Q_NULLPTR));
+        GB_MaterialProperty->setTitle(QApplication::translate("DLG_IMPORT_SHAPE", "Material property", Q_NULLPTR));
+        L_Type->setText(QApplication::translate("DLG_IMPORT_SHAPE", "Type", Q_NULLPTR));
+        L_YoungsModulus->setText(QApplication::translate("DLG_IMPORT_SHAPE", "Youngs modulus", Q_NULLPTR));
+        L_Density->setText(QApplication::translate("DLG_IMPORT_SHAPE", "Density", Q_NULLPTR));
+        L_PoissonRatio->setText(QApplication::translate("DLG_IMPORT_SHAPE", "Poisson ratio", Q_NULLPTR));
+        L_ShearModulus->setText(QApplication::translate("DLG_IMPORT_SHAPE", "Shear modulus", Q_NULLPTR));
+        PB_Ok->setText(QApplication::translate("DLG_IMPORT_SHAPE", "Ok", Q_NULLPTR));
+        PB_Cancle->setText(QApplication::translate("DLG_IMPORT_SHAPE", "Cancle", Q_NULLPTR));
+        PB_FileBrowser->setText(QApplication::translate("DLG_IMPORT_SHAPE", "<<", Q_NULLPTR));
+        L_CenterOfMass->setText(QApplication::translate("DLG_IMPORT_SHAPE", "Center of mass", Q_NULLPTR));
     } // retranslateUi
 
 };

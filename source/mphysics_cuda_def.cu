@@ -58,14 +58,11 @@ void vv_update_velocity(double *vel, double *acc, double *omega, double *alpha, 
 void cu_calculateHashAndIndex(
 	unsigned int* hash,
 	unsigned int* index,
-	unsigned int* rearr,
 	double *pos,
-	double *spos,
-	unsigned int np,
-	unsigned int snp)
+	unsigned int np)
 {
-	computeGridSize(np + snp, 512, numBlocks, numThreads);
-	calculateHashAndIndex_kernel <<< numBlocks, numThreads >>>(hash, index, rearr, (double4 *)pos, (double4 *)spos, np, snp);
+	computeGridSize(np, 512, numBlocks, numThreads);
+	calculateHashAndIndex_kernel <<< numBlocks, numThreads >>>(hash, index, (double4 *)pos, np);
 }
 
 void cu_calculateHashAndIndexForPolygonSphere(

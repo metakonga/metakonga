@@ -109,7 +109,7 @@ void setSymbolicParameter(device_parameters *h_paras);
 void vv_update_position(double *pos, double *vel, double *acc, unsigned int np);
 void vv_update_velocity(double *vel, double *acc, double *omega, double *alpha, double *force, double *moment, double* mass, double* iner, unsigned int np);
 
-void cu_calculateHashAndIndex(unsigned int* hash, unsigned int* index, unsigned int* rearrang, double *pos, double *spos, unsigned int np, unsigned int snp);
+void cu_calculateHashAndIndex(unsigned int* hash, unsigned int* index, double *pos, unsigned int np);
 void cu_calculateHashAndIndexForPolygonSphere(
 	unsigned int* hash, unsigned int* index, 
 	unsigned int sid, unsigned int nsphere, double *sphere);

@@ -319,7 +319,7 @@ bool dem_simulation::initialize(contactManager* _cm)
 	}
 	if (per_np)
 		np = 0;
-	dynamic_cast<neighborhood_cell*>(dtor)->reorderElements(pos, (double*)cm->HostSphereData(), np, nPolySphere);
+	//dynamic_cast<neighborhood_cell*>(dtor)->reorderElements(pos, (double*)cm->HostSphereData(), np, nPolySphere);
 	return true;
 }
 

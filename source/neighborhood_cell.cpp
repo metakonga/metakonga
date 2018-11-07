@@ -92,13 +92,13 @@ void neighborhood_cell::detection(double *pos, double* spos, unsigned int np, un
 {
 	if (simulation::isGpu())
 	{
-		cu_calculateHashAndIndex(d_cell_id, d_body_id, d_rearranged_id, pos, spos, np, snp);
+		cu_calculateHashAndIndex(d_cell_id, d_body_id, pos, np);
 	//	qDebug() << "detection0 done";
-// 		if (snp && spos)
-// 		{
-// 			cu_calculateHashAndIndexForPolygonSphere(d_cell_id, d_body_id, np, snp, spos);
+ 		if (snp && spos)
+ 		{
+ 			cu_calculateHashAndIndexForPolygonSphere(d_cell_id, d_body_id, np, snp, spos);
 // 		//	qDebug() << "detection1 done";
-// 		}
+ 		}
 		cu_reorderDataAndFindCellStart(d_cell_id, d_body_id, d_cell_start, d_cell_end, d_sorted_id, np + snp,/* md->numPolygonSphere(),*/ ng);
 		//qDebug() << "detection2 done";
 	}
@@ -121,31 +121,31 @@ void neighborhood_cell::detection_f(float *pos /*= NULL*/, float* spos /*= NULL*
 
 void neighborhood_cell::reorderElements(double *p, double *sp, unsigned int np, unsigned int snp)
 {
-	if (!rearranged_id)
-		rearranged_id = new unsigned int[np + snp];
-	VEC4D_PTR pos = (VEC4D_PTR)p;
-	VEC4D_PTR psph = (VEC4D_PTR)sp;
-	VEC3I cell3d;
-	for (unsigned int i = 0; i < np; i++){
-		cell3d = getCellNumber(pos[i].x, pos[i].y, pos[i].z);
-		cell_id[i] = getHash(cell3d);
-		rearranged_id[i] = i;
-	}
-	if (sp)
-	{
-		for (unsigned int i = 0; i < snp; i++){
-			cell3d = getCellNumber(psph[i].x, psph[i].y, psph[i].z);
-			cell_id[np + i] = getHash(cell3d);
-			rearranged_id[np + i] = np + i;
-		}
-	}
-	
-	thrust::sort_by_key(cell_id, cell_id + np + snp, rearranged_id);
-	if (simulation::isGpu())
-	{
-		checkCudaErrors(cudaMalloc((void**)&d_rearranged_id, sizeof(unsigned int) * (np + snp)));
-		checkCudaErrors(cudaMemcpy(d_rearranged_id, rearranged_id, sizeof(unsigned int) * (np + snp), cudaMemcpyHostToDevice));
-	}
+// 	if (!rearranged_id)
+// 		rearranged_id = new unsigned int[np + snp];
+// 	VEC4D_PTR pos = (VEC4D_PTR)p;
+// 	VEC4D_PTR psph = (VEC4D_PTR)sp;
+// 	VEC3I cell3d;
+// 	for (unsigned int i = 0; i < np; i++){
+// 		cell3d = getCellNumber(pos[i].x, pos[i].y, pos[i].z);
+// 		cell_id[i] = getHash(cell3d);
+// 		rearranged_id[i] = i;
+// 	}
+// 	if (sp)
+// 	{
+// 		for (unsigned int i = 0; i < snp; i++){
+// 			cell3d = getCellNumber(psph[i].x, psph[i].y, psph[i].z);
+// 			cell_id[np + i] = getHash(cell3d);
+// 			rearranged_id[np + i] = np + i;
+// 		}
+// 	}
+// 	
+// 	thrust::sort_by_key(cell_id, cell_id + np + snp, rearranged_id);
+// 	if (simulation::isGpu())
+// 	{
+// 		checkCudaErrors(cudaMalloc((void**)&d_rearranged_id, sizeof(unsigned int) * (np + snp)));
+// 		checkCudaErrors(cudaMemcpy(d_rearranged_id, rearranged_id, sizeof(unsigned int) * (np + snp), cudaMemcpyHostToDevice));
+// 	}
 // 	VEC4D *pPos = new VEC4D[md->numParticle()];
 // 	memcpy(pPos, pos, sizeof(VEC4D) * md->numParticle());
 // // 	VEC4D *sphPos = NULL;

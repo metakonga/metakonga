@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'solveHqukCe.ui'
+** Form generated from reading UI file 'solve.ui'
 **
-** Created by: Qt User Interface Compiler version 5.10.0
+** Created by: Qt User Interface Compiler version 5.7.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef SOLVEHQUKCE_H
-#define SOLVEHQUKCE_H
+#ifndef UI_SOLVE_H
+#define UI_SOLVE_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -124,12 +124,9 @@ public:
         horizontalLayout_2->addWidget(RB_GPU);
 
         CB_MBD_Integrator = new QComboBox(DLG_SOLVE);
-        CB_MBD_Integrator->addItem(QString());
-        CB_MBD_Integrator->addItem(QString());
         CB_MBD_Integrator->setObjectName(QStringLiteral("CB_MBD_Integrator"));
         CB_MBD_Integrator->setGeometry(QRect(10, 110, 241, 22));
         CB_DEM_Integrator = new QComboBox(DLG_SOLVE);
-        CB_DEM_Integrator->addItem(QString());
         CB_DEM_Integrator->setObjectName(QStringLiteral("CB_DEM_Integrator"));
         CB_DEM_Integrator->setGeometry(QRect(10, 60, 241, 22));
         label = new QLabel(DLG_SOLVE);
@@ -146,21 +143,25 @@ public:
 
     void retranslateUi(QDialog *DLG_SOLVE)
     {
-        DLG_SOLVE->setWindowTitle(QApplication::translate("DLG_SOLVE", "Simulation", nullptr));
-        L_TimeStep->setText(QApplication::translate("DLG_SOLVE", "Time step", nullptr));
-        L_SaveStep->setText(QApplication::translate("DLG_SOLVE", "Save step", nullptr));
-        L_SimulationTime->setText(QApplication::translate("DLG_SOLVE", "Simulation time", nullptr));
-        PB_Ok->setText(QApplication::translate("DLG_SOLVE", "Ok", nullptr));
-        PB_Cancle->setText(QApplication::translate("DLG_SOLVE", "Cancle", nullptr));
-        RB_CPU->setText(QApplication::translate("DLG_SOLVE", "CPU Process", nullptr));
-        RB_GPU->setText(QApplication::translate("DLG_SOLVE", "GPU Process", nullptr));
-        CB_MBD_Integrator->setItemText(0, QApplication::translate("DLG_SOLVE", "Implicit HHT-alpha", nullptr));
-        CB_MBD_Integrator->setItemText(1, QApplication::translate("DLG_SOLVE", "Explicit Runke-Kutta 2th Order(Nystrom Methods)", nullptr));
-
-        CB_DEM_Integrator->setItemText(0, QApplication::translate("DLG_SOLVE", "Explicit Velocity-Verlet", nullptr));
-
-        label->setText(QApplication::translate("DLG_SOLVE", "DEM Integrator", nullptr));
-        label_2->setText(QApplication::translate("DLG_SOLVE", "MBD Integrator", nullptr));
+        DLG_SOLVE->setWindowTitle(QApplication::translate("DLG_SOLVE", "Simulation", Q_NULLPTR));
+        L_TimeStep->setText(QApplication::translate("DLG_SOLVE", "Time step", Q_NULLPTR));
+        L_SaveStep->setText(QApplication::translate("DLG_SOLVE", "Save step", Q_NULLPTR));
+        L_SimulationTime->setText(QApplication::translate("DLG_SOLVE", "Simulation time", Q_NULLPTR));
+        PB_Ok->setText(QApplication::translate("DLG_SOLVE", "Ok", Q_NULLPTR));
+        PB_Cancle->setText(QApplication::translate("DLG_SOLVE", "Cancle", Q_NULLPTR));
+        RB_CPU->setText(QApplication::translate("DLG_SOLVE", "CPU Process", Q_NULLPTR));
+        RB_GPU->setText(QApplication::translate("DLG_SOLVE", "GPU Process", Q_NULLPTR));
+        CB_MBD_Integrator->clear();
+        CB_MBD_Integrator->insertItems(0, QStringList()
+         << QApplication::translate("DLG_SOLVE", "Implicit HHT-alpha", Q_NULLPTR)
+         << QApplication::translate("DLG_SOLVE", "Explicit Runke-Kutta 2th Order(Nystrom Methods)", Q_NULLPTR)
+        );
+        CB_DEM_Integrator->clear();
+        CB_DEM_Integrator->insertItems(0, QStringList()
+         << QApplication::translate("DLG_SOLVE", "Explicit Velocity-Verlet", Q_NULLPTR)
+        );
+        label->setText(QApplication::translate("DLG_SOLVE", "DEM Integrator", Q_NULLPTR));
+        label_2->setText(QApplication::translate("DLG_SOLVE", "MBD Integrator", Q_NULLPTR));
     } // retranslateUi
 
 };
@@ -171,4 +172,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // SOLVEHQUKCE_H
+#endif // UI_SOLVE_H
