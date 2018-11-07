@@ -115,3 +115,56 @@ double numeric::utility::getMaxValue(double v1, double v2, double v3)
 	return v1 > v2 ? (v1 > v3 ? v1 : (v3 > v2 ? v3 : v2)) : (v2 > v3 ? v2 : v3);
 }
 
+// void numeric::utility::swap_column(MATD& lhs, unsigned int i, unsigned int j)
+// {
+// 
+// }
+
+void numeric::utility::coordinatePartioning(MATD& lhs, VECUI& pv)
+{
+	unsigned int nr = lhs.rows();
+	for (unsigned int i = 0; i < nr; i++)
+	{
+		double mv = 0.0;
+		unsigned int pv_c = 0.0;
+		unsigned int k = 0;
+		for (k = i; k < lhs.cols(); k++)
+		{
+			if (abs(lhs(i, k)) > abs(mv))
+			{
+				mv = lhs(i, k);
+				pv_c = k;
+			}
+		}
+		if (i != pv_c)
+		{
+			lhs.swap_column(i, pv_c);
+			pv.swap(i, pv_c);
+		}
+			
+		double inv_m = 1.0 / mv;
+		lhs(i, i) *= inv_m;
+		for (unsigned int jc = i + 1; jc < lhs.cols(); jc++)
+		{
+			double bc = inv_m * lhs(i, jc);
+		//	double ec = lhs(jr, jc) + bc;
+			lhs(i, jc) = bc;
+			//lhs(jr, jc) = ec;
+		}
+		
+		for (unsigned int jr = i + 1; jr < nr; jr++)
+		{
+			double m = -lhs(jr, i);
+			lhs(jr, i) = 0;
+			for (unsigned int jc = i + 1; jc < lhs.cols(); jc++)
+			{
+				//double bc = inv_m * lhs(i, jc);
+				double ec = lhs(i, jc) * m;
+				//lhs(i, jc) = bc;
+				double vv = lhs(jr, jc) + ec;
+				lhs(jr, jc) = vv;
+			}
+		}
+	}
+	//lhs.display();
+}
