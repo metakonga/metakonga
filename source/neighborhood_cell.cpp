@@ -38,19 +38,21 @@ void neighborhood_cell::_detection(VEC4D_PTR pos, VEC4D_PTR spos, unsigned int n
 // 		_np = md->particleSystem()->particleCluster().size() * particle_cluster::perCluster();
 // 	else
 // 		_np = md->numParticle();
-	for (unsigned int i = 0; i < np; i++){
-		cell3d = getCellNumber(pos[i].x, pos[i].y, pos[i].z);
+	for (unsigned int i = 0; i < np + snp; i++){
+		unsigned int rid = rearranged_id[i];
+		VEC4D p = rid >= np ? spos[rid - np] : pos[rid];
+		cell3d = getCellNumber(p.x, p.y, p.z);
 		cell_id[i] = getHash(cell3d);
-		body_id[i] = i;
+		body_id[i] = rearranged_id[i];
 	}
-	if (spos)
-	{
-		for (unsigned int i = 0; i < snp; i++){
-			cell3d = getCellNumber(spos[i].x, spos[i].y, spos[i].z);
-			cell_id[np + i] = getHash(cell3d);
-			body_id[np + i] = np + i;
-		}
-	}
+// 	if (spos)
+// 	{
+// 		for (unsigned int i = 0; i < snp; i++){
+// 			cell3d = getCellNumber(spos[i].x, spos[i].y, spos[i].z);
+// 			cell_id[np + i] = getHash(cell3d);
+// 			body_id[np + i] = np + i;
+// 		}
+// 	}
 // 	unsigned int sid = md->numParticle();
 // 	QList<polygonObject*> polys = md->polyObjects();
 // 	for (unsigned int po = 0; po < md->numPoly(); po++){

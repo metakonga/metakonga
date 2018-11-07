@@ -7,17 +7,17 @@
     <x>0</x>
     <y>0</y>
     <width>267</width>
-    <height>164</height>
+    <height>254</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Simulation</string>
   </property>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>50</y>
+     <y>140</y>
      <width>245</width>
      <height>74</height>
     </rect>
@@ -55,11 +55,11 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>130</y>
+     <y>220</y>
      <width>158</width>
      <height>25</height>
     </rect>
@@ -81,11 +81,11 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>20</y>
+     <y>10</y>
      <width>241</width>
      <height>18</height>
     </rect>
@@ -106,6 +106,67 @@
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QComboBox" name="CB_MBD_Integrator">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>110</y>
+     <width>241</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>Implicit HHT-alpha</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Explicit Runke-Kutta 2th Order(Nystrom Methods)</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QComboBox" name="CB_DEM_Integrator">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>60</y>
+     <width>241</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>Explicit Velocity-Verlet</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>40</y>
+     <width>91</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>DEM Integrator</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>90</y>
+     <width>91</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>MBD Integrator</string>
+   </property>
   </widget>
  </widget>
  <resources/>

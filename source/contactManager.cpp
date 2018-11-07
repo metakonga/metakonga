@@ -346,7 +346,7 @@ unsigned int contactManager::setupParticlesPolygonObjectsContact()
 double* contactManager::SphereData()
 {
 	if (cppoly)
-		return cppoly->SphereData();
+		return simulation::isGpu() ? cppoly->SphereData() : (double*)cppoly->HostSphereData();
 	return NULL;
 }
 

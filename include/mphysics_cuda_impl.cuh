@@ -140,8 +140,8 @@ __global__ void calculateHashAndIndex_kernel(
 	if (id >= (np + snp)) return;
 	unsigned int rid = re[id];
 	double4 p;
-	if (rid > np)
-		p = spos[rid];
+	if (rid >= np)
+		p = spos[rid - np];
 	else
 		p = pos[rid];
 	//volatile double4 p = pos[id];

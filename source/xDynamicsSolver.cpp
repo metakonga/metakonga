@@ -28,12 +28,13 @@ xDynamicsSolver::~xDynamicsSolver()
 	if (mbd) delete mbd; mbd = NULL;
 }
 
-bool xDynamicsSolver::initialize(startingModel* stm)
+bool xDynamicsSolver::initialize(int dem_itype, int mbd_itype, startingModel* stm)
 {	
 	nstep = static_cast<unsigned int>((simulation::et / simulation::dt) + 1);
 	npart = static_cast<unsigned int>((nstep / simulation::st) + 1);
 	if (dem)
 	{
+		dem->setIntegratorType((dem_integrator_type)dem_itype);
 		particleManager* pm = mg->DEMModel()->ParticleManager();
 		if (stm && pm->RealTimeCreating())
 			pm->setRealTimeCreating(false);
@@ -52,6 +53,7 @@ bool xDynamicsSolver::initialize(startingModel* stm)
 	}
 	if (mbd)
 	{
+		mbd->setIntegratorType((mbd_integrator_type)mbd_itype);
 		mbd->initialize(stm);
 	}
 	

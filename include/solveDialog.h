@@ -11,6 +11,8 @@ public:
 	~solveDialog();
 
 	bool isCpu;
+	int dem_itor_type;
+	int mbd_itor_type;
 	double time_step;
 	unsigned int save_step;
 	double sim_time;

@@ -18,7 +18,7 @@ public:
 	xDynamicsSolver(modelManager* _mg);
 	~xDynamicsSolver();
 
-	bool initialize(startingModel* stm = NULL);
+	bool initialize(int dem_itype, int mbd_itype, startingModel* stm = NULL);
 	unsigned int totalStep() { return nstep; }
 	unsigned int totalPart() { return npart; }
 

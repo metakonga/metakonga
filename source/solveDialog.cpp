@@ -27,6 +27,8 @@ void solveDialog::click_ok()
 	time_step = LE_TimeStep->text().toDouble();
 	save_step = LE_SaveStep->text().toUInt();
 	sim_time = LE_SimulationTime->text().toDouble();
+	dem_itor_type = CB_DEM_Integrator->currentIndex();
+	mbd_itor_type = CB_MBD_Integrator->currentIndex();
 	this->close();
 	setResult(QDialog::Accepted);
 }

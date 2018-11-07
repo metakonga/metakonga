@@ -1103,7 +1103,7 @@ void xdynamics::solve()
 	connect(solver, SIGNAL(finishedThread()), this, SLOT(exitThread()));
 	connect(solver, SIGNAL(excuteMessageBox()), this, SLOT(excuteMessageBox()));
 	connect(solver, SIGNAL(sendProgress(int, QString, QString)), this, SLOT(recieveProgress(int, QString, QString)));
-	if (solver->initialize(st_model))
+	if (solver->initialize(sd.dem_itor_type, sd.mbd_itor_type, st_model))
 	{
 
 	}

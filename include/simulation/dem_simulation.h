@@ -20,6 +20,7 @@ public:
 	bool oneStepAnalysis_f(double ct, unsigned int cstep);
 	QString saveResult(double *vp, double* vv, double ct, unsigned int pt);
 	QString saveResult_f(float *vp, float* vv, double ct, unsigned int pt);
+	void setIntegratorType(dem_integrator_type itype) { itor_type = itype; }
 	void saveFinalResult(QFile& qf);
 	void saveFinalResult_f(QFile& qf);
 	void setStartingData(startingModel* stm);
@@ -30,6 +31,7 @@ private:
 	void allocationMemory();
 
 private:
+	dem_integrator_type itor_type;
 	unsigned int np;
 	unsigned int per_np;
 	unsigned int nPolySphere;
