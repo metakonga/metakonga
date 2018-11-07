@@ -1,4 +1,6 @@
 #include "mphysics_cuda_dec.cuh"
+#include <stdio.h>
+#include <stdlib.h>
 #include <helper_math.h>
 
 __constant__ device_parameters cte;
@@ -1016,6 +1018,77 @@ __global__ void particle_polygonObject_collision_kernel(
 			}
 		}
 	}
+}
+
+__device__ double3 toGlobal(double4& ep, double3& s)
+{
+	double3 tv;
+	tv.x = 2.0 * (ep.x*ep.x + ep.y*ep.y - 0.5) * s.x + 2.0 * (ep.y*ep.z - ep.x*ep.w) * s.y + 2.0 * (ep.y*ep.w + ep.x*ep.z) * s.z;
+	tv.y = 2.0 * (ep.y*ep.z + ep.x*ep.w) * s.x + 2.0 * (ep.x*ep.x + ep.z*ep.z - 0.5) * s.y + 2.0 * (ep.z*ep.w - ep.x*ep.y) * s.z;
+	tv.z = 2.0 * (ep.y*ep.w - ep.x*ep.z) * s.x + 2.0 * (ep.z*ep.w + ep.x*ep.y) * s.y + 2.0 * (ep.x*ep.x + ep.w*ep.w - 0.5) * s.z;
+	return tv;
+}
+
+__device__ double3 calculate_center_of_triangle(double3& P, double3& Q, double3& R)
+{
+	double3 V = Q - P;
+	double3 W = R - P;
+	double3 N = cross(V, W);
+	//printf("V = [%f %f %f]\n", V.x, V.y, V.z);
+	//printf("W = [%f %f %f]\n", W.x, W.y, W.z);
+	N = N / length(N);
+	double3 M1 = (Q + P) / 2.0;
+	double3 M2 = (R + P) / 2.0;
+	double3 D1 = cross(N, V);
+
+	double3 D2 = cross(N, W);
+	double t;// = (D2.x*(M1.y - M2.y)) / (D1.x*D2.y - D1.y*D2.x) - (D2.y*(M1.x - M2.x)) / (D1.x*D2.y - D1.y*D2.x);
+	if (abs(D1.x*D2.y - D1.y*D2.x) > 1E-13)
+	{
+		t = (D2.x*(M1.y - M2.y)) / (D1.x*D2.y - D1.y*D2.x) - (D2.y*(M1.x - M2.x)) / (D1.x*D2.y - D1.y*D2.x);
+	}
+	else if (abs(D1.x*D2.z - D1.z*D2.x) > 1E-13)
+	{
+		t = (D2.x*(M1.z - M2.z)) / (D1.x*D2.z - D1.z*D2.x) - (D2.z*(M1.x - M2.x)) / (D1.x*D2.z - D1.z*D2.x);
+	}
+	else if (abs(D1.y*D2.z - D1.z*D2.y) > 1E-13)
+	{
+		t = (D2.y*(M1.z - M2.z)) / (D1.y*D2.z - D1.z*D2.y) - (D2.z*(M1.y - M2.y)) / (D1.y*D2.z - D1.z*D2.y);
+	}
+	//printf("%f\n", t);
+	//printf("D1 = [%f %f %f]\n", D1.x, D1.y, D1.z);
+	return M1 + t * D1;
+}
+
+__global__ void updatePolygonObjectData_kernel(
+	double3 *vList, double4* sph, device_polygon_info* poly,
+	device_polygon_mass_info* dpmi, unsigned int np)
+{
+	unsigned id = __mul24(blockIdx.x, blockDim.x) + threadIdx.x;
+	//unsigned int np = _np;
+	if (id >= np)
+		return;
+	//device_polygon_info po;
+	unsigned int midx = poly[id].id;
+	//printf("%d", midx);
+	double3 P = vList[id * 3 + 0];
+	double3 Q = vList[id * 3 + 1];
+	double3 R = vList[id * 3 + 2];
+	double3 mpos = dpmi[midx].origin;
+	double4 ep = dpmi[midx].ep;
+	//printf("%d -> P = [%f %f %f], Q = [%f %f %f], R = [%f %f %f]\n", id, P.x, P.y, P.z, Q.x, Q.y, Q.z, R.x, R.y, R.z);
+	P = mpos + toGlobal(ep, P);
+	Q = mpos + toGlobal(ep, Q);
+	R = mpos + toGlobal(ep, R);
+	//printf("%d - ", id);
+	double3 ctri = calculate_center_of_triangle(P, Q, R);
+	//printf("ctri = [%f %f %f]\n", ctri.x, ctri.y, ctri.z);
+	sph[id].x = ctri.x;
+	sph[id].y = ctri.y;
+	sph[id].z = ctri.z;
+	poly[id].P = P;
+	poly[id].Q = Q;
+	poly[id].R = R;
 }
 
 // float

@@ -54,12 +54,14 @@ private:
 	VEC4D *hsphere;
 	VEC4F *hsphere_f;
 	double* dsphere;
+	double* dvertexList;
 	float* dsphere_f;
 	host_polygon_info* hpi;
 	host_polygon_info_f* hpi_f;
 	device_polygon_info* dpi;
 	device_polygon_info_f* dpi_f;
 	QMap<unsigned int, polygonObject*> pair_ip;
+	device_polygon_mass_info *dpmi;
 };
 
 #endif

@@ -244,7 +244,14 @@ double3 reductionD3(double3* in, unsigned int np)
 	return rt;
 }
 
-
+void cu_updatePolygonObjectData(
+	double *vList, double* sph, device_polygon_info* poly,
+	device_polygon_mass_info* dpmi, unsigned int np)
+{
+	computeGridSize(np, 512, numBlocks, numThreads);
+	updatePolygonObjectData_kernel<< < numBlocks, numThreads >> >(
+		(double3 *)vList, (double4 *)sph, poly, dpmi, np);
+}
 
 
 // float 

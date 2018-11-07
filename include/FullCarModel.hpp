@@ -185,11 +185,17 @@ public:
 
 		//reck bar
 
-		VEC3D F_reckbar_position(-1.088333343, 0.00577058640000001, 0.3299998362);//
-		VEC3D R_reckbar_position(0.5816666565, 0.00577058640000001, 0.3299998362);//
+		VEC3D F_reckbar_position(-1.088333343, 0.00577058640000001, -0.1395346338);//
+		VEC3D R_reckbar_position(0.5816666565, 0.00577058640000001, -0.1395346338);//
 
-		VEC3D F_reckbar_Translate_location(-1.088333343, 0.00577058640000001, 0.3299998362);//
-		VEC3D R_reckbar_Translate_location(0.5816666565, 0.00577058640000001, 0.3299998362);//
+		VEC3D F_reckbar_Translate_location(-1.088333343, 0.00577058640000001, -0.1395346338);//
+		VEC3D R_reckbar_Translate_location(0.5816666565, 0.00577058640000001, -0.1395346338);//
+
+		F_reckbar_position = F_reckbar_position - ppap;
+		R_reckbar_position = R_reckbar_position - ppap;
+		F_reckbar_Translate_location = F_reckbar_Translate_location - ppap;
+		R_reckbar_Translate_location = R_reckbar_Translate_location - ppap;
+
 
 		pointMass* F_Reckbar = createPointMass(
 			"F_Reckbar", 0.00001,
@@ -653,10 +659,10 @@ public:
 		//spi = ground->toLocal(G_CarBody_Fix_location - ground->Position());
 		//spj = CarBody->toLocal(G_CarBody_Fix_location - CarBody_position);
 
-		kinematicConstraint* G_Car_FIX = createKinematicConstraint(
-		"Car_Ground_Fix", kinematicConstraint::FIXED,
-		ground, spi, VEC3D(1, 0, 0), VEC3D(0, 1, 0),
-		CarBody, spj, VEC3D(0, 1, 0), VEC3D(-1, 0, 0));
+		//kinematicConstraint* G_Car_FIX = createKinematicConstraint(
+		//"Car_Ground_Fix", kinematicConstraint::FIXED,
+		//ground, spi, VEC3D(1, 0, 0), VEC3D(0, 1, 0),
+		//CarBody, spj, VEC3D(0, 1, 0), VEC3D(-1, 0, 0));
 		//-----------------------------------------------------------------------------
 		/*spi = ground->toLocal(LF_N_W_REV_location - ground->Position());
 		spj = LF_wheel->toLocal(LF_N_W_REV_location - LF_wheel_position);
