@@ -785,20 +785,20 @@ void xdynamics::makeParticle()
 		switch (pd.method)
 		{
 		case 0: pm->CreateCubeParticle
-			(pd.name, (material_type)pd.type, pd.ncubex, pd.ncubey, pd.ncubez, 
+			(pd.name, (material_type)pd.type, pd.np, pd.dcubex, pd.dcubey, pd.dcubez, 
 			 pd.loc[0], pd.loc[1], pd.loc[2], 
 			 pd.spacing, pd.min_radius, pd.max_radius,
 			 pd.youngs, pd.density, pd.poisson, pd.shear);
 			break;
 		case 1: pm->CreatePlaneParticle
-			(pd.name, (material_type)pd.type, pd.nplanex, pd.nplanez, pd.np,
+			(pd.name, (material_type)pd.type, pd.dplanex, pd.nplaney, pd.dplanez, pd.np,
 			 pd.loc[0], pd.loc[1], pd.loc[2],
 			 pd.dir[0], pd.dir[1], pd.dir[2],
 			 pd.spacing, pd.min_radius, pd.max_radius,
-			 pd.youngs, pd.density, pd.poisson, pd.shear, pd.real_time, pd.perNp, pd.one_by_one);
+			 pd.youngs, pd.density, pd.poisson, pd.shear, pd.real_time, pd.perNp, pd.perTime, pd.one_by_one);
 			break;
 		case 2: pm->CreateCircleParticle(
-			pd.name, (material_type)pd.type, pd.circle_diameter, pd.np,
+			pd.name, (material_type)pd.type, pd.circle_diameter, pd.np, pd.nheight,
 			pd.loc[0], pd.loc[1], pd.loc[2],
 			pd.dir[0], pd.dir[1], pd.dir[2],
 			pd.spacing, pd.min_radius, pd.max_radius,

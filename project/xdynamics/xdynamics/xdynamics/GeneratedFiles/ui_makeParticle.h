@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'makeParticle.ui'
+** Form generated from reading UI file 'makeParticleBnUhVd.ui'
 **
-** Created by: Qt User Interface Compiler version 5.7.1
+** Created by: Qt User Interface Compiler version 5.10.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef UI_MAKEPARTICLE_H
-#define UI_MAKEPARTICLE_H
+#ifndef MAKEPARTICLEBNUHVD_H
+#define MAKEPARTICLEBNUHVD_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -35,12 +35,12 @@ public:
     QWidget *T_Cube;
     QWidget *layoutWidget;
     QHBoxLayout *horizontalLayout;
-    QLabel *L_CUBE_NX;
-    QLineEdit *LE_CUBE_NX;
-    QLabel *L_CUBE_NY;
-    QLineEdit *LE_CUBE_NY;
-    QLabel *L_CUBE_NZ;
-    QLineEdit *LE_CUBE_NZ;
+    QLabel *L_CUBE_DX;
+    QLineEdit *LE_CUBE_DX;
+    QLabel *L_CUBE_DY;
+    QLineEdit *LE_CUBE_DY;
+    QLabel *L_CUBE_DZ;
+    QLineEdit *LE_CUBE_DZ;
     QWidget *layoutWidget1;
     QHBoxLayout *horizontalLayout_6;
     QLabel *L_CUBE_LOC;
@@ -50,37 +50,39 @@ public:
     QHBoxLayout *horizontalLayout_7;
     QLabel *L_PLANE_LOC;
     QLineEdit *LE_PLANE_LOC;
-    QWidget *layoutWidget3;
+    QWidget *widget;
     QHBoxLayout *horizontalLayout_3;
-    QLabel *L_PLANE_NX;
-    QLineEdit *LE_PLANE_NX;
-    QLabel *L_PLANE_NZ;
-    QLineEdit *LE_PLANE_NZ;
-    QWidget *layoutWidget4;
+    QLabel *L_PLANE_DX;
+    QLineEdit *LE_PLANE_DX;
+    QLabel *L_PLANE_NY;
+    QLineEdit *LE_PLANE_NY;
+    QLabel *L_PLANE_DZ;
+    QLineEdit *LE_PLANE_DZ;
+    QWidget *widget1;
     QHBoxLayout *horizontalLayout_5;
     QLabel *L_PLANE_DIR;
     QLineEdit *LE_PLANE_DIR;
     QWidget *T_Circle;
-    QWidget *layoutWidget5;
+    QWidget *layoutWidget3;
     QHBoxLayout *horizontalLayout_9;
     QLabel *L_CircleLocation;
     QLineEdit *LE_CircleLocation;
     QLabel *L_CircleDirection;
     QLineEdit *LE_CircleDirection;
-    QWidget *layoutWidget6;
+    QWidget *layoutWidget4;
     QHBoxLayout *horizontalLayout_8;
     QLabel *L_CircleDiameter;
     QLineEdit *LE_CircleDiameter;
     QLabel *L_NumParticle;
-    QLineEdit *LE_NumParticle;
+    QLineEdit *LE_NumHeight;
     QGroupBox *groupBox;
-    QWidget *layoutWidget7;
+    QWidget *layoutWidget5;
     QHBoxLayout *horizontalLayout_2;
     QLabel *L_MIN_RADIUS;
     QLineEdit *LE_MIN_RADIUS;
     QLabel *L_MAX_RADIUS;
     QLineEdit *LE_MAX_RADIUS;
-    QWidget *layoutWidget8;
+    QWidget *layoutWidget6;
     QGridLayout *gridLayout;
     QLabel *L_P_SPACING;
     QLineEdit *LE_P_SPACING;
@@ -99,7 +101,7 @@ public:
     QLineEdit *LE_PoissonRatio;
     QLabel *L_ShearModulus;
     QLineEdit *LE_ShearModulus;
-    QWidget *layoutWidget9;
+    QWidget *layoutWidget7;
     QHBoxLayout *horizontalLayout_4;
     QPushButton *PB_Ok;
     QPushButton *PB_Cancle;
@@ -107,12 +109,13 @@ public:
     QLabel *L_Name;
     QLineEdit *LE_Name;
     QGroupBox *GB_RealTime;
-    QWidget *layoutWidget10;
+    QWidget *layoutWidget8;
     QHBoxLayout *horizontalLayout_10;
     QLabel *L_NumParticlesPer;
     QLineEdit *LE_NumParclesPer;
     QRadioButton *RB_OneByOne;
     QRadioButton *RB_OneByGroup;
+    QPushButton *PB_CalNumParticles;
 
     void setupUi(QDialog *DLG_MakeParticle)
     {
@@ -130,35 +133,35 @@ public:
         horizontalLayout = new QHBoxLayout(layoutWidget);
         horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
         horizontalLayout->setContentsMargins(0, 0, 0, 0);
-        L_CUBE_NX = new QLabel(layoutWidget);
-        L_CUBE_NX->setObjectName(QStringLiteral("L_CUBE_NX"));
+        L_CUBE_DX = new QLabel(layoutWidget);
+        L_CUBE_DX->setObjectName(QStringLiteral("L_CUBE_DX"));
 
-        horizontalLayout->addWidget(L_CUBE_NX);
+        horizontalLayout->addWidget(L_CUBE_DX);
 
-        LE_CUBE_NX = new QLineEdit(layoutWidget);
-        LE_CUBE_NX->setObjectName(QStringLiteral("LE_CUBE_NX"));
+        LE_CUBE_DX = new QLineEdit(layoutWidget);
+        LE_CUBE_DX->setObjectName(QStringLiteral("LE_CUBE_DX"));
 
-        horizontalLayout->addWidget(LE_CUBE_NX);
+        horizontalLayout->addWidget(LE_CUBE_DX);
 
-        L_CUBE_NY = new QLabel(layoutWidget);
-        L_CUBE_NY->setObjectName(QStringLiteral("L_CUBE_NY"));
+        L_CUBE_DY = new QLabel(layoutWidget);
+        L_CUBE_DY->setObjectName(QStringLiteral("L_CUBE_DY"));
 
-        horizontalLayout->addWidget(L_CUBE_NY);
+        horizontalLayout->addWidget(L_CUBE_DY);
 
-        LE_CUBE_NY = new QLineEdit(layoutWidget);
-        LE_CUBE_NY->setObjectName(QStringLiteral("LE_CUBE_NY"));
+        LE_CUBE_DY = new QLineEdit(layoutWidget);
+        LE_CUBE_DY->setObjectName(QStringLiteral("LE_CUBE_DY"));
 
-        horizontalLayout->addWidget(LE_CUBE_NY);
+        horizontalLayout->addWidget(LE_CUBE_DY);
 
-        L_CUBE_NZ = new QLabel(layoutWidget);
-        L_CUBE_NZ->setObjectName(QStringLiteral("L_CUBE_NZ"));
+        L_CUBE_DZ = new QLabel(layoutWidget);
+        L_CUBE_DZ->setObjectName(QStringLiteral("L_CUBE_DZ"));
 
-        horizontalLayout->addWidget(L_CUBE_NZ);
+        horizontalLayout->addWidget(L_CUBE_DZ);
 
-        LE_CUBE_NZ = new QLineEdit(layoutWidget);
-        LE_CUBE_NZ->setObjectName(QStringLiteral("LE_CUBE_NZ"));
+        LE_CUBE_DZ = new QLineEdit(layoutWidget);
+        LE_CUBE_DZ->setObjectName(QStringLiteral("LE_CUBE_DZ"));
 
-        horizontalLayout->addWidget(LE_CUBE_NZ);
+        horizontalLayout->addWidget(LE_CUBE_DZ);
 
         layoutWidget1 = new QWidget(T_Cube);
         layoutWidget1->setObjectName(QStringLiteral("layoutWidget1"));
@@ -195,44 +198,54 @@ public:
 
         horizontalLayout_7->addWidget(LE_PLANE_LOC);
 
-        layoutWidget3 = new QWidget(T_Plane);
-        layoutWidget3->setObjectName(QStringLiteral("layoutWidget3"));
-        layoutWidget3->setGeometry(QRect(10, 10, 191, 22));
-        horizontalLayout_3 = new QHBoxLayout(layoutWidget3);
+        widget = new QWidget(T_Plane);
+        widget->setObjectName(QStringLiteral("widget"));
+        widget->setGeometry(QRect(10, 10, 211, 22));
+        horizontalLayout_3 = new QHBoxLayout(widget);
         horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
         horizontalLayout_3->setContentsMargins(0, 0, 0, 0);
-        L_PLANE_NX = new QLabel(layoutWidget3);
-        L_PLANE_NX->setObjectName(QStringLiteral("L_PLANE_NX"));
+        L_PLANE_DX = new QLabel(widget);
+        L_PLANE_DX->setObjectName(QStringLiteral("L_PLANE_DX"));
 
-        horizontalLayout_3->addWidget(L_PLANE_NX);
+        horizontalLayout_3->addWidget(L_PLANE_DX);
 
-        LE_PLANE_NX = new QLineEdit(layoutWidget3);
-        LE_PLANE_NX->setObjectName(QStringLiteral("LE_PLANE_NX"));
+        LE_PLANE_DX = new QLineEdit(widget);
+        LE_PLANE_DX->setObjectName(QStringLiteral("LE_PLANE_DX"));
 
-        horizontalLayout_3->addWidget(LE_PLANE_NX);
+        horizontalLayout_3->addWidget(LE_PLANE_DX);
 
-        L_PLANE_NZ = new QLabel(layoutWidget3);
-        L_PLANE_NZ->setObjectName(QStringLiteral("L_PLANE_NZ"));
+        L_PLANE_NY = new QLabel(widget);
+        L_PLANE_NY->setObjectName(QStringLiteral("L_PLANE_NY"));
 
-        horizontalLayout_3->addWidget(L_PLANE_NZ);
+        horizontalLayout_3->addWidget(L_PLANE_NY);
 
-        LE_PLANE_NZ = new QLineEdit(layoutWidget3);
-        LE_PLANE_NZ->setObjectName(QStringLiteral("LE_PLANE_NZ"));
+        LE_PLANE_NY = new QLineEdit(widget);
+        LE_PLANE_NY->setObjectName(QStringLiteral("LE_PLANE_NY"));
 
-        horizontalLayout_3->addWidget(LE_PLANE_NZ);
+        horizontalLayout_3->addWidget(LE_PLANE_NY);
 
-        layoutWidget4 = new QWidget(T_Plane);
-        layoutWidget4->setObjectName(QStringLiteral("layoutWidget4"));
-        layoutWidget4->setGeometry(QRect(210, 10, 151, 22));
-        horizontalLayout_5 = new QHBoxLayout(layoutWidget4);
+        L_PLANE_DZ = new QLabel(widget);
+        L_PLANE_DZ->setObjectName(QStringLiteral("L_PLANE_DZ"));
+
+        horizontalLayout_3->addWidget(L_PLANE_DZ);
+
+        LE_PLANE_DZ = new QLineEdit(widget);
+        LE_PLANE_DZ->setObjectName(QStringLiteral("LE_PLANE_DZ"));
+
+        horizontalLayout_3->addWidget(LE_PLANE_DZ);
+
+        widget1 = new QWidget(T_Plane);
+        widget1->setObjectName(QStringLiteral("widget1"));
+        widget1->setGeometry(QRect(230, 10, 131, 22));
+        horizontalLayout_5 = new QHBoxLayout(widget1);
         horizontalLayout_5->setObjectName(QStringLiteral("horizontalLayout_5"));
         horizontalLayout_5->setContentsMargins(0, 0, 0, 0);
-        L_PLANE_DIR = new QLabel(layoutWidget4);
+        L_PLANE_DIR = new QLabel(widget1);
         L_PLANE_DIR->setObjectName(QStringLiteral("L_PLANE_DIR"));
 
         horizontalLayout_5->addWidget(L_PLANE_DIR);
 
-        LE_PLANE_DIR = new QLineEdit(layoutWidget4);
+        LE_PLANE_DIR = new QLineEdit(widget1);
         LE_PLANE_DIR->setObjectName(QStringLiteral("LE_PLANE_DIR"));
 
         horizontalLayout_5->addWidget(LE_PLANE_DIR);
@@ -240,110 +253,110 @@ public:
         TB_Method->addTab(T_Plane, QString());
         T_Circle = new QWidget();
         T_Circle->setObjectName(QStringLiteral("T_Circle"));
-        layoutWidget5 = new QWidget(T_Circle);
-        layoutWidget5->setObjectName(QStringLiteral("layoutWidget5"));
-        layoutWidget5->setGeometry(QRect(10, 38, 341, 22));
-        horizontalLayout_9 = new QHBoxLayout(layoutWidget5);
+        layoutWidget3 = new QWidget(T_Circle);
+        layoutWidget3->setObjectName(QStringLiteral("layoutWidget3"));
+        layoutWidget3->setGeometry(QRect(10, 38, 341, 22));
+        horizontalLayout_9 = new QHBoxLayout(layoutWidget3);
         horizontalLayout_9->setObjectName(QStringLiteral("horizontalLayout_9"));
         horizontalLayout_9->setContentsMargins(0, 0, 0, 0);
-        L_CircleLocation = new QLabel(layoutWidget5);
+        L_CircleLocation = new QLabel(layoutWidget3);
         L_CircleLocation->setObjectName(QStringLiteral("L_CircleLocation"));
 
         horizontalLayout_9->addWidget(L_CircleLocation);
 
-        LE_CircleLocation = new QLineEdit(layoutWidget5);
+        LE_CircleLocation = new QLineEdit(layoutWidget3);
         LE_CircleLocation->setObjectName(QStringLiteral("LE_CircleLocation"));
 
         horizontalLayout_9->addWidget(LE_CircleLocation);
 
-        L_CircleDirection = new QLabel(layoutWidget5);
+        L_CircleDirection = new QLabel(layoutWidget3);
         L_CircleDirection->setObjectName(QStringLiteral("L_CircleDirection"));
 
         horizontalLayout_9->addWidget(L_CircleDirection);
 
-        LE_CircleDirection = new QLineEdit(layoutWidget5);
+        LE_CircleDirection = new QLineEdit(layoutWidget3);
         LE_CircleDirection->setObjectName(QStringLiteral("LE_CircleDirection"));
 
         horizontalLayout_9->addWidget(LE_CircleDirection);
 
-        layoutWidget6 = new QWidget(T_Circle);
-        layoutWidget6->setObjectName(QStringLiteral("layoutWidget6"));
-        layoutWidget6->setGeometry(QRect(10, 10, 341, 22));
-        horizontalLayout_8 = new QHBoxLayout(layoutWidget6);
+        layoutWidget4 = new QWidget(T_Circle);
+        layoutWidget4->setObjectName(QStringLiteral("layoutWidget4"));
+        layoutWidget4->setGeometry(QRect(10, 10, 341, 22));
+        horizontalLayout_8 = new QHBoxLayout(layoutWidget4);
         horizontalLayout_8->setObjectName(QStringLiteral("horizontalLayout_8"));
         horizontalLayout_8->setContentsMargins(0, 0, 0, 0);
-        L_CircleDiameter = new QLabel(layoutWidget6);
+        L_CircleDiameter = new QLabel(layoutWidget4);
         L_CircleDiameter->setObjectName(QStringLiteral("L_CircleDiameter"));
 
         horizontalLayout_8->addWidget(L_CircleDiameter);
 
-        LE_CircleDiameter = new QLineEdit(layoutWidget6);
+        LE_CircleDiameter = new QLineEdit(layoutWidget4);
         LE_CircleDiameter->setObjectName(QStringLiteral("LE_CircleDiameter"));
 
         horizontalLayout_8->addWidget(LE_CircleDiameter);
 
-        L_NumParticle = new QLabel(layoutWidget6);
+        L_NumParticle = new QLabel(layoutWidget4);
         L_NumParticle->setObjectName(QStringLiteral("L_NumParticle"));
 
         horizontalLayout_8->addWidget(L_NumParticle);
 
-        LE_NumParticle = new QLineEdit(layoutWidget6);
-        LE_NumParticle->setObjectName(QStringLiteral("LE_NumParticle"));
+        LE_NumHeight = new QLineEdit(layoutWidget4);
+        LE_NumHeight->setObjectName(QStringLiteral("LE_NumHeight"));
 
-        horizontalLayout_8->addWidget(LE_NumParticle);
+        horizontalLayout_8->addWidget(LE_NumHeight);
 
         TB_Method->addTab(T_Circle, QString());
         groupBox = new QGroupBox(DLG_MakeParticle);
         groupBox->setObjectName(QStringLiteral("groupBox"));
         groupBox->setGeometry(QRect(10, 170, 371, 106));
-        layoutWidget7 = new QWidget(groupBox);
-        layoutWidget7->setObjectName(QStringLiteral("layoutWidget7"));
-        layoutWidget7->setGeometry(QRect(10, 20, 351, 22));
-        horizontalLayout_2 = new QHBoxLayout(layoutWidget7);
+        layoutWidget5 = new QWidget(groupBox);
+        layoutWidget5->setObjectName(QStringLiteral("layoutWidget5"));
+        layoutWidget5->setGeometry(QRect(10, 20, 351, 22));
+        horizontalLayout_2 = new QHBoxLayout(layoutWidget5);
         horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
         horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
-        L_MIN_RADIUS = new QLabel(layoutWidget7);
+        L_MIN_RADIUS = new QLabel(layoutWidget5);
         L_MIN_RADIUS->setObjectName(QStringLiteral("L_MIN_RADIUS"));
 
         horizontalLayout_2->addWidget(L_MIN_RADIUS);
 
-        LE_MIN_RADIUS = new QLineEdit(layoutWidget7);
+        LE_MIN_RADIUS = new QLineEdit(layoutWidget5);
         LE_MIN_RADIUS->setObjectName(QStringLiteral("LE_MIN_RADIUS"));
 
         horizontalLayout_2->addWidget(LE_MIN_RADIUS);
 
-        L_MAX_RADIUS = new QLabel(layoutWidget7);
+        L_MAX_RADIUS = new QLabel(layoutWidget5);
         L_MAX_RADIUS->setObjectName(QStringLiteral("L_MAX_RADIUS"));
 
         horizontalLayout_2->addWidget(L_MAX_RADIUS);
 
-        LE_MAX_RADIUS = new QLineEdit(layoutWidget7);
+        LE_MAX_RADIUS = new QLineEdit(layoutWidget5);
         LE_MAX_RADIUS->setObjectName(QStringLiteral("LE_MAX_RADIUS"));
 
         horizontalLayout_2->addWidget(LE_MAX_RADIUS);
 
-        layoutWidget8 = new QWidget(groupBox);
-        layoutWidget8->setObjectName(QStringLiteral("layoutWidget8"));
-        layoutWidget8->setGeometry(QRect(10, 50, 351, 48));
-        gridLayout = new QGridLayout(layoutWidget8);
+        layoutWidget6 = new QWidget(groupBox);
+        layoutWidget6->setObjectName(QStringLiteral("layoutWidget6"));
+        layoutWidget6->setGeometry(QRect(10, 50, 351, 48));
+        gridLayout = new QGridLayout(layoutWidget6);
         gridLayout->setObjectName(QStringLiteral("gridLayout"));
         gridLayout->setContentsMargins(0, 0, 0, 0);
-        L_P_SPACING = new QLabel(layoutWidget8);
+        L_P_SPACING = new QLabel(layoutWidget6);
         L_P_SPACING->setObjectName(QStringLiteral("L_P_SPACING"));
 
         gridLayout->addWidget(L_P_SPACING, 0, 0, 1, 1);
 
-        LE_P_SPACING = new QLineEdit(layoutWidget8);
+        LE_P_SPACING = new QLineEdit(layoutWidget6);
         LE_P_SPACING->setObjectName(QStringLiteral("LE_P_SPACING"));
 
         gridLayout->addWidget(LE_P_SPACING, 0, 1, 1, 1);
 
-        L_NUM_PARTICLE = new QLabel(layoutWidget8);
+        L_NUM_PARTICLE = new QLabel(layoutWidget6);
         L_NUM_PARTICLE->setObjectName(QStringLiteral("L_NUM_PARTICLE"));
 
         gridLayout->addWidget(L_NUM_PARTICLE, 1, 0, 1, 1);
 
-        LE_NUM_PARTICLE = new QLineEdit(layoutWidget8);
+        LE_NUM_PARTICLE = new QLineEdit(layoutWidget6);
         LE_NUM_PARTICLE->setObjectName(QStringLiteral("LE_NUM_PARTICLE"));
         LE_NUM_PARTICLE->setReadOnly(true);
 
@@ -408,18 +421,18 @@ public:
 
         gridLayout_2->addWidget(LE_ShearModulus, 4, 1, 1, 1);
 
-        layoutWidget9 = new QWidget(DLG_MakeParticle);
-        layoutWidget9->setObjectName(QStringLiteral("layoutWidget9"));
-        layoutWidget9->setGeometry(QRect(190, 530, 191, 25));
-        horizontalLayout_4 = new QHBoxLayout(layoutWidget9);
+        layoutWidget7 = new QWidget(DLG_MakeParticle);
+        layoutWidget7->setObjectName(QStringLiteral("layoutWidget7"));
+        layoutWidget7->setGeometry(QRect(190, 530, 191, 25));
+        horizontalLayout_4 = new QHBoxLayout(layoutWidget7);
         horizontalLayout_4->setObjectName(QStringLiteral("horizontalLayout_4"));
         horizontalLayout_4->setContentsMargins(0, 0, 0, 0);
-        PB_Ok = new QPushButton(layoutWidget9);
+        PB_Ok = new QPushButton(layoutWidget7);
         PB_Ok->setObjectName(QStringLiteral("PB_Ok"));
 
         horizontalLayout_4->addWidget(PB_Ok);
 
-        PB_Cancle = new QPushButton(layoutWidget9);
+        PB_Cancle = new QPushButton(layoutWidget7);
         PB_Cancle->setObjectName(QStringLiteral("PB_Cancle"));
 
         horizontalLayout_4->addWidget(PB_Cancle);
@@ -438,18 +451,18 @@ public:
         GB_RealTime->setGeometry(QRect(10, 450, 371, 71));
         GB_RealTime->setCheckable(true);
         GB_RealTime->setChecked(false);
-        layoutWidget10 = new QWidget(GB_RealTime);
-        layoutWidget10->setObjectName(QStringLiteral("layoutWidget10"));
-        layoutWidget10->setGeometry(QRect(10, 40, 351, 22));
-        horizontalLayout_10 = new QHBoxLayout(layoutWidget10);
+        layoutWidget8 = new QWidget(GB_RealTime);
+        layoutWidget8->setObjectName(QStringLiteral("layoutWidget8"));
+        layoutWidget8->setGeometry(QRect(10, 40, 351, 22));
+        horizontalLayout_10 = new QHBoxLayout(layoutWidget8);
         horizontalLayout_10->setObjectName(QStringLiteral("horizontalLayout_10"));
         horizontalLayout_10->setContentsMargins(0, 0, 0, 0);
-        L_NumParticlesPer = new QLabel(layoutWidget10);
+        L_NumParticlesPer = new QLabel(layoutWidget8);
         L_NumParticlesPer->setObjectName(QStringLiteral("L_NumParticlesPer"));
 
         horizontalLayout_10->addWidget(L_NumParticlesPer);
 
-        LE_NumParclesPer = new QLineEdit(layoutWidget10);
+        LE_NumParclesPer = new QLineEdit(layoutWidget8);
         LE_NumParclesPer->setObjectName(QStringLiteral("LE_NumParclesPer"));
 
         horizontalLayout_10->addWidget(LE_NumParclesPer);
@@ -461,12 +474,15 @@ public:
         RB_OneByGroup = new QRadioButton(GB_RealTime);
         RB_OneByGroup->setObjectName(QStringLiteral("RB_OneByGroup"));
         RB_OneByGroup->setGeometry(QRect(140, 20, 141, 16));
+        PB_CalNumParticles = new QPushButton(DLG_MakeParticle);
+        PB_CalNumParticles->setObjectName(QStringLiteral("PB_CalNumParticles"));
+        PB_CalNumParticles->setGeometry(QRect(10, 530, 171, 25));
         QWidget::setTabOrder(LE_Name, TB_Method);
-        QWidget::setTabOrder(TB_Method, LE_PLANE_NX);
-        QWidget::setTabOrder(LE_PLANE_NX, LE_PLANE_NZ);
-        QWidget::setTabOrder(LE_PLANE_NZ, LE_PLANE_DIR);
-        QWidget::setTabOrder(LE_PLANE_DIR, LE_PLANE_LOC);
-        QWidget::setTabOrder(LE_PLANE_LOC, LE_MIN_RADIUS);
+        QWidget::setTabOrder(TB_Method, LE_CUBE_DX);
+        QWidget::setTabOrder(LE_CUBE_DX, LE_CUBE_DY);
+        QWidget::setTabOrder(LE_CUBE_DY, LE_CUBE_DZ);
+        QWidget::setTabOrder(LE_CUBE_DZ, LE_CUBE_LOC);
+        QWidget::setTabOrder(LE_CUBE_LOC, LE_MIN_RADIUS);
         QWidget::setTabOrder(LE_MIN_RADIUS, LE_MAX_RADIUS);
         QWidget::setTabOrder(LE_MAX_RADIUS, LE_P_SPACING);
         QWidget::setTabOrder(LE_P_SPACING, LE_NUM_PARTICLE);
@@ -475,12 +491,21 @@ public:
         QWidget::setTabOrder(LE_Youngs, LE_Density);
         QWidget::setTabOrder(LE_Density, LE_PoissonRatio);
         QWidget::setTabOrder(LE_PoissonRatio, LE_ShearModulus);
-        QWidget::setTabOrder(LE_ShearModulus, PB_Ok);
+        QWidget::setTabOrder(LE_ShearModulus, GB_RealTime);
+        QWidget::setTabOrder(GB_RealTime, RB_OneByOne);
+        QWidget::setTabOrder(RB_OneByOne, RB_OneByGroup);
+        QWidget::setTabOrder(RB_OneByGroup, LE_NumParclesPer);
+        QWidget::setTabOrder(LE_NumParclesPer, PB_CalNumParticles);
+        QWidget::setTabOrder(PB_CalNumParticles, PB_Ok);
         QWidget::setTabOrder(PB_Ok, PB_Cancle);
-        QWidget::setTabOrder(PB_Cancle, LE_CUBE_NX);
-        QWidget::setTabOrder(LE_CUBE_NX, LE_CUBE_NY);
-        QWidget::setTabOrder(LE_CUBE_NY, LE_CUBE_LOC);
-        QWidget::setTabOrder(LE_CUBE_LOC, LE_CUBE_NZ);
+        QWidget::setTabOrder(PB_Cancle, LE_PLANE_DX);
+        QWidget::setTabOrder(LE_PLANE_DX, LE_PLANE_DZ);
+        QWidget::setTabOrder(LE_PLANE_DZ, LE_PLANE_DIR);
+        QWidget::setTabOrder(LE_PLANE_DIR, LE_PLANE_LOC);
+        QWidget::setTabOrder(LE_PLANE_LOC, LE_CircleDiameter);
+        QWidget::setTabOrder(LE_CircleDiameter, LE_NumHeight);
+        QWidget::setTabOrder(LE_NumHeight, LE_CircleLocation);
+        QWidget::setTabOrder(LE_CircleLocation, LE_CircleDirection);
 
         retranslateUi(DLG_MakeParticle);
 
@@ -492,41 +517,43 @@ public:
 
     void retranslateUi(QDialog *DLG_MakeParticle)
     {
-        DLG_MakeParticle->setWindowTitle(QApplication::translate("DLG_MakeParticle", "Make particles", Q_NULLPTR));
-        L_CUBE_NX->setText(QApplication::translate("DLG_MakeParticle", "Nx", Q_NULLPTR));
-        L_CUBE_NY->setText(QApplication::translate("DLG_MakeParticle", "Ny", Q_NULLPTR));
-        L_CUBE_NZ->setText(QApplication::translate("DLG_MakeParticle", "Nz", Q_NULLPTR));
-        L_CUBE_LOC->setText(QApplication::translate("DLG_MakeParticle", "Start loc.", Q_NULLPTR));
-        TB_Method->setTabText(TB_Method->indexOf(T_Cube), QApplication::translate("DLG_MakeParticle", "Cube", Q_NULLPTR));
-        L_PLANE_LOC->setText(QApplication::translate("DLG_MakeParticle", "Start loc.", Q_NULLPTR));
-        L_PLANE_NX->setText(QApplication::translate("DLG_MakeParticle", "Nx", Q_NULLPTR));
-        L_PLANE_NZ->setText(QApplication::translate("DLG_MakeParticle", "Nz", Q_NULLPTR));
-        L_PLANE_DIR->setText(QApplication::translate("DLG_MakeParticle", "Dir.", Q_NULLPTR));
-        TB_Method->setTabText(TB_Method->indexOf(T_Plane), QApplication::translate("DLG_MakeParticle", "Plane", Q_NULLPTR));
-        L_CircleLocation->setText(QApplication::translate("DLG_MakeParticle", "Location", Q_NULLPTR));
-        L_CircleDirection->setText(QApplication::translate("DLG_MakeParticle", "Direction", Q_NULLPTR));
-        L_CircleDiameter->setText(QApplication::translate("DLG_MakeParticle", "Diameter", Q_NULLPTR));
-        L_NumParticle->setText(QApplication::translate("DLG_MakeParticle", "Num. particles", Q_NULLPTR));
-        TB_Method->setTabText(TB_Method->indexOf(T_Circle), QApplication::translate("DLG_MakeParticle", "Circle", Q_NULLPTR));
-        groupBox->setTitle(QApplication::translate("DLG_MakeParticle", "Particle property", Q_NULLPTR));
-        L_MIN_RADIUS->setText(QApplication::translate("DLG_MakeParticle", "Min. radius", Q_NULLPTR));
-        L_MAX_RADIUS->setText(QApplication::translate("DLG_MakeParticle", "Max. radius", Q_NULLPTR));
-        L_P_SPACING->setText(QApplication::translate("DLG_MakeParticle", "Particle spacing", Q_NULLPTR));
-        L_NUM_PARTICLE->setText(QApplication::translate("DLG_MakeParticle", "Num. particle", Q_NULLPTR));
-        GB_MaterialProperty->setTitle(QApplication::translate("DLG_MakeParticle", "Material property", Q_NULLPTR));
-        L_Type->setText(QApplication::translate("DLG_MakeParticle", "Type", Q_NULLPTR));
-        L_YoungsModulus->setText(QApplication::translate("DLG_MakeParticle", "Youngs modulus", Q_NULLPTR));
-        L_Density->setText(QApplication::translate("DLG_MakeParticle", "Density", Q_NULLPTR));
-        L_PoissonRatio->setText(QApplication::translate("DLG_MakeParticle", "Poisson ratio", Q_NULLPTR));
-        L_ShearModulus->setText(QApplication::translate("DLG_MakeParticle", "Shear modulus", Q_NULLPTR));
-        PB_Ok->setText(QApplication::translate("DLG_MakeParticle", "Ok", Q_NULLPTR));
-        PB_Cancle->setText(QApplication::translate("DLG_MakeParticle", "Cancle", Q_NULLPTR));
-        GB_BASIC->setTitle(QApplication::translate("DLG_MakeParticle", "GroupBox", Q_NULLPTR));
-        L_Name->setText(QApplication::translate("DLG_MakeParticle", "Name", Q_NULLPTR));
-        GB_RealTime->setTitle(QApplication::translate("DLG_MakeParticle", "Real time creating", Q_NULLPTR));
-        L_NumParticlesPer->setText(QApplication::translate("DLG_MakeParticle", "The number of particles(per second)", Q_NULLPTR));
-        RB_OneByOne->setText(QApplication::translate("DLG_MakeParticle", "One by one drop", Q_NULLPTR));
-        RB_OneByGroup->setText(QApplication::translate("DLG_MakeParticle", "One by group drop", Q_NULLPTR));
+        DLG_MakeParticle->setWindowTitle(QApplication::translate("DLG_MakeParticle", "Make particles", nullptr));
+        L_CUBE_DX->setText(QApplication::translate("DLG_MakeParticle", "Dx", nullptr));
+        L_CUBE_DY->setText(QApplication::translate("DLG_MakeParticle", "Dy", nullptr));
+        L_CUBE_DZ->setText(QApplication::translate("DLG_MakeParticle", "Dz", nullptr));
+        L_CUBE_LOC->setText(QApplication::translate("DLG_MakeParticle", "Start loc.", nullptr));
+        TB_Method->setTabText(TB_Method->indexOf(T_Cube), QApplication::translate("DLG_MakeParticle", "Cube", nullptr));
+        L_PLANE_LOC->setText(QApplication::translate("DLG_MakeParticle", "Start loc.", nullptr));
+        L_PLANE_DX->setText(QApplication::translate("DLG_MakeParticle", "Dx", nullptr));
+        L_PLANE_NY->setText(QApplication::translate("DLG_MakeParticle", "Ny", nullptr));
+        L_PLANE_DZ->setText(QApplication::translate("DLG_MakeParticle", "Dz", nullptr));
+        L_PLANE_DIR->setText(QApplication::translate("DLG_MakeParticle", "Dir.", nullptr));
+        TB_Method->setTabText(TB_Method->indexOf(T_Plane), QApplication::translate("DLG_MakeParticle", "Plane", nullptr));
+        L_CircleLocation->setText(QApplication::translate("DLG_MakeParticle", "Location", nullptr));
+        L_CircleDirection->setText(QApplication::translate("DLG_MakeParticle", "Direction", nullptr));
+        L_CircleDiameter->setText(QApplication::translate("DLG_MakeParticle", "Diameter", nullptr));
+        L_NumParticle->setText(QApplication::translate("DLG_MakeParticle", "N.Height", nullptr));
+        TB_Method->setTabText(TB_Method->indexOf(T_Circle), QApplication::translate("DLG_MakeParticle", "Circle", nullptr));
+        groupBox->setTitle(QApplication::translate("DLG_MakeParticle", "Particle property", nullptr));
+        L_MIN_RADIUS->setText(QApplication::translate("DLG_MakeParticle", "Min. radius", nullptr));
+        L_MAX_RADIUS->setText(QApplication::translate("DLG_MakeParticle", "Max. radius", nullptr));
+        L_P_SPACING->setText(QApplication::translate("DLG_MakeParticle", "Particle spacing", nullptr));
+        L_NUM_PARTICLE->setText(QApplication::translate("DLG_MakeParticle", "Num. particle", nullptr));
+        GB_MaterialProperty->setTitle(QApplication::translate("DLG_MakeParticle", "Material property", nullptr));
+        L_Type->setText(QApplication::translate("DLG_MakeParticle", "Type", nullptr));
+        L_YoungsModulus->setText(QApplication::translate("DLG_MakeParticle", "Youngs modulus", nullptr));
+        L_Density->setText(QApplication::translate("DLG_MakeParticle", "Density", nullptr));
+        L_PoissonRatio->setText(QApplication::translate("DLG_MakeParticle", "Poisson ratio", nullptr));
+        L_ShearModulus->setText(QApplication::translate("DLG_MakeParticle", "Shear modulus", nullptr));
+        PB_Ok->setText(QApplication::translate("DLG_MakeParticle", "Ok", nullptr));
+        PB_Cancle->setText(QApplication::translate("DLG_MakeParticle", "Cancle", nullptr));
+        GB_BASIC->setTitle(QApplication::translate("DLG_MakeParticle", "GroupBox", nullptr));
+        L_Name->setText(QApplication::translate("DLG_MakeParticle", "Name", nullptr));
+        GB_RealTime->setTitle(QApplication::translate("DLG_MakeParticle", "Real time creating", nullptr));
+        L_NumParticlesPer->setText(QApplication::translate("DLG_MakeParticle", "The number of particles(per second)", nullptr));
+        RB_OneByOne->setText(QApplication::translate("DLG_MakeParticle", "One by one drop", nullptr));
+        RB_OneByGroup->setText(QApplication::translate("DLG_MakeParticle", "One by group drop", nullptr));
+        PB_CalNumParticles->setText(QApplication::translate("DLG_MakeParticle", "Calculation Num. Particles", nullptr));
     } // retranslateUi
 
 };
@@ -537,4 +564,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // UI_MAKEPARTICLE_H
+#endif // MAKEPARTICLEBNUHVD_H

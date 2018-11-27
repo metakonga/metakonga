@@ -40,34 +40,34 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QLabel" name="L_CUBE_NX">
+       <widget class="QLabel" name="L_CUBE_DX">
         <property name="text">
-         <string>Nx</string>
+         <string>Dx</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="LE_CUBE_NX"/>
+       <widget class="QLineEdit" name="LE_CUBE_DX"/>
       </item>
       <item>
-       <widget class="QLabel" name="L_CUBE_NY">
+       <widget class="QLabel" name="L_CUBE_DY">
         <property name="text">
-         <string>Ny</string>
+         <string>Dy</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="LE_CUBE_NY"/>
+       <widget class="QLineEdit" name="LE_CUBE_DY"/>
       </item>
       <item>
-       <widget class="QLabel" name="L_CUBE_NZ">
+       <widget class="QLabel" name="L_CUBE_DZ">
         <property name="text">
-         <string>Nz</string>
+         <string>Dz</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="LE_CUBE_NZ"/>
+       <widget class="QLineEdit" name="LE_CUBE_DZ"/>
       </item>
      </layout>
     </widget>
@@ -120,44 +120,54 @@
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="layoutWidget">
+    <widget class="QWidget" name="">
      <property name="geometry">
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>191</width>
+       <width>211</width>
        <height>22</height>
       </rect>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
       <item>
-       <widget class="QLabel" name="L_PLANE_NX">
+       <widget class="QLabel" name="L_PLANE_DX">
         <property name="text">
-         <string>Nx</string>
+         <string>Dx</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="LE_PLANE_NX"/>
+       <widget class="QLineEdit" name="LE_PLANE_DX"/>
       </item>
       <item>
-       <widget class="QLabel" name="L_PLANE_NZ">
+       <widget class="QLabel" name="L_PLANE_NY">
         <property name="text">
-         <string>Nz</string>
+         <string>Ny</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="LE_PLANE_NZ"/>
+       <widget class="QLineEdit" name="LE_PLANE_NY"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="L_PLANE_DZ">
+        <property name="text">
+         <string>Dz</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="LE_PLANE_DZ"/>
       </item>
      </layout>
     </widget>
-    <widget class="QWidget" name="layoutWidget">
+    <widget class="QWidget" name="">
      <property name="geometry">
       <rect>
-       <x>210</x>
+       <x>230</x>
        <y>10</y>
-       <width>151</width>
+       <width>131</width>
        <height>22</height>
       </rect>
      </property>
@@ -234,12 +244,12 @@
       <item>
        <widget class="QLabel" name="L_NumParticle">
         <property name="text">
-         <string>Num. particles</string>
+         <string>N.Height</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QLineEdit" name="LE_NumParticle"/>
+       <widget class="QLineEdit" name="LE_NumHeight"/>
       </item>
      </layout>
     </widget>
@@ -533,14 +543,27 @@
     </property>
    </widget>
   </widget>
+  <widget class="QPushButton" name="PB_CalNumParticles">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>530</y>
+     <width>171</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Calculation Num. Particles</string>
+   </property>
+  </widget>
  </widget>
  <tabstops>
   <tabstop>LE_Name</tabstop>
   <tabstop>TB_Method</tabstop>
-  <tabstop>LE_PLANE_NX</tabstop>
-  <tabstop>LE_PLANE_NZ</tabstop>
-  <tabstop>LE_PLANE_DIR</tabstop>
-  <tabstop>LE_PLANE_LOC</tabstop>
+  <tabstop>LE_CUBE_DX</tabstop>
+  <tabstop>LE_CUBE_DY</tabstop>
+  <tabstop>LE_CUBE_DZ</tabstop>
+  <tabstop>LE_CUBE_LOC</tabstop>
   <tabstop>LE_MIN_RADIUS</tabstop>
   <tabstop>LE_MAX_RADIUS</tabstop>
   <tabstop>LE_P_SPACING</tabstop>
@@ -550,12 +573,21 @@
   <tabstop>LE_Density</tabstop>
   <tabstop>LE_PoissonRatio</tabstop>
   <tabstop>LE_ShearModulus</tabstop>
+  <tabstop>GB_RealTime</tabstop>
+  <tabstop>RB_OneByOne</tabstop>
+  <tabstop>RB_OneByGroup</tabstop>
+  <tabstop>LE_NumParclesPer</tabstop>
+  <tabstop>PB_CalNumParticles</tabstop>
   <tabstop>PB_Ok</tabstop>
   <tabstop>PB_Cancle</tabstop>
-  <tabstop>LE_CUBE_NX</tabstop>
-  <tabstop>LE_CUBE_NY</tabstop>
-  <tabstop>LE_CUBE_LOC</tabstop>
-  <tabstop>LE_CUBE_NZ</tabstop>
+  <tabstop>LE_PLANE_DX</tabstop>
+  <tabstop>LE_PLANE_DZ</tabstop>
+  <tabstop>LE_PLANE_DIR</tabstop>
+  <tabstop>LE_PLANE_LOC</tabstop>
+  <tabstop>LE_CircleDiameter</tabstop>
+  <tabstop>LE_NumHeight</tabstop>
+  <tabstop>LE_CircleLocation</tabstop>
+  <tabstop>LE_CircleDirection</tabstop>
  </tabstops>
  <resources/>
  <connections/>

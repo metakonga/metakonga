@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'lineEditWidget.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.7.1)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.10.0)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -12,12 +12,14 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'lineEditWidget.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.7.1. It"
+#error "This file was generated using the moc from 5.10.0. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
 
 QT_BEGIN_MOC_NAMESPACE
+QT_WARNING_PUSH
+QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_lineEditWidget_t {
     QByteArrayData data[3];
     char stringdata0[35];
@@ -71,10 +73,9 @@ void lineEditWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
         int *result = reinterpret_cast<int *>(_a[0]);
-        void **func = reinterpret_cast<void **>(_a[1]);
         {
             typedef void (lineEditWidget::*_t)();
-            if (*reinterpret_cast<_t *>(func) == static_cast<_t>(&lineEditWidget::up_arrow_key_press)) {
+            if (*reinterpret_cast<_t *>(_a[1]) == static_cast<_t>(&lineEditWidget::up_arrow_key_press)) {
                 *result = 0;
                 return;
             }
@@ -85,7 +86,7 @@ void lineEditWidget::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _
 
 const QMetaObject lineEditWidget::staticMetaObject = {
     { &QLineEdit::staticMetaObject, qt_meta_stringdata_lineEditWidget.data,
-      qt_meta_data_lineEditWidget,  qt_static_metacall, Q_NULLPTR, Q_NULLPTR}
+      qt_meta_data_lineEditWidget,  qt_static_metacall, nullptr, nullptr}
 };
 
 
@@ -96,9 +97,9 @@ const QMetaObject *lineEditWidget::metaObject() const
 
 void *lineEditWidget::qt_metacast(const char *_clname)
 {
-    if (!_clname) return Q_NULLPTR;
+    if (!_clname) return nullptr;
     if (!strcmp(_clname, qt_meta_stringdata_lineEditWidget.stringdata0))
-        return static_cast<void*>(const_cast< lineEditWidget*>(this));
+        return static_cast<void*>(this);
     return QLineEdit::qt_metacast(_clname);
 }
 
@@ -122,6 +123,7 @@ int lineEditWidget::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 // SIGNAL 0
 void lineEditWidget::up_arrow_key_press()
 {
-    QMetaObject::activate(this, &staticMetaObject, 0, Q_NULLPTR);
+    QMetaObject::activate(this, &staticMetaObject, 0, nullptr);
 }
+QT_WARNING_POP
 QT_END_MOC_NAMESPACE

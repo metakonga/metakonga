@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'xdynamics.ui'
 **
-** Created by: Qt User Interface Compiler version 5.7.1
+** Created by: Qt User Interface Compiler version 5.10.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -112,15 +112,15 @@ public:
 
     void retranslateUi(QMainWindow *xdynamics)
     {
-        xdynamics->setWindowTitle(QApplication::translate("xdynamics", "xdynamics", Q_NULLPTR));
-        actionChange_Shape->setText(QApplication::translate("xdynamics", "Change Shape", Q_NULLPTR));
-        Import_MilkShape_3D_ASCII->setText(QApplication::translate("xdynamics", "MilkShape 3D ASCII", Q_NULLPTR));
-        actionMBD_Result_ASCII->setText(QApplication::translate("xdynamics", "MBD Result ASCII", Q_NULLPTR));
-        actionDEM_Result_ASCII->setText(QApplication::translate("xdynamics", "DEM Result ASCII", Q_NULLPTR));
-        actionProperty->setText(QApplication::translate("xdynamics", "Property", Q_NULLPTR));
-        Menu_import->setText(QApplication::translate("xdynamics", "Import", Q_NULLPTR));
-        menu->setTitle(QApplication::translate("xdynamics", "File", Q_NULLPTR));
-        menuExport->setTitle(QApplication::translate("xdynamics", "Export", Q_NULLPTR));
+        xdynamics->setWindowTitle(QApplication::translate("xdynamics", "xdynamics", nullptr));
+        actionChange_Shape->setText(QApplication::translate("xdynamics", "Change Shape", nullptr));
+        Import_MilkShape_3D_ASCII->setText(QApplication::translate("xdynamics", "MilkShape 3D ASCII", nullptr));
+        actionMBD_Result_ASCII->setText(QApplication::translate("xdynamics", "MBD Result ASCII", nullptr));
+        actionDEM_Result_ASCII->setText(QApplication::translate("xdynamics", "DEM Result ASCII", nullptr));
+        actionProperty->setText(QApplication::translate("xdynamics", "Property", nullptr));
+        Menu_import->setText(QApplication::translate("xdynamics", "Import", nullptr));
+        menu->setTitle(QApplication::translate("xdynamics", "File", nullptr));
+        menuExport->setTitle(QApplication::translate("xdynamics", "Export", nullptr));
     } // retranslateUi
 
 };

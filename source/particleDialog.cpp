@@ -1,5 +1,6 @@
 #include "particleDialog.h"
 #include "particleManager.h"
+#include "messageBox.h"
 #include "types.h"
 
 particleDialog::particleDialog(QWidget* parent)
@@ -8,19 +9,22 @@ particleDialog::particleDialog(QWidget* parent)
 	, min_radius(0.01)
 	, max_radius(0.01)
 	, circle_diameter(0.01)
-	, ncubex(3)
-	, ncubey(3)
-	, ncubez(3)
-	, nplanex(3)
-	, nplanez(3)
+	, dcubex(0.2)
+	, dcubey(0.1)
+	, dcubez(0.2)
+	, dplanex(0.2)
+	, nplaney(1)
+	, dplanez(0.2)
+	, nheight(1)
 	, np(0)
 	, perNp(0)
+	, perTime(0)
 	, real_time(false)
 {
 	setupUi(this);
 	LE_NUM_PARTICLE->setReadOnly(false);
 	dir[0] = 0.0; dir[1] = 1.0; dir[2] = 0.0;
-	loc[0] = 0.0; loc[1] = 0.02; loc[2] = 0.0;
+	loc[0] = 0.01; loc[1] = 0.02; loc[2] = 0.01;
 	name = "Particle" + QString("%1").arg(particleManager::count);
 	setCubeData();
 	LE_Name->setText(name);
@@ -37,11 +41,7 @@ particleDialog::particleDialog(QWidget* parent)
 	connect(PB_Ok, SIGNAL(clicked()), this, SLOT(click_ok()));
 	connect(PB_Cancle, SIGNAL(clicked()), this, SLOT(click_cancle()));
 	connect(CB_Type, SIGNAL(currentIndexChanged(int)), this, SLOT(changeComboBox(int)));
-	connect(LE_CUBE_NX, SIGNAL(editingFinished()), this, SLOT(update_tnp()));
-	connect(LE_CUBE_NY, SIGNAL(editingFinished()), this, SLOT(update_tnp()));
-	connect(LE_CUBE_NZ, SIGNAL(editingFinished()), this, SLOT(update_tnp()));
-	connect(LE_PLANE_NX, SIGNAL(editingFinished()), this, SLOT(update_tnp()));
-	connect(LE_PLANE_NZ, SIGNAL(editingFinished()), this, SLOT(update_tnp()));
+	connect(PB_CalNumParticles, SIGNAL(clicked()), this, SLOT(calculate_tnp()));
 }
 
 particleDialog::~particleDialog()
@@ -76,31 +76,33 @@ void particleDialog::changeComboBox(int idx)
 
 void particleDialog::setCubeData()
 {
-	LE_CUBE_NX->setText(QString("%1").arg(ncubex));
-	LE_CUBE_NY->setText(QString("%1").arg(ncubey));
-	LE_CUBE_NZ->setText(QString("%1").arg(ncubez));
+	LE_CUBE_DX->setText(QString("%1").arg(dcubex));
+	LE_CUBE_DY->setText(QString("%1").arg(dcubey));
+	LE_CUBE_DZ->setText(QString("%1").arg(dcubez));
 	LE_P_SPACING->setText(QString("%1").arg(spacing));
 	LE_MIN_RADIUS->setText(QString("%1").arg(min_radius));
 	LE_MAX_RADIUS->setText(QString("%1").arg(max_radius));
-	LE_NUM_PARTICLE->setText(QString("%1").arg(ncubex * ncubey * ncubez));
-	LE_CUBE_LOC->setText("0.0 0.02 0.0");
+	LE_NUM_PARTICLE->setText(QString("%1").arg(np));
+	LE_CUBE_LOC->setText(QString("%1 %2 %3").arg(loc[0]).arg(loc[1]).arg(loc[2]));
 }
 
 void particleDialog::setPlaneData()
 {
-	LE_PLANE_NX->setText(QString("%1").arg(nplanex));
-	LE_PLANE_NZ->setText(QString("%1").arg(nplanez));
+	LE_PLANE_DX->setText(QString("%1").arg(dplanex));
+	LE_PLANE_NY->setText(QString("%1").arg(nplaney));
+	LE_PLANE_DZ->setText(QString("%1").arg(dplanez));
 	LE_P_SPACING->setText(QString("%1").arg(spacing));
 	LE_MIN_RADIUS->setText(QString("%1").arg(min_radius));
 	LE_MAX_RADIUS->setText(QString("%1").arg(max_radius));
-	LE_NUM_PARTICLE->setText(QString("%1").arg(nplanex * nplanez));
-	LE_PLANE_LOC->setText("0.0 0.02 0.0");
+	LE_NUM_PARTICLE->setText(QString("%1").arg(np));
+	LE_PLANE_LOC->setText(QString("%1 %2 %3").arg(loc[0]).arg(loc[1]).arg(loc[2]));
 }
 
 void particleDialog::setCircleData()
 {
-	LE_NumParticle->setText(QString("%1").arg(1));
+	//LE_NumParticle->setText(QString("%1").arg(np));
 	LE_CircleDiameter->setText(QString("%1").arg(circle_diameter));
+	LE_NumHeight->setText(QString("%1").arg(nheight));
 	LE_CircleLocation->setText(QString("%1 %2 %3").arg(loc[0]).arg(loc[1]).arg(loc[2]));
 	LE_CircleDirection->setText(QString("%1 %2 %3").arg(dir[0]).arg(dir[1]).arg(dir[2]));
 }
@@ -122,18 +124,21 @@ void particleDialog::click_ok()
 	QStringList dl;
 	if (method == 0)
 	{
-		ncubex = LE_CUBE_NX->text().toUInt();
-		ncubey = LE_CUBE_NY->text().toUInt();
-		ncubez = LE_CUBE_NZ->text().toUInt();
+		dcubex = LE_CUBE_DX->text().toDouble();
+		dcubey = LE_CUBE_DY->text().toDouble();
+		dcubez = LE_CUBE_DZ->text().toDouble();
 		dl = LE_CUBE_LOC->text().split(" ");
 		loc[0] = dl.at(0).toDouble();
 		loc[1] = dl.at(1).toDouble();
 		loc[2] = dl.at(2).toDouble();
+		if (!np)
+			np = particleManager::calculateNumCubeParticles(dcubex, dcubey, dcubez, LE_MIN_RADIUS->text().toDouble(), LE_MAX_RADIUS->text().toDouble());
 	}
 	else if (method == 1)
 	{
-		nplanex = LE_PLANE_NX->text().toUInt();
-		nplanez = LE_PLANE_NZ->text().toUInt();
+		dplanex = LE_PLANE_DX->text().toDouble();
+		nplaney = LE_PLANE_NY->text().toUInt();
+		dplanez = LE_PLANE_DZ->text().toDouble();
 		QStringList dl = LE_PLANE_DIR->text().split(" ");
 		dir[0] = dl.at(0).toDouble(); 
 		dir[1] = dl.at(1).toDouble(); 
@@ -143,11 +148,13 @@ void particleDialog::click_ok()
 		loc[1] = dl.at(1).toDouble();
 		loc[2] = dl.at(2).toDouble();
 		np = LE_NUM_PARTICLE->text().toUInt();
+		if (!np)
+			np = particleManager::calculateNumPlaneParticles(dplanex, nplaney, dplanez, LE_MIN_RADIUS->text().toDouble(), LE_MAX_RADIUS->text().toDouble());
 	}
 	else if (method == 2)
 	{
 		circle_diameter = LE_CircleDiameter->text().toDouble();
-		
+		nheight = LE_NumHeight->text().toUInt();
 		QStringList cl = LE_CircleDirection->text().split(" ");
 		dir[0] = cl.at(0).toDouble();
 		dir[1] = cl.at(1).toDouble();
@@ -156,7 +163,9 @@ void particleDialog::click_ok()
 		loc[0] = cl.at(0).toDouble();
 		loc[1] = cl.at(1).toDouble();
 		loc[2] = cl.at(2).toDouble();
-		np = LE_NumParticle->text().toUInt();
+//		np = LE_NumParticle->text().toUInt();
+		if (!np)
+			np = particleManager::calculateNumCircleParticles(circle_diameter, nheight, LE_MIN_RADIUS->text().toDouble(), LE_MAX_RADIUS->text().toDouble());
 	}
 	spacing = LE_P_SPACING->text().toDouble();
 	min_radius = LE_MIN_RADIUS->text().toDouble();
@@ -188,19 +197,33 @@ void particleDialog::click_cancle()
 	this->setResult(QDialog::Rejected);
 }
 
-void particleDialog::update_tnp()
+void particleDialog::calculate_tnp()
 {
 	method = TB_Method->currentIndex();
 	unsigned int np = 0;
 	if (method == 0)
 	{
-		np = LE_CUBE_NX->text().toUInt() * LE_CUBE_NY->text().toUInt() * LE_CUBE_NZ->text().toUInt();
-		
+		np = particleManager::calculateNumCubeParticles(LE_CUBE_DX->text().toDouble(), LE_CUBE_DY->text().toDouble(), LE_CUBE_DZ->text().toDouble(), LE_MIN_RADIUS->text().toDouble(), LE_MAX_RADIUS->text().toDouble());// LE_CUBE_DX->text().toUInt() * LE_CUBE_DY->text().toUInt() * LE_CUBE_DZ->text().toUInt();
 	}
 	else if (method == 1)
 	{
-		np = LE_PLANE_NX->text().toUInt() * LE_PLANE_NZ->text().toUInt();
-		LE_NUM_PARTICLE->setText(QString("%1").arg(np));
+		if (!GB_RealTime->isChecked() && LE_PLANE_NY->text().toUInt() != 1)
+		{
+			messageBox::run("If it is not real time creating in plane, the value 'Ny' regards as '1'");
+			LE_PLANE_NY->setText("1");
+		}
+		np = particleManager::calculateNumPlaneParticles(LE_PLANE_DX->text().toDouble(), LE_PLANE_NY->text().toUInt(), LE_PLANE_DZ->text().toDouble(), LE_MIN_RADIUS->text().toDouble(), LE_MAX_RADIUS->text().toDouble());// LE_CUBE_DX->text().toUInt() * LE_CUBE_DY->text().toUInt() * LE_CUBE_DZ->text().toUInt();
+		//np = LE_PLANE_DX->text().toUInt() * LE_PLANE_DZ->text().toUInt();
+		/*LE_NUM_PARTICLE->setText(QString("%1").arg(np));*/
+	}
+	else if (method == 2)
+	{
+		if (!GB_RealTime->isChecked() && LE_NumHeight->text().toUInt() != 1)
+		{
+			messageBox::run("If it is not real time creating in circle, the value 'N. Height' regards as '1'");
+			LE_NumHeight->setText("1");
+		}
+		np = particleManager::calculateNumCircleParticles(LE_CircleDiameter->text().toDouble(), LE_NumHeight->text().toUInt(), LE_MIN_RADIUS->text().toDouble(), LE_MAX_RADIUS->text().toDouble());
 	}
 	LE_NUM_PARTICLE->setText(QString("%1").arg(np));
 }

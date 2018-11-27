@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'controlBody.ui'
 **
-** Created by: Qt User Interface Compiler version 5.7.1
+** Created by: Qt User Interface Compiler version 5.10.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -94,14 +94,14 @@ public:
 
     void retranslateUi(QDialog *DLG_ControlBody)
     {
-        DLG_ControlBody->setWindowTitle(QApplication::translate("DLG_ControlBody", "Dialog", Q_NULLPTR));
-        TB_UPArrow->setText(QApplication::translate("DLG_ControlBody", "...", Q_NULLPTR));
-        TB_LEFTArrow->setText(QApplication::translate("DLG_ControlBody", "...", Q_NULLPTR));
-        TB_RIGHTArrow->setText(QApplication::translate("DLG_ControlBody", "...", Q_NULLPTR));
-        TB_BOTTOMArrow->setText(QApplication::translate("DLG_ControlBody", "...", Q_NULLPTR));
-        TB_XRotation->setText(QApplication::translate("DLG_ControlBody", "...", Q_NULLPTR));
-        TB_YRotation->setText(QApplication::translate("DLG_ControlBody", "...", Q_NULLPTR));
-        TB_ZRotation->setText(QApplication::translate("DLG_ControlBody", "...", Q_NULLPTR));
+        DLG_ControlBody->setWindowTitle(QApplication::translate("DLG_ControlBody", "Dialog", nullptr));
+        TB_UPArrow->setText(QApplication::translate("DLG_ControlBody", "...", nullptr));
+        TB_LEFTArrow->setText(QApplication::translate("DLG_ControlBody", "...", nullptr));
+        TB_RIGHTArrow->setText(QApplication::translate("DLG_ControlBody", "...", nullptr));
+        TB_BOTTOMArrow->setText(QApplication::translate("DLG_ControlBody", "...", nullptr));
+        TB_XRotation->setText(QApplication::translate("DLG_ControlBody", "...", nullptr));
+        TB_YRotation->setText(QApplication::translate("DLG_ControlBody", "...", nullptr));
+        TB_ZRotation->setText(QApplication::translate("DLG_ControlBody", "...", nullptr));
     } // retranslateUi
 
 };

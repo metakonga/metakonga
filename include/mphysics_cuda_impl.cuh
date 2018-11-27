@@ -1000,7 +1000,7 @@ __global__ void particle_polygonObject_collision_kernel(
 										dv, unit, Ft, Fn, M);
 									break;
 								}
-								double3 sum_f = Fn;// +shear_force;
+								double3 sum_f = Fn/* + Ft*/;
 								force[id] += make_double3(sum_f.x, sum_f.y, sum_f.z);
 								moment[id] += make_double3(M.x, M.y, M.z);
 								dpmi[pidx].force += -(sum_f + Ft);// +make_double3(1.0, 5.0, 9.0);

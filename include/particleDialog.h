@@ -21,14 +21,16 @@ public:
 	bool one_by_one;
 	unsigned int perNp;
 	unsigned int np;
+	unsigned int nplaney;
+	unsigned int nheight;
 	double perTime;
 	double circle_diameter;
 	double spacing;
 	double min_radius;
 	double max_radius;
-	unsigned int ncubex, nplanex;
-	unsigned int ncubey, nplanez;
-	unsigned int ncubez;
+	double dcubex, dplanex;
+	double dcubey;
+	double dcubez, dplanez;
 	double dir[3];
 	double loc[3];
 	double stiffnessRatio;
@@ -47,7 +49,7 @@ private slots:
 	void changeTab(int);
 	void click_ok();
 	void click_cancle();
-	void update_tnp();
+	void calculate_tnp();
 	void click_radio_button();
 };
 

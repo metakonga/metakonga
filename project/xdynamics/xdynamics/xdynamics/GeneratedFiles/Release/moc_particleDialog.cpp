@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'particleDialog.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.7.1)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.10.0)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -12,15 +12,17 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'particleDialog.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.7.1. It"
+#error "This file was generated using the moc from 5.10.0. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
 
 QT_BEGIN_MOC_NAMESPACE
+QT_WARNING_PUSH
+QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_particleDialog_t {
     QByteArrayData data[8];
-    char stringdata0[93];
+    char stringdata0[96];
 };
 #define QT_MOC_LITERAL(idx, ofs, len) \
     Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
@@ -35,12 +37,12 @@ QT_MOC_LITERAL(2, 30, 0), // ""
 QT_MOC_LITERAL(3, 31, 9), // "changeTab"
 QT_MOC_LITERAL(4, 41, 8), // "click_ok"
 QT_MOC_LITERAL(5, 50, 12), // "click_cancle"
-QT_MOC_LITERAL(6, 63, 10), // "update_tnp"
-QT_MOC_LITERAL(7, 74, 18) // "click_radio_button"
+QT_MOC_LITERAL(6, 63, 13), // "calculate_tnp"
+QT_MOC_LITERAL(7, 77, 18) // "click_radio_button"
 
     },
     "particleDialog\0changeComboBox\0\0changeTab\0"
-    "click_ok\0click_cancle\0update_tnp\0"
+    "click_ok\0click_cancle\0calculate_tnp\0"
     "click_radio_button"
 };
 #undef QT_MOC_LITERAL
@@ -87,7 +89,7 @@ void particleDialog::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _
         case 1: _t->changeTab((*reinterpret_cast< int(*)>(_a[1]))); break;
         case 2: _t->click_ok(); break;
         case 3: _t->click_cancle(); break;
-        case 4: _t->update_tnp(); break;
+        case 4: _t->calculate_tnp(); break;
         case 5: _t->click_radio_button(); break;
         default: ;
         }
@@ -96,7 +98,7 @@ void particleDialog::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _
 
 const QMetaObject particleDialog::staticMetaObject = {
     { &QDialog::staticMetaObject, qt_meta_stringdata_particleDialog.data,
-      qt_meta_data_particleDialog,  qt_static_metacall, Q_NULLPTR, Q_NULLPTR}
+      qt_meta_data_particleDialog,  qt_static_metacall, nullptr, nullptr}
 };
 
 
@@ -107,9 +109,9 @@ const QMetaObject *particleDialog::metaObject() const
 
 void *particleDialog::qt_metacast(const char *_clname)
 {
-    if (!_clname) return Q_NULLPTR;
+    if (!_clname) return nullptr;
     if (!strcmp(_clname, qt_meta_stringdata_particleDialog.stringdata0))
-        return static_cast<void*>(const_cast< particleDialog*>(this));
+        return static_cast<void*>(this);
     return QDialog::qt_metacast(_clname);
 }
 
@@ -129,4 +131,5 @@ int particleDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     }
     return _id;
 }
+QT_WARNING_POP
 QT_END_MOC_NAMESPACE

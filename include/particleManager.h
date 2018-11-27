@@ -46,25 +46,28 @@ public:
 	float* Position_f() { return (float*)pos_f; }
 	QString setParticleDataFromPart(QString& f);
 
-	VEC4D* CreateCubeParticle(
-		QString n, material_type type, unsigned int nx, unsigned int ny, unsigned int nz,
-		double lx, double ly, double lz,
-		double spacing, double min_radius, double max_radius,
-		double youngs, double density, double poisson, double shear
-		);
+	static unsigned int calculateNumCubeParticles(double dx, double dy, double dz, double min_radius, double max_radius);
+	static unsigned int calculateNumPlaneParticles(double dx, unsigned int ny, double dy, double min_radius, double max_radius);
+	static unsigned int calculateNumCircleParticles(double d, unsigned int ny, double min_radius, double max_radius);
 
-	VEC4D* CreatePlaneParticle(
-		QString n, material_type type, unsigned int nx, unsigned int ny, unsigned int _np,
+	VEC4D* CreateCubeParticle(
+		QString n, material_type type, unsigned int _np, double dx, double dy, double dz,
 		double lx, double ly, double lz,
-		double dx, double dy, double dz,
 		double spacing, double min_radius, double max_radius,
-		double youngs, double density, double poisson, double shear, bool isr = false, unsigned int pnp = 0, double pnt = 0.0, bool obo = false);
+		double youngs, double density, double poisson, double shear);
+	VEC4D* CreatePlaneParticle(
+		QString n, material_type type, double dx, unsigned int ny, double dz, unsigned int _np,
+		double lx, double ly, double lz,
+		double dirx, double diry, double dirz,
+		double spacing, double min_radius, double max_radius,
+		double youngs, double density, double poisson, double shear, bool isr = false, unsigned int pnp = 0, double pnt = 0.0, bool obo = false, QString pfile = "none");
 	VEC4D* CreateCircleParticle(
-		QString n, material_type type, double cdia, unsigned int _np, 
+		QString n, material_type type, double cdia, unsigned int _np,
+		unsigned int nh,
 		double lx, double ly, double lz, 
 		double dx, double dy, double dz,
 		double spacing, double min_radius, double max_radius,
-		double youngs, double density, double poisson, double shear, bool isr = false, unsigned int pnp = 0, double pnt = 0.0, bool obo = false);
+		double youngs, double density, double poisson, double shear, bool isr = false, unsigned int pnp = 0, double pnt = 0.0, bool obo = false, QString pfile = "none");
 	static unsigned int count;
 
 private:

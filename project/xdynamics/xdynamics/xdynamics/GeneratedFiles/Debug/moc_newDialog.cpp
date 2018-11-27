@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'newDialog.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.7.1)
+** Created by: The Qt Meta Object Compiler version 67 (Qt 5.10.0)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -12,12 +12,14 @@
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'newDialog.h' doesn't include <QObject>."
 #elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.7.1. It"
+#error "This file was generated using the moc from 5.10.0. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
 
 QT_BEGIN_MOC_NAMESPACE
+QT_WARNING_PUSH
+QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_newDialog_t {
     QByteArrayData data[4];
     char stringdata0[33];
@@ -79,7 +81,7 @@ void newDialog::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, v
 
 const QMetaObject newDialog::staticMetaObject = {
     { &QDialog::staticMetaObject, qt_meta_stringdata_newDialog.data,
-      qt_meta_data_newDialog,  qt_static_metacall, Q_NULLPTR, Q_NULLPTR}
+      qt_meta_data_newDialog,  qt_static_metacall, nullptr, nullptr}
 };
 
 
@@ -90,9 +92,9 @@ const QMetaObject *newDialog::metaObject() const
 
 void *newDialog::qt_metacast(const char *_clname)
 {
-    if (!_clname) return Q_NULLPTR;
+    if (!_clname) return nullptr;
     if (!strcmp(_clname, qt_meta_stringdata_newDialog.stringdata0))
-        return static_cast<void*>(const_cast< newDialog*>(this));
+        return static_cast<void*>(this);
     return QDialog::qt_metacast(_clname);
 }
 
@@ -112,4 +114,5 @@ int newDialog::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     }
     return _id;
 }
+QT_WARNING_POP
 QT_END_MOC_NAMESPACE
