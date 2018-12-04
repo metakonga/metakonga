@@ -115,10 +115,19 @@ void vplane::draw(GLenum eMode)
 		glColor3f(clr.redF(), clr.greenF(), clr.blueF());
 		if (eMode == GL_SELECT)
 			glLoadName((GLuint)ID());
-		glTranslated(pos0.x, pos0.y, pos0.z);
-		glRotated(ang0.x, 0, 0, 1);
-		glRotated(ang0.y, 1, 0, 0);
-		glRotated(ang0.z, 0, 0, 1);
+		unsigned int idx = vcontroller::getFrame();
+		if (idx != 0)
+		{
+			geometry_motion_result gmr = model::rs->geometryMotionResults()[nm].at(idx);
+			animationFrame(gmr.p, gmr.ep);
+		}
+		else
+		{
+			glTranslated(pos0.x, pos0.y, pos0.z);
+			glRotated(ang0.x, 0, 0, 1);
+			glRotated(ang0.y, 1, 0, 0);
+			glRotated(ang0.z, 0, 0, 1);
+		}	
 		glCallList(glList);
 		if (isSelected)
 		{

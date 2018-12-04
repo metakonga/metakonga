@@ -446,7 +446,7 @@ bool dem_simulation::initialize_f(contactManager* _cm)
 bool dem_simulation::oneStepAnalysis(double ct, unsigned int cstep)
 {
 	if (per_np && !((cstep-1) % per_np) && np < md->ParticleManager()->Np())
-		md->ParticleManager()->OneByOneCreating() ? np++ : np += md->ParticleManager()->NextCreatingPerGroup();
+		md->ParticleManager()->OneByOneCreating() ? np += md->ParticleManager()->NextCreatingOne(np) : np += md->ParticleManager()->NextCreatingPerGroup();
 
 	//qDebug() << np;
 	if (itor->integrationType() == dem_integrator::VELOCITY_VERLET)

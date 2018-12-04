@@ -180,6 +180,7 @@ void GLWidget::ShowContextMenu(const QPoint& pos)
 			subMenu->addAction("Select");
 			subMenu->addAction("Delete");
 			subMenu->addAction("Property");
+			subMenu->addAction("Motion");
 			if (vobj->ViewObjectType() == vobject::V_POLYGON)
 			{
 				subMenu->addAction("Refinement");
@@ -247,6 +248,11 @@ void GLWidget::ShowContextMenu(const QPoint& pos)
 			{
 				setSelectMarking(pmenuTitle);
 				emit contextSignal(pmenuTitle, CONTEXT_REFINEMENT);
+			}
+			else if (txt == "Motion")
+			{
+				setSelectMarking(pmenuTitle);
+				emit contextSignal(pmenuTitle, CONTEXT_MOTION_CONDITION);
 			}
 		}
 	}

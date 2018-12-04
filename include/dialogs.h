@@ -6,6 +6,7 @@
 #include "cylinderDialog.h"
 #include "preDefinedMBDDialog.h"
 #include "newDialog.h"
+#include "motionConditionDialog.h"
 #include "bodyInfoDialog.h"
 #include "hmcmDialog.h"
 #include "importDialog.h"

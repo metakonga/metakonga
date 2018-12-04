@@ -72,7 +72,7 @@ public:
 	void changeProjectionViewMode();
 	void solve();
 	void exitThread();
-	//void 
+	void motionConditionOfGeometry(QString nm);
 	void recieveProgress(int, QString, QString = "");
 	void excuteMessageBox();
 	void contextSlot(QString, context_menu);

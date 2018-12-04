@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DLG_MotionCondition</class>
+ <widget class="QDialog" name="DLG_MotionCondition">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>272</width>
+    <height>239</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QGroupBox" name="GB_MotionCondition">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>40</y>
+     <width>251</width>
+     <height>151</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Motion condition</string>
+   </property>
+   <widget class="QRadioButton" name="RB_ConstantVelocity">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>20</y>
+      <width>121</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Constant velocity</string>
+    </property>
+   </widget>
+   <widget class="QRadioButton" name="RB_NoCondition">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>90</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>No condition</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QWidget" name="">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>42</y>
+      <width>231</width>
+      <height>102</height>
+     </rect>
+    </property>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QLabel" name="L_StartTime">
+         <property name="text">
+          <string>Start time</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="L_EndTime">
+         <property name="text">
+          <string>End time</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="L_Value">
+         <property name="text">
+          <string>Value</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="L_Direction">
+         <property name="text">
+          <string>Direction</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLineEdit" name="LE_StartTime"/>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="LE_EndTime"/>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="LE_Value"/>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="LE_Direction"/>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>251</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QLabel" name="L_Name">
+      <property name="text">
+       <string>Name</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLineEdit" name="LE_Name">
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>100</x>
+     <y>200</y>
+     <width>158</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
+    <item>
+     <widget class="QPushButton" name="PB_Ok">
+      <property name="text">
+       <string>Ok</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="PB_Cancle">
+      <property name="text">
+       <string>Cancle</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <tabstops>
+  <tabstop>LE_Name</tabstop>
+  <tabstop>RB_NoCondition</tabstop>
+  <tabstop>RB_ConstantVelocity</tabstop>
+  <tabstop>LE_StartTime</tabstop>
+  <tabstop>LE_EndTime</tabstop>
+  <tabstop>LE_Value</tabstop>
+  <tabstop>PB_Ok</tabstop>
+  <tabstop>PB_Cancle</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

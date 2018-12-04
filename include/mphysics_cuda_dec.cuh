@@ -4,6 +4,7 @@
 #include <cuda_runtime.h>
 #include <vector_types.h>
 #include <helper_cuda.h>
+//#include "vector_types.h"
 //#include <helper_math.h>
 
 //#include <helper_functions.h>
@@ -11,6 +12,7 @@
 
 //__constant__ device_parameters cte;
 //double3 toDouble3(VEC3D& v3) { return double3(v3.x, v3.y, v3.z); }
+//inline double3 change_cuda_double3(VEC3D& v3) { return make_double3(v3.x, v3.y, v3.z); }
 
 struct device_parameters
 {

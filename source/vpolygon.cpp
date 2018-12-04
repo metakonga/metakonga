@@ -1,7 +1,6 @@
 #include "vpolygon.h"
 #include "numeric_utility.h"
 #include "shader.h"
-#include "model.h"
 #include "vcube.h"
 #include "vcontroller.h"
 #include <QTextStream>

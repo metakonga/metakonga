@@ -41,10 +41,12 @@ private:
 	void singleCollision(
 		plane* _pe, double mass, double rad, VEC3D& pos, VEC3D& vel,
 		VEC3D& omega, VEC3D& force, VEC3D& moment);
+	void cudaMemoryAlloc_planeObject();
 
 	object* p;
 	plane *pe;
 	device_plane_info *dpi;
+	host_plane_info hpi;
 	device_plane_info_f *dpi_f;
 };
 

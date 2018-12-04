@@ -263,8 +263,10 @@ void xdynamics::newproj()
 {
 	newDialog nd;
 	int ret = nd.exec();
+	QString log;
 	if (ret)
 	{
+		
 		createToolOperations();
 		createAnimationOperations();
 		_isOnMainActions = true;
@@ -275,7 +277,9 @@ void xdynamics::newproj()
 		db = new database(this, mg);
 		addDockWidget(Qt::RightDockWidgetArea, db);
 		if (nd.isBrowser)
-			mg->OpenModel(nd.fullPath);
+		{
+			log = mg->OpenModel(nd.fullPath);
+		}			
 		else
 		{
 			unit_type u = nd.unit;
@@ -305,6 +309,7 @@ void xdynamics::newproj()
 	comMgr = new commandManager;
 	addDockWidget(Qt::TopDockWidgetArea, comm);
 	addDockWidget(Qt::BottomDockWidgetArea, cmd);
+	cmd->write(CMD_INFO, log);
 }
 
 // CODEDYN
@@ -319,7 +324,9 @@ void xdynamics::openproj()
 		QString file = file_path.at(0);
 		QString ext = getFileExtend(file);
 		if (ext == "xdm")
-			mg->OpenModel(file);
+		{
+			cmd->write(CMD_INFO, mg->OpenModel(file));
+		}			
 		if (ext == "bfr")
 		{
 			if (!st_model)
@@ -802,7 +809,7 @@ void xdynamics::makeParticle()
 			pd.loc[0], pd.loc[1], pd.loc[2],
 			pd.dir[0], pd.dir[1], pd.dir[2],
 			pd.spacing, pd.min_radius, pd.max_radius,
-			pd.youngs, pd.density, pd.poisson, pd.shear, pd.real_time, pd.perNp, pd.one_by_one);
+			pd.youngs, pd.density, pd.poisson, pd.shear, pd.real_time, pd.perNp, pd.perTime, pd.one_by_one);
 			break;
 		}
 		cmd->printLine();
@@ -960,6 +967,21 @@ void xdynamics::exitThread()
 	errors::Error(model::name);
 }
 
+void xdynamics::motionConditionOfGeometry(QString nm)
+{
+	object *o = mg->GeometryObject()->Object(nm);
+	if (o)
+	{
+		motionConditionDialog mcd(this);
+		mcd.setName(nm);
+		int ret = mcd.exec();
+		if (ret)
+		{
+			o->setMotionCondition(mcd.st, mcd.et, mcd.cv, VEC3D(mcd.ux, mcd.uy, mcd.uz));
+		}
+	}
+}
+
 void xdynamics::recieveProgress(int pt, QString ch, QString info)
 {
 	if (ch == "__line__")
@@ -1025,6 +1047,9 @@ void xdynamics::contextSlot(QString nm, context_menu vot)
 	case CONTEXT_REFINEMENT:
 		comm->setWindowTitle("Input the refinement size.");
 		//comm->setEditFocus(true);
+		break;
+	case CONTEXT_MOTION_CONDITION:
+		motionConditionOfGeometry(nm);
 		break;
 // 	case CONTACT_OBJECT:
 // 		cpd = new contactPairDialog(this);

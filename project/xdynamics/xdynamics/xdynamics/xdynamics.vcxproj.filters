@@ -476,6 +476,15 @@
     <ClCompile Include="..\..\..\..\source\utility\parabola_predictor.cpp">
       <Filter>Source Files\mbd</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\source\motionConditionDialog.cpp">
+      <Filter>Source Files\dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_motionConditionDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_motionConditionDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="xdynamics.h">
@@ -590,6 +599,12 @@
       <Filter>Form Files</Filter>
     </CustomBuild>
     <CustomBuild Include="..\..\..\..\include\controlBodyDialog.h">
+      <Filter>Header Files\dialog</Filter>
+    </CustomBuild>
+    <CustomBuild Include="motionCondition.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\..\include\motionConditionDialog.h">
       <Filter>Header Files\dialog</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -869,6 +884,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\include\utility\parabola_predictor.h">
       <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_motionCondition.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

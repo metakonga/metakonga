@@ -1,13 +1,13 @@
 /********************************************************************************
-** Form generated from reading UI file 'makeParticleBnUhVd.ui'
+** Form generated from reading UI file 'makeParticle.ui'
 **
 ** Created by: Qt User Interface Compiler version 5.10.0
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#ifndef MAKEPARTICLEBNUHVD_H
-#define MAKEPARTICLEBNUHVD_H
+#ifndef UI_MAKEPARTICLE_H
+#define UI_MAKEPARTICLE_H
 
 #include <QtCore/QVariant>
 #include <QtWidgets/QAction>
@@ -564,4 +564,4 @@ namespace Ui {
 
 QT_END_NAMESPACE
 
-#endif // MAKEPARTICLEBNUHVD_H
+#endif // UI_MAKEPARTICLE_H

@@ -15,7 +15,7 @@
 #include <QMap>
 
 
-
+#include "model.h"
 #include "VController.h"
 #include "types.h"
 #include "algebraMath.h"

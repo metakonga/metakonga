@@ -138,6 +138,12 @@ unsigned int particleManager::NextCreatingPerGroup()
 	return pn;
 }
 
+unsigned int particleManager::NextCreatingOne(unsigned int pn)
+{
+	//	t
+	return 1;
+}
+
 QString particleManager::setParticleDataFromPart(QString& f)
 {
 	QFile qf(f);
@@ -189,7 +195,7 @@ unsigned int particleManager::calculateNumCircleParticles(double d, unsigned int
 		unsigned int _np = static_cast<unsigned int>((2.0 * M_PI) / dth);
 		cnt += _np;
 	}
-	return cnt;
+	return cnt * ny;
 }
 
 unsigned int particleManager::calculateNumCubeParticles(double dx, double dy, double dz, double min_radius, double max_radius)
@@ -244,23 +250,21 @@ VEC4D* particleManager::CreateCubeParticle(
 		space.y /= ndim.y + 1;
 		space.z /= ndim.z + 1;
 		VEC3D gab(diameter + space.x, diameter + space.y, diameter + space.z);
-		VEC3D ran = 100.0 * r * space;
+		VEC3D ran = r * space;
 		unsigned int cnt = 0;
 		for (unsigned int z = 0; z < ndim.z; z++)
 		{
-			double _z = lz + space.z;
+			double _z = lz + r + space.z;
 // 			_z = lz + z * gab + frand() * ran;
-// 			if (_z + r > lmz) break;
 			for (unsigned int y = 0; y < ndim.y; y++)
 			{
-				double _y = ly + space.y;
+				double _y = ly + r + space.y;
 // 				_y = ly + y * gab + frand() * ran;
 // 				if (_y + r > lmy) break;
 				for (unsigned int x = 0; x < ndim.x; x++)
 				{
-					double _x = lx + space.x;
-// 					_x = lx + x * gab + frand() * ran;
-// 					if (_x + r > lmx) break;
+					double _x = lx + r + space.x;
+					
 					VEC4D p = VEC4D(_x + x * gab.x + ran.x * frand(), _y + y * gab.y + ran.y * frand(), _z + z * gab.z + ran.z * frand(), r);
 					if (model::isSinglePrecision)
 						pos_f[pinfo.sid + cnt] = p.To<float>();
@@ -423,7 +427,9 @@ VEC4D* particleManager::CreateCircleParticle(
 {
 	particlesInfo pinfo;
 	//pinfo.szp = 0;
+	pinfo.tp = 2;
 	pinfo.sid = np;
+	pinfo.cdia = cdia;
 	unsigned int pnp = np;
 	pinfo.youngs = youngs;
 	pinfo.density = density;
@@ -584,6 +590,8 @@ VEC4D* particleManager::CreateCircleParticle(
 	one_by_one = obo;
 	if (one_by_one)
 		per_np = perNp;
+	else
+		np_group_iterator = np_group.begin();
 	//}
 	if (model::isSinglePrecision)
 		GLWidget::GLObject()->makeParticle_f((float*)pos_f, np);
@@ -596,7 +604,7 @@ VEC4D* particleManager::CreateCircleParticle(
 		<< "NAME " << n << endl
 		<< "MATERIAL_TYPE " << (int)type << endl
 		<< "DIAMETER " << cdia << endl
-		<< "NUM_HEIGHT" << nh << endl
+		<< "NUM_HEIGHT " << nh << endl
 		<< "STARTPOINT " << lx << " " << ly << " " << lz << endl
 		<< "DIRECTION " << dx << " " << dy << " " << dz << endl
 		<< "SPACE " << spacing << endl

@@ -32,6 +32,21 @@ void contact_particles_plane::setPlane(plane* _pe)
 
 void contact_particles_plane::cuda_collision(double *pos, double *vel, double *omega, double *mass, double *force, double *moment, unsigned int *sorted_id, unsigned int *cell_start, unsigned int *cell_end, unsigned int np)
 {
+	geometry_motion_condition gmc = pe->MotionCondition();
+	if (gmc.enable && simulation::ctime >= gmc.st)
+	{
+		hpi.xw = pe->XW();
+		hpi.w2 = pe->W2();
+		hpi.w3 = pe->W3();
+		hpi.w4 = pe->W4();
+		hpi.pa = pe->PA();
+		hpi.pb = pe->PB();
+		hpi.u1 = pe->U1();
+		hpi.u2 = pe->U2();
+		hpi.uw = pe->UW();
+		
+		checkCudaErrors(cudaMemcpy(dpi, &hpi, sizeof(device_plane_info), cudaMemcpyHostToDevice));
+	}
 	cu_plane_contact_force(1, dpi, pos, vel, omega, force, moment, mass, np, dcp);
 }
 
@@ -59,24 +74,29 @@ void contact_particles_plane::collision(
 // 	;// moment[i] += M;
 }
 
+void contact_particles_plane::cudaMemoryAlloc_planeObject()
+{
+	//device_plane_info *_dpi = new device_plane_info;
+	hpi.l1 = pe->L1();
+	hpi.l2 = pe->L2();
+	hpi.xw = pe->XW();
+	hpi.uw = pe->UW();
+	hpi.u1 = pe->U1();
+	hpi.u2 = pe->U2();
+	hpi.pa = pe->PA();
+	hpi.pb = pe->PB();
+	hpi.w2 = pe->W2();
+	hpi.w3 = pe->W3();
+	hpi.w4 = pe->W4();
+	checkCudaErrors(cudaMalloc((void**)&dpi, sizeof(device_plane_info)));
+	checkCudaErrors(cudaMemcpy(dpi, &hpi, sizeof(device_plane_info), cudaMemcpyHostToDevice));
+	//delete _dpi;
+}
+
 void contact_particles_plane::cudaMemoryAlloc()
 {
 	contact::cudaMemoryAlloc();
-	device_plane_info *_dpi = new device_plane_info;
-	_dpi->l1 = pe->L1();
-	_dpi->l2 = pe->L2();
-	_dpi->xw = make_double3(pe->XW().x, pe->XW().y, pe->XW().z);
-	_dpi->uw = make_double3(pe->UW().x, pe->UW().y, pe->UW().z);
-	_dpi->u1 = make_double3(pe->U1().x, pe->U1().y, pe->U1().z);
-	_dpi->u2 = make_double3(pe->U2().x, pe->U2().y, pe->U2().z);
-	_dpi->pa = make_double3(pe->PA().x, pe->PA().y, pe->PA().z);
-	_dpi->pb = make_double3(pe->PB().x, pe->PB().y, pe->PB().z);
-	_dpi->w2 = make_double3(pe->W2().x, pe->W2().y, pe->W2().z);
-	_dpi->w3 = make_double3(pe->W3().x, pe->W3().y, pe->W3().z);
-	_dpi->w4 = make_double3(pe->W4().x, pe->W4().y, pe->W4().z);
-	checkCudaErrors(cudaMalloc((void**)&dpi, sizeof(device_plane_info)));
-	checkCudaErrors(cudaMemcpy(dpi, _dpi, sizeof(device_plane_info), cudaMemcpyHostToDevice));
-	delete _dpi;
+	cudaMemoryAlloc_planeObject();
 }
 
 void contact_particles_plane::cudaMemoryAlloc_f()

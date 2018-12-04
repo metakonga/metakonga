@@ -56,7 +56,11 @@ bool xDynamicsSolver::initialize(int dem_itype, int mbd_itype, startingModel* st
 		mbd->setIntegratorType((mbd_integrator_type)mbd_itype);
 		mbd->initialize(stm);
 	}
-	
+	foreach(object* o, mg->GeometryObject()->Objects())
+	{
+		if (o->MotionCondition().enable)
+			gms[o->Name()] = o;
+	}
 	savePart(0, 0);
 	return true;
 }
@@ -91,6 +95,12 @@ bool xDynamicsSolver::savePart(double ct, unsigned int pt)
 	if (mbd)
 	{
 		mbd->saveResult(ct);
+	}
+	foreach(object* o, mg->GeometryObject()->Objects())
+	{
+		pointMass* pm = dynamic_cast<pointMass*>(o);
+		geometry_motion_result gmr = { pm->Position(), pm->getEP() };
+		model::rs->insertGeometryObjectResult(o->Name(), gmr);
 	}
 	return true;
 }
@@ -144,13 +154,6 @@ void xDynamicsSolver::run()
 	sendProgress(part, ch); 
 	ch.clear();
 	
-// 	qts << "| " 
-// 		<< qSetFieldWidth(14) << part 
-// 		<< qSetFieldWidth(17) << ct 
-// 		<< qSetFieldWidth(12) << eachStep 
-// 		<< qSetFieldWidth(13) << cstep 
-// 		<< qSetFieldWidth(22) << 0 
-// 		<< "|";
 	QTime tme;
 	//savePart(ct, part);
 	tme.start();
@@ -166,11 +169,15 @@ void xDynamicsSolver::run()
 		eachStep++;
 		ct += simulation::dt;
 		qDebug() << ct;
-//#ifdef _DEBUG
-		//qDebug() << ct;
-//#endif
+
 		simulation::setCurrentTime(ct);
-		
+		if (gms.size())
+		{
+			foreach(object* o, gms)
+			{
+				o->UpdateGeometryMotion(simulation::dt);
+			}
+		}
 		if (dem)
 		{
 			model::isSinglePrecision ?
@@ -182,7 +189,7 @@ void xDynamicsSolver::run()
 		if (mbd)
 		{
 			mbd_state = mbd->oneStepAnalysis(ct, cstep);
-			//qDebug() << "mbd_state : " << mbd_state;
+			//qDebug() << "mbd_state : " << mbd_state << "NR_Iteration : " << mbd->N_NR_Iteration();
 			if (mbd_state == -1)
 			{
 				//errors::Error(mbd->MbdModel()->modelName());

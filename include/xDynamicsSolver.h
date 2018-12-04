@@ -19,6 +19,7 @@ public:
 	~xDynamicsSolver();
 
 	bool initialize(int dem_itype, int mbd_itype, startingModel* stm = NULL);
+	void geometryMotionUpdate(double ct);
 	unsigned int totalStep() { return nstep; }
 	unsigned int totalPart() { return npart; }
 
@@ -38,6 +39,7 @@ private:
 	modelManager* mg;
 	dem_simulation *dem;
 	multibodyDynamics *mbd;
+	QMap<QString, object*> gms;
 
 signals:
 	void finishedThread();

@@ -16,8 +16,10 @@ class particleManager
 public:
 	typedef struct
 	{
+		int tp;
 		unsigned int sid;
 		unsigned int np;
+		double cdia, dx, dy, dz;
 		double min_radius, max_radius;
 		double youngs, density, poisson, shear;
 		VEC3D loc;
@@ -41,6 +43,7 @@ public:
 	unsigned int NumCreatingPerSecond() { return per_np; }
 	double TimeCreatingPerGroup() { return per_time; }
 	unsigned int NextCreatingPerGroup();
+	unsigned int NextCreatingOne(unsigned int pn);
 	object* Object() { return obj; }
 	double* Position() { return (double*)pos; }
 	float* Position_f() { return (float*)pos_f; }
