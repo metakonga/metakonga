@@ -452,7 +452,7 @@ __global__ void calculate_p2p_kernel(
 						if (cdist > 0){
 							double rcon = ir - 0.5 * cdist;
 							double3 unit = rp / dist;
-							double3 rv = cte.rollingCondition ? jvel + cross(jomega, -jr * unit) - (ivel + cross(iomega, ir * unit)) : jvel - ivel;
+							double3 rv = cte.rollingCondition ? jvel + cross(jomega, -jr * unit) - (ivel + cross(iomega, ir * unit)) : (jvel - ivel);
 							device_force_constant c = getConstant(
 								TCM, ir, jr, im, jm, cp->Ei, cp->Ej, 
 								cp->pri, cp->prj, cp->Gi, cp->Gj,

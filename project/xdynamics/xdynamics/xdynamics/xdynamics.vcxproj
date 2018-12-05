@@ -159,6 +159,7 @@
     <ClCompile Include="..\..\..\..\..\share\src\colors.cpp" />
     <ClCompile Include="..\..\..\..\..\share\src\errors.cpp" />
     <ClCompile Include="..\..\..\..\..\share\src\geometryObjects.cpp" />
+    <ClCompile Include="..\..\..\..\..\share\src\hardMoving.cpp" />
     <ClCompile Include="..\..\..\..\..\share\src\messageBox.cpp" />
     <ClCompile Include="..\..\..\..\..\share\src\model.cpp" />
     <ClCompile Include="..\..\..\..\..\share\src\modelManager.cpp" />
@@ -447,6 +448,7 @@
     <ClInclude Include="..\..\..\..\..\share\inc\dialogs.h" />
     <ClInclude Include="..\..\..\..\..\share\inc\errors.h" />
     <ClInclude Include="..\..\..\..\..\share\inc\geometryObjects.h" />
+    <ClInclude Include="..\..\..\..\..\share\inc\hardMoving.h" />
     <ClInclude Include="..\..\..\..\..\share\inc\messageBox.h" />
     <ClInclude Include="..\..\..\..\..\share\inc\model.h" />
     <ClInclude Include="..\..\..\..\..\share\inc\modelManager.h" />
