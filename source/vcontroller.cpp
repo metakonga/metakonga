@@ -58,12 +58,12 @@ void vcontroller::off_play()
 
 void vcontroller::move2forward1x()
 {
-	current_frame == buffer_count-1 ? current_frame = current_frame : ++current_frame;
+	current_frame == buffer_count ? current_frame = current_frame : ++current_frame;
 }
 
 void vcontroller::move2forward2x()
 {
-	current_frame == buffer_count-1 ? current_frame = current_frame : (++current_frame == buffer_count-1 ? current_frame = current_frame : ++current_frame);
+	current_frame == buffer_count ? current_frame = current_frame : (++current_frame == buffer_count-1 ? current_frame = current_frame : ++current_frame);
 }
 
 void vcontroller::update_frame()

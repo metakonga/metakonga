@@ -465,3 +465,11 @@ float3 reductionD3(float3* in, unsigned int np)
 	checkCudaErrors(cudaFree(d_out));
 	return rt;
 }
+
+void cu_updatePolygonObjectData(
+	device_polygon_mass_info *dpmi, double* vList,
+	double* sphere, device_polygon_info* dpi, unsigned int ntriangle)
+{
+	computeGridSize(ntriangle, 512, numBlocks, numThreads);
+	updatePolygonObjectData_kernel << <numBlocks, numThreads >> >(dpmi, vList, (double4 *)sphere, dpi, ntriangle);
+}

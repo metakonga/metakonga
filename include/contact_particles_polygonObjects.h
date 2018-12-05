@@ -54,6 +54,8 @@ private:
 	VEC4D *hsphere;
 	VEC4F *hsphere_f;
 	double* dsphere;
+	double* dvList;
+	unsigned int* diList;
 	//double* dvertexList;
 	float* dsphere_f;
 	host_polygon_info* hpi;

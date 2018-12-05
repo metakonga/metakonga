@@ -292,6 +292,10 @@ void cu_cylinder_hertzian_contact_force(
 	unsigned int np, device_contact_property_f* cp,
 	float3* mpos, float3* mf, float3* mm, float3& _mf, float3& _mm);
 
+void cu_updatePolygonObjectData(
+	device_polygon_mass_info *dpmi, double* vList, 
+	double* sphere, device_polygon_info* dpi, unsigned int ntriangle);
+
 float3 reductionD3(float3* in, unsigned int np);
 
 #endif

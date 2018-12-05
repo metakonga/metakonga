@@ -240,7 +240,7 @@ bool dem_simulation::initialize(contactManager* _cm)
 	for (unsigned int i = 0; i < np; i++)
 	{
 		double r = pos[i * 4 + 3];
-		//vel[i * 3 + 0] = 0.1;
+		//vel[i * 3 + 0] = 1.0;
 		mass[i] = pm->Object()->Density() * (4.0 / 3.0) * M_PI * pow(r, 3.0);
 		inertia[i] = (2.0 / 5.0) * mass[i] * pow(r, 2.0);
 		force[i * 3 + 0] = mass[i] * model::gravity.x;

@@ -55,6 +55,8 @@ bool xDynamicsSolver::initialize(int dem_itype, int mbd_itype, startingModel* st
 	{
 		mbd->setIntegratorType((mbd_integrator_type)mbd_itype);
 		mbd->initialize(stm);
+		if (mg->ContactManager())
+			mg->ContactManager()->update();
 	}
 	foreach(object* o, mg->GeometryObject()->Objects())
 	{
@@ -175,7 +177,8 @@ void xDynamicsSolver::run()
 		{
 			foreach(object* o, gms)
 			{
-				o->UpdateGeometryMotion(simulation::dt);
+				if(ct >= o->MotionCondition().st)
+					o->UpdateGeometryMotion(simulation::dt);
 			}
 		}
 		if (dem)
