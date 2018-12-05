@@ -1069,17 +1069,25 @@ void xdynamics::editingCommandLine()
 		return;
 	int code = comMgr->QnA(c);
 	if (code == 0)
-		cmd->write(CMD_INFO, "Complete command.");
+	{
+		cmd->write(CMD_INFO, QString("Success -- ") + comMgr->SuccessMessage());
+		comMgr->SuccessMessage().clear();
+	}
 	if (code > 0)
 	{
 		c = comMgr->AnQ(code);
 		cmd->write(CMD_INFO, c);
 	}
-	if (code < 0)
+	if (code == -2)
 	{
 		QString ret = comMgr->AnQ(comm->windowTitle(), c);
 		cmd->write(CMD_INFO, ret);
 		comm->setWindowTitle("Command window");
+	}
+	if (code == -1)
+	{
+		cmd->write(CMD_INFO, QString("Failure -- ") + comMgr->FailureMessage());
+		comMgr->SuccessMessage().clear();
 	}
 	//comMgr->appendLog(c);
 	e->setText("");

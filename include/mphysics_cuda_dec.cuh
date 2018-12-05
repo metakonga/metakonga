@@ -16,6 +16,7 @@
 
 struct device_parameters
 {
+	bool rollingCondition;
 	unsigned int np;
 	unsigned int nsphere;
 	unsigned int ncell;

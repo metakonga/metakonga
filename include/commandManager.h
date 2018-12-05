@@ -14,6 +14,8 @@ public:
 	QString AnQ(int c);
 	QString AnQ(QString c, QString v);
 	bool IsFinished() { is_finished; }
+	QString& SuccessMessage() { return successMessage; }
+	QString& FailureMessage() { return failureMessage; }
 	QString getPassedCommand();
 private:
 	bool is_finished;
@@ -27,6 +29,8 @@ private:
 	int step3(int c, QString s);
 	int current_log_index;
 	QStringList logs;
+	QString successMessage;
+	QString failureMessage;
 };
 
 #endif

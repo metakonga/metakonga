@@ -6,6 +6,7 @@
 
 dem_model::dem_model()
 	: pm(NULL)
+	, rollingCondition(true)
 	, sort_type(grid_base::NEIGHBORHOOD)
 	, integration_type(dem_integrator::VELOCITY_VERLET)
 {

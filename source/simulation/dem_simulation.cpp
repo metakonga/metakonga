@@ -288,6 +288,7 @@ bool dem_simulation::initialize(contactManager* _cm)
 		}		
 		device_parameters dp;
 		dp.np = np;
+		dp.rollingCondition = md->RollingCondition();
 		dp.nsphere = 0;
 		dp.ncell = dtor->nCell();
 		dp.grid_size.x = grid_base::gs.x;

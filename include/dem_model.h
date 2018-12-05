@@ -27,7 +27,8 @@ public:
 	void Save(QTextStream& qts);
 	void Open(QTextStream& qts);
 
-	
+	void setRollingConditionEnable(bool rce) { rollingCondition = rce; }
+	bool RollingCondition() { return rollingCondition; }
 	//void setParticleSystem(particleManager* _ps) { ps = _ps; }
 // 	void setDatabase(database* _db) { db = _db; }
 // 	void setSolveDevice(tSolveDevice tsd) { tdevice = tsd; }
@@ -69,6 +70,7 @@ public:
 // 	}
 
 private:
+	bool rollingCondition;
 	dem_integrator::Type integration_type;
 	grid_base::Type sort_type;
 	particleManager *pm;

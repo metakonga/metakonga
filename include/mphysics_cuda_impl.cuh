@@ -452,7 +452,7 @@ __global__ void calculate_p2p_kernel(
 						if (cdist > 0){
 							double rcon = ir - 0.5 * cdist;
 							double3 unit = rp / dist;
-							double3 rv = jvel - ivel;// +cross(jomega, -jr * unit) - (ivel + cross(iomega, ir * unit));
+							double3 rv = cte.rollingCondition ? jvel + cross(jomega, -jr * unit) - (ivel + cross(iomega, ir * unit)) : jvel - ivel;
 							device_force_constant c = getConstant(
 								TCM, ir, jr, im, jm, cp->Ei, cp->Ej, 
 								cp->pri, cp->prj, cp->Gi, cp->Gj,
@@ -597,7 +597,7 @@ __global__ void plane_contact_force_kernel(
 	double cdist = particle_plane_contact_detection(plane, ipos3, wp, unit, r);
 	if (cdist > 0){
 		double rcon = r - 0.5 * cdist;
-		double3 dv = -(ivel);// +cross(iomega, r * unit));
+		double3 dv = cte.rollingCondition ? -(ivel + cross(iomega, r * unit)) : -ivel;
 		device_force_constant c = getConstant(
 			TCM, r, 0.0, m, 0.0, cp->Ei, cp->Ej,
 			cp->pri, cp->prj, cp->Gi, cp->Gj,
@@ -984,7 +984,7 @@ __global__ void particle_polygonObject_collision_kernel(
 								double rcon = ir - 0.5 * cdist;
 								unit = -cross(qp, rp);// -dpi[k].N;
 								unit = unit / length(unit);
-								double3 dv = pmi.vel - ivel;// +cross(pmi.omega, po2cp) - (ivel + cross(iomega, ir * unit));
+								double3 dv = cte.rollingCondition ? pmi.vel + cross(pmi.omega, po2cp) - (ivel + cross(iomega, ir * unit)) : pmi.vel - ivel;
 								device_force_constant c = getConstant(
 									TCM, ir, 0, im, 0, cmp.Ei, cmp.Ej,
 									cmp.pri, cmp.prj, cmp.Gi, cmp.Gj,

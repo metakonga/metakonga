@@ -39,6 +39,24 @@ int commandManager::step0(int c, QString s)
 		}		
 		return 20;
 	}
+	else if (c == 4) // env
+	{
+		if (s == "rolling")
+		{
+			if (sz > 2)
+				return step1(41, sList.at(++cidx));
+			else
+			{
+				if (modelManager::MM()->DEMModel())
+				{
+					bool b = modelManager::MM()->DEMModel()->RollingCondition();
+					QTextStream(&successMessage) << "Rolling condition : " << (b ? "enable" : "disable");
+					return 0;
+				}
+				QTextStream(&failureMessage) << "DEM model is not exist.";
+			}
+		}
+	}
 	else
 		return c;
 	return -1;
@@ -67,6 +85,17 @@ int commandManager::step1(int c, QString s)
 				return 121;
 		}
 		return 120;
+	}
+	else if (c == 41) // env rolling
+	{
+		bool b = (bool)s.toInt();
+		if (modelManager::MM()->DEMModel())
+		{
+			modelManager::MM()->DEMModel()->setRollingConditionEnable(b);
+			QTextStream(&successMessage) << "Rolling condition of dem model is " << (b ? "enabled." : "disabled.");
+			return 0;
+		}
+		QTextStream(&failureMessage) << "DEM model is not exist.";
 	}
 // 	else if (c == 21)
 // 	{
@@ -149,11 +178,10 @@ int commandManager::QnA(QString& q)
 		if (sz > 1) return step0(2, sList.at(cidx));
 		else return 2;
 	}
-	else if (sList.at(cidx) == "refinement")
+	else if (sList.at(cidx) == "env")
 	{
 		cidx++;
-		if (sz > 1) return step0(3, sList.at(cidx));
-		else return 3;
+		if (sz > 1) return step0(4, sList.at(cidx));
 	}
 	//else if (sList.at(cidx) == "")
 // 	if (cstep != 1) return -2;
@@ -175,7 +203,7 @@ int commandManager::QnA(QString& q)
 // 		else return 111;
 // 	}
 
-	return -1;
+	return -2;
 }
 
 QString commandManager::AnQ(int c)
