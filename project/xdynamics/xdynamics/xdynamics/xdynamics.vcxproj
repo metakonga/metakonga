@@ -204,6 +204,7 @@
     <ClCompile Include="..\..\..\..\source\controlBodyDialog.cpp" />
     <ClCompile Include="..\..\..\..\source\cubeDialog.cpp" />
     <ClCompile Include="..\..\..\..\source\cylinderDialog.cpp" />
+    <ClCompile Include="..\..\..\..\source\event_trigger.cpp" />
     <ClCompile Include="..\..\..\..\source\ExportDialog.cpp" />
     <ClCompile Include="..\..\..\..\source\glwidget.cpp" />
     <ClCompile Include="..\..\..\..\source\grid_base.cpp" />
@@ -537,6 +538,7 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DADD_ -DHAVE_LAPACK_CONFIG_H -DLAPACK_COMPLEX_STRUCTURE -D_USE_MATH_DEFINES -DUNICODE -DWIN32 -DWIN64 -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_DLL "-I.\GeneratedFiles" "-I." "-I$(USING_QT_VERSION)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(USING_QT_VERSION)\include\QtCore" "-I$(USING_QT_VERSION)\include\QtGui" "-I$(USING_QT_VERSION)\include\QtOpenGL" "-I$(USING_QT_VERSION)\include\QtWidgets" "-I$(XDYNAMICS)\include" "-I$(XDYNAMICS)\include\object" "-I$(XDYNAMICS)\include\simulation" "-I$(USING_CUDA_SAMPLE_VERSION)\common\inc" "-I$(XDYNAMICS)\include\widget" "-I$(LAPACK_64)\inc" "-IC:\share\inc" "-IC:\share\inc\Algebra" "-IC:\share\inc\MultibodyDynamics" "-IC:\share\inc\object"</Command>
     </CustomBuild>
+    <ClInclude Include="..\..\..\..\include\eventTrigger.h" />
     <ClInclude Include="..\..\..\..\include\numeric_utility.h" />
     <ClInclude Include="..\..\..\..\include\startingModel.h" />
     <ClInclude Include="..\..\..\..\include\test_model.hpp" />

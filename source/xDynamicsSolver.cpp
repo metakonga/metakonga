@@ -3,6 +3,7 @@
 #include "messageBox.h"
 //#include "errors.h"
 #include "startingModel.h"
+#include "eventTrigger.h"
 #include <QTime>
 #include <QDebug>
 
@@ -192,7 +193,10 @@ void xDynamicsSolver::run()
 		if (mbd)
 		{
 			mbd_state = mbd->oneStepAnalysis(ct, cstep);
-			//qDebug() << "mbd_state : " << mbd_state << "NR_Iteration : " << mbd->N_NR_Iteration();
+			if (event_trigger::IsEvnetTrigger())
+			{
+				sendProgress(part, event_trigger::OnMessage());
+			}
 			if (mbd_state == -1)
 			{
 				//errors::Error(mbd->MbdModel()->modelName());

@@ -357,7 +357,9 @@ void xdynamics::openproj()
 		}	
 		if (ext == "rfl")
 		{
-			model::rs->openResultList(file);
+			unsigned int nlist = model::rs->openResultList(file);
+			vcontroller::setTotalFrame(nlist-1);
+			setAnimationAction(true);
 		}
 	}
 // 	else

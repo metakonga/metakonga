@@ -488,6 +488,9 @@
     <ClCompile Include="..\..\..\..\..\share\src\hardMoving.cpp">
       <Filter>Source Files\mbd</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\..\source\event_trigger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="xdynamics.h">
@@ -893,6 +896,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\..\share\inc\hardMoving.h">
       <Filter>Header Files\mbd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\include\eventTrigger.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
